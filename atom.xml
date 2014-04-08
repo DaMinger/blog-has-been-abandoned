@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title><![CDATA[DaMinger's blog]]></title>
+  <subtitle><![CDATA[鼓捣点小实验，分享点学习心得]]></subtitle>
+  <link href="/atom.xml" rel="self"/>
+  <link href="http://yoursite.com/"/>
+  <updated>2014-04-08T13:32:11.736Z</updated>
+  <id>http://yoursite.com/</id>
+  
+  <author>
+    <name><![CDATA[DaMinger-lqm]]></name>
+    <email><![CDATA[564400632@qq.com]]></email>
+  </author>
+  
+  <generator uri="http://zespia.tw/hexo/">Hexo</generator>
+  
+  <entry>
+    <title><![CDATA[第一篇Blog都是扯淡]]></title>
+    <link href="http://yoursite.com/2014/04/07/%E6%9D%82%E8%B0%88/first_blog/"/>
+    <id>http://yoursite.com/2014/04/07/杂谈/first_blog/</id>
+    <published>2014-04-07T04:18:40.000Z</published>
+    <updated>2014-04-08T11:28:24.000Z</updated>
+    <content type="html"><![CDATA[<ul>
+<li>所谓的第一篇文章都是扯淡，原先学习都是用OneNote来管理个人笔记，现在整个Blog分享点学习心得。<br>学生党</li>
+</ul>
+]]></content>
+    
+    
+      <category term="杂谈" scheme="http://yoursite.com/tags/%E6%9D%82%E8%B0%88/"/>
+    
+      <category term="杂谈" scheme="http://yoursite.com/categories/%E6%9D%82%E8%B0%88/"/>
+    
+  </entry>
+  
+</feed>
