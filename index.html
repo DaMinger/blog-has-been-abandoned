@@ -7,12 +7,14 @@
     <title>DaMinger&#39;s blog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
-    <meta name="author" content="DaMinger-lqm">
+    <meta name="author" content="DaMinger">
     
     <meta name="description" content="DaMinger&#39;s blog | java | Oracle | Linux">
     
     
     
+    
+    <link rel="alternative" href="/atom.xml" title="DaMinger&#39;s blog" type="application/atom+xml">
     
     
     <link rel="icon" href="/img/favicon.ico">
@@ -36,7 +38,7 @@
 			
 			<div id="textlogo">
 				<h1 class="site-name"><a rel="hover" class="hover" href="/" title="DaMinger&#39;s blog">DaMinger&#39;s blog</a></h1>
-				<h2 class="blog-motto"><a rel="wobble-to-bottom-right" class="wobble-to-bottom-right" href="#" title="#">鼓捣点小实验，分享点学习心得</a></h2>
+				<h2 class="blog-motto"><a rel="wobble-to-bottom-right" class="wobble-to-bottom-right" href="#" title="#">信春哥，系统稳，闭眼上线不回滚</a></h2>
 			</div>
 			<div class="navbar"><a rel="buzz" class="buzz" href="#" title="菜单">
 			</a></div>
@@ -48,17 +50,65 @@
 					
 						<li><a rel="wobble-top" class="wobble-top" href="/archives">Menu</a></li>
 					
-						<li><a rel="wobble-top" class="wobble-top" href="/tags">Index</a></li>
-					
 						<li><a rel="wobble-top" class="wobble-top" href="/about">About</a></li>
 					
 				</ul>
+				
 			</nav>			
 </div>
+<div style="text-align:right;">
+<form  class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+ <input type="search" name="q" id="search" autocomplete="off" autocorrect="off" autocapitalize="off" maxlength="20" placeholder="Search" />
+ <input type="hidden" name="q" value="site:github.com/DaMinger/DaMinger.github.io.git">
+</form>
+</div>
+
 
     </header>
     <div id="container">
       <div id="main">
+
+  <section class="post" itemscope itemprop="blogPost">
+  
+    <a rel="sink" class="sink" href="/2014/04/09/Linux/linux_mysql_install/" title="在Linux CentOS6.3下编译安装MySQL5.6.10" itemprop="url">
+  
+    <h1 itemprop="name">在Linux CentOS6.3下编译安装MySQL5.6.10</h1>
+    
+     
+           <p rel="wobble-bottom" class="wobble-bottom" itemprop="description" >一、编译安装MySQL前的准备工作
+安装编译源码所需的工具和库
+yum install gcc gcc-c++ ncurses-devel perl
+安装cmake，从http://www.cmake.org下载源码并编译安装
+wget http://www.cmake.org/</p>
+        
+    
+    <time datetime="2014-04-09T12:15:51.000Z" itemprop="datePublished">4月 9 2014</time>
+  </a>
+</section>
+
+
+
+  <section class="post" itemscope itemprop="blogPost">
+  
+    <a rel="sink" class="sink" href="/2014/04/09/Linux/linux_yum/" title="CENTOS 6.5搭建本地YUM源" itemprop="url">
+  
+    <h1 itemprop="name">CENTOS 6.5搭建本地YUM源</h1>
+    
+     
+           <p rel="wobble-bottom" class="wobble-bottom" itemprop="description" >CENTOS 6.5搭建本地YUM源
+方法一：用系统光盘镜像创建
+1）创建yum源目录并挂载系统光盘镜像
+mkdir /opt/local-mirror
+mount /dev/cdrom  /opt/local-mirror
+2)新建local-mirror.repo文件
+cd </p>
+        
+    
+    <time datetime="2014-04-09T12:01:08.000Z" itemprop="datePublished">4月 9 2014</time>
+  </a>
+</section>
+
+
 
   <section class="post" itemscope itemprop="blogPost">
   
@@ -67,12 +117,13 @@
     <h1 itemprop="name">第一篇Blog都是扯淡</h1>
     
      
-           <p rel="wobble-bottom" class="wobble-bottom" itemprop="description" >所谓的第一篇文章都是扯淡，原先学习都是用OneNote来管理个人笔记，现在整个Blog分享点学习心得。学生党</p>
+           <p rel="wobble-bottom" class="wobble-bottom" itemprop="description" >所谓的第一篇文章都是扯淡，原先学习都是用OneNote来管理个人笔记，现在整个Blog分享点学习心得,共享知识，共同进步。</p>
         
     
     <time datetime="2014-04-07T04:18:40.000Z" itemprop="datePublished">4月 7 2014</time>
   </a>
 </section>
+
 
 
 
@@ -88,6 +139,8 @@
 	<p rel="asidetitle grow" class="asidetitle grow">分类</p>
 		<ul>
 		
+			<li><a rel="grow" class="grow" href="/categories/Linux/" title="Linux">Linux<sup>2</sup></a></li>
+		
 			<li><a rel="grow" class="grow" href="/categories/杂谈/" title="杂谈">杂谈<sup>1</sup></a></li>
 		
 		</ul>
@@ -98,7 +151,11 @@
   <div class="linkslist">
 <h3 rel="grow" class="grow asidetitle">友情链接</h3>
 <ul class="entry">
-<li><a rel="grow" class="grow" href="http://blog.jobbole.com" title="伯乐在线">伯乐在线</a></li>
+<li><a rel="grow" class="grow" href="http://tahiti.oracle.com/" title="Oracle文档">Oracle文档</a></li>
+<li><a rel="grow" class="grow" href="http://asktom.oracle.com/" title="AskTom">AskTom</a></li>
+<li><a rel="grow" class="grow" href="http://blog.csdn.net/tianlesoftware/" title="Dave">Dave</a></li>
+<li><a rel="grow" class="grow" href="http://www.eygle.com/" title="eygle">eygle</a></li>
+<li><a rel="grow" class="grow" href="http://www.dbsnake.com/" title="dbsnake">dbsnake</a></li>
 </ul>
 </div>
 
@@ -108,6 +165,12 @@
 	<p class="asidetitle">标签</p>
 		<ul class="clearfix">
 		
+			<li><a href="/tags/Linux/" title="Linux">Linux<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Mysql/" title="Mysql">Mysql<sup>1</sup></a></li>
+		
+			<li><a href="/tags/yum/" title="yum">yum<sup>1</sup></a></li>
+		
 			<li><a href="/tags/杂谈/" title="杂谈">杂谈<sup>1</sup></a></li>
 		
 		</ul>
@@ -115,13 +178,13 @@
 
 
   <div class="rsspart">
-	<a href="null" target="_blank" title="rss">RSS 订阅</a>
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
 </div>
 
   
   <div class="archiveslist">
     <p class="asidetitle"><a href="/archives">归档</a></p>
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/04">四月 2014</a><span class="archive-list-count">1</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/04">四月 2014</a><span class="archive-list-count">3</span></li></ul>
   </div>
 
 
@@ -129,7 +192,7 @@
   <div class="tagcloudlist">
     <p class="asidetitle">标签云</p>
     <div class="tagcloudlist clearfix">
-       <a href="/tags/杂谈/" style="font-size: NaNpx;">杂谈</a>
+       <a href="/tags/Linux/" style="font-size: 20.00px;">Linux</a><a href="/tags/Mysql/" style="font-size: 10.00px;">Mysql</a><a href="/tags/yum/" style="font-size: 10.00px;">yum</a><a href="/tags/杂谈/" style="font-size: 10.00px;">杂谈</a>
     </div>
   </div>
 
@@ -147,16 +210,23 @@
 	</div>
 	
 	
+	<section class="info">
+		<span class="buzz" rel="buzz"> Hello,I&#39;m liuqinming.For now I&#39;m a student at collage. <br/>
+			I will share my learning experience with you at this blog.</span>
+	</section>
+	 
 	<div class="social-font" class="clearfix">
 		
 		
+		
+		<a rel="push" class="push" href="https://github.com/https://github.com/DaMinger" target="_blank" title="github"></a>
 		
 		
 	</div>
 		<p class="copyright">Powered by <a rel="float-shadow" class="float-shadow" href="http://zespia.tw/hexo/" target="_blank" title="hexo">Hexo</a> and Theme by <a class="box-shadow-inset"href="https://github.com/uruir/pacmanhover" target="_blank" title="Pacman">PacmanHover</a> © 2014 
 		
 		
-		<a class="wobble-horizontal" rel="wobble-horizontal" href="http://yoursite.com" target="_blank" title="DaMinger-lqm">DaMinger-lqm</a>
+		<a class="wobble-horizontal" rel="wobble-horizontal" href="https://github.com/DaMinger/DaMinger.github.io.git" target="_blank" title="DaMinger">DaMinger</a>
 		
 		</p>
 </div>

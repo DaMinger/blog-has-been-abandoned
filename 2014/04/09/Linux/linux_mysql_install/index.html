@@ -1,0 +1,506 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>在Linux CentOS6.3下编译安装MySQL5.6.10 | DaMinger&#39;s blog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="DaMinger">
+    
+    <meta name="description" content="一、编译安装MySQL前的准备工作
+安装编译源码所需的工具和库
+yum install gcc gcc-c++ ncurses-devel perl
+安装cmake，从http://www.cmake.org下载源码并编译安装
+wget http://www.cmake.org/files/v2.8">
+    
+    
+    
+    
+    <link rel="alternative" href="/atom.xml" title="DaMinger&#39;s blog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/pacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/pacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+    <link href="/css/hover.css" rel="stylesheet">
+    <link href="/css/bottom.css" rel="stylesheet">
+</head>
+
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a rel="pulse" class="pulse" href="/"><img src="/img/pacman.png" alt="DaMinger&#39;s blog" title="DaMinger&#39;s blog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a rel="hover" class="hover" href="/" title="DaMinger&#39;s blog">DaMinger&#39;s blog</a></h1>
+				<h2 class="blog-motto"><a rel="wobble-to-bottom-right" class="wobble-to-bottom-right" href="#" title="#">信春哥，系统稳，闭眼上线不回滚</a></h2>
+			</div>
+			<div class="navbar"><a rel="buzz" class="buzz" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a rel="wobble-top" class="wobble-top" href="/">Home</a></li>
+					
+						<li><a rel="wobble-top" class="wobble-top" href="/archives">Menu</a></li>
+					
+						<li><a rel="wobble-top" class="wobble-top" href="/about">About</a></li>
+					
+				</ul>
+				
+			</nav>			
+</div>
+<div style="text-align:right;">
+<form  class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+ <input type="search" name="q" id="search" autocomplete="off" autocorrect="off" autocapitalize="off" maxlength="20" placeholder="Search" />
+ <input type="hidden" name="q" value="site:github.com/DaMinger/DaMinger.github.io.git">
+</form>
+</div>
+
+
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2014/04/09/Linux/linux_mysql_install/" title="在Linux CentOS6.3下编译安装MySQL5.6.10" itemprop="url">在Linux CentOS6.3下编译安装MySQL5.6.10</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="https://github.com/DaMinger/DaMinger.github.io.git" title="DaMinger">DaMinger</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2014-04-09T12:15:51.000Z" itemprop="datePublished">4月 9 2014</time>
+    更新日期:<time datetime="2014-04-09T12:42:15.000Z" itemprop="dateModified">4月 9 2014</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#一、编译安装MySQL前的准备工作"><span class="toc-number">1.</span> <span class="toc-text">一、编译安装MySQL前的准备工作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二、设置MySQL用户和组"><span class="toc-number">2.</span> <span class="toc-text">二、设置MySQL用户和组</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#三、新建MySQL所需要的目录"><span class="toc-number">3.</span> <span class="toc-text">三、新建MySQL所需要的目录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#四、下载MySQL源码包并解压"><span class="toc-number">4.</span> <span class="toc-text">四、下载MySQL源码包并解压</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#五、编译安装MySQL"><span class="toc-number">5.</span> <span class="toc-text">五、编译安装MySQL</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#六、修改mysql目录所有者和组"><span class="toc-number">6.</span> <span class="toc-text">六、修改mysql目录所有者和组</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#七、初始化mysql数据库"><span class="toc-number">7.</span> <span class="toc-text">七、初始化mysql数据库</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#八、复制mysql服务启动配置文件"><span class="toc-number">8.</span> <span class="toc-text">八、复制mysql服务启动配置文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#九、复制mysql服务启动脚本及加入PATH路径"><span class="toc-number">9.</span> <span class="toc-text">九、复制mysql服务启动脚本及加入PATH路径</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#十、启动mysql服务并加入开机自启动"><span class="toc-number">10.</span> <span class="toc-text">十、启动mysql服务并加入开机自启动</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#十一、检查mysql服务是否启动"><span class="toc-number">11.</span> <span class="toc-text">十一、检查mysql服务是否启动</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#十二、修改MySQL用户root的密码"><span class="toc-number">12.</span> <span class="toc-text">十二、修改MySQL用户root的密码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#十三、可能会出现的错误"><span class="toc-number">13.</span> <span class="toc-text">十三、可能会出现的错误</span></a></li></ol>
+		</div>
+		
+		<h2 id="一、编译安装MySQL前的准备工作">一、编译安装MySQL前的准备工作</h2>
+<pre><code>安装编译源码所需的工具和库
+yum install gcc gcc-c++ ncurses-devel perl
+安装cmake，从http://www<span class="preprocessor">.cmake</span><span class="preprocessor">.org</span>下载源码并编译安装
+wget http://www<span class="preprocessor">.cmake</span><span class="preprocessor">.org</span>/files/v2<span class="number">.8</span>/cmake-<span class="number">2.8</span><span class="number">.10</span><span class="number">.2</span><span class="preprocessor">.tar</span><span class="preprocessor">.gz</span>
+tar -xzvf cmake-<span class="number">2.8</span><span class="number">.10</span><span class="number">.2</span><span class="preprocessor">.tar</span><span class="preprocessor">.gz</span>
+cd cmake-<span class="number">2.8</span><span class="number">.10</span><span class="number">.2</span>
+./bootstrap <span class="comment">; make ; make install</span>
+cd ~
+</code></pre><h2 id="二、设置MySQL用户和组">二、设置MySQL用户和组</h2>
+<pre><code>新增mysql用户组
+groupadd mysql
+新增mysql用户
+useradd <span class="attribute">-r</span> <span class="attribute">-g</span> mysql mysql
+</code></pre><h2 id="三、新建MySQL所需要的目录">三、新建MySQL所需要的目录</h2>
+<pre><code>新建mysql安装目录
+mkdir <span class="attribute">-p</span> /usr/<span class="built_in">local</span>/mysql
+新建mysql数据库数据文件目录
+mkdir <span class="attribute">-p</span> /<span class="built_in">data</span>/mysqldb
+</code></pre><h2 id="四、下载MySQL源码包并解压">四、下载MySQL源码包并解压</h2>
+<pre><code>从http://dev<span class="preprocessor">.mysql</span><span class="preprocessor">.com</span>/downloads/mysql/直接下载源码
+解压mysql-<span class="number">5.6</span><span class="number">.10</span><span class="preprocessor">.tar</span><span class="preprocessor">.gz</span>
+tar -zxv -f mysql-<span class="number">5.6</span><span class="number">.10</span><span class="preprocessor">.tar</span><span class="preprocessor">.gz</span>
+cd mysql-<span class="number">5.6</span><span class="number">.10</span>
+</code></pre><h2 id="五、编译安装MySQL">五、编译安装MySQL</h2>
+<pre><code>从mysql5.5起，mysql源码安装开始使用cmake了，设置源码编译配置脚本。
+-<span class="ruby"><span class="constant">DCMAKE_INSTALL_PREFIX</span>=dir_name    设置mysql安装目录
+</span>-<span class="ruby"><span class="constant">DMYSQL_UNIX_ADDR</span>=file_name    设置监听套接字路径，这必须是一个绝对路径名。默认为/tmp/mysql.sock的中。
+</span>-<span class="ruby"><span class="constant">DDEFAULT_CHARSET</span>=charset_name    设置服务器的字符集。缺省情况下，<span class="constant">MySQL</span>使用latin1的（<span class="constant">CP1252</span>西欧）字符集。
+</span>cmake/character_sets.cmake文件包含允许的字符集名称列表。
+-<span class="ruby"><span class="constant">DDEFAULT_COLLATION</span>=collation_name    设置服务器的排序规则。
+</span>-<span class="ruby"><span class="constant">DWITH_INNOBASE_STORAGE_ENGINE</span>=<span class="number">1</span>
+</span>-<span class="ruby"><span class="constant">DWITH_ARCHIVE_STORAGE_ENGINE</span>=<span class="number">1</span>
+</span>-<span class="ruby"><span class="constant">DWITH_BLACKHOLE_STORAGE_ENGINE</span>=<span class="number">1</span>
+</span>-<span class="ruby"><span class="constant">DWITH_PERFSCHEMA_STORAGE_ENGINE</span>=<span class="number">1</span>    存储引擎选项：
+</span>MyISAM，MERGE，MEMORY，和CSV引擎是默认编译到服务器中，并不需要明确地安装。
+静态编译一个存储引擎到服务器，使用-DWITH_engine_STORAGE_ENGINE= 1。
+可用的存储引擎值有：ARCHIVE, BLACKHOLE, EXAMPLE, FEDERATED, INNOBASE (InnoDB),   PARTITION (partitioning support), 和 PERFSCHEMA (Performance Schema).
+-<span class="ruby"><span class="constant">DMYSQL_DATADIR</span>=dir_name    设置mysql数据库文件目录
+</span>-<span class="ruby"><span class="constant">DMYSQL_TCP_PORT</span>=port_num    设置mysql服务器监听端口，默认为<span class="number">3306</span>
+</span>-<span class="ruby"><span class="constant">DENABLE_DOWNLOADS</span>=bool    是否要下载可选的文件。例如，启用此选项（设置为<span class="number">1</span>），cmake将下载谷歌所使用的测试套件运行单元测试。
+</span>设置编译参数
+cmake \
+-<span class="ruby"><span class="constant">DCMAKE_INSTALL_PREFIX</span>=<span class="regexp">/usr/local</span><span class="regexp">/mysql \
+</span></span>-<span class="ruby"><span class="constant">DMYSQL_UNIX_ADDR</span>=<span class="regexp">/usr/local</span><span class="regexp">/mysql/mysql</span>.sock \
+</span>-<span class="ruby"><span class="constant">DDEFAULT_CHARSET</span>=utf8 \
+</span>-<span class="ruby"><span class="constant">DDEFAULT_COLLATION</span>=utf8_general_ci \
+</span>-<span class="ruby"><span class="constant">DWITH_INNOBASE_STORAGE_ENGINE</span>=<span class="number">1</span> \
+</span>-<span class="ruby"><span class="constant">DWITH_ARCHIVE_STORAGE_ENGINE</span>=<span class="number">1</span> \
+</span>-<span class="ruby"><span class="constant">DWITH_BLACKHOLE_STORAGE_ENGINE</span>=<span class="number">1</span> \
+</span>-<span class="ruby"><span class="constant">DMYSQL_DATADIR</span>=<span class="regexp">/data/mysqldb</span> \
+</span>-<span class="ruby"><span class="constant">DMYSQL_TCP_PORT</span>=<span class="number">3306</span> \
+</span>-<span class="ruby"><span class="constant">DENABLE_DOWNLOADS</span>=<span class="number">1</span>
+</span>注：重新运行配置，需要删除CMakeCache.txt文件
+rm CMakeCache.txt
+编译源码
+make
+安装
+make install
+</code></pre><h2 id="六、修改mysql目录所有者和组">六、修改mysql目录所有者和组</h2>
+<pre><code>修改mysql安装目录
+cd /usr/<span class="built_in">local</span>/mysql
+chown <span class="attribute">-R</span> mysql:mysql <span class="built_in">.</span>
+修改mysql数据库文件目录
+cd /<span class="built_in">data</span>/mysqldb
+chown <span class="attribute">-R</span> mysql:mysql <span class="built_in">.</span>
+</code></pre><h2 id="七、初始化mysql数据库">七、初始化mysql数据库</h2>
+<pre><code><span class="comment">cd</span> <span class="comment">/usr/local/mysql</span>
+<span class="comment">scripts/mysql_install_db</span> <span class="literal">-</span><span class="literal">-</span><span class="comment">user=mysql</span> <span class="literal">-</span><span class="literal">-</span><span class="comment">datadir=/data/mysqldb</span>
+</code></pre><h2 id="八、复制mysql服务启动配置文件">八、复制mysql服务启动配置文件</h2>
+<pre><code>cp /usr/<span class="keyword">local</span>/mysql/support-files/<span class="keyword">my</span>-default.cnf /etc/<span class="keyword">my</span>.cnf
+注：如果/etc/<span class="keyword">my</span>.cnf文件存在，则覆盖。
+</code></pre><h2 id="九、复制mysql服务启动脚本及加入PATH路径">九、复制mysql服务启动脚本及加入PATH路径</h2>
+<pre><code>cp support-files/mysql.server /etc/init.d/mysqld
+vim /etc/profile
+<span class="constant">PATH</span>=<span class="regexp">/usr/local</span><span class="regexp">/mysql/bin</span><span class="symbol">:/usr/local/mysql/lib</span><span class="symbol">:</span><span class="variable">$PATH</span>
+export <span class="constant">PATH</span>
+source /etc/profile
+</code></pre><h2 id="十、启动mysql服务并加入开机自启动">十、启动mysql服务并加入开机自启动</h2>
+<pre><code>service mysqld <span class="operator"><span class="keyword">start</span>
+chkconfig --<span class="keyword">level</span> <span class="number">35</span> mysqld <span class="keyword">on</span></span>
+</code></pre><h2 id="十一、检查mysql服务是否启动">十一、检查mysql服务是否启动</h2>
+<pre><code>netstat <span class="attribute">-tulnp</span> <span class="subst">|</span> grep <span class="number">3306</span>
+mysql <span class="attribute">-u</span> root <span class="attribute">-p</span>
+密码为空，如果能登陆上，则安装成功。
+</code></pre><h2 id="十二、修改MySQL用户root的密码">十二、修改MySQL用户root的密码</h2>
+<pre><code>mysqladmin <span class="attribute">-u</span> root password <span class="string">'123456'</span>
+注：也可运行安全设置脚本，修改MySQL用户root的密码，同时可禁止root远程连接，移除test数据库和匿名用户。
+/usr/<span class="built_in">local</span>/mysql/bin/mysql_secure_installation
+</code></pre><h2 id="十三、可能会出现的错误">十三、可能会出现的错误</h2>
+<pre><code>问题：
+Starting MySQL..The server quit <span class="keyword">without</span> updating PID <span class="type">file</span> ([FAILED]/mysql/Server03.mylinux.com.pid).
+解决：
+修改/etc/<span class="keyword">my</span>.cnf 中datadir,指向正确的mysql数据库文件目录
+
+问题：
+ERROR <span class="number">2002</span> (HY000): Can't connect <span class="keyword">to</span> <span class="keyword">local</span> MySQL server <span class="keyword">through</span> socket '/tmp/mysql.sock' (<span class="number">2</span>)
+解决：
+新建一个链接或在mysql中加入-S参数，直接指出mysql.sock位置。
+ln -s /usr/<span class="keyword">local</span>/mysql/data/mysql.sock /tmp/mysql.sock
+/usr/<span class="keyword">local</span>/mysql/bin/mysql -u root -S /usr/<span class="keyword">local</span>/mysql/data/mysql.sock
+</code></pre>  
+	</div>
+		<footer class="article-footer clearfix">
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Linux/">Linux</a><a href="/tags/Mysql/">Mysql</a>
+  </div>
+
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Linux/">Linux</a>
+</div>
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="https://github.com/DaMinger/DaMinger.github.io.git/2014/04/09/Linux/linux_mysql_install/" data-title="在Linux CentOS6.3下编译安装MySQL5.6.10 | DaMinger&#39;s blog" data-tsina="null" class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+
+<div class="next">
+<a href="/2014/04/09/Linux/linux_yum/"  title="CENTOS 6.5搭建本地YUM源">
+ <strong>NEXT:</strong><br/> 
+ <span>CENTOS 6.5搭建本地YUM源
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section class="comment">
+	<div class="ds-thread"></div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#一、编译安装MySQL前的准备工作"><span class="toc-number">1.</span> <span class="toc-text">一、编译安装MySQL前的准备工作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二、设置MySQL用户和组"><span class="toc-number">2.</span> <span class="toc-text">二、设置MySQL用户和组</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#三、新建MySQL所需要的目录"><span class="toc-number">3.</span> <span class="toc-text">三、新建MySQL所需要的目录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#四、下载MySQL源码包并解压"><span class="toc-number">4.</span> <span class="toc-text">四、下载MySQL源码包并解压</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#五、编译安装MySQL"><span class="toc-number">5.</span> <span class="toc-text">五、编译安装MySQL</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#六、修改mysql目录所有者和组"><span class="toc-number">6.</span> <span class="toc-text">六、修改mysql目录所有者和组</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#七、初始化mysql数据库"><span class="toc-number">7.</span> <span class="toc-text">七、初始化mysql数据库</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#八、复制mysql服务启动配置文件"><span class="toc-number">8.</span> <span class="toc-text">八、复制mysql服务启动配置文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#九、复制mysql服务启动脚本及加入PATH路径"><span class="toc-number">9.</span> <span class="toc-text">九、复制mysql服务启动脚本及加入PATH路径</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#十、启动mysql服务并加入开机自启动"><span class="toc-number">10.</span> <span class="toc-text">十、启动mysql服务并加入开机自启动</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#十一、检查mysql服务是否启动"><span class="toc-number">11.</span> <span class="toc-text">十一、检查mysql服务是否启动</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#十二、修改MySQL用户root的密码"><span class="toc-number">12.</span> <span class="toc-text">十二、修改MySQL用户root的密码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#十三、可能会出现的错误"><span class="toc-number">13.</span> <span class="toc-text">十三、可能会出现的错误</span></a></li></ol>
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p rel="asidetitle grow" class="asidetitle grow">分类</p>
+		<ul>
+		
+			<li><a rel="grow" class="grow" href="/categories/Linux/" title="Linux">Linux<sup>2</sup></a></li>
+		
+			<li><a rel="grow" class="grow" href="/categories/杂谈/" title="杂谈">杂谈<sup>1</sup></a></li>
+		
+		</ul>
+</div>
+
+
+
+  <div class="linkslist">
+<h3 rel="grow" class="grow asidetitle">友情链接</h3>
+<ul class="entry">
+<li><a rel="grow" class="grow" href="http://tahiti.oracle.com/" title="Oracle文档">Oracle文档</a></li>
+<li><a rel="grow" class="grow" href="http://asktom.oracle.com/" title="AskTom">AskTom</a></li>
+<li><a rel="grow" class="grow" href="http://blog.csdn.net/tianlesoftware/" title="Dave">Dave</a></li>
+<li><a rel="grow" class="grow" href="http://www.eygle.com/" title="eygle">eygle</a></li>
+<li><a rel="grow" class="grow" href="http://www.dbsnake.com/" title="dbsnake">dbsnake</a></li>
+</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/Linux/" title="Linux">Linux<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Mysql/" title="Mysql">Mysql<sup>1</sup></a></li>
+		
+			<li><a href="/tags/yum/" title="yum">yum<sup>1</sup></a></li>
+		
+			<li><a href="/tags/杂谈/" title="杂谈">杂谈<sup>1</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle"><a href="/archives">归档</a></p>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/04">四月 2014</a><span class="archive-list-count">3</span></li></ul>
+  </div>
+
+
+  
+  <div class="tagcloudlist">
+    <p class="asidetitle">标签云</p>
+    <div class="tagcloudlist clearfix">
+       <a href="/tags/Linux/" style="font-size: 20.00px;">Linux</a><a href="/tags/Mysql/" style="font-size: 10.00px;">Mysql</a><a href="/tags/yum/" style="font-size: 10.00px;">yum</a><a href="/tags/杂谈/" style="font-size: 10.00px;">杂谈</a>
+    </div>
+  </div>
+
+
+  <iframe width="100%" height="550" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=2&ptype=1&speed=0&skin=1&isTitle=1&noborder=1&isWeibo=1&isFans=1&uid=3819451430&verifier=f953543e&dpc=1"></iframe>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<span class="buzz" rel="buzz"> Hello,I&#39;m liuqinming.For now I&#39;m a student at collage. <br/>
+			I will share my learning experience with you at this blog.</span>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		<a rel="push" class="push" href="https://github.com/https://github.com/DaMinger" target="_blank" title="github"></a>
+		
+		
+	</div>
+		<p class="copyright">Powered by <a rel="float-shadow" class="float-shadow" href="http://zespia.tw/hexo/" target="_blank" title="hexo">Hexo</a> and Theme by <a class="box-shadow-inset"href="https://github.com/uruir/pacmanhover" target="_blank" title="Pacman">PacmanHover</a> © 2014 
+		
+		
+		<a class="wobble-horizontal" rel="wobble-horizontal" href="https://github.com/DaMinger/DaMinger.github.io.git" target="_blank" title="DaMinger">DaMinger</a>
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+    c.click(function(){
+      ta.css('display', 'block').addClass('fadeIn');
+    });
+    o.click(function(){
+      ta.css('display', 'none');
+    });
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,320-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"null"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+<div id="totop" style="position:fixed;bottom:150px;right:50px;cursor: pointer;">
+<a title="���ض���"><img src="/img/scrollup.png"/></a>
+</div>
+<script src="/js/totop.js"></script>
+
+
+
+  </body>
+</html>

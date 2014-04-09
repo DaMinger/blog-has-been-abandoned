@@ -1,34 +1,200 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title><![CDATA[DaMinger's blog]]></title>
-  <subtitle><![CDATA[鼓捣点小实验，分享点学习心得]]></subtitle>
+  <subtitle><![CDATA[信春哥，系统稳，闭眼上线不回滚]]></subtitle>
   <link href="/atom.xml" rel="self"/>
-  <link href="http://yoursite.com/"/>
-  <updated>2014-04-08T14:33:52.549Z</updated>
-  <id>http://yoursite.com/</id>
+  <link href="https://github.com/DaMinger/DaMinger.github.io.git/"/>
+  <updated>2014-04-09T12:47:59.955Z</updated>
+  <id>https://github.com/DaMinger/DaMinger.github.io.git/</id>
   
   <author>
-    <name><![CDATA[DaMinger-lqm]]></name>
+    <name><![CDATA[DaMinger]]></name>
     <email><![CDATA[564400632@qq.com]]></email>
   </author>
   
   <generator uri="http://zespia.tw/hexo/">Hexo</generator>
   
   <entry>
-    <title><![CDATA[第一篇Blog都是扯淡]]></title>
-    <link href="http://yoursite.com/2014/04/07/%E6%9D%82%E8%B0%88/first_blog/"/>
-    <id>http://yoursite.com/2014/04/07/杂谈/first_blog/</id>
-    <published>2014-04-07T04:18:40.000Z</published>
-    <updated>2014-04-08T11:28:24.000Z</updated>
-    <content type="html"><![CDATA[<ul>
-<li>所谓的第一篇文章都是扯淡，原先学习都是用OneNote来管理个人笔记，现在整个Blog分享点学习心得。<br>学生党</li>
-</ul>
+    <title><![CDATA[在Linux CentOS6.3下编译安装MySQL5.6.10]]></title>
+    <link href="https://github.com/DaMinger/DaMinger.github.io.git/2014/04/09/Linux/linux_mysql_install/"/>
+    <id>https://github.com/DaMinger/DaMinger.github.io.git/2014/04/09/Linux/linux_mysql_install/</id>
+    <published>2014-04-09T12:15:51.000Z</published>
+    <updated>2014-04-09T12:42:15.000Z</updated>
+    <content type="html"><![CDATA[<h2 id="一、编译安装MySQL前的准备工作">一、编译安装MySQL前的准备工作</h2>
+<pre><code>安装编译源码所需的工具和库
+yum install gcc gcc-c++ ncurses-devel perl
+安装cmake，从http://www<span class="preprocessor">.cmake</span><span class="preprocessor">.org</span>下载源码并编译安装
+wget http://www<span class="preprocessor">.cmake</span><span class="preprocessor">.org</span>/files/v2<span class="number">.8</span>/cmake-<span class="number">2.8</span><span class="number">.10</span><span class="number">.2</span><span class="preprocessor">.tar</span><span class="preprocessor">.gz</span>
+tar -xzvf cmake-<span class="number">2.8</span><span class="number">.10</span><span class="number">.2</span><span class="preprocessor">.tar</span><span class="preprocessor">.gz</span>
+cd cmake-<span class="number">2.8</span><span class="number">.10</span><span class="number">.2</span>
+./bootstrap <span class="comment">; make ; make install</span>
+cd ~
+</code></pre><h2 id="二、设置MySQL用户和组">二、设置MySQL用户和组</h2>
+<pre><code>新增mysql用户组
+groupadd mysql
+新增mysql用户
+useradd <span class="attribute">-r</span> <span class="attribute">-g</span> mysql mysql
+</code></pre><h2 id="三、新建MySQL所需要的目录">三、新建MySQL所需要的目录</h2>
+<pre><code>新建mysql安装目录
+mkdir <span class="attribute">-p</span> /usr/<span class="built_in">local</span>/mysql
+新建mysql数据库数据文件目录
+mkdir <span class="attribute">-p</span> /<span class="built_in">data</span>/mysqldb
+</code></pre><h2 id="四、下载MySQL源码包并解压">四、下载MySQL源码包并解压</h2>
+<pre><code>从http://dev<span class="preprocessor">.mysql</span><span class="preprocessor">.com</span>/downloads/mysql/直接下载源码
+解压mysql-<span class="number">5.6</span><span class="number">.10</span><span class="preprocessor">.tar</span><span class="preprocessor">.gz</span>
+tar -zxv -f mysql-<span class="number">5.6</span><span class="number">.10</span><span class="preprocessor">.tar</span><span class="preprocessor">.gz</span>
+cd mysql-<span class="number">5.6</span><span class="number">.10</span>
+</code></pre><h2 id="五、编译安装MySQL">五、编译安装MySQL</h2>
+<pre><code>从mysql5.5起，mysql源码安装开始使用cmake了，设置源码编译配置脚本。
+-<span class="ruby"><span class="constant">DCMAKE_INSTALL_PREFIX</span>=dir_name    设置mysql安装目录
+</span>-<span class="ruby"><span class="constant">DMYSQL_UNIX_ADDR</span>=file_name    设置监听套接字路径，这必须是一个绝对路径名。默认为/tmp/mysql.sock的中。
+</span>-<span class="ruby"><span class="constant">DDEFAULT_CHARSET</span>=charset_name    设置服务器的字符集。缺省情况下，<span class="constant">MySQL</span>使用latin1的（<span class="constant">CP1252</span>西欧）字符集。
+</span>cmake/character_sets.cmake文件包含允许的字符集名称列表。
+-<span class="ruby"><span class="constant">DDEFAULT_COLLATION</span>=collation_name    设置服务器的排序规则。
+</span>-<span class="ruby"><span class="constant">DWITH_INNOBASE_STORAGE_ENGINE</span>=<span class="number">1</span>
+</span>-<span class="ruby"><span class="constant">DWITH_ARCHIVE_STORAGE_ENGINE</span>=<span class="number">1</span>
+</span>-<span class="ruby"><span class="constant">DWITH_BLACKHOLE_STORAGE_ENGINE</span>=<span class="number">1</span>
+</span>-<span class="ruby"><span class="constant">DWITH_PERFSCHEMA_STORAGE_ENGINE</span>=<span class="number">1</span>    存储引擎选项：
+</span>MyISAM，MERGE，MEMORY，和CSV引擎是默认编译到服务器中，并不需要明确地安装。
+静态编译一个存储引擎到服务器，使用-DWITH_engine_STORAGE_ENGINE= 1。
+可用的存储引擎值有：ARCHIVE, BLACKHOLE, EXAMPLE, FEDERATED, INNOBASE (InnoDB),   PARTITION (partitioning support), 和 PERFSCHEMA (Performance Schema).
+-<span class="ruby"><span class="constant">DMYSQL_DATADIR</span>=dir_name    设置mysql数据库文件目录
+</span>-<span class="ruby"><span class="constant">DMYSQL_TCP_PORT</span>=port_num    设置mysql服务器监听端口，默认为<span class="number">3306</span>
+</span>-<span class="ruby"><span class="constant">DENABLE_DOWNLOADS</span>=bool    是否要下载可选的文件。例如，启用此选项（设置为<span class="number">1</span>），cmake将下载谷歌所使用的测试套件运行单元测试。
+</span>设置编译参数
+cmake \
+-<span class="ruby"><span class="constant">DCMAKE_INSTALL_PREFIX</span>=<span class="regexp">/usr/local</span><span class="regexp">/mysql \
+</span></span>-<span class="ruby"><span class="constant">DMYSQL_UNIX_ADDR</span>=<span class="regexp">/usr/local</span><span class="regexp">/mysql/mysql</span>.sock \
+</span>-<span class="ruby"><span class="constant">DDEFAULT_CHARSET</span>=utf8 \
+</span>-<span class="ruby"><span class="constant">DDEFAULT_COLLATION</span>=utf8_general_ci \
+</span>-<span class="ruby"><span class="constant">DWITH_INNOBASE_STORAGE_ENGINE</span>=<span class="number">1</span> \
+</span>-<span class="ruby"><span class="constant">DWITH_ARCHIVE_STORAGE_ENGINE</span>=<span class="number">1</span> \
+</span>-<span class="ruby"><span class="constant">DWITH_BLACKHOLE_STORAGE_ENGINE</span>=<span class="number">1</span> \
+</span>-<span class="ruby"><span class="constant">DMYSQL_DATADIR</span>=<span class="regexp">/data/mysqldb</span> \
+</span>-<span class="ruby"><span class="constant">DMYSQL_TCP_PORT</span>=<span class="number">3306</span> \
+</span>-<span class="ruby"><span class="constant">DENABLE_DOWNLOADS</span>=<span class="number">1</span>
+</span>注：重新运行配置，需要删除CMakeCache.txt文件
+rm CMakeCache.txt
+编译源码
+make
+安装
+make install
+</code></pre><h2 id="六、修改mysql目录所有者和组">六、修改mysql目录所有者和组</h2>
+<pre><code>修改mysql安装目录
+cd /usr/<span class="built_in">local</span>/mysql
+chown <span class="attribute">-R</span> mysql:mysql <span class="built_in">.</span>
+修改mysql数据库文件目录
+cd /<span class="built_in">data</span>/mysqldb
+chown <span class="attribute">-R</span> mysql:mysql <span class="built_in">.</span>
+</code></pre><h2 id="七、初始化mysql数据库">七、初始化mysql数据库</h2>
+<pre><code><span class="comment">cd</span> <span class="comment">/usr/local/mysql</span>
+<span class="comment">scripts/mysql_install_db</span> <span class="literal">-</span><span class="literal">-</span><span class="comment">user=mysql</span> <span class="literal">-</span><span class="literal">-</span><span class="comment">datadir=/data/mysqldb</span>
+</code></pre><h2 id="八、复制mysql服务启动配置文件">八、复制mysql服务启动配置文件</h2>
+<pre><code>cp /usr/<span class="keyword">local</span>/mysql/support-files/<span class="keyword">my</span>-default.cnf /etc/<span class="keyword">my</span>.cnf
+注：如果/etc/<span class="keyword">my</span>.cnf文件存在，则覆盖。
+</code></pre><h2 id="九、复制mysql服务启动脚本及加入PATH路径">九、复制mysql服务启动脚本及加入PATH路径</h2>
+<pre><code>cp support-files/mysql.server /etc/init.d/mysqld
+vim /etc/profile
+<span class="constant">PATH</span>=<span class="regexp">/usr/local</span><span class="regexp">/mysql/bin</span><span class="symbol">:/usr/local/mysql/lib</span><span class="symbol">:</span><span class="variable">$PATH</span>
+export <span class="constant">PATH</span>
+source /etc/profile
+</code></pre><h2 id="十、启动mysql服务并加入开机自启动">十、启动mysql服务并加入开机自启动</h2>
+<pre><code>service mysqld <span class="operator"><span class="keyword">start</span>
+chkconfig --<span class="keyword">level</span> <span class="number">35</span> mysqld <span class="keyword">on</span></span>
+</code></pre><h2 id="十一、检查mysql服务是否启动">十一、检查mysql服务是否启动</h2>
+<pre><code>netstat <span class="attribute">-tulnp</span> <span class="subst">|</span> grep <span class="number">3306</span>
+mysql <span class="attribute">-u</span> root <span class="attribute">-p</span>
+密码为空，如果能登陆上，则安装成功。
+</code></pre><h2 id="十二、修改MySQL用户root的密码">十二、修改MySQL用户root的密码</h2>
+<pre><code>mysqladmin <span class="attribute">-u</span> root password <span class="string">'123456'</span>
+注：也可运行安全设置脚本，修改MySQL用户root的密码，同时可禁止root远程连接，移除test数据库和匿名用户。
+/usr/<span class="built_in">local</span>/mysql/bin/mysql_secure_installation
+</code></pre><h2 id="十三、可能会出现的错误">十三、可能会出现的错误</h2>
+<pre><code>问题：
+Starting MySQL..The server quit <span class="keyword">without</span> updating PID <span class="type">file</span> ([FAILED]/mysql/Server03.mylinux.com.pid).
+解决：
+修改/etc/<span class="keyword">my</span>.cnf 中datadir,指向正确的mysql数据库文件目录
+
+问题：
+ERROR <span class="number">2002</span> (HY000): Can't connect <span class="keyword">to</span> <span class="keyword">local</span> MySQL server <span class="keyword">through</span> socket '/tmp/mysql.sock' (<span class="number">2</span>)
+解决：
+新建一个链接或在mysql中加入-S参数，直接指出mysql.sock位置。
+ln -s /usr/<span class="keyword">local</span>/mysql/data/mysql.sock /tmp/mysql.sock
+/usr/<span class="keyword">local</span>/mysql/bin/mysql -u root -S /usr/<span class="keyword">local</span>/mysql/data/mysql.sock
+</code></pre>]]></content>
+    
+    
+      <category term="Linux" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/Linux/"/>
+    
+      <category term="Mysql" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/Mysql/"/>
+    
+      <category term="Linux" scheme="https://github.com/DaMinger/DaMinger.github.io.git/categories/Linux/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[CENTOS 6.5搭建本地YUM源]]></title>
+    <link href="https://github.com/DaMinger/DaMinger.github.io.git/2014/04/09/Linux/linux_yum/"/>
+    <id>https://github.com/DaMinger/DaMinger.github.io.git/2014/04/09/Linux/linux_yum/</id>
+    <published>2014-04-09T12:01:08.000Z</published>
+    <updated>2014-04-09T12:13:21.000Z</updated>
+    <content type="html"><![CDATA[<h1 id="CENTOS_6-5搭建本地YUM源">CENTOS 6.5搭建本地YUM源</h1>
+<h2 id="方法一：用系统光盘镜像创建">方法一：用系统光盘镜像创建</h2>
+<h3 id="1）创建yum源目录并挂载系统光盘镜像">1）创建yum源目录并挂载系统光盘镜像</h3>
+<p>mkdir /opt/local-mirror</p>
+<p>mount /dev/cdrom  /opt/local-mirror</p>
+<h3 id="2)新建local-mirror-repo文件">2)新建local-mirror.repo文件</h3>
+<p>cd /etc/yum.repos.d/</p>
+<p>rm -f  *  (删掉原来的repo文件，如果以后还想用，也可以重命名或者移到其他目录，我这里删掉)</p>
+<p>vi /etc/yum.repos.d/local-mirror.repo</p>
+<pre><code><span class="title">[local-mirror]</span>
+<span class="setting">name=<span class="value">This is a local repo</span></span>
+<span class="setting">baseurl=<span class="value">file:///opt/local-mirror</span></span>
+<span class="setting">enabled=<span class="value"><span class="number">1</span></span></span>
+<span class="setting">gpgcheck=<span class="value"><span class="number">1</span></span></span>
+<span class="setting">gpgkey=<span class="value">file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-<span class="number">6</span></span></span>
+</code></pre><h3 id="3)设置开机自动挂载">3)设置开机自动挂载</h3>
+<p>vi  /etc/fstab   //在最后一行加上：</p>
+<pre><code>/dev/cdrom    /opt/local-mirror     iso9660        <span class="default"><span class="keyword">default</span>      0    0</span>
+</code></pre><h3 id="4)测试">4)测试</h3>
+<p>yum clean all</p>
+<p>yum  makecache</p>
+<p>yum -y install ftp(或者安装其他软件包)</p>
+<p>如果没有提示错误，就说明本地yum源搭建成功了！</p>
+<h2 id="方法二：将所有rpm包复制到指定文件夹，通过createrepo命令创建">方法二：将所有rpm包复制到指定文件夹，通过createrepo命令创建</h2>
+<h3 id="1）创建yum源目录并且挂载系统光盘镜像之后，将所有rpm包复制到yum源目录，如果镜像文件像CentOS6-5一样是分为2个iso文件的，分2次挂载并且复制即可">1）创建yum源目录并且挂载系统光盘镜像之后，将所有rpm包复制到yum源目录，如果镜像文件像CentOS6.5一样是分为2个iso文件的，分2次挂载并且复制即可</h3>
+<p>mkdir /opt/local-mirror</p>
+<p>mount /dev/cdrom  /mnt (临时供copy的目录）</p>
+<p>cp /mnt/Packages/*   /opt/local-mirror</p>
+<h3 id="2)通过rpm命令手动安装createrepo命令创建yum仓库">2)通过rpm命令手动安装createrepo命令创建yum仓库</h3>
+<p>rpm -ivh createrepo     (若提示需要安装依赖包，根据提示安装即可）</p>
+<p>createrepo -v  /opt/local-mirror  (创建索引信息）</p>
+<h3 id="3）同方法一的第二步">3）同方法一的第二步</h3>
+<h3 id="4）测试同方法一的第四步">4）测试同方法一的第四步</h3>
 ]]></content>
     
     
-      <category term="杂谈" scheme="http://yoursite.com/tags/%E6%9D%82%E8%B0%88/"/>
+      <category term="Linux" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/Linux/"/>
     
-      <category term="杂谈" scheme="http://yoursite.com/categories/%E6%9D%82%E8%B0%88/"/>
+      <category term="yum" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/yum/"/>
+    
+      <category term="Linux" scheme="https://github.com/DaMinger/DaMinger.github.io.git/categories/Linux/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[第一篇Blog都是扯淡]]></title>
+    <link href="https://github.com/DaMinger/DaMinger.github.io.git/2014/04/07/%E6%9D%82%E8%B0%88/first_blog/"/>
+    <id>https://github.com/DaMinger/DaMinger.github.io.git/2014/04/07/杂谈/first_blog/</id>
+    <published>2014-04-07T04:18:40.000Z</published>
+    <updated>2014-04-09T09:05:06.000Z</updated>
+    <content type="html"><![CDATA[<p>所谓的第一篇文章都是扯淡，原先学习都是用OneNote来管理个人笔记，现在整个Blog分享点学习心得,共享知识，共同进步。</p>
+]]></content>
+    
+    
+      <category term="杂谈" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/%E6%9D%82%E8%B0%88/"/>
+    
+      <category term="杂谈" scheme="https://github.com/DaMinger/DaMinger.github.io.git/categories/%E6%9D%82%E8%B0%88/"/>
     
   </entry>
   
