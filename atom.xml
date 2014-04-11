@@ -4,7 +4,7 @@
   <subtitle><![CDATA[信春哥，系统稳，闭眼上线不回滚]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="https://github.com/DaMinger/DaMinger.github.io.git/"/>
-  <updated>2014-04-10T12:47:01.646Z</updated>
+  <updated>2014-04-11T14:41:03.449Z</updated>
   <id>https://github.com/DaMinger/DaMinger.github.io.git/</id>
   
   <author>
@@ -13,6 +13,42 @@
   </author>
   
   <generator uri="http://zespia.tw/hexo/">Hexo</generator>
+  
+  <entry>
+    <title><![CDATA[Centos 6.4克隆系统后网卡eth0变成eth1的解决办法]]></title>
+    <link href="https://github.com/DaMinger/DaMinger.github.io.git/2014/04/11/Linux/linux_ethX_problem/"/>
+    <id>https://github.com/DaMinger/DaMinger.github.io.git/2014/04/11/Linux/linux_ethX_problem/</id>
+    <published>2014-04-11T14:31:24.000Z</published>
+    <updated>2014-04-11T14:40:08.000Z</updated>
+    <content type="html"><![CDATA[<p>vbox 或者vmware克隆系统后里面的eth0变成了eht1，开始没有发现问题，当我/etc/init.d/network restart重启的时候，发现找不到eth0，ifconfig 后只有eth1，原来linux使用udev动态管理设备文件，并根据设备的信息对其进行持久化命名。克隆时就自动变成eth1了。还好找到了解决办法，于是备份并分享之。</p>
+<pre><code>vi /etc/udev/rules.d/70-persistent-net.rules
+dd删除关于eth0的记录或者是用<span class="comment">#注释掉eth0的记录(谨慎的可以注释掉，不过完全没有用)</span>
+记住其中eth1的mac地址 复制到文本中，备用
+将eth1改成eth0
+vi /etc/sysconfig/network-scripts/ifcfg-eth0
+将老文件eth0的mac地址换掉，(如果细心的话会发现ifconfig eth1会跟配置文件中的mac不一样)
+<span class="constant">DEVICE</span>=eth0
+<span class="constant">HWADDR</span>=08:00:27:b7:bb:f7            //将备用的mac地址替换
+<span class="constant">TYPE</span>=Ethernet
+<span class="constant">UUID</span>=010da721-97c3-49f6-b95d-fe485634956a
+<span class="constant">ONBOOT</span>=yes
+<span class="constant">NM_CONTROLLED</span>=yes
+<span class="constant">BOOTPROTO</span>=dhcp                       //自动IP拨号
+<span class="constant">BOOTPROTO</span>=static                    //静态IP设置
+<span class="constant">IPADDR</span>=192.168.1.111
+<span class="constant">NETMASK</span>=255.255.255.0
+<span class="constant">BROADCAST</span>=192.168.1.255
+<span class="constant">GATEWAY</span>=192.168.1.1
+/etc/init.d/network restart     //重启network--如果不行的话
+就shutdown -r now//重启系统了
+</code></pre>]]></content>
+    
+    
+      <category term="Linux" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/Linux/"/>
+    
+      <category term="Linux" scheme="https://github.com/DaMinger/DaMinger.github.io.git/categories/Linux/"/>
+    
+  </entry>
   
   <entry>
     <title><![CDATA[三次握手，四次挥手]]></title>
