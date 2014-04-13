@@ -11,11 +11,11 @@
     
     <meta name="description" content="CENTOS 6.5搭建本地YUM源
 方法一：用系统光盘镜像创建
-1）创建yum源目录并挂载系统光盘镜像
+创建yum源目录并挂载系统光盘镜像
 mkdir /opt/local-mirror
 mount /dev/cdrom  /opt/local-mirror
-2)新建local-mirror.repo文件
-cd /etc/yum.r">
+新建local-mirror.repo文件
+cd /etc/yum.repos">
     
     
     
@@ -85,7 +85,7 @@ cd /etc/yum.r">
     </p>
   <p class="article-time">
     <time datetime="2014-04-09T12:01:08.000Z" itemprop="datePublished">4月 9 2014</time>
-    更新日期:<time datetime="2014-04-09T12:13:21.000Z" itemprop="dateModified">4月 9 2014</time>
+    更新日期:<time datetime="2014-04-13T12:04:03.000Z" itemprop="dateModified">4月 13 2014</time>
     
   </p>
 </header>
@@ -94,42 +94,42 @@ cd /etc/yum.r">
 		
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
-		<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#CENTOS_6-5搭建本地YUM源"><span class="toc-number">1.</span> <span class="toc-text">CENTOS 6.5搭建本地YUM源</span></a></li><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#方法一：用系统光盘镜像创建"><span class="toc-number">1.1.</span> <span class="toc-text">方法一：用系统光盘镜像创建</span></a></li><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1）创建yum源目录并挂载系统光盘镜像"><span class="toc-number">1.1.1.</span> <span class="toc-text">1）创建yum源目录并挂载系统光盘镜像</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2)新建local-mirror-repo文件"><span class="toc-number">1.1.2.</span> <span class="toc-text">2)新建local-mirror.repo文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3)设置开机自动挂载"><span class="toc-number">1.1.3.</span> <span class="toc-text">3)设置开机自动挂载</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4)测试"><span class="toc-number">1.1.4.</span> <span class="toc-text">4)测试</span></a></li></ol><li class="toc-item toc-level-2"><a class="toc-link" href="#方法二：将所有rpm包复制到指定文件夹，通过createrepo命令创建"><span class="toc-number">1.2.</span> <span class="toc-text">方法二：将所有rpm包复制到指定文件夹，通过createrepo命令创建</span></a></li><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1）创建yum源目录并且挂载系统光盘镜像之后，将所有rpm包复制到yum源目录，如果镜像文件像CentOS6-5一样是分为2个iso文件的，分2次挂载并且复制即可"><span class="toc-number">1.2.1.</span> <span class="toc-text">1）创建yum源目录并且挂载系统光盘镜像之后，将所有rpm包复制到yum源目录，如果镜像文件像CentOS6.5一样是分为2个iso文件的，分2次挂载并且复制即可</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2)通过rpm命令手动安装createrepo命令创建yum仓库"><span class="toc-number">1.2.2.</span> <span class="toc-text">2)通过rpm命令手动安装createrepo命令创建yum仓库</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3）同方法一的第二步"><span class="toc-number">1.2.3.</span> <span class="toc-text">3）同方法一的第二步</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4）测试同方法一的第四步"><span class="toc-number">1.2.4.</span> <span class="toc-text">4）测试同方法一的第四步</span></a></li></ol>
+		<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#CENTOS_6-5搭建本地YUM源"><span class="toc-number">1.</span> <span class="toc-text">CENTOS 6.5搭建本地YUM源</span></a></li><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#方法一：用系统光盘镜像创建"><span class="toc-number">1.1.</span> <span class="toc-text">方法一：用系统光盘镜像创建</span></a></li><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#创建yum源目录并挂载系统光盘镜像"><span class="toc-number">1.1.1.</span> <span class="toc-text">创建yum源目录并挂载系统光盘镜像</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#新建local-mirror-repo文件"><span class="toc-number">1.1.2.</span> <span class="toc-text">新建local-mirror.repo文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#设置开机自动挂载"><span class="toc-number">1.1.3.</span> <span class="toc-text">设置开机自动挂载</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#测试"><span class="toc-number">1.1.4.</span> <span class="toc-text">测试</span></a></li></ol><li class="toc-item toc-level-2"><a class="toc-link" href="#方法二：将所有rpm包复制到指定文件夹，通过createrepo命令创建"><span class="toc-number">1.2.</span> <span class="toc-text">方法二：将所有rpm包复制到指定文件夹，通过createrepo命令创建</span></a></li><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#创建yum源目录并且挂载系统光盘镜像之后，将所有rpm包复制到yum源目录，如果镜像文件像CentOS6-5一样是分为2个iso文件的，分2次挂载并且复制即可"><span class="toc-number">1.2.1.</span> <span class="toc-text">创建yum源目录并且挂载系统光盘镜像之后，将所有rpm包复制到yum源目录，如果镜像文件像CentOS6.5一样是分为2个iso文件的，分2次挂载并且复制即可</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#通过rpm命令手动安装createrepo命令创建yum仓库"><span class="toc-number">1.2.2.</span> <span class="toc-text">通过rpm命令手动安装createrepo命令创建yum仓库</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#同方法一的第二步"><span class="toc-number">1.2.3.</span> <span class="toc-text">同方法一的第二步</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#测试同方法一的第四步"><span class="toc-number">1.2.4.</span> <span class="toc-text">测试同方法一的第四步</span></a></li></ol>
 		</div>
 		
 		<h1 id="CENTOS_6-5搭建本地YUM源">CENTOS 6.5搭建本地YUM源</h1>
 <h2 id="方法一：用系统光盘镜像创建">方法一：用系统光盘镜像创建</h2>
-<h3 id="1）创建yum源目录并挂载系统光盘镜像">1）创建yum源目录并挂载系统光盘镜像</h3>
-<p>mkdir /opt/local-mirror</p>
-<p>mount /dev/cdrom  /opt/local-mirror</p>
-<h3 id="2)新建local-mirror-repo文件">2)新建local-mirror.repo文件</h3>
-<p>cd /etc/yum.repos.d/</p>
-<p>rm -f  *  (删掉原来的repo文件，如果以后还想用，也可以重命名或者移到其他目录，我这里删掉)</p>
-<p>vi /etc/yum.repos.d/local-mirror.repo</p>
-<pre><code><span class="title">[local-mirror]</span>
-<span class="setting">name=<span class="value">This is a local repo</span></span>
-<span class="setting">baseurl=<span class="value">file:///opt/local-mirror</span></span>
-<span class="setting">enabled=<span class="value"><span class="number">1</span></span></span>
-<span class="setting">gpgcheck=<span class="value"><span class="number">1</span></span></span>
-<span class="setting">gpgkey=<span class="value">file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-<span class="number">6</span></span></span>
-</code></pre><h3 id="3)设置开机自动挂载">3)设置开机自动挂载</h3>
+<h3 id="创建yum源目录并挂载系统光盘镜像">创建yum源目录并挂载系统光盘镜像</h3>
+<pre><code>mkdir /opt/<span class="built_in">local</span><span class="attribute">-mirror</span>
+mount /dev/cdrom  /opt/<span class="built_in">local</span><span class="attribute">-mirror</span>
+</code></pre><h3 id="新建local-mirror-repo文件">新建local-mirror.repo文件</h3>
+<pre><code>cd /etc/yum.repos.d/
+rm -f  *  (删掉原来的repo文件，如果以后还想用，也可以重命名或者移到其他目录，我这里删掉)
+vi /etc/yum.repos.d/local-mirror.repo
+[local-mirror]
+name=This <span class="keyword">is</span> a local repo
+baseurl=file:<span class="comment"><span class="xmlDocTag">///</span>opt/local-mirror</span>
+enabled=<span class="number">1</span>
+gpgcheck=<span class="number">1</span>
+gpgkey=file:<span class="comment"><span class="xmlDocTag">///</span>etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-6</span>
+</code></pre><h3 id="设置开机自动挂载">设置开机自动挂载</h3>
 <p>vi  /etc/fstab   //在最后一行加上：</p>
 <pre><code>/dev/cdrom    /opt/local-mirror     iso9660        <span class="default"><span class="keyword">default</span>      0    0</span>
-</code></pre><h3 id="4)测试">4)测试</h3>
-<p>yum clean all</p>
-<p>yum  makecache</p>
-<p>yum -y install ftp(或者安装其他软件包)</p>
-<p>如果没有提示错误，就说明本地yum源搭建成功了！</p>
+</code></pre><h3 id="测试">测试</h3>
+<pre><code>yum clean <span class="literal">all</span>
+yum  makecache
+yum <span class="attribute">-y</span> install ftp(或者安装其他软件包)
+</code></pre><p>如果没有提示错误，就说明本地yum源搭建成功了！</p>
 <h2 id="方法二：将所有rpm包复制到指定文件夹，通过createrepo命令创建">方法二：将所有rpm包复制到指定文件夹，通过createrepo命令创建</h2>
-<h3 id="1）创建yum源目录并且挂载系统光盘镜像之后，将所有rpm包复制到yum源目录，如果镜像文件像CentOS6-5一样是分为2个iso文件的，分2次挂载并且复制即可">1）创建yum源目录并且挂载系统光盘镜像之后，将所有rpm包复制到yum源目录，如果镜像文件像CentOS6.5一样是分为2个iso文件的，分2次挂载并且复制即可</h3>
-<p>mkdir /opt/local-mirror</p>
-<p>mount /dev/cdrom  /mnt (临时供copy的目录）</p>
-<p>cp /mnt/Packages/*   /opt/local-mirror</p>
-<h3 id="2)通过rpm命令手动安装createrepo命令创建yum仓库">2)通过rpm命令手动安装createrepo命令创建yum仓库</h3>
-<p>rpm -ivh createrepo     (若提示需要安装依赖包，根据提示安装即可）</p>
-<p>createrepo -v  /opt/local-mirror  (创建索引信息）</p>
-<h3 id="3）同方法一的第二步">3）同方法一的第二步</h3>
-<h3 id="4）测试同方法一的第四步">4）测试同方法一的第四步</h3>
+<h3 id="创建yum源目录并且挂载系统光盘镜像之后，将所有rpm包复制到yum源目录，如果镜像文件像CentOS6-5一样是分为2个iso文件的，分2次挂载并且复制即可">创建yum源目录并且挂载系统光盘镜像之后，将所有rpm包复制到yum源目录，如果镜像文件像CentOS6.5一样是分为2个iso文件的，分2次挂载并且复制即可</h3>
+<pre><code>mkdir /opt/<span class="keyword">local</span>-mirror
+mount /dev/cdrom  /mnt (临时供<span class="keyword">copy</span>的目录）
+cp /mnt/Packages/*   /opt/<span class="keyword">local</span>-mirror
+</code></pre><h3 id="通过rpm命令手动安装createrepo命令创建yum仓库">通过rpm命令手动安装createrepo命令创建yum仓库</h3>
+<pre><code>rpm <span class="attribute">-ivh</span> createrepo     (若提示需要安装依赖包，根据提示安装即可）
+createrepo <span class="attribute">-v</span>  /opt/<span class="built_in">local</span><span class="attribute">-mirror</span>  (创建索引信息）
+</code></pre><h3 id="同方法一的第二步">同方法一的第二步</h3>
+<h3 id="测试同方法一的第四步">测试同方法一的第四步</h3>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -187,7 +187,7 @@ cd /etc/yum.r">
 
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
-  <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#CENTOS_6-5搭建本地YUM源"><span class="toc-number">1.</span> <span class="toc-text">CENTOS 6.5搭建本地YUM源</span></a></li><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#方法一：用系统光盘镜像创建"><span class="toc-number">1.1.</span> <span class="toc-text">方法一：用系统光盘镜像创建</span></a></li><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1）创建yum源目录并挂载系统光盘镜像"><span class="toc-number">1.1.1.</span> <span class="toc-text">1）创建yum源目录并挂载系统光盘镜像</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2)新建local-mirror-repo文件"><span class="toc-number">1.1.2.</span> <span class="toc-text">2)新建local-mirror.repo文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3)设置开机自动挂载"><span class="toc-number">1.1.3.</span> <span class="toc-text">3)设置开机自动挂载</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4)测试"><span class="toc-number">1.1.4.</span> <span class="toc-text">4)测试</span></a></li></ol><li class="toc-item toc-level-2"><a class="toc-link" href="#方法二：将所有rpm包复制到指定文件夹，通过createrepo命令创建"><span class="toc-number">1.2.</span> <span class="toc-text">方法二：将所有rpm包复制到指定文件夹，通过createrepo命令创建</span></a></li><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1）创建yum源目录并且挂载系统光盘镜像之后，将所有rpm包复制到yum源目录，如果镜像文件像CentOS6-5一样是分为2个iso文件的，分2次挂载并且复制即可"><span class="toc-number">1.2.1.</span> <span class="toc-text">1）创建yum源目录并且挂载系统光盘镜像之后，将所有rpm包复制到yum源目录，如果镜像文件像CentOS6.5一样是分为2个iso文件的，分2次挂载并且复制即可</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2)通过rpm命令手动安装createrepo命令创建yum仓库"><span class="toc-number">1.2.2.</span> <span class="toc-text">2)通过rpm命令手动安装createrepo命令创建yum仓库</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3）同方法一的第二步"><span class="toc-number">1.2.3.</span> <span class="toc-text">3）同方法一的第二步</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4）测试同方法一的第四步"><span class="toc-number">1.2.4.</span> <span class="toc-text">4）测试同方法一的第四步</span></a></li></ol>
+  <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#CENTOS_6-5搭建本地YUM源"><span class="toc-number">1.</span> <span class="toc-text">CENTOS 6.5搭建本地YUM源</span></a></li><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#方法一：用系统光盘镜像创建"><span class="toc-number">1.1.</span> <span class="toc-text">方法一：用系统光盘镜像创建</span></a></li><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#创建yum源目录并挂载系统光盘镜像"><span class="toc-number">1.1.1.</span> <span class="toc-text">创建yum源目录并挂载系统光盘镜像</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#新建local-mirror-repo文件"><span class="toc-number">1.1.2.</span> <span class="toc-text">新建local-mirror.repo文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#设置开机自动挂载"><span class="toc-number">1.1.3.</span> <span class="toc-text">设置开机自动挂载</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#测试"><span class="toc-number">1.1.4.</span> <span class="toc-text">测试</span></a></li></ol><li class="toc-item toc-level-2"><a class="toc-link" href="#方法二：将所有rpm包复制到指定文件夹，通过createrepo命令创建"><span class="toc-number">1.2.</span> <span class="toc-text">方法二：将所有rpm包复制到指定文件夹，通过createrepo命令创建</span></a></li><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#创建yum源目录并且挂载系统光盘镜像之后，将所有rpm包复制到yum源目录，如果镜像文件像CentOS6-5一样是分为2个iso文件的，分2次挂载并且复制即可"><span class="toc-number">1.2.1.</span> <span class="toc-text">创建yum源目录并且挂载系统光盘镜像之后，将所有rpm包复制到yum源目录，如果镜像文件像CentOS6.5一样是分为2个iso文件的，分2次挂载并且复制即可</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#通过rpm命令手动安装createrepo命令创建yum仓库"><span class="toc-number">1.2.2.</span> <span class="toc-text">通过rpm命令手动安装createrepo命令创建yum仓库</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#同方法一的第二步"><span class="toc-number">1.2.3.</span> <span class="toc-text">同方法一的第二步</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#测试同方法一的第四步"><span class="toc-number">1.2.4.</span> <span class="toc-text">测试同方法一的第四步</span></a></li></ol>
   </div>
 
 <div id="asidepart">
@@ -199,7 +199,9 @@ cd /etc/yum.r">
 	<p rel="asidetitle grow" class="asidetitle grow">分类</p>
 		<ul>
 		
-			<li><a rel="grow" class="grow" href="/categories/Linux/" title="Linux">Linux<sup>3</sup></a></li>
+			<li><a rel="grow" class="grow" href="/categories/Hadoop/" title="Hadoop">Hadoop<sup>1</sup></a></li>
+		
+			<li><a rel="grow" class="grow" href="/categories/Linux/" title="Linux">Linux<sup>4</sup></a></li>
 		
 			<li><a rel="grow" class="grow" href="/categories/杂谈/" title="杂谈">杂谈<sup>1</sup></a></li>
 		
@@ -227,13 +229,17 @@ cd /etc/yum.r">
 	<p class="asidetitle">标签</p>
 		<ul class="clearfix">
 		
-			<li><a href="/tags/Linux/" title="Linux">Linux<sup>3</sup></a></li>
+			<li><a href="/tags/Hadoop/" title="Hadoop">Hadoop<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Linux/" title="Linux">Linux<sup>4</sup></a></li>
 		
 			<li><a href="/tags/Mysql/" title="Mysql">Mysql<sup>1</sup></a></li>
 		
 			<li><a href="/tags/yum/" title="yum">yum<sup>1</sup></a></li>
 		
 			<li><a href="/tags/杂谈/" title="杂谈">杂谈<sup>1</sup></a></li>
+		
+			<li><a href="/tags/网卡错误/" title="网卡错误">网卡错误<sup>1</sup></a></li>
 		
 			<li><a href="/tags/网络/" title="网络">网络<sup>1</sup></a></li>
 		
@@ -248,7 +254,7 @@ cd /etc/yum.r">
   
   <div class="archiveslist">
     <p class="asidetitle"><a href="/archives">归档</a></p>
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/04">四月 2014</a><span class="archive-list-count">5</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/04">四月 2014</a><span class="archive-list-count">7</span></li></ul>
   </div>
 
 
@@ -256,7 +262,7 @@ cd /etc/yum.r">
   <div class="tagcloudlist">
     <p class="asidetitle">标签云</p>
     <div class="tagcloudlist clearfix">
-       <a href="/tags/Linux/" style="font-size: 20.00px;">Linux</a><a href="/tags/Mysql/" style="font-size: 10.00px;">Mysql</a><a href="/tags/yum/" style="font-size: 10.00px;">yum</a><a href="/tags/杂谈/" style="font-size: 10.00px;">杂谈</a><a href="/tags/网络/" style="font-size: 10.00px;">网络</a>
+       <a href="/tags/Hadoop/" style="font-size: 10.00px;">Hadoop</a><a href="/tags/Linux/" style="font-size: 20.00px;">Linux</a><a href="/tags/Mysql/" style="font-size: 10.00px;">Mysql</a><a href="/tags/yum/" style="font-size: 10.00px;">yum</a><a href="/tags/杂谈/" style="font-size: 10.00px;">杂谈</a><a href="/tags/网卡错误/" style="font-size: 10.00px;">网卡错误</a><a href="/tags/网络/" style="font-size: 10.00px;">网络</a>
     </div>
   </div>
 

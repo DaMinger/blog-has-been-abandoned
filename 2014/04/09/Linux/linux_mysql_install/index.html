@@ -9,11 +9,11 @@
     
     <meta name="author" content="DaMinger">
     
-    <meta name="description" content="一、编译安装MySQL前的准备工作
+    <meta name="description" content="编译安装MySQL前的准备工作
 安装编译源码所需的工具和库
 yum install gcc gcc-c++ ncurses-devel perl
 安装cmake，从http://www.cmake.org下载源码并编译安装
-wget http://www.cmake.org/files/v2.8">
+wget http://www.cmake.org/files/v2.8/c">
     
     
     
@@ -83,7 +83,7 @@ wget http://www.cmake.org/files/v2.8">
     </p>
   <p class="article-time">
     <time datetime="2014-04-09T12:15:51.000Z" itemprop="datePublished">4月 9 2014</time>
-    更新日期:<time datetime="2014-04-09T12:42:15.000Z" itemprop="dateModified">4月 9 2014</time>
+    更新日期:<time datetime="2014-04-13T12:02:26.000Z" itemprop="dateModified">4月 13 2014</time>
     
   </p>
 </header>
@@ -92,10 +92,10 @@ wget http://www.cmake.org/files/v2.8">
 		
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
-		<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#一、编译安装MySQL前的准备工作"><span class="toc-number">1.</span> <span class="toc-text">一、编译安装MySQL前的准备工作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二、设置MySQL用户和组"><span class="toc-number">2.</span> <span class="toc-text">二、设置MySQL用户和组</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#三、新建MySQL所需要的目录"><span class="toc-number">3.</span> <span class="toc-text">三、新建MySQL所需要的目录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#四、下载MySQL源码包并解压"><span class="toc-number">4.</span> <span class="toc-text">四、下载MySQL源码包并解压</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#五、编译安装MySQL"><span class="toc-number">5.</span> <span class="toc-text">五、编译安装MySQL</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#六、修改mysql目录所有者和组"><span class="toc-number">6.</span> <span class="toc-text">六、修改mysql目录所有者和组</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#七、初始化mysql数据库"><span class="toc-number">7.</span> <span class="toc-text">七、初始化mysql数据库</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#八、复制mysql服务启动配置文件"><span class="toc-number">8.</span> <span class="toc-text">八、复制mysql服务启动配置文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#九、复制mysql服务启动脚本及加入PATH路径"><span class="toc-number">9.</span> <span class="toc-text">九、复制mysql服务启动脚本及加入PATH路径</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#十、启动mysql服务并加入开机自启动"><span class="toc-number">10.</span> <span class="toc-text">十、启动mysql服务并加入开机自启动</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#十一、检查mysql服务是否启动"><span class="toc-number">11.</span> <span class="toc-text">十一、检查mysql服务是否启动</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#十二、修改MySQL用户root的密码"><span class="toc-number">12.</span> <span class="toc-text">十二、修改MySQL用户root的密码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#十三、可能会出现的错误"><span class="toc-number">13.</span> <span class="toc-text">十三、可能会出现的错误</span></a></li></ol>
+		<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#编译安装MySQL前的准备工作"><span class="toc-number">1.</span> <span class="toc-text">编译安装MySQL前的准备工作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#设置MySQL用户和组"><span class="toc-number">2.</span> <span class="toc-text">设置MySQL用户和组</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#新建MySQL所需要的目录"><span class="toc-number">3.</span> <span class="toc-text">新建MySQL所需要的目录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#下载MySQL源码包并解压"><span class="toc-number">4.</span> <span class="toc-text">下载MySQL源码包并解压</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#编译安装MySQL"><span class="toc-number">5.</span> <span class="toc-text">编译安装MySQL</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#修改mysql目录所有者和组"><span class="toc-number">6.</span> <span class="toc-text">修改mysql目录所有者和组</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#初始化mysql数据库"><span class="toc-number">7.</span> <span class="toc-text">初始化mysql数据库</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#复制mysql服务启动配置文件"><span class="toc-number">8.</span> <span class="toc-text">复制mysql服务启动配置文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#复制mysql服务启动脚本及加入PATH路径"><span class="toc-number">9.</span> <span class="toc-text">复制mysql服务启动脚本及加入PATH路径</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#启动mysql服务并加入开机自启动"><span class="toc-number">10.</span> <span class="toc-text">启动mysql服务并加入开机自启动</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#检查mysql服务是否启动"><span class="toc-number">11.</span> <span class="toc-text">检查mysql服务是否启动</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#修改MySQL用户root的密码"><span class="toc-number">12.</span> <span class="toc-text">修改MySQL用户root的密码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#可能会出现的错误"><span class="toc-number">13.</span> <span class="toc-text">可能会出现的错误</span></a></li></ol>
 		</div>
 		
-		<h2 id="一、编译安装MySQL前的准备工作">一、编译安装MySQL前的准备工作</h2>
+		<h2 id="编译安装MySQL前的准备工作">编译安装MySQL前的准备工作</h2>
 <pre><code>安装编译源码所需的工具和库
 yum install gcc gcc-c++ ncurses-devel perl
 安装cmake，从http://www<span class="preprocessor">.cmake</span><span class="preprocessor">.org</span>下载源码并编译安装
@@ -104,22 +104,22 @@ tar -xzvf cmake-<span class="number">2.8</span><span class="number">.10</span><s
 cd cmake-<span class="number">2.8</span><span class="number">.10</span><span class="number">.2</span>
 ./bootstrap <span class="comment">; make ; make install</span>
 cd ~
-</code></pre><h2 id="二、设置MySQL用户和组">二、设置MySQL用户和组</h2>
+</code></pre><h2 id="设置MySQL用户和组">设置MySQL用户和组</h2>
 <pre><code>新增mysql用户组
 groupadd mysql
 新增mysql用户
 useradd <span class="attribute">-r</span> <span class="attribute">-g</span> mysql mysql
-</code></pre><h2 id="三、新建MySQL所需要的目录">三、新建MySQL所需要的目录</h2>
+</code></pre><h2 id="新建MySQL所需要的目录">新建MySQL所需要的目录</h2>
 <pre><code>新建mysql安装目录
 mkdir <span class="attribute">-p</span> /usr/<span class="built_in">local</span>/mysql
 新建mysql数据库数据文件目录
 mkdir <span class="attribute">-p</span> /<span class="built_in">data</span>/mysqldb
-</code></pre><h2 id="四、下载MySQL源码包并解压">四、下载MySQL源码包并解压</h2>
+</code></pre><h2 id="下载MySQL源码包并解压">下载MySQL源码包并解压</h2>
 <pre><code>从http://dev<span class="preprocessor">.mysql</span><span class="preprocessor">.com</span>/downloads/mysql/直接下载源码
 解压mysql-<span class="number">5.6</span><span class="number">.10</span><span class="preprocessor">.tar</span><span class="preprocessor">.gz</span>
 tar -zxv -f mysql-<span class="number">5.6</span><span class="number">.10</span><span class="preprocessor">.tar</span><span class="preprocessor">.gz</span>
 cd mysql-<span class="number">5.6</span><span class="number">.10</span>
-</code></pre><h2 id="五、编译安装MySQL">五、编译安装MySQL</h2>
+</code></pre><h2 id="编译安装MySQL">编译安装MySQL</h2>
 <pre><code>从mysql5.5起，mysql源码安装开始使用cmake了，设置源码编译配置脚本。
 -<span class="ruby"><span class="constant">DCMAKE_INSTALL_PREFIX</span>=dir_name    设置mysql安装目录
 </span>-<span class="ruby"><span class="constant">DMYSQL_UNIX_ADDR</span>=file_name    设置监听套接字路径，这必须是一个绝对路径名。默认为/tmp/mysql.sock的中。
@@ -154,37 +154,37 @@ rm CMakeCache.txt
 make
 安装
 make install
-</code></pre><h2 id="六、修改mysql目录所有者和组">六、修改mysql目录所有者和组</h2>
+</code></pre><h2 id="修改mysql目录所有者和组">修改mysql目录所有者和组</h2>
 <pre><code>修改mysql安装目录
 cd /usr/<span class="built_in">local</span>/mysql
 chown <span class="attribute">-R</span> mysql:mysql <span class="built_in">.</span>
 修改mysql数据库文件目录
 cd /<span class="built_in">data</span>/mysqldb
 chown <span class="attribute">-R</span> mysql:mysql <span class="built_in">.</span>
-</code></pre><h2 id="七、初始化mysql数据库">七、初始化mysql数据库</h2>
+</code></pre><h2 id="初始化mysql数据库">初始化mysql数据库</h2>
 <pre><code><span class="comment">cd</span> <span class="comment">/usr/local/mysql</span>
 <span class="comment">scripts/mysql_install_db</span> <span class="literal">-</span><span class="literal">-</span><span class="comment">user=mysql</span> <span class="literal">-</span><span class="literal">-</span><span class="comment">datadir=/data/mysqldb</span>
-</code></pre><h2 id="八、复制mysql服务启动配置文件">八、复制mysql服务启动配置文件</h2>
+</code></pre><h2 id="复制mysql服务启动配置文件">复制mysql服务启动配置文件</h2>
 <pre><code>cp /usr/<span class="keyword">local</span>/mysql/support-files/<span class="keyword">my</span>-default.cnf /etc/<span class="keyword">my</span>.cnf
 注：如果/etc/<span class="keyword">my</span>.cnf文件存在，则覆盖。
-</code></pre><h2 id="九、复制mysql服务启动脚本及加入PATH路径">九、复制mysql服务启动脚本及加入PATH路径</h2>
+</code></pre><h2 id="复制mysql服务启动脚本及加入PATH路径">复制mysql服务启动脚本及加入PATH路径</h2>
 <pre><code>cp support-files/mysql.server /etc/init.d/mysqld
 vim /etc/profile
 <span class="constant">PATH</span>=<span class="regexp">/usr/local</span><span class="regexp">/mysql/bin</span><span class="symbol">:/usr/local/mysql/lib</span><span class="symbol">:</span><span class="variable">$PATH</span>
 export <span class="constant">PATH</span>
 source /etc/profile
-</code></pre><h2 id="十、启动mysql服务并加入开机自启动">十、启动mysql服务并加入开机自启动</h2>
+</code></pre><h2 id="启动mysql服务并加入开机自启动">启动mysql服务并加入开机自启动</h2>
 <pre><code>service mysqld <span class="operator"><span class="keyword">start</span>
 chkconfig --<span class="keyword">level</span> <span class="number">35</span> mysqld <span class="keyword">on</span></span>
-</code></pre><h2 id="十一、检查mysql服务是否启动">十一、检查mysql服务是否启动</h2>
+</code></pre><h2 id="检查mysql服务是否启动">检查mysql服务是否启动</h2>
 <pre><code>netstat <span class="attribute">-tulnp</span> <span class="subst">|</span> grep <span class="number">3306</span>
 mysql <span class="attribute">-u</span> root <span class="attribute">-p</span>
 密码为空，如果能登陆上，则安装成功。
-</code></pre><h2 id="十二、修改MySQL用户root的密码">十二、修改MySQL用户root的密码</h2>
+</code></pre><h2 id="修改MySQL用户root的密码">修改MySQL用户root的密码</h2>
 <pre><code>mysqladmin <span class="attribute">-u</span> root password <span class="string">'123456'</span>
 注：也可运行安全设置脚本，修改MySQL用户root的密码，同时可禁止root远程连接，移除test数据库和匿名用户。
 /usr/<span class="built_in">local</span>/mysql/bin/mysql_secure_installation
-</code></pre><h2 id="十三、可能会出现的错误">十三、可能会出现的错误</h2>
+</code></pre><h2 id="可能会出现的错误">可能会出现的错误</h2>
 <pre><code>问题：
 Starting MySQL..The server quit <span class="keyword">without</span> updating PID <span class="type">file</span> ([FAILED]/mysql/Server03.mylinux.com.pid).
 解决：
@@ -253,7 +253,7 @@ ln -s /usr/<span class="keyword">local</span>/mysql/data/mysql.sock /tmp/mysql.s
 
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
-  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#一、编译安装MySQL前的准备工作"><span class="toc-number">1.</span> <span class="toc-text">一、编译安装MySQL前的准备工作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二、设置MySQL用户和组"><span class="toc-number">2.</span> <span class="toc-text">二、设置MySQL用户和组</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#三、新建MySQL所需要的目录"><span class="toc-number">3.</span> <span class="toc-text">三、新建MySQL所需要的目录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#四、下载MySQL源码包并解压"><span class="toc-number">4.</span> <span class="toc-text">四、下载MySQL源码包并解压</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#五、编译安装MySQL"><span class="toc-number">5.</span> <span class="toc-text">五、编译安装MySQL</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#六、修改mysql目录所有者和组"><span class="toc-number">6.</span> <span class="toc-text">六、修改mysql目录所有者和组</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#七、初始化mysql数据库"><span class="toc-number">7.</span> <span class="toc-text">七、初始化mysql数据库</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#八、复制mysql服务启动配置文件"><span class="toc-number">8.</span> <span class="toc-text">八、复制mysql服务启动配置文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#九、复制mysql服务启动脚本及加入PATH路径"><span class="toc-number">9.</span> <span class="toc-text">九、复制mysql服务启动脚本及加入PATH路径</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#十、启动mysql服务并加入开机自启动"><span class="toc-number">10.</span> <span class="toc-text">十、启动mysql服务并加入开机自启动</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#十一、检查mysql服务是否启动"><span class="toc-number">11.</span> <span class="toc-text">十一、检查mysql服务是否启动</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#十二、修改MySQL用户root的密码"><span class="toc-number">12.</span> <span class="toc-text">十二、修改MySQL用户root的密码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#十三、可能会出现的错误"><span class="toc-number">13.</span> <span class="toc-text">十三、可能会出现的错误</span></a></li></ol>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#编译安装MySQL前的准备工作"><span class="toc-number">1.</span> <span class="toc-text">编译安装MySQL前的准备工作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#设置MySQL用户和组"><span class="toc-number">2.</span> <span class="toc-text">设置MySQL用户和组</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#新建MySQL所需要的目录"><span class="toc-number">3.</span> <span class="toc-text">新建MySQL所需要的目录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#下载MySQL源码包并解压"><span class="toc-number">4.</span> <span class="toc-text">下载MySQL源码包并解压</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#编译安装MySQL"><span class="toc-number">5.</span> <span class="toc-text">编译安装MySQL</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#修改mysql目录所有者和组"><span class="toc-number">6.</span> <span class="toc-text">修改mysql目录所有者和组</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#初始化mysql数据库"><span class="toc-number">7.</span> <span class="toc-text">初始化mysql数据库</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#复制mysql服务启动配置文件"><span class="toc-number">8.</span> <span class="toc-text">复制mysql服务启动配置文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#复制mysql服务启动脚本及加入PATH路径"><span class="toc-number">9.</span> <span class="toc-text">复制mysql服务启动脚本及加入PATH路径</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#启动mysql服务并加入开机自启动"><span class="toc-number">10.</span> <span class="toc-text">启动mysql服务并加入开机自启动</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#检查mysql服务是否启动"><span class="toc-number">11.</span> <span class="toc-text">检查mysql服务是否启动</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#修改MySQL用户root的密码"><span class="toc-number">12.</span> <span class="toc-text">修改MySQL用户root的密码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#可能会出现的错误"><span class="toc-number">13.</span> <span class="toc-text">可能会出现的错误</span></a></li></ol>
   </div>
 
 <div id="asidepart">
@@ -265,7 +265,9 @@ ln -s /usr/<span class="keyword">local</span>/mysql/data/mysql.sock /tmp/mysql.s
 	<p rel="asidetitle grow" class="asidetitle grow">分类</p>
 		<ul>
 		
-			<li><a rel="grow" class="grow" href="/categories/Linux/" title="Linux">Linux<sup>3</sup></a></li>
+			<li><a rel="grow" class="grow" href="/categories/Hadoop/" title="Hadoop">Hadoop<sup>1</sup></a></li>
+		
+			<li><a rel="grow" class="grow" href="/categories/Linux/" title="Linux">Linux<sup>4</sup></a></li>
 		
 			<li><a rel="grow" class="grow" href="/categories/杂谈/" title="杂谈">杂谈<sup>1</sup></a></li>
 		
@@ -293,13 +295,17 @@ ln -s /usr/<span class="keyword">local</span>/mysql/data/mysql.sock /tmp/mysql.s
 	<p class="asidetitle">标签</p>
 		<ul class="clearfix">
 		
-			<li><a href="/tags/Linux/" title="Linux">Linux<sup>3</sup></a></li>
+			<li><a href="/tags/Hadoop/" title="Hadoop">Hadoop<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Linux/" title="Linux">Linux<sup>4</sup></a></li>
 		
 			<li><a href="/tags/Mysql/" title="Mysql">Mysql<sup>1</sup></a></li>
 		
 			<li><a href="/tags/yum/" title="yum">yum<sup>1</sup></a></li>
 		
 			<li><a href="/tags/杂谈/" title="杂谈">杂谈<sup>1</sup></a></li>
+		
+			<li><a href="/tags/网卡错误/" title="网卡错误">网卡错误<sup>1</sup></a></li>
 		
 			<li><a href="/tags/网络/" title="网络">网络<sup>1</sup></a></li>
 		
@@ -314,7 +320,7 @@ ln -s /usr/<span class="keyword">local</span>/mysql/data/mysql.sock /tmp/mysql.s
   
   <div class="archiveslist">
     <p class="asidetitle"><a href="/archives">归档</a></p>
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/04">四月 2014</a><span class="archive-list-count">5</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/04">四月 2014</a><span class="archive-list-count">7</span></li></ul>
   </div>
 
 
@@ -322,7 +328,7 @@ ln -s /usr/<span class="keyword">local</span>/mysql/data/mysql.sock /tmp/mysql.s
   <div class="tagcloudlist">
     <p class="asidetitle">标签云</p>
     <div class="tagcloudlist clearfix">
-       <a href="/tags/Linux/" style="font-size: 20.00px;">Linux</a><a href="/tags/Mysql/" style="font-size: 10.00px;">Mysql</a><a href="/tags/yum/" style="font-size: 10.00px;">yum</a><a href="/tags/杂谈/" style="font-size: 10.00px;">杂谈</a><a href="/tags/网络/" style="font-size: 10.00px;">网络</a>
+       <a href="/tags/Hadoop/" style="font-size: 10.00px;">Hadoop</a><a href="/tags/Linux/" style="font-size: 20.00px;">Linux</a><a href="/tags/Mysql/" style="font-size: 10.00px;">Mysql</a><a href="/tags/yum/" style="font-size: 10.00px;">yum</a><a href="/tags/杂谈/" style="font-size: 10.00px;">杂谈</a><a href="/tags/网卡错误/" style="font-size: 10.00px;">网卡错误</a><a href="/tags/网络/" style="font-size: 10.00px;">网络</a>
     </div>
   </div>
 
