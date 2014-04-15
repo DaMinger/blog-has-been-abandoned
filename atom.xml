@@ -4,7 +4,7 @@
   <subtitle><![CDATA[信春哥，系统稳，闭眼上线不回滚]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="https://github.com/DaMinger/DaMinger.github.io.git/"/>
-  <updated>2014-04-13T13:24:53.752Z</updated>
+  <updated>2014-04-15T04:09:13.236Z</updated>
   <id>https://github.com/DaMinger/DaMinger.github.io.git/</id>
   
   <author>
@@ -13,6 +13,36 @@
   </author>
   
   <generator uri="http://zespia.tw/hexo/">Hexo</generator>
+  
+  <entry>
+    <title><![CDATA[hadoop报错：could only be replicated to 0 nodes, instead of 1 解决思路]]></title>
+    <link href="https://github.com/DaMinger/DaMinger.github.io.git/2014/04/15/Hadoop/hadoop_error_1/"/>
+    <id>https://github.com/DaMinger/DaMinger.github.io.git/2014/04/15/Hadoop/hadoop_error_1/</id>
+    <published>2014-04-15T03:36:28.000Z</published>
+    <updated>2014-04-15T04:07:09.000Z</updated>
+    <content type="html"><![CDATA[<p>有时候做一些hadoop操作时候，例如上传文件、运行程序时<br>hadoop报错：could only be replicated to 0 nodes, instead of 1</p>
+<p>其思路可以这样考虑一下</p>
+<h1 id="一、优先考虑看下hadoop的日志，根据日志排错。">一、优先考虑看下hadoop的日志，根据日志排错。</h1>
+<h1 id="二、如果不会看日志，注意以下几点做了没：">二、如果不会看日志，注意以下几点做了没：</h1>
+<pre><code><span class="number">1</span>、看看各节点的防火墙关了没。
+<span class="number">2</span>、这个问题是由于没有添加节点的原因，也就是说需要先启动namenode，
+再启动datanode，然后启动jobtracker和tasktracker。
+<span class="variable">$hadoop</span><span class="attribute">-daemon</span><span class="built_in">.</span>sh start namenode
+<span class="variable">$hadoop</span><span class="attribute">-daemon</span><span class="built_in">.</span>sh start datanode
+<span class="number">3</span>、查看配置文件   conf/hdfs<span class="attribute">-site</span><span class="built_in">.</span><span class="built_in">xml</span> 观察配置的域名和IP改了么。
+<span class="number">4</span>、实验环境可以这样做，生产环境别这样做：
+先把服务都停掉 stop<span class="attribute">-all</span><span class="built_in">.</span>sh
+格式化namenode hadoop namenode <span class="attribute">-foramt</span>
+重新启动所有服务 start<span class="attribute">-all</span><span class="built_in">.</span>sh
+可以进行正常操作了
+</code></pre>]]></content>
+    
+    
+      <category term="Hadoop" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/Hadoop/"/>
+    
+      <category term="Hadoop" scheme="https://github.com/DaMinger/DaMinger.github.io.git/categories/Hadoop/"/>
+    
+  </entry>
   
   <entry>
     <title><![CDATA[启动eth0 网卡时报错Error: Connection activation failed: Device not managed by NetworkManager]]></title>
