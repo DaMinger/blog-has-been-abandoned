@@ -4,7 +4,7 @@
   <subtitle><![CDATA[信春哥，系统稳，闭眼上线不回滚]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="https://github.com/DaMinger/DaMinger.github.io.git/"/>
-  <updated>2014-04-15T04:09:13.236Z</updated>
+  <updated>2014-04-16T09:25:36.544Z</updated>
   <id>https://github.com/DaMinger/DaMinger.github.io.git/</id>
   
   <author>
@@ -13,6 +13,112 @@
   </author>
   
   <generator uri="http://zespia.tw/hexo/">Hexo</generator>
+  
+  <entry>
+    <title><![CDATA[利用wordcount程序检验hadoop集群搭建是否成功]]></title>
+    <link href="https://github.com/DaMinger/DaMinger.github.io.git/2014/04/16/Hadoop/hadoop_error_2/"/>
+    <id>https://github.com/DaMinger/DaMinger.github.io.git/2014/04/16/Hadoop/hadoop_error_2/</id>
+    <published>2014-04-16T09:17:35.000Z</published>
+    <updated>2014-04-16T09:24:09.000Z</updated>
+    <content type="html"><![CDATA[<h1 id="创建个input目录，里面有test1-txt、test2-txt">创建个input目录，里面有test1.txt、test2.txt</h1>
+<pre><code>[<span class="keyword">grid</span><span class="variable">@hadoop01</span> ~]$ cd input/
+[<span class="keyword">grid</span><span class="variable">@hadoop01</span> input]$ <span class="keyword">ls</span>
+test1.txt  test2.txt
+[<span class="keyword">grid</span><span class="variable">@hadoop01</span> input]$ cat test1.txt 
+hello world
+[<span class="keyword">grid</span><span class="variable">@hadoop01</span> input]$ cat test2.txt 
+hello hadoop
+[<span class="keyword">grid</span><span class="variable">@hadoop01</span> bin]$ hadoop fs -<span class="keyword">ls</span>
+<span class="keyword">ls</span>: Cannot access .: No such <span class="keyword">file</span> or directory.
+[<span class="keyword">grid</span><span class="variable">@hadoop01</span> bin]$ cd ~
+[<span class="keyword">grid</span><span class="variable">@hadoop01</span> ~]$ <span class="keyword">ls</span>
+Desktop    Downloads     hadoop-<span class="number">1.2</span><span class="number">.1</span>.tar.gz  Music     Public  Templates
+Documents  hadoop-<span class="number">1.2</span><span class="number">.1</span>  input                Pictures  share   Videos
+[<span class="keyword">grid</span><span class="variable">@hadoop01</span> ~]$ cd hadoop-<span class="number">1.2</span><span class="number">.1</span>
+</code></pre><h1 id="将input的内容放到自定义目录in">将input的内容放到自定义目录in</h1>
+<pre><code>[grid<span class="variable">@hadoop01</span> hadoop-<span class="number">1.2</span>.<span class="number">1</span>]<span class="variable">$ </span>hadoop fs -put ../input ./<span class="keyword">in</span>
+[grid<span class="variable">@hadoop01</span> hadoop-<span class="number">1.2</span>.<span class="number">1</span>]<span class="variable">$ </span>hadoop fs -ls
+<span class="constant">Found</span> <span class="number">1</span> items
+drwxr-xr-x   - grid supergroup          <span class="number">0</span> <span class="number">2014</span>-<span class="number">04</span>-<span class="number">16</span> <span class="number">16</span><span class="symbol">:</span><span class="number">57</span> /user/grid/<span class="keyword">in</span>
+[grid<span class="variable">@hadoop01</span> hadoop-<span class="number">1.2</span>.<span class="number">1</span>]<span class="variable">$ </span>hadoop fs -ls ./<span class="keyword">in</span>/*
+-rw-r--r--   <span class="number">2</span> grid supergroup         <span class="number">12</span> <span class="number">2014</span>-<span class="number">04</span>-<span class="number">16</span> <span class="number">16</span><span class="symbol">:</span><span class="number">57</span> /user/grid/<span class="keyword">in</span>/test1.txt
+-rw-r--r--   <span class="number">2</span> grid supergroup         <span class="number">13</span> <span class="number">2014</span>-<span class="number">04</span>-<span class="number">16</span> <span class="number">16</span><span class="symbol">:</span><span class="number">57</span> /user/grid/<span class="keyword">in</span>/test2.txt
+[grid<span class="variable">@hadoop01</span> hadoop-<span class="number">1.2</span>.<span class="number">1</span>]<span class="variable">$ </span>hadoop fs -cat ./<span class="keyword">in</span>/test1.txt
+hello world
+[grid<span class="variable">@hadoop01</span> hadoop-<span class="number">1.2</span>.<span class="number">1</span>]<span class="variable">$ </span>ls
+bin          docs                          hadoop-test-<span class="number">1.2</span>.<span class="number">1</span>.jar   <span class="constant">LICENSE</span>.txt  src
+build.xml    hadoop-ant-<span class="number">1.2</span>.<span class="number">1</span>.jar          hadoop-tools-<span class="number">1.2</span>.<span class="number">1</span>.jar  logs         tmp
+c++          hadoop-client-<span class="number">1.2</span>.<span class="number">1</span>.jar       ivy                     <span class="constant">NOTICE</span>.txt   webapps
+<span class="constant">CHANGES</span>.txt  hadoop-core-<span class="number">1.2</span>.<span class="number">1</span>.jar         ivy.xml                 <span class="constant">README</span>.txt
+conf         hadoop-examples-<span class="number">1.2</span>.<span class="number">1</span>.jar     lib                     sbin
+contrib      hadoop-minicluster-<span class="number">1.2</span>.<span class="number">1</span>.jar  libexec                 share
+</code></pre><h1 id="运行wordcount程序，放到out目录">运行wordcount程序，放到out目录</h1>
+<pre><code>[grid@hadoop01 hadoop-<span class="number">1.2</span><span class="number">.1</span>]$ hadoop jar hadoop-examples-<span class="number">1.2</span><span class="number">.1</span><span class="preprocessor">.jar</span>  wordcount <span class="keyword">in</span> <span class="keyword">out</span>
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">16</span> <span class="number">16</span>:<span class="number">59</span>:<span class="number">46</span> INFO input<span class="preprocessor">.FileInputFormat</span>: Total input paths to process : <span class="number">2</span>
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">16</span> <span class="number">16</span>:<span class="number">59</span>:<span class="number">46</span> INFO util<span class="preprocessor">.NativeCodeLoader</span>: Loaded the native-hadoop library
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">16</span> <span class="number">16</span>:<span class="number">59</span>:<span class="number">46</span> WARN snappy<span class="preprocessor">.LoadSnappy</span>: Snappy native library not loaded
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">16</span> <span class="number">16</span>:<span class="number">59</span>:<span class="number">51</span> INFO mapred<span class="preprocessor">.JobClient</span>: Running job: job_201404161644_0001
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">16</span> <span class="number">16</span>:<span class="number">59</span>:<span class="number">52</span> INFO mapred<span class="preprocessor">.JobClient</span>:  map <span class="number">0</span>% reduce <span class="number">0</span>%
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">16</span> <span class="number">17</span>:<span class="number">00</span>:<span class="number">07</span> INFO mapred<span class="preprocessor">.JobClient</span>:  map <span class="number">50</span>% reduce <span class="number">0</span>%
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">16</span> <span class="number">17</span>:<span class="number">00</span>:<span class="number">09</span> INFO mapred<span class="preprocessor">.JobClient</span>:  map <span class="number">100</span>% reduce <span class="number">0</span>%
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">16</span> <span class="number">17</span>:<span class="number">00</span>:<span class="number">17</span> INFO mapred<span class="preprocessor">.JobClient</span>:  map <span class="number">100</span>% reduce <span class="number">33</span>%
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">16</span> <span class="number">17</span>:<span class="number">00</span>:<span class="number">20</span> INFO mapred<span class="preprocessor">.JobClient</span>:  map <span class="number">100</span>% reduce <span class="number">100</span>%
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">16</span> <span class="number">17</span>:<span class="number">00</span>:<span class="number">23</span> INFO mapred<span class="preprocessor">.JobClient</span>: Job complete: job_201404161644_0001
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">16</span> <span class="number">17</span>:<span class="number">00</span>:<span class="number">23</span> INFO mapred<span class="preprocessor">.JobClient</span>: Counters: <span class="number">29</span>
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">16</span> <span class="number">17</span>:<span class="number">00</span>:<span class="number">23</span> INFO mapred<span class="preprocessor">.JobClient</span>:   Job Counters 
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">16</span> <span class="number">17</span>:<span class="number">00</span>:<span class="number">23</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Launched reduce tasks=<span class="number">1</span>
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">16</span> <span class="number">17</span>:<span class="number">00</span>:<span class="number">23</span> INFO mapred<span class="preprocessor">.JobClient</span>:     SLOTS_MILLIS_MAPS=<span class="number">20824</span>
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">16</span> <span class="number">17</span>:<span class="number">00</span>:<span class="number">23</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Total time spent by all reduces waiting after reserving slots (ms)=<span class="number">0</span>
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">16</span> <span class="number">17</span>:<span class="number">00</span>:<span class="number">23</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Total time spent by all maps waiting after reserving slots (ms)=<span class="number">0</span>
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">16</span> <span class="number">17</span>:<span class="number">00</span>:<span class="number">23</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Launched map tasks=<span class="number">2</span>
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">16</span> <span class="number">17</span>:<span class="number">00</span>:<span class="number">23</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Data-local map tasks=<span class="number">2</span>
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">16</span> <span class="number">17</span>:<span class="number">00</span>:<span class="number">23</span> INFO mapred<span class="preprocessor">.JobClient</span>:     SLOTS_MILLIS_REDUCES=<span class="number">12323</span>
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">16</span> <span class="number">17</span>:<span class="number">00</span>:<span class="number">23</span> INFO mapred<span class="preprocessor">.JobClient</span>:   File Output Format Counters 
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">16</span> <span class="number">17</span>:<span class="number">00</span>:<span class="number">23</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Bytes Written=<span class="number">25</span>
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">16</span> <span class="number">17</span>:<span class="number">00</span>:<span class="number">23</span> INFO mapred<span class="preprocessor">.JobClient</span>:   FileSystemCounters
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">16</span> <span class="number">17</span>:<span class="number">00</span>:<span class="number">23</span> INFO mapred<span class="preprocessor">.JobClient</span>:     FILE_BYTES_READ=<span class="number">55</span>
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">16</span> <span class="number">17</span>:<span class="number">00</span>:<span class="number">23</span> INFO mapred<span class="preprocessor">.JobClient</span>:     HDFS_BYTES_READ=<span class="number">267</span>
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">16</span> <span class="number">17</span>:<span class="number">00</span>:<span class="number">23</span> INFO mapred<span class="preprocessor">.JobClient</span>:     FILE_BYTES_WRITTEN=<span class="number">173563</span>
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">16</span> <span class="number">17</span>:<span class="number">00</span>:<span class="number">23</span> INFO mapred<span class="preprocessor">.JobClient</span>:     HDFS_BYTES_WRITTEN=<span class="number">25</span>
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">16</span> <span class="number">17</span>:<span class="number">00</span>:<span class="number">23</span> INFO mapred<span class="preprocessor">.JobClient</span>:   File Input Format Counters 
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">16</span> <span class="number">17</span>:<span class="number">00</span>:<span class="number">23</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Bytes Read=<span class="number">25</span>
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">16</span> <span class="number">17</span>:<span class="number">00</span>:<span class="number">23</span> INFO mapred<span class="preprocessor">.JobClient</span>:   Map-Reduce Framework
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">16</span> <span class="number">17</span>:<span class="number">00</span>:<span class="number">23</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Map output materialized bytes=<span class="number">61</span>
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">16</span> <span class="number">17</span>:<span class="number">00</span>:<span class="number">23</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Map input records=<span class="number">2</span>
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">16</span> <span class="number">17</span>:<span class="number">00</span>:<span class="number">23</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Reduce shuffle bytes=<span class="number">61</span>
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">16</span> <span class="number">17</span>:<span class="number">00</span>:<span class="number">23</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Spilled Records=<span class="number">8</span>
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">16</span> <span class="number">17</span>:<span class="number">00</span>:<span class="number">23</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Map output bytes=<span class="number">41</span>
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">16</span> <span class="number">17</span>:<span class="number">00</span>:<span class="number">23</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Total committed heap usage (bytes)=<span class="number">336338944</span>
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">16</span> <span class="number">17</span>:<span class="number">00</span>:<span class="number">23</span> INFO mapred<span class="preprocessor">.JobClient</span>:     CPU time spent (ms)=<span class="number">3230</span>
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">16</span> <span class="number">17</span>:<span class="number">00</span>:<span class="number">23</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Combine input records=<span class="number">4</span>
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">16</span> <span class="number">17</span>:<span class="number">00</span>:<span class="number">23</span> INFO mapred<span class="preprocessor">.JobClient</span>:     SPLIT_RAW_BYTES=<span class="number">242</span>
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">16</span> <span class="number">17</span>:<span class="number">00</span>:<span class="number">23</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Reduce input records=<span class="number">4</span>
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">16</span> <span class="number">17</span>:<span class="number">00</span>:<span class="number">23</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Reduce input groups=<span class="number">3</span>
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">16</span> <span class="number">17</span>:<span class="number">00</span>:<span class="number">23</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Combine output records=<span class="number">4</span>
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">16</span> <span class="number">17</span>:<span class="number">00</span>:<span class="number">23</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Physical memory (bytes) snapshot=<span class="number">422449152</span>
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">16</span> <span class="number">17</span>:<span class="number">00</span>:<span class="number">23</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Reduce output records=<span class="number">3</span>
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">16</span> <span class="number">17</span>:<span class="number">00</span>:<span class="number">23</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Virtual memory (bytes) snapshot=<span class="number">2173210624</span>
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">16</span> <span class="number">17</span>:<span class="number">00</span>:<span class="number">23</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Map output records=<span class="number">4</span>
+[grid@hadoop01 hadoop-<span class="number">1.2</span><span class="number">.1</span>]$ hadoop fs -ls ./<span class="keyword">out</span>
+Found <span class="number">3</span> items
+-rw-r--r--   <span class="number">2</span> grid supergroup          <span class="number">0</span> <span class="number">2014</span>-<span class="number">04</span>-<span class="number">16</span> <span class="number">17</span>:<span class="number">00</span> /user/grid/<span class="keyword">out</span>/_SUCCESS
+drwxr-xr-<span class="built_in">x</span>   - grid supergroup          <span class="number">0</span> <span class="number">2014</span>-<span class="number">04</span>-<span class="number">16</span> <span class="number">16</span>:<span class="number">59</span> /user/grid/<span class="keyword">out</span>/_logs
+-rw-r--r--   <span class="number">2</span> grid supergroup         <span class="number">25</span> <span class="number">2014</span>-<span class="number">04</span>-<span class="number">16</span> <span class="number">17</span>:<span class="number">00</span> /user/grid/<span class="keyword">out</span>/part-r-<span class="number">00000</span>
+[grid@hadoop01 hadoop-<span class="number">1.2</span><span class="number">.1</span>]$ hadoop fs -cat ./<span class="keyword">out</span>/part-r-<span class="number">00000</span>
+hadoop  <span class="number">1</span>
+hello   <span class="number">2</span>
+world   <span class="number">1</span>
+</code></pre><h1 id="浏览器访问：">浏览器访问：</h1>
+<pre><code><span class="label">http:</span>//hadoop01<span class="preprocessor">.myhadoop</span><span class="preprocessor">.com</span>/<span class="number">50070</span>
+<span class="label">http:</span>//hadoop01<span class="preprocessor">.myhadoop</span><span class="preprocessor">.com</span>/<span class="number">50030</span>
+</code></pre>]]></content>
+    
+    
+      <category term="Hadoop" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/Hadoop/"/>
+    
+      <category term="Hadoop" scheme="https://github.com/DaMinger/DaMinger.github.io.git/categories/Hadoop/"/>
+    
+  </entry>
   
   <entry>
     <title><![CDATA[hadoop报错：could only be replicated to 0 nodes, instead of 1 解决思路]]></title>
