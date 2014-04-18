@@ -1,0 +1,463 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>Hive简单认识 | DaMinger&#39;s blog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="DaMinger">
+    
+    <meta name="description" content="一、HDFS的基本概念
+1.1、数据块(block)
+HDFS(Hadoop Distributed File System)默认的最基本的存储单位是64M的数据块。和普通文件系统相同的是，HDFS中的文件是被分成64M一块的数据块存储的。不同于普通文件系统的是，HDFS中，如果一个文件小于一个数据">
+    
+    
+    
+    
+    <link rel="alternative" href="/atom.xml" title="DaMinger&#39;s blog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/pacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/pacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+    <link href="/css/hover.css" rel="stylesheet">
+    <link href="/css/bottom.css" rel="stylesheet">
+</head>
+
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a rel="pulse" class="pulse" href="/"><img src="/img/pacman.png" alt="DaMinger&#39;s blog" title="DaMinger&#39;s blog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a rel="hover" class="hover" href="/" title="DaMinger&#39;s blog">DaMinger&#39;s blog</a></h1>
+				<h2 class="blog-motto"><a rel="wobble-to-bottom-right" class="wobble-to-bottom-right" href="#" title="#">信春哥，系统稳，闭眼上线不回滚</a></h2>
+			</div>
+			<div class="navbar"><a rel="buzz" class="buzz" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a rel="wobble-top" class="wobble-top" href="/">Home</a></li>
+					
+						<li><a rel="wobble-top" class="wobble-top" href="/archives">Menu</a></li>
+					
+						<li><a rel="wobble-top" class="wobble-top" href="/about">About</a></li>
+					
+				</ul>
+				
+			</nav>			
+</div>
+<div style="text-align:right;">
+<form  class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+ <input type="search" name="q" id="search" autocomplete="off" autocorrect="off" autocapitalize="off" maxlength="20" placeholder="Search" />
+ <input type="hidden" name="q" value="site:github.com/DaMinger/DaMinger.github.io.git">
+</form>
+</div>
+
+
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2014/04/18/Hadoop/hadoop_hive/" title="Hive简单认识" itemprop="url">Hive简单认识</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="https://github.com/DaMinger/DaMinger.github.io.git" title="DaMinger">DaMinger</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2014-04-18T11:58:57.000Z" itemprop="datePublished">4月 18 2014</time>
+    更新日期:<time datetime="2014-04-18T12:44:46.000Z" itemprop="dateModified">4月 18 2014</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#一、HDFS的基本概念"><span class="toc-number">1.</span> <span class="toc-text">一、HDFS的基本概念</span></a></li><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-1、数据块(block)"><span class="toc-number">1.1.</span> <span class="toc-text">1.1、数据块(block)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-2、元数据节点(Namenode)和数据节点(datanode)"><span class="toc-number">1.2.</span> <span class="toc-text">1.2、元数据节点(Namenode)和数据节点(datanode)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-2-1、元数据节点文件夹结构"><span class="toc-number">1.3.</span> <span class="toc-text">1.2.1、元数据节点文件夹结构</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-2-2、文件系统命名空间映像文件及修改日志"><span class="toc-number">1.4.</span> <span class="toc-text">1.2.2、文件系统命名空间映像文件及修改日志</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-2-3、从元数据节点的目录结构"><span class="toc-number">1.5.</span> <span class="toc-text">1.2.3、从元数据节点的目录结构</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-2-4、数据节点的目录结构"><span class="toc-number">1.6.</span> <span class="toc-text">1.2.4、数据节点的目录结构</span></a></li></ol><li class="toc-item toc-level-3"><a class="toc-link" href="#二、数据流(data_flow)"><span class="toc-number">2.</span> <span class="toc-text">二、数据流(data flow)</span></a></li><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2-1、读文件的过程"><span class="toc-number">2.1.</span> <span class="toc-text">2.1、读文件的过程</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-2、写文件的过程"><span class="toc-number">2.2.</span> <span class="toc-text">2.2、写文件的过程</span></a></li></ol>
+		</div>
+		
+		<h3 id="一、HDFS的基本概念">一、HDFS的基本概念</h3>
+<h4 id="1-1、数据块(block)">1.1、数据块(block)</h4>
+<p>HDFS(Hadoop Distributed File System)默认的最基本的存储单位是64M的数据块。和普通文件系统相同的是，HDFS中的文件是被分成64M一块的数据块存储的。不同于普通文件系统的是，HDFS中，如果一个文件小于一个数据块的大小，并不占用整个数据块存储空间。</p>
+<h4 id="1-2、元数据节点(Namenode)和数据节点(datanode)">1.2、元数据节点(Namenode)和数据节点(datanode)</h4>
+<p>元数据节点用来管理文件系统的命名空间,其将所有的文件和文件夹的元数据保存在一个文件系统树中。这些信息也会在硬盘上保存成以下文件：命名空间镜像(namespace image)及修改日志(edit log)。其还保存了一个文件包括哪些数据块，分布在哪些数据节点上。然而这些信息并不存储在硬盘上，而是在系统启动的时候从数据节点收集而成的。</p>
+<p>数据节点是文件系统中真正存储数据的地方。客户端(client)或者元数据信息(namenode)可以向数据节点请求写入或者读出数据块。其周期性的向元数据节点回报其存储的数据块信息。</p>
+<p>从元数据节点(secondary namenode)从元数据节点并不是元数据节点出现问题时候的备用节点，它和元数据节点负责不同的事情。其主要功能就是周期性将元数据节点的命名空间镜像文件和修改日志合并，以防日志文件过大。这点在下面会相信叙述。合并过后的命名空间镜像文件也在从元数据节点保存了一份，以防元数据节点失败的时候，可以恢复。</p>
+<h4 id="1-2-1、元数据节点文件夹结构">1.2.1、元数据节点文件夹结构</h4>
+<p><img src="/img/Hadoop/Hive/1.png" alt="图1"><br>VERSION文件是java properties文件，保存了HDFS的版本号。</p>
+<pre><code>layoutVersion是一个负整数，保存了HDFS的持续化在硬盘上的数据结构的格式版本号。
+namespaceID是文件系统的唯一标识符，是在文件系统初次格式化时生成的。
+cTime此处为0
+storageType表示此文件夹中保存的是元数据节点的数据结构。
+<span class="constant">namespaceID</span>=1232737062
+<span class="constant">cTime</span>=0
+<span class="constant">storageType</span>=NAME_NODE
+<span class="constant">layoutVersion</span>=-18
+</code></pre><h4 id="1-2-2、文件系统命名空间映像文件及修改日志">1.2.2、文件系统命名空间映像文件及修改日志</h4>
+<p>当文件系统客户端(client)进行写操作时，首先把它记录在修改日志中(edit log),元数据节点在内存中保存了文件系统的元数据信息。在记录了修改日志后，元数据节点则修改内存中的数据结构。每次的写操作成功之前，修改日志都会同步(sync)到文件系统。</p>
+<p>fsimage文件，也即命名空间映像文件，是内存中的元数据在硬盘上的checkpoint，它是一种序列化的格式，并不能够在硬盘上直接修改。同数据的机制相似，当元数据节点失败时，则最新checkpoint的元数据信息从fsimage加载到内存中，然后逐一重新执行修改日志中的操作。从元数据节点就是用来帮助元数据节点将内存中的元数据信息checkpoint到硬盘上的。<br>checkpoint的过程如下：</p>
+<pre><code>从元数据节点通知元数据节点生成新的日志文件，以后的日志都写到新的日志文件中。
+从元数据节点用<span class="keyword">http</span> <span class="built_in">get</span>从元数据节点获得fsimage文件及旧的日志文件。
+从元数据节点将fsimage文件加载到内存中，并执行日志文件中的操作，然后生成新的fsimage文件。
+从元数据节点奖新的fsimage文件用<span class="keyword">http</span> <span class="built_in">post</span>传回元数据节点
+元数据节点可以将旧的fsimage文件及旧的日志文件，换为新的fsimage文件和新的日志文件(第一步生成的)，
+然后更新fstime文件，写入此次checkpoint的时间。
+</code></pre><p>这样元数据节点中的fsimage文件保存了最新的checkpoint的元数据信息，日志文件也重新开始，不会变的很大了。<br><img src="/img/Hadoop/Hive/2.png" alt="图2"></p>
+<h4 id="1-2-3、从元数据节点的目录结构">1.2.3、从元数据节点的目录结构</h4>
+<p><img src="/img/Hadoop/Hive/3.png" alt="图3"></p>
+<h4 id="1-2-4、数据节点的目录结构">1.2.4、数据节点的目录结构</h4>
+<p><img src="/img/Hadoop/Hive/4.png" alt="图4"><br>数据节点的VERSION文件格式如下：</p>
+<pre><code><span class="setting">namespaceID=<span class="value"><span class="number">1232737062</span></span></span>
+<span class="setting">storageID=<span class="value">DS-<span class="number">1640411682</span>-<span class="number">127.0</span>.<span class="number">1.1</span>-<span class="number">50010</span>-<span class="number">1254997319480</span></span></span>
+<span class="setting">cTime=<span class="value"><span class="number">0</span></span></span>
+<span class="setting">storageType=<span class="value">DATA_NODE</span></span>
+<span class="setting">layoutVersion=<span class="value">-<span class="number">18</span></span></span>
+</code></pre><p>blk_<id>保存的是HDFS的数据块，其中保存了具体的二进制数据。</p>
+<p>blk_<id>.meta保存的是数据块的属性信息：版本信息，类型信息，和checksum。</p>
+<p>当一个目录中的数据块到达一定数量的时候，则创建子文件夹来保存数据块及数据块属性信息。</p>
+<h3 id="二、数据流(data_flow)">二、数据流(data flow)</h3>
+<h4 id="2-1、读文件的过程">2.1、读文件的过程</h4>
+<p>客户端(client)用FileSystem的open()函数打开文件，DistributedFileSystem用RPC调用元数据节点，得到文件的数据块信息。对于每一个数据块，元数据节点返回保存数据块的数据节点的地址。DistributedFileSystem返回FSDataInputStream给客户端，用来读取数据。客户端调用stream的read()函数开始读取数据。DFSInputStream连接保存此文件第一个数据块的最近的数据节点。Data从数据节点读到客户端(client)。<br>当此数据块读取完毕时，DFSInputStream关闭和此数据节点的连接，然后连接此文件下一个数据块的最近的数据节点。</p>
+<p>当客户端读取完毕数据的时候，调用FSDataInputStream的close函数。在读取数据的过程中，如果客户端在与数据节点通信出现错误，则尝试连接包含此数据块的下一个数据节点。失败的数据节点将被记录，以后不再连接。<br><img src="/img/Hadoop/Hive/5.png" alt="图5"></p>
+<h4 id="2-2、写文件的过程">2.2、写文件的过程</h4>
+<p>客户端调用create()来创建文件，DistributedFileSystem用RPC调用元数据节点，在文件系统的命名空间中创建一个新的文件。元数据节点首先确定文件原来不存在，并且客户端有创建文件的权限，然后创建新文件。DistributedFileSystem返回DFSOutputStream，客户端用于写数据。</p>
+<p>客户端开始写入数据，DFSOutputStream将数据分成块，写入data queue。Data queue由Data Streamer读取，并通知元数据节点分配数据节点，用来存储数据块(每块默认复制3块)。分配的数据节点放在一个pipeline里。Data Streamer将数据块写入pipeline中的第一个数据节点。第一个数据节点将数据块发送给第二个数据节点。第二个数据节点将数据发送给第三个数据节点。DFSOutputStream为发出去的数据块保存了ack queue，等待pipeline中的数据节点告知数据已经写入成功。</p>
+<p>如果数据节点在写入的过程中失败：关闭pipeline，将ack queue中的数据块放入data queue的开始。当前的数据块在已经写入的数据节点中被元数据节点赋予新的标示，则错误节点重启后能够察觉其数据块是过时的，会被删除。失败的数据节点从pipeline中移除，另外的数据块则写入pipeline中的另外两个数据节点。元数据节点则被通知此数据块是复制块数不足，将来会再创建第三份备份。</p>
+<p>当客户端结束写入数据，则调用stream的close函数。此操作将所有的数据块写入pipeline中的数据节点，并等待ack queue返回成功。最后通知元数据节点写入完毕。<br><img src="/img/Hadoop/Hive/6.png" alt="图6"></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Hadoop/">Hadoop</a><a href="/tags/Hive/">Hive</a>
+  </div>
+
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Hadoop/">Hadoop</a>
+</div>
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="https://github.com/DaMinger/DaMinger.github.io.git/2014/04/18/Hadoop/hadoop_hive/" data-title="Hive简单认识 | DaMinger&#39;s blog" data-tsina="null" class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+
+<div class="next">
+<a href="/2014/04/18/Hadoop/hadoop_test_1/"  title="Hadoop集群中编译并运行《权威指南》中的例3.2">
+ <strong>NEXT:</strong><br/> 
+ <span>Hadoop集群中编译并运行《权威指南》中的例3.2
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section class="comment">
+	<div class="ds-thread"></div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+  <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#一、HDFS的基本概念"><span class="toc-number">1.</span> <span class="toc-text">一、HDFS的基本概念</span></a></li><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-1、数据块(block)"><span class="toc-number">1.1.</span> <span class="toc-text">1.1、数据块(block)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-2、元数据节点(Namenode)和数据节点(datanode)"><span class="toc-number">1.2.</span> <span class="toc-text">1.2、元数据节点(Namenode)和数据节点(datanode)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-2-1、元数据节点文件夹结构"><span class="toc-number">1.3.</span> <span class="toc-text">1.2.1、元数据节点文件夹结构</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-2-2、文件系统命名空间映像文件及修改日志"><span class="toc-number">1.4.</span> <span class="toc-text">1.2.2、文件系统命名空间映像文件及修改日志</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-2-3、从元数据节点的目录结构"><span class="toc-number">1.5.</span> <span class="toc-text">1.2.3、从元数据节点的目录结构</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-2-4、数据节点的目录结构"><span class="toc-number">1.6.</span> <span class="toc-text">1.2.4、数据节点的目录结构</span></a></li></ol><li class="toc-item toc-level-3"><a class="toc-link" href="#二、数据流(data_flow)"><span class="toc-number">2.</span> <span class="toc-text">二、数据流(data flow)</span></a></li><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2-1、读文件的过程"><span class="toc-number">2.1.</span> <span class="toc-text">2.1、读文件的过程</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-2、写文件的过程"><span class="toc-number">2.2.</span> <span class="toc-text">2.2、写文件的过程</span></a></li></ol>
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p rel="asidetitle grow" class="asidetitle grow">分类</p>
+		<ul>
+		
+			<li><a rel="grow" class="grow" href="/categories/Hadoop/" title="Hadoop">Hadoop<sup>6</sup></a></li>
+		
+			<li><a rel="grow" class="grow" href="/categories/Linux/" title="Linux">Linux<sup>4</sup></a></li>
+		
+			<li><a rel="grow" class="grow" href="/categories/杂谈/" title="杂谈">杂谈<sup>1</sup></a></li>
+		
+			<li><a rel="grow" class="grow" href="/categories/计算机网络/" title="计算机网络">计算机网络<sup>1</sup></a></li>
+		
+		</ul>
+</div>
+
+
+
+  <div class="linkslist">
+<h3 rel="grow" class="grow asidetitle">友情链接</h3>
+<ul class="entry">
+<li><a rel="grow" class="grow" href="http://tahiti.oracle.com/" title="Oracle文档">Oracle文档</a></li>
+<li><a rel="grow" class="grow" href="http://asktom.oracle.com/" title="AskTom">AskTom</a></li>
+<li><a rel="grow" class="grow" href="http://blog.csdn.net/tianlesoftware/" title="Dave">Dave</a></li>
+<li><a rel="grow" class="grow" href="http://www.eygle.com/" title="eygle">eygle</a></li>
+<li><a rel="grow" class="grow" href="http://www.dbsnake.com/" title="dbsnake">dbsnake</a></li>
+</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/Hadoop/" title="Hadoop">Hadoop<sup>6</sup></a></li>
+		
+			<li><a href="/tags/Hive/" title="Hive">Hive<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Linux/" title="Linux">Linux<sup>4</sup></a></li>
+		
+			<li><a href="/tags/Mysql/" title="Mysql">Mysql<sup>1</sup></a></li>
+		
+			<li><a href="/tags/yum/" title="yum">yum<sup>1</sup></a></li>
+		
+			<li><a href="/tags/杂谈/" title="杂谈">杂谈<sup>1</sup></a></li>
+		
+			<li><a href="/tags/网卡错误/" title="网卡错误">网卡错误<sup>1</sup></a></li>
+		
+			<li><a href="/tags/网络/" title="网络">网络<sup>1</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle"><a href="/archives">归档</a></p>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/04">四月 2014</a><span class="archive-list-count">12</span></li></ul>
+  </div>
+
+
+  
+  <div class="tagcloudlist">
+    <p class="asidetitle">标签云</p>
+    <div class="tagcloudlist clearfix">
+       <a href="/tags/Hadoop/" style="font-size: 20.00px;">Hadoop</a><a href="/tags/Hive/" style="font-size: 13.33px;">Hive</a><a href="/tags/Linux/" style="font-size: 16.67px;">Linux</a><a href="/tags/Mysql/" style="font-size: 10.00px;">Mysql</a><a href="/tags/yum/" style="font-size: 10.00px;">yum</a><a href="/tags/杂谈/" style="font-size: 10.00px;">杂谈</a><a href="/tags/网卡错误/" style="font-size: 10.00px;">网卡错误</a><a href="/tags/网络/" style="font-size: 10.00px;">网络</a>
+    </div>
+  </div>
+
+
+  <iframe width="100%" height="550" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=2&ptype=1&speed=0&skin=1&isTitle=1&noborder=1&isWeibo=1&isFans=1&uid=3819451430&verifier=f953543e&dpc=1"></iframe>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<span class="buzz" rel="buzz"> Hello,I&#39;m liuqinming.For now I&#39;m a student at collage. <br/>
+			I will share my learning experience with you at this blog.</span>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		<a rel="push" class="push" href="https://github.com/https://github.com/DaMinger" target="_blank" title="github"></a>
+		
+		
+	</div>
+		<p class="copyright">Powered by <a rel="float-shadow" class="float-shadow" href="http://zespia.tw/hexo/" target="_blank" title="hexo">Hexo</a> and Theme by <a class="box-shadow-inset"href="https://github.com/uruir/pacmanhover" target="_blank" title="Pacman">PacmanHover</a> © 2014 
+		
+		
+		<a class="wobble-horizontal" rel="wobble-horizontal" href="https://github.com/DaMinger/DaMinger.github.io.git" target="_blank" title="DaMinger">DaMinger</a>
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+    c.click(function(){
+      ta.css('display', 'block').addClass('fadeIn');
+    });
+    o.click(function(){
+      ta.css('display', 'none');
+    });
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,320-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"null"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+<div id="totop" style="position:fixed;bottom:150px;right:50px;cursor: pointer;">
+<a title="���ض���"><img src="/img/scrollup.png"/></a>
+</div>
+<script src="/js/totop.js"></script>
+
+
+
+  </body>
+</html>
