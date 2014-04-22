@@ -1,0 +1,596 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>下载气象数据集部分数据，写一个Map-Reduce作业，求每年的最低温度，部署并运行之 | DaMinger&#39;s blog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="DaMinger">
+    
+    <meta name="description" content="下载气象数据集部分数据，写一个Map-Reduce作业，求每年的最低温度，部署并运行之，关于下载2013noaa上的天气数据，去http://f.dataguru.cn/ 的hadoop论坛上去搜就行
+是这种格式，2013的部分数据
+023170-99999-2013.gz  032260-9999">
+    
+    
+    
+    
+    <link rel="alternative" href="/atom.xml" title="DaMinger&#39;s blog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/pacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/pacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+    <link href="/css/hover.css" rel="stylesheet">
+    <link href="/css/bottom.css" rel="stylesheet">
+</head>
+
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a rel="pulse" class="pulse" href="/"><img src="/img/pacman.png" alt="DaMinger&#39;s blog" title="DaMinger&#39;s blog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a rel="hover" class="hover" href="/" title="DaMinger&#39;s blog">DaMinger&#39;s blog</a></h1>
+				<h2 class="blog-motto"><a rel="wobble-to-bottom-right" class="wobble-to-bottom-right" href="#" title="#">信春哥，系统稳，闭眼上线不回滚</a></h2>
+			</div>
+			<div class="navbar"><a rel="buzz" class="buzz" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a rel="wobble-top" class="wobble-top" href="/">Home</a></li>
+					
+						<li><a rel="wobble-top" class="wobble-top" href="/archives">Menu</a></li>
+					
+						<li><a rel="wobble-top" class="wobble-top" href="/about">About</a></li>
+					
+				</ul>
+				
+			</nav>			
+</div>
+<div style="text-align:right;">
+<form  class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+ <input type="search" name="q" id="search" autocomplete="off" autocorrect="off" autocapitalize="off" maxlength="20" placeholder="Search" />
+ <input type="hidden" name="q" value="site:github.com/DaMinger/DaMinger.github.io.git">
+</form>
+</div>
+
+
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2014/04/21/Hadoop/hadoop_mapreduce_1/" title="下载气象数据集部分数据，写一个Map-Reduce作业，求每年的最低温度，部署并运行之" itemprop="url">下载气象数据集部分数据，写一个Map-Reduce作业，求每年的最低温度，部署并运行之</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="https://github.com/DaMinger/DaMinger.github.io.git" title="DaMinger">DaMinger</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2014-04-21T13:50:41.000Z" itemprop="datePublished">4月 21 2014</time>
+    更新日期:<time datetime="2014-04-21T14:10:31.000Z" itemprop="dateModified">4月 21 2014</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+		</div>
+		
+		<p>下载气象数据集部分数据，写一个Map-Reduce作业，求每年的最低温度，部署并运行之，关于下载2013noaa上的天气数据，去<a href="http://f.dataguru.cn/" target="_blank">http://f.dataguru.cn/</a> 的hadoop论坛上去搜就行</p>
+<pre><code>是这种格式，<span class="number">2013</span>的部分数据
+<span class="number">023170</span>-<span class="number">99999</span>-<span class="number">2013.</span>gz  <span class="number">032260</span>-<span class="number">99999</span>-<span class="number">2013.</span>gz  <span class="number">064280</span>-<span class="number">99999</span>-<span class="number">2013.</span>gz  <span class="number">080440</span>-<span class="number">99999</span>-<span class="number">2013.</span>gz  <span class="number">121200</span>-<span class="number">99999</span>-<span class="number">2013.</span>gz
+<span class="number">023190</span>-<span class="number">99999</span>-<span class="number">2013.</span>gz  <span class="number">032270</span>-<span class="number">99999</span>-<span class="number">2013.</span>gz  <span class="number">064310</span>-<span class="number">99999</span>-<span class="number">2013.</span>gz  <span class="number">080450</span>-<span class="number">99999</span>-<span class="number">2013.</span>gz  <span class="number">121240</span>-<span class="number">99999</span>-<span class="number">2013.</span>gz
+<span class="number">023210</span>-<span class="number">99999</span>-<span class="number">2013.</span>gz  <span class="number">032300</span>-<span class="number">99999</span>-<span class="number">2013.</span>gz  <span class="number">064320</span>-<span class="number">99999</span>-<span class="number">2013.</span>gz  <span class="number">080480</span>-<span class="number">99999</span>-<span class="number">2013.</span>gz  noaaSample<span class="preprocessor">.txt</span>
+<span class="number">023250</span>-<span class="number">99999</span>-<span class="number">2013.</span>gz  <span class="number">032380</span>-<span class="number">99999</span>-<span class="number">2013.</span>gz  <span class="number">064325</span>-<span class="number">99999</span>-<span class="number">2013.</span>gz  <span class="number">080530</span>-<span class="number">99999</span>-<span class="number">2013.</span>gz
+<span class="number">023270</span>-<span class="number">99999</span>-<span class="number">2013.</span>gz  <span class="number">032400</span>-<span class="number">99999</span>-<span class="number">2013.</span>gz  <span class="number">064340</span>-<span class="number">99999</span>-<span class="number">2013.</span>gz  <span class="number">080550</span>-<span class="number">99999</span>-<span class="number">2013.</span>gz
+[grid@hadoop01 noaa]$ zcat  *<span class="preprocessor">.gz</span> &gt; noaaSample<span class="preprocessor">.txt</span>
+</code></pre><p>编写Java文件 MinTemperatureMapper.java,MinTemperatureReducer.java, 和 MinTemperature.java</p>
+<pre><code>MinTemperatureMapper<span class="preprocessor">.java</span>
+import java<span class="preprocessor">.io</span><span class="preprocessor">.IOException</span><span class="comment">;</span>
+import org<span class="preprocessor">.apache</span><span class="preprocessor">.hadoop</span><span class="preprocessor">.io</span><span class="preprocessor">.IntWritable</span><span class="comment">;</span>
+import org<span class="preprocessor">.apache</span><span class="preprocessor">.hadoop</span><span class="preprocessor">.io</span><span class="preprocessor">.LongWritable</span><span class="comment">;</span>
+import org<span class="preprocessor">.apache</span><span class="preprocessor">.hadoop</span><span class="preprocessor">.io</span><span class="preprocessor">.Text</span><span class="comment">;</span>
+import org<span class="preprocessor">.apache</span><span class="preprocessor">.hadoop</span><span class="preprocessor">.mapreduce</span><span class="preprocessor">.Mapper</span><span class="comment">;</span>
+public class MinTemperatureMapper extends Mapper&lt;LongWritable, Text, Text, IntWritable&gt; {
+    private static final int MISSING = <span class="number">9999</span><span class="comment">;</span>
+    @Override
+    public void map(LongWritable key, Text value, Context context)
+            throws IOException, InterruptedException {
+        String line = value<span class="preprocessor">.toString</span>()<span class="comment">;</span>
+        String year = line<span class="preprocessor">.substring</span>(<span class="number">15</span>, <span class="number">19</span>)<span class="comment">;</span>
+        int airTemperature<span class="comment">;</span>
+        if (line<span class="preprocessor">.charAt</span>(<span class="number">87</span>) == <span class="string">'+'</span>) { 
+            airTemperature = Integer<span class="preprocessor">.parseInt</span>(line<span class="preprocessor">.substring</span>(<span class="number">88</span>, <span class="number">92</span>))<span class="comment">;</span>
+        } else {
+            airTemperature = Integer<span class="preprocessor">.parseInt</span>(line<span class="preprocessor">.substring</span>(<span class="number">87</span>, <span class="number">92</span>))<span class="comment">;</span>
+        }
+        String quality = line<span class="preprocessor">.substring</span>(<span class="number">92</span>, <span class="number">93</span>)<span class="comment">;</span>
+        if (airTemperature != MISSING &amp;&amp; quality<span class="preprocessor">.matches</span>(<span class="string">"[01459]"</span>)) {
+            context<span class="preprocessor">.write</span>(new Text(year), new IntWritable(airTemperature))<span class="comment">;</span>
+        }
+    }
+}
+
+MinTemperatureReducer<span class="preprocessor">.java</span>
+import java<span class="preprocessor">.io</span><span class="preprocessor">.IOException</span><span class="comment">;</span>
+import org<span class="preprocessor">.apache</span><span class="preprocessor">.hadoop</span><span class="preprocessor">.io</span><span class="preprocessor">.IntWritable</span><span class="comment">;</span>
+import org<span class="preprocessor">.apache</span><span class="preprocessor">.hadoop</span><span class="preprocessor">.io</span><span class="preprocessor">.Text</span><span class="comment">;</span>
+import org<span class="preprocessor">.apache</span><span class="preprocessor">.hadoop</span><span class="preprocessor">.mapreduce</span><span class="preprocessor">.Reducer</span><span class="comment">;</span>
+public class MinTemperatureReducer extends Reducer&lt;Text, IntWritable, Text, IntWritable&gt; {
+    @Override
+    public void reduce(Text key, Iterable&lt;IntWritable&gt; values, Context context)
+            throws IOException, InterruptedException {
+        int minValue = Integer<span class="preprocessor">.MAX</span>_VALUE<span class="comment">;</span>
+        for (IntWritable value : values) {
+            minValue = Math<span class="preprocessor">.min</span>(minValue, value<span class="preprocessor">.get</span>())<span class="comment">;</span>
+        }
+        context<span class="preprocessor">.write</span>(key, new IntWritable(minValue))<span class="comment">;</span>
+    }
+}
+
+MinTemperature<span class="preprocessor">.java</span>
+import org<span class="preprocessor">.apache</span><span class="preprocessor">.hadoop</span><span class="preprocessor">.fs</span><span class="preprocessor">.Path</span><span class="comment">;</span>
+import org<span class="preprocessor">.apache</span><span class="preprocessor">.hadoop</span><span class="preprocessor">.io</span><span class="preprocessor">.IntWritable</span><span class="comment">;</span>
+import org<span class="preprocessor">.apache</span><span class="preprocessor">.hadoop</span><span class="preprocessor">.io</span><span class="preprocessor">.Text</span><span class="comment">;</span>
+import org<span class="preprocessor">.apache</span><span class="preprocessor">.hadoop</span><span class="preprocessor">.mapreduce</span><span class="preprocessor">.Job</span><span class="comment">;</span>
+import org<span class="preprocessor">.apache</span><span class="preprocessor">.hadoop</span><span class="preprocessor">.mapreduce</span><span class="preprocessor">.lib</span><span class="preprocessor">.input</span><span class="preprocessor">.FileInputFormat</span><span class="comment">;</span>
+import org<span class="preprocessor">.apache</span><span class="preprocessor">.hadoop</span><span class="preprocessor">.mapreduce</span><span class="preprocessor">.lib</span><span class="preprocessor">.output</span><span class="preprocessor">.FileOutputFormat</span><span class="comment">;</span>
+public class MinTemperature {
+    public static void main(String[] args) throws Exception {
+        if (args<span class="preprocessor">.length</span> != <span class="number">2</span>) {
+            System<span class="preprocessor">.err</span><span class="preprocessor">.println</span>(<span class="string">"Usage: MaxTemperature &lt;input path&gt; &lt;output path&gt;"</span>)<span class="comment">;</span>
+            System<span class="preprocessor">.exit</span>(-<span class="number">1</span>)<span class="comment">;</span>
+        }
+        Job job = new Job()<span class="comment">;</span>
+        job<span class="preprocessor">.setJarByClass</span>(MinTemperature<span class="preprocessor">.class</span>)<span class="comment">;</span>
+        job<span class="preprocessor">.setJobName</span>(<span class="string">"Min temperature"</span>)<span class="comment">;</span>
+        FileInputFormat<span class="preprocessor">.addInputPath</span>(job, new Path(args[<span class="number">0</span>]))<span class="comment">;</span>
+        FileOutputFormat<span class="preprocessor">.setOutputPath</span>(job, new Path(args[<span class="number">1</span>]))<span class="comment">;</span>
+        job<span class="preprocessor">.setMapperClass</span>(MinTemperatureMapper<span class="preprocessor">.class</span>)<span class="comment">;</span>
+        job<span class="preprocessor">.setReducerClass</span>(MinTemperatureReducer<span class="preprocessor">.class</span>)<span class="comment">;</span>
+        job<span class="preprocessor">.setOutputKeyClass</span>(Text<span class="preprocessor">.class</span>)<span class="comment">;</span>
+        job<span class="preprocessor">.setOutputValueClass</span>(IntWritable<span class="preprocessor">.class</span>)<span class="comment">;</span>
+        System<span class="preprocessor">.exit</span>(job<span class="preprocessor">.waitForCompletion</span>(true) ? <span class="number">0</span> : <span class="number">1</span>)<span class="comment">;</span>
+    }
+}
+</code></pre><p>编译 打包  将jar包移到$HADOOP_HOME, 删除原class文件</p>
+<pre><code>[grid@hadoop01 noaa]$ javac -classpath  /home/grid/hadoop-<span class="number">1.2</span><span class="number">.1</span>/hadoop-core-<span class="number">1.2</span><span class="number">.1</span><span class="preprocessor">.jar</span> *<span class="preprocessor">.java</span>
+[grid@hadoop01 noaa]$ ls
+MinTemperature<span class="preprocessor">.class</span>  MinTemperatureMapper<span class="preprocessor">.class</span>  MinTemperatureReducer<span class="preprocessor">.class</span>
+MinTemperature<span class="preprocessor">.java</span>   MinTemperatureMapper<span class="preprocessor">.java</span>   MinTemperatureReducer<span class="preprocessor">.java</span>
+[grid@hadoop01 noaa]$ hadoop  fs -put  /home/grid/Downloads/noaa/noaaSample<span class="preprocessor">.txt</span>   ./<span class="keyword">in</span>
+[grid@hadoop01 noaa]$ hadoop  fs -ls ./<span class="keyword">in</span>
+<span class="label">Warning:</span> $HADOOP_HOME is deprecated.
+Found <span class="number">3</span> items
+-rw-r--r--   <span class="number">2</span> grid supergroup   <span class="number">39564893</span> <span class="number">2014</span>-<span class="number">04</span>-<span class="number">21</span> <span class="number">20</span>:<span class="number">43</span> /user/grid/<span class="keyword">in</span>/noaaSample<span class="preprocessor">.txt</span>
+-rw-r--r--   <span class="number">2</span> grid supergroup         <span class="number">12</span> <span class="number">2014</span>-<span class="number">04</span>-<span class="number">16</span> <span class="number">16</span>:<span class="number">57</span> /user/grid/<span class="keyword">in</span>/test1<span class="preprocessor">.txt</span>
+-rw-r--r--   <span class="number">2</span> grid supergroup         <span class="number">13</span> <span class="number">2014</span>-<span class="number">04</span>-<span class="number">16</span> <span class="number">16</span>:<span class="number">57</span> /user/grid/<span class="keyword">in</span>/test2<span class="preprocessor">.txt</span>
+[grid@hadoop01 noaa]$ jar cvf ./MinTemperature<span class="preprocessor">.jar</span> *<span class="preprocessor">.class</span>
+added manifest
+<span class="label">adding:</span> MinTemperature<span class="preprocessor">.class</span>(<span class="keyword">in</span> = <span class="number">1418</span>) (<span class="keyword">out</span>= <span class="number">802</span>)(deflated <span class="number">43</span>%)
+<span class="label">adding:</span> MinTemperatureMapper<span class="preprocessor">.class</span>(<span class="keyword">in</span> = <span class="number">1876</span>) (<span class="keyword">out</span>= <span class="number">804</span>)(deflated <span class="number">57</span>%)
+<span class="label">adding:</span> MinTemperatureReducer<span class="preprocessor">.class</span>(<span class="keyword">in</span> = <span class="number">1664</span>) (<span class="keyword">out</span>= <span class="number">706</span>)(deflated <span class="number">57</span>%)
+[grid@hadoop01 noaa]$ ls
+MinTemperature<span class="preprocessor">.class</span>  MinTemperature<span class="preprocessor">.java</span>         MinTemperatureMapper<span class="preprocessor">.java</span>    MinTemperatureReducer<span class="preprocessor">.java</span>
+MinTemperature<span class="preprocessor">.jar</span>    MinTemperatureMapper<span class="preprocessor">.class</span>  MinTemperatureReducer<span class="preprocessor">.class</span>
+[grid@hadoop01 noaa]$ mv MinTemperature<span class="preprocessor">.jar</span> /home/grid/hadoop-<span class="number">1.2</span><span class="number">.1</span>/
+[grid@hadoop01 noaa]$ rm  *<span class="preprocessor">.class</span>
+[grid@hadoop01 noaa]$ ls
+MinTemperature<span class="preprocessor">.java</span>  MinTemperatureMapper<span class="preprocessor">.java</span>  MinTemperatureReducer<span class="preprocessor">.java</span>
+[grid@hadoop01 hadoop-<span class="number">1.2</span><span class="number">.1</span>]$ ls
+<span class="number">7287</span>OS_Code  contrib                    Hadoop MapReduce Cookbook<span class="preprocessor">.zip</span>  lib                 NOTICE<span class="preprocessor">.txt</span>  webapps
+bin          docs                       hadoop-minicluster-<span class="number">1.2</span><span class="number">.1</span><span class="preprocessor">.jar</span>   libexec             README<span class="preprocessor">.txt</span>
+build<span class="preprocessor">.xml</span>    hadoop-ant-<span class="number">1.2</span><span class="number">.1</span><span class="preprocessor">.jar</span>       hadoop-test-<span class="number">1.2</span><span class="number">.1</span><span class="preprocessor">.jar</span>          LICENSE<span class="preprocessor">.txt</span>         sbin
+c++          hadoop-client-<span class="number">1.2</span><span class="number">.1</span><span class="preprocessor">.jar</span>    hadoop-tools-<span class="number">1.2</span><span class="number">.1</span><span class="preprocessor">.jar</span>         logs                share
+CHANGES<span class="preprocessor">.txt</span>  hadoop-core-<span class="number">1.2</span><span class="number">.1</span><span class="preprocessor">.jar</span>      ivy                            MinTemperature<span class="preprocessor">.jar</span>  src
+conf         hadoop-examples-<span class="number">1.2</span><span class="number">.1</span><span class="preprocessor">.jar</span>  ivy<span class="preprocessor">.xml</span>                        myclass             tmp
+</code></pre><p>运行程序</p>
+<pre><code>[grid@hadoop01 hadoop-<span class="number">1.2</span><span class="number">.1</span>]$ hadoop jar ./MinTemperature<span class="preprocessor">.jar</span> MinTemperature ./<span class="keyword">in</span>/noaaSample<span class="preprocessor">.txt</span> ./out2
+<span class="label">Warning:</span> $HADOOP_HOME is deprecated.
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">20</span>:<span class="number">52</span>:<span class="number">28</span> WARN mapred<span class="preprocessor">.JobClient</span>: Use GenericOptionsParser for parsing the arguments. Applications should implement Tool for the same.
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">20</span>:<span class="number">52</span>:<span class="number">28</span> INFO input<span class="preprocessor">.FileInputFormat</span>: Total input paths to process : <span class="number">1</span>
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">20</span>:<span class="number">52</span>:<span class="number">28</span> INFO util<span class="preprocessor">.NativeCodeLoader</span>: Loaded the native-hadoop library
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">20</span>:<span class="number">52</span>:<span class="number">28</span> WARN snappy<span class="preprocessor">.LoadSnappy</span>: Snappy native library not loaded
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">20</span>:<span class="number">52</span>:<span class="number">30</span> INFO mapred<span class="preprocessor">.JobClient</span>: Running job: job_201404211930_0001
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">20</span>:<span class="number">52</span>:<span class="number">31</span> INFO mapred<span class="preprocessor">.JobClient</span>:  map <span class="number">0</span>% reduce <span class="number">0</span>%
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">20</span>:<span class="number">52</span>:<span class="number">48</span> INFO mapred<span class="preprocessor">.JobClient</span>:  map <span class="number">100</span>% reduce <span class="number">0</span>%
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">20</span>:<span class="number">52</span>:<span class="number">58</span> INFO mapred<span class="preprocessor">.JobClient</span>:  map <span class="number">100</span>% reduce <span class="number">33</span>%
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">20</span>:<span class="number">53</span>:<span class="number">01</span> INFO mapred<span class="preprocessor">.JobClient</span>:  map <span class="number">100</span>% reduce <span class="number">100</span>%
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">20</span>:<span class="number">53</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>: Job complete: job_201404211930_0001
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">20</span>:<span class="number">53</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>: Counters: <span class="number">29</span>
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">20</span>:<span class="number">53</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:   Job Counters 
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">20</span>:<span class="number">53</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Launched reduce tasks=<span class="number">1</span>
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">20</span>:<span class="number">53</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:     SLOTS_MILLIS_MAPS=<span class="number">16513</span>
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">20</span>:<span class="number">53</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Total time spent by all reduces waiting after reserving slots (ms)=<span class="number">0</span>
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">20</span>:<span class="number">53</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Total time spent by all maps waiting after reserving slots (ms)=<span class="number">0</span>
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">20</span>:<span class="number">53</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Launched map tasks=<span class="number">1</span>
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">20</span>:<span class="number">53</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Data-local map tasks=<span class="number">1</span>
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">20</span>:<span class="number">53</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:     SLOTS_MILLIS_REDUCES=<span class="number">12911</span>
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">20</span>:<span class="number">53</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:   File Output Format Counters 
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">20</span>:<span class="number">53</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Bytes Written=<span class="number">10</span>
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">20</span>:<span class="number">53</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:   FileSystemCounters
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">20</span>:<span class="number">53</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:     FILE_BYTES_READ=<span class="number">1652569</span>
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">20</span>:<span class="number">53</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:     HDFS_BYTES_READ=<span class="number">39565019</span>
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">20</span>:<span class="number">53</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:     FILE_BYTES_WRITTEN=<span class="number">3419762</span>
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">20</span>:<span class="number">53</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:     HDFS_BYTES_WRITTEN=<span class="number">10</span>
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">20</span>:<span class="number">53</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:   File Input Format Counters 
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">20</span>:<span class="number">53</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Bytes Read=<span class="number">39564893</span>
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">20</span>:<span class="number">53</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:   Map-Reduce Framework
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">20</span>:<span class="number">53</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Map output materialized bytes=<span class="number">1652569</span>
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">20</span>:<span class="number">53</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Map input records=<span class="number">154375</span>
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">20</span>:<span class="number">53</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Reduce shuffle bytes=<span class="number">1652569</span>
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">20</span>:<span class="number">53</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Spilled Records=<span class="number">300466</span>
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">20</span>:<span class="number">53</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Map output bytes=<span class="number">1352097</span>
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">20</span>:<span class="number">53</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Total committed heap usage (bytes)=<span class="number">176033792</span>
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">20</span>:<span class="number">53</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:     CPU time spent (ms)=<span class="number">7420</span>
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">20</span>:<span class="number">53</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Combine input records=<span class="number">0</span>
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">20</span>:<span class="number">53</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:     SPLIT_RAW_BYTES=<span class="number">126</span>
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">20</span>:<span class="number">53</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Reduce input records=<span class="number">150233</span>
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">20</span>:<span class="number">53</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Reduce input groups=<span class="number">1</span>
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">20</span>:<span class="number">53</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Combine output records=<span class="number">0</span>
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">20</span>:<span class="number">53</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Physical memory (bytes) snapshot=<span class="number">302170112</span>
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">20</span>:<span class="number">53</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Reduce output records=<span class="number">1</span>
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">20</span>:<span class="number">53</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Virtual memory (bytes) snapshot=<span class="number">1453506560</span>
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">20</span>:<span class="number">53</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Map output records=<span class="number">150233</span>
+</code></pre><p>查看结果</p>
+<pre><code>[<span class="keyword">grid</span><span class="variable">@hadoop01</span> hadoop-<span class="number">1.2</span><span class="number">.1</span>]$ hadoop fs -<span class="keyword">ls</span> ./out2
+Warning: <span class="variable">$HADOOP_HOME</span> is deprecated.
+Found <span class="number">3</span> items
+-rw-r--r--   <span class="number">2</span> <span class="keyword">grid</span> supergroup          <span class="number">0</span> <span class="number">2014</span>-<span class="number">04</span>-<span class="number">21</span> <span class="number">20</span>:<span class="number">53</span> /user/<span class="keyword">grid</span>/out2/_SUCCESS
+drwxr-xr-x   - <span class="keyword">grid</span> supergroup          <span class="number">0</span> <span class="number">2014</span>-<span class="number">04</span>-<span class="number">21</span> <span class="number">20</span>:<span class="number">52</span> /user/<span class="keyword">grid</span>/out2/_logs
+-rw-r--r--   <span class="number">2</span> <span class="keyword">grid</span> supergroup         <span class="number">10</span> <span class="number">2014</span>-<span class="number">04</span>-<span class="number">21</span> <span class="number">20</span>:<span class="number">52</span> /user/<span class="keyword">grid</span>/out2/part-r-<span class="number">00000</span>
+[<span class="keyword">grid</span><span class="variable">@hadoop01</span> hadoop-<span class="number">1.2</span><span class="number">.1</span>]$ hadoop fs -cat ./out2/part-r-<span class="number">00000</span>
+Warning: <span class="variable">$HADOOP_HOME</span> is deprecated.
+<span class="number">2013</span>    -<span class="number">604</span>
+[<span class="keyword">grid</span><span class="variable">@hadoop01</span> hadoop-<span class="number">1.2</span><span class="number">.1</span>]$ 
+</code></pre>  
+	</div>
+		<footer class="article-footer clearfix">
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Hadoop/">Hadoop</a><a href="/tags/Map-Reduce/">Map-Reduce</a>
+  </div>
+
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Hadoop/">Hadoop</a>
+</div>
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="https://github.com/DaMinger/DaMinger.github.io.git/2014/04/21/Hadoop/hadoop_mapreduce_1/" data-title="下载气象数据集部分数据，写一个Map-Reduce作业，求每年的最低温度，部署并运行之 | DaMinger&#39;s blog" data-tsina="null" class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2014/04/21/Hadoop/hadoop_stream_python/" title="使用hadoop流的方法来实现对气象数据集求最高温度的分析任务（使用python）">
+  <strong>PREVIOUS:</strong><br/>
+  <span>
+  使用hadoop流的方法来实现对气象数据集求最高温度的分析任务（使用python）</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2014/04/18/Hadoop/hadoop_hive/"  title="Hive简单认识">
+ <strong>NEXT:</strong><br/> 
+ <span>Hive简单认识
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section class="comment">
+	<div class="ds-thread"></div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+  
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p rel="asidetitle grow" class="asidetitle grow">分类</p>
+		<ul>
+		
+			<li><a rel="grow" class="grow" href="/categories/Hadoop/" title="Hadoop">Hadoop<sup>10</sup></a></li>
+		
+			<li><a rel="grow" class="grow" href="/categories/Linux/" title="Linux">Linux<sup>4</sup></a></li>
+		
+			<li><a rel="grow" class="grow" href="/categories/杂谈/" title="杂谈">杂谈<sup>1</sup></a></li>
+		
+			<li><a rel="grow" class="grow" href="/categories/计算机网络/" title="计算机网络">计算机网络<sup>1</sup></a></li>
+		
+		</ul>
+</div>
+
+
+
+  <div class="linkslist">
+<h3 rel="grow" class="grow asidetitle">友情链接</h3>
+<ul class="entry">
+<li><a rel="grow" class="grow" href="http://tahiti.oracle.com/" title="Oracle文档">Oracle文档</a></li>
+<li><a rel="grow" class="grow" href="http://asktom.oracle.com/" title="AskTom">AskTom</a></li>
+<li><a rel="grow" class="grow" href="http://blog.csdn.net/tianlesoftware/" title="Dave">Dave</a></li>
+<li><a rel="grow" class="grow" href="http://www.eygle.com/" title="eygle">eygle</a></li>
+<li><a rel="grow" class="grow" href="http://www.dbsnake.com/" title="dbsnake">dbsnake</a></li>
+</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/Eclipse/" title="Eclipse">Eclipse<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Hadoop/" title="Hadoop">Hadoop<sup>10</sup></a></li>
+		
+			<li><a href="/tags/Hadoop_Stream/" title="Hadoop_Stream">Hadoop_Stream<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Hive/" title="Hive">Hive<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Linux/" title="Linux">Linux<sup>4</sup></a></li>
+		
+			<li><a href="/tags/Map-Reduce/" title="Map-Reduce">Map-Reduce<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Mysql/" title="Mysql">Mysql<sup>1</sup></a></li>
+		
+			<li><a href="/tags/yum/" title="yum">yum<sup>1</sup></a></li>
+		
+			<li><a href="/tags/杂谈/" title="杂谈">杂谈<sup>1</sup></a></li>
+		
+			<li><a href="/tags/网卡错误/" title="网卡错误">网卡错误<sup>1</sup></a></li>
+		
+			<li><a href="/tags/网络/" title="网络">网络<sup>1</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle"><a href="/archives">归档</a></p>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/04">四月 2014</a><span class="archive-list-count">16</span></li></ul>
+  </div>
+
+
+  
+  <div class="tagcloudlist">
+    <p class="asidetitle">标签云</p>
+    <div class="tagcloudlist clearfix">
+       <a href="/tags/Eclipse/" style="font-size: 10.00px;">Eclipse</a><a href="/tags/Hadoop/" style="font-size: 20.00px;">Hadoop</a><a href="/tags/Hadoop_Stream/" style="font-size: 10.00px;">Hadoop_Stream</a><a href="/tags/Hive/" style="font-size: 13.33px;">Hive</a><a href="/tags/Linux/" style="font-size: 16.67px;">Linux</a><a href="/tags/Map-Reduce/" style="font-size: 13.33px;">Map-Reduce</a><a href="/tags/Mysql/" style="font-size: 10.00px;">Mysql</a><a href="/tags/yum/" style="font-size: 10.00px;">yum</a><a href="/tags/杂谈/" style="font-size: 10.00px;">杂谈</a><a href="/tags/网卡错误/" style="font-size: 10.00px;">网卡错误</a><a href="/tags/网络/" style="font-size: 10.00px;">网络</a>
+    </div>
+  </div>
+
+
+  <iframe width="100%" height="550" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=2&ptype=1&speed=0&skin=1&isTitle=1&noborder=1&isWeibo=1&isFans=1&uid=3819451430&verifier=f953543e&dpc=1"></iframe>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<span class="buzz" rel="buzz"> Hello,I&#39;m liuqinming.For now I&#39;m a student at collage. <br/>
+			I will share my learning experience with you at this blog.</span>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		<a rel="push" class="push" href="https://github.com/https://github.com/DaMinger" target="_blank" title="github"></a>
+		
+		
+	</div>
+		<p class="copyright">Powered by <a rel="float-shadow" class="float-shadow" href="http://zespia.tw/hexo/" target="_blank" title="hexo">Hexo</a> and Theme by <a class="box-shadow-inset"href="https://github.com/uruir/pacmanhover" target="_blank" title="Pacman">PacmanHover</a> © 2014 
+		
+		
+		<a class="wobble-horizontal" rel="wobble-horizontal" href="https://github.com/DaMinger/DaMinger.github.io.git" target="_blank" title="DaMinger">DaMinger</a>
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+    c.click(function(){
+      ta.css('display', 'block').addClass('fadeIn');
+    });
+    o.click(function(){
+      ta.css('display', 'none');
+    });
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,320-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"null"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+<div id="totop" style="position:fixed;bottom:150px;right:50px;cursor: pointer;">
+<a title="���ض���"><img src="/img/scrollup.png"/></a>
+</div>
+<script src="/js/totop.js"></script>
+
+
+
+  </body>
+</html>

@@ -4,12 +4,16 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>Centos 6.4克隆系统后网卡eth0变成eth1的解决办法 | DaMinger&#39;s blog</title>
+    <title>使用hadoop流的方法来实现对气象数据集求最高温度的分析任务（使用python） | DaMinger&#39;s blog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="DaMinger">
     
-    <meta name="description" content="vbox 或者vmware克隆系统后里面的eth0变成了eht1，开始没有发现问题，当我/etc/init.d/network restart重启的时候，发现找不到eth0，ifconfig 后只有eth1，原来linux使用udev动态管理设备文件，并根据设备的信息对其进行持久化命名。克隆时就自动">
+    <meta name="description" content="使用hadoop流的方法来实现对气象数据集求最高温度的分析任务（使用python）
+创建python脚本
+[grid@hadoop01 python]$ ls
+max_temperature_map.py  max_temperature_reduce.py
+[grid@hadoop01 pytho">
     
     
     
@@ -71,15 +75,15 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2014/04/11/Linux/linux_ethX_problem/" title="Centos 6.4克隆系统后网卡eth0变成eth1的解决办法" itemprop="url">Centos 6.4克隆系统后网卡eth0变成eth1的解决办法</a>
+      <a href="/2014/04/21/Hadoop/hadoop_stream_python/" title="使用hadoop流的方法来实现对气象数据集求最高温度的分析任务（使用python）" itemprop="url">使用hadoop流的方法来实现对气象数据集求最高温度的分析任务（使用python）</a>
   </h1>
   <p class="article-author">By
     
       <a href="https://github.com/DaMinger/DaMinger.github.io.git" title="DaMinger">DaMinger</a>
     </p>
   <p class="article-time">
-    <time datetime="2014-04-11T14:31:24.000Z" itemprop="datePublished">4月 11 2014</time>
-    更新日期:<time datetime="2014-04-11T14:40:08.000Z" itemprop="dateModified">4月 11 2014</time>
+    <time datetime="2014-04-21T13:50:46.000Z" itemprop="datePublished">4月 21 2014</time>
+    更新日期:<time datetime="2014-04-21T14:18:29.000Z" itemprop="dateModified">4月 21 2014</time>
     
   </p>
 </header>
@@ -91,47 +95,81 @@
 		
 		</div>
 		
-		<p>vbox 或者vmware克隆系统后里面的eth0变成了eht1，开始没有发现问题，当我/etc/init.d/network restart重启的时候，发现找不到eth0，ifconfig 后只有eth1，原来linux使用udev动态管理设备文件，并根据设备的信息对其进行持久化命名。克隆时就自动变成eth1了。还好找到了解决办法，于是备份并分享之。</p>
-<pre><code>vi /etc/udev/rules.d/70-persistent-net.rules
-dd删除关于eth0的记录或者是用<span class="comment">#注释掉eth0的记录(谨慎的可以注释掉，不过完全没有用)</span>
-记住其中eth1的mac地址 复制到文本中，备用
-将eth1改成eth0
-vi /etc/sysconfig/network-scripts/ifcfg-eth0
-将老文件eth0的mac地址换掉，(如果细心的话会发现ifconfig eth1会跟配置文件中的mac不一样)
-<span class="constant">DEVICE</span>=eth0
-<span class="constant">HWADDR</span>=08:00:27:b7:bb:f7            //将备用的mac地址替换
-<span class="constant">TYPE</span>=Ethernet
-<span class="constant">UUID</span>=010da721-97c3-49f6-b95d-fe485634956a
-<span class="constant">ONBOOT</span>=yes
-<span class="constant">NM_CONTROLLED</span>=yes
-<span class="constant">BOOTPROTO</span>=dhcp                       //自动IP拨号
-<span class="constant">BOOTPROTO</span>=static                    //静态IP设置
-<span class="constant">IPADDR</span>=192.168.1.111
-<span class="constant">NETMASK</span>=255.255.255.0
-<span class="constant">BROADCAST</span>=192.168.1.255
-<span class="constant">GATEWAY</span>=192.168.1.1
-/etc/init.d/network restart     //重启network--如果不行的话
-就shutdown -r now//重启系统了
+		<p>使用hadoop流的方法来实现对气象数据集求最高温度的分析任务（使用python）</p>
+<p>创建python脚本</p>
+<pre><code>[<span class="keyword">grid</span><span class="variable">@hadoop01</span> <span class="keyword">python</span>]$ <span class="keyword">ls</span>
+max_temperature_map.py  max_temperature_reduce.py
+[<span class="keyword">grid</span><span class="variable">@hadoop01</span> <span class="keyword">python</span>]$ cat max_temperature_map.py 
+#!/bin/<span class="keyword">env</span> <span class="keyword">python</span>
+import re
+import sys
+<span class="keyword">for</span> line <span class="keyword">in</span> sys.stdin:
+  val = line.<span class="keyword">strip</span>()
+  (year, temp) = (val[<span class="number">0</span>:<span class="number">4</span>], val[<span class="number">13</span>:<span class="number">19</span>])
+  <span class="keyword">if</span> (temp != <span class="string">"+9999"</span>):
+    <span class="keyword">print</span> <span class="string">"%s\t%s"</span> % (year, temp)
+[<span class="keyword">grid</span><span class="variable">@hadoop01</span> <span class="keyword">python</span>]$ cat max_temperature_reduce.py 
+#!/bin/<span class="keyword">env</span> <span class="keyword">python</span>
+import sys
+
+(last_key, max_val) = (None, -sys.maxint)
+<span class="keyword">for</span> line <span class="keyword">in</span> sys.stdin:
+  (key, val) = line.<span class="keyword">strip</span>().split(<span class="string">"\t"</span>)
+  <span class="keyword">if</span> last_key and last_key != key:
+    <span class="keyword">print</span> <span class="string">"%s\t%s"</span> % (last_key, max_val)
+    (last_key, max_val) = (key, <span class="keyword">int</span>(val))
+  <span class="keyword">else</span>:
+    (last_key, max_val) = (key, <span class="keyword">max</span>(max_val, <span class="keyword">int</span>(val)))
+
+<span class="keyword">if</span> last_key:
+  <span class="keyword">print</span> <span class="string">"%s\t%s"</span> % (last_key, max_val)
+[<span class="keyword">grid</span><span class="variable">@hadoop01</span> <span class="keyword">python</span>]$ 
+</code></pre><p>编译运行</p>
+<pre><code>[grid@hadoop01 hadoop-<span class="number">1.2</span><span class="number">.1</span>]$ bin/hadoop jar contrib/streaming/hadoop-streaming-<span class="number">1.2</span><span class="number">.1</span><span class="preprocessor">.jar</span> -input ./<span class="keyword">in</span>/noaaSample<span class="preprocessor">.txt</span> -output ./out3 -mapper /home/grid/hadoop-<span class="number">1.2</span><span class="number">.1</span>/myclass/python/max_temperature_map<span class="preprocessor">.py</span> -reducer /home/grid/hadoop-<span class="number">1.2</span><span class="number">.1</span>/myclass/python/max_temperature_reduce<span class="preprocessor">.py</span> -file /home/grid/hadoop-<span class="number">1.2</span><span class="number">.1</span>/myclass/python/max_temperature_map<span class="preprocessor">.py</span> -file /home/grid/hadoop-<span class="number">1.2</span><span class="number">.1</span>/myclass/python/max_temperature_reduce<span class="preprocessor">.py</span> 
+<span class="label">Warning:</span> $HADOOP_HOME is deprecated.
+<span class="label">packageJobJar:</span> [/home/grid/hadoop-<span class="number">1.2</span><span class="number">.1</span>/myclass/python/max_temperature_map<span class="preprocessor">.py</span>, /home/grid/hadoop-<span class="number">1.2</span><span class="number">.1</span>/myclass/python/max_temperature_reduce<span class="preprocessor">.py</span>, /home/grid/hadoop-<span class="number">1.2</span><span class="number">.1</span>/tmp/hadoop-unjar7471324797393042067/] [] /tmp/streamjob6919467714598114562<span class="preprocessor">.jar</span> tmpDir=null
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">21</span>:<span class="number">35</span>:<span class="number">12</span> INFO util<span class="preprocessor">.NativeCodeLoader</span>: Loaded the native-hadoop library
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">21</span>:<span class="number">35</span>:<span class="number">12</span> WARN snappy<span class="preprocessor">.LoadSnappy</span>: Snappy native library not loaded
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">21</span>:<span class="number">35</span>:<span class="number">12</span> INFO mapred<span class="preprocessor">.FileInputFormat</span>: Total input paths to process : <span class="number">1</span>
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">21</span>:<span class="number">35</span>:<span class="number">13</span> INFO streaming<span class="preprocessor">.StreamJob</span>: getLocalDirs(): [/home/grid/hadoop-<span class="number">1.2</span><span class="number">.1</span>/tmp/mapred/local]
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">21</span>:<span class="number">35</span>:<span class="number">13</span> INFO streaming<span class="preprocessor">.StreamJob</span>: Running job: job_201404211930_0005
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">21</span>:<span class="number">35</span>:<span class="number">13</span> INFO streaming<span class="preprocessor">.StreamJob</span>: To kill this job, run:
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">21</span>:<span class="number">35</span>:<span class="number">13</span> INFO streaming<span class="preprocessor">.StreamJob</span>: /home/grid/hadoop-<span class="number">1.2</span><span class="number">.1</span>/libexec/../bin/hadoop job  -Dmapred<span class="preprocessor">.job</span><span class="preprocessor">.tracker</span>=hadoop01<span class="preprocessor">.myhadoop</span><span class="preprocessor">.com</span>:<span class="number">9001</span> -kill job_201404211930_0005
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">21</span>:<span class="number">35</span>:<span class="number">13</span> INFO streaming<span class="preprocessor">.StreamJob</span>: Tracking URL: http://hadoop01<span class="preprocessor">.myhadoop</span><span class="preprocessor">.com</span>:<span class="number">50030</span>/jobdetails<span class="preprocessor">.jsp</span>?jobid=job_201404211930_0005
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">21</span>:<span class="number">35</span>:<span class="number">14</span> INFO streaming<span class="preprocessor">.StreamJob</span>:  map <span class="number">0</span>%  reduce <span class="number">0</span>%
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">21</span>:<span class="number">35</span>:<span class="number">26</span> INFO streaming<span class="preprocessor">.StreamJob</span>:  map <span class="number">100</span>%  reduce <span class="number">0</span>%
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">21</span>:<span class="number">35</span>:<span class="number">35</span> INFO streaming<span class="preprocessor">.StreamJob</span>:  map <span class="number">100</span>%  reduce <span class="number">33</span>%
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">21</span>:<span class="number">35</span>:<span class="number">40</span> INFO streaming<span class="preprocessor">.StreamJob</span>:  map <span class="number">100</span>%  reduce <span class="number">100</span>%
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">21</span>:<span class="number">35</span>:<span class="number">43</span> INFO streaming<span class="preprocessor">.StreamJob</span>: Job complete: job_201404211930_0005
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">21</span>:<span class="number">35</span>:<span class="number">43</span> INFO streaming<span class="preprocessor">.StreamJob</span>: Output: ./out3
+</code></pre><p>查看结果</p>
+<pre><code>[<span class="keyword">grid</span><span class="variable">@hadoop01</span> hadoop-<span class="number">1.2</span><span class="number">.1</span>]$ hadoop fs -<span class="keyword">ls</span> ./out3
+Warning: <span class="variable">$HADOOP_HOME</span> is deprecated.
+Found <span class="number">3</span> items
+-rw-r--r--   <span class="number">2</span> <span class="keyword">grid</span> supergroup          <span class="number">0</span> <span class="number">2014</span>-<span class="number">04</span>-<span class="number">21</span> <span class="number">21</span>:<span class="number">35</span> /user/<span class="keyword">grid</span>/out3/_SUCCESS
+drwxr-xr-x   - <span class="keyword">grid</span> supergroup          <span class="number">0</span> <span class="number">2014</span>-<span class="number">04</span>-<span class="number">21</span> <span class="number">21</span>:<span class="number">35</span> /user/<span class="keyword">grid</span>/out3/_logs
+-rw-r--r--   <span class="number">2</span> <span class="keyword">grid</span> supergroup       <span class="number">5184</span> <span class="number">2014</span>-<span class="number">04</span>-<span class="number">21</span> <span class="number">21</span>:<span class="number">35</span> /user/<span class="keyword">grid</span>/out3/part-<span class="number">00000</span>
+[<span class="keyword">grid</span><span class="variable">@hadoop01</span> hadoop-<span class="number">1.2</span><span class="number">.1</span>]$ 
 </code></pre>  
 	</div>
 		<footer class="article-footer clearfix">
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/Linux/">Linux</a>
+  <span></span> <a href="/tags/Hadoop/">Hadoop</a><a href="/tags/Hadoop_Stream/">Hadoop_Stream</a>
   </div>
 
 
 <div class="article-categories">
   <span></span>
-  <a class="article-category-link" href="/categories/Linux/">Linux</a>
+  <a class="article-category-link" href="/categories/Hadoop/">Hadoop</a>
 </div>
 
 
 
 <div class="article-share" id="share">
 
-  <div data-url="https://github.com/DaMinger/DaMinger.github.io.git/2014/04/11/Linux/linux_ethX_problem/" data-title="Centos 6.4克隆系统后网卡eth0变成eth1的解决办法 | DaMinger&#39;s blog" data-tsina="null" class="share clearfix">
+  <div data-url="https://github.com/DaMinger/DaMinger.github.io.git/2014/04/21/Hadoop/hadoop_stream_python/" data-title="使用hadoop流的方法来实现对气象数据集求最高温度的分析任务（使用python） | DaMinger&#39;s blog" data-tsina="null" class="share clearfix">
   </div>
 
 </div>
@@ -141,18 +179,18 @@ vi /etc/sysconfig/network-scripts/ifcfg-eth0
 <nav class="article-nav clearfix">
  
  <div class="prev" >
- <a href="/2014/04/13/Hadoop/hadoop_install/" title="利用NFS+DNS+Shell脚本搭建Hadoop1.2.1">
+ <a href="/2014/04/21/Hadoop/map_reduce/" title="Map-Reduce入门">
   <strong>PREVIOUS:</strong><br/>
   <span>
-  利用NFS+DNS+Shell脚本搭建Hadoop1.2.1</span>
+  Map-Reduce入门</span>
 </a>
 </div>
 
 
 <div class="next">
-<a href="/2014/04/10/计算机网络/internet_1/"  title="三次握手，四次挥手">
+<a href="/2014/04/21/Hadoop/hadoop_mapreduce_1/"  title="下载气象数据集部分数据，写一个Map-Reduce作业，求每年的最低温度，部署并运行之">
  <strong>NEXT:</strong><br/> 
- <span>三次握手，四次挥手
+ <span>下载气象数据集部分数据，写一个Map-Reduce作业，求每年的最低温度，部署并运行之
 </span>
 </a>
 </div>

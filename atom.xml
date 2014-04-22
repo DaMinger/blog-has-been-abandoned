@@ -4,7 +4,7 @@
   <subtitle><![CDATA[信春哥，系统稳，闭眼上线不回滚]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="https://github.com/DaMinger/DaMinger.github.io.git/"/>
-  <updated>2014-04-18T12:46:19.532Z</updated>
+  <updated>2014-04-22T13:42:37.678Z</updated>
   <id>https://github.com/DaMinger/DaMinger.github.io.git/</id>
   
   <author>
@@ -13,6 +13,655 @@
   </author>
   
   <generator uri="http://zespia.tw/hexo/">Hexo</generator>
+  
+  <entry>
+    <title><![CDATA[eclipse连接hadoop1.2.1集群]]></title>
+    <link href="https://github.com/DaMinger/DaMinger.github.io.git/2014/04/22/Hadoop/hadoop-eclispe/"/>
+    <id>https://github.com/DaMinger/DaMinger.github.io.git/2014/04/22/Hadoop/hadoop-eclispe/</id>
+    <published>2014-04-22T12:43:01.000Z</published>
+    <updated>2014-04-22T13:41:56.000Z</updated>
+    <content type="html"><![CDATA[<h5 id="下载安装eclipse">下载安装eclipse</h5>
+<p>去官网下载eclipse，我下载的是eclipse-standard-kepler-SR2-linux-gtk-x86_64.tar.gz<br>移到目录/opt下,解压tar -zxvf eclipse-standard-kepler-SR2-linux-gtk-x86_64.tar.gz 进入/opt/eclipse/目录，双击eclipse,eclipse启动了</p>
+<p>为eclipse创建桌面快捷方式，在linux桌面空白处,点击鼠标右键,弹出一个对话框,选择“create Launcher”(中文是“新建启动器”),在“Create Launcher”(中文“创建快捷方式”)对话框中选择Application(中文“应用程序”)，输入名字：eclipse ，在Command(中文“命令”)找到eclipse的启动程序(比如我的是：/opt/eclipse/eclipse),双击左上侧的图标会弹出一个选择图标的对话框，找到安装eclipse的目录,在目录中找到icon.xpm，选择Open(确定),设置好后类似于下图：<br><img src="/img/Hadoop/eclipse/1.png" alt="图1"></p>
+<h5 id="修改配置文件">修改配置文件</h5>
+<p>hadoop-1.2.1/src/contrib/eclipse-plugin/build.xml<br>添加相应位置下内容：</p>
+<pre><code><span class="tag">&lt;<span class="title">path</span> <span class="attribute">id</span>=<span class="value">"eclipse-sdk-jars"</span>&gt;</span>    <span class="tag">&lt;<span class="title">fileset</span> <span class="attribute">dir</span>=<span class="value">"${eclipse.home}/plugins/"</span>&gt;</span>
+<span class="tag">&lt;<span class="title">include</span> <span class="attribute">name</span>=<span class="value">"org.eclipse.ui*.jar"</span>/&gt;</span>
+<span class="tag">&lt;<span class="title">include</span> <span class="attribute">name</span>=<span class="value">"org.eclipse.jdt*.jar"</span>/&gt;</span>
+<span class="tag">&lt;<span class="title">include</span> <span class="attribute">name</span>=<span class="value">"org.eclipse.core*.jar"</span>/&gt;</span>
+<span class="tag">&lt;<span class="title">include</span> <span class="attribute">name</span>=<span class="value">"org.eclipse.equinox*.jar"</span>/&gt;</span>
+<span class="tag">&lt;<span class="title">include</span> <span class="attribute">name</span>=<span class="value">"org.eclipse.debug*.jar"</span>/&gt;</span>
+<span class="tag">&lt;<span class="title">include</span> <span class="attribute">name</span>=<span class="value">"org.eclipse.osgi*.jar"</span>/&gt;</span>
+<span class="tag">&lt;<span class="title">include</span> <span class="attribute">name</span>=<span class="value">"org.eclipse.swt*.jar"</span>/&gt;</span>
+<span class="tag">&lt;<span class="title">include</span> <span class="attribute">name</span>=<span class="value">"org.eclipse.jface*.jar"</span>/&gt;</span>
+<span class="tag">&lt;<span class="title">include</span> <span class="attribute">name</span>=<span class="value">"org.eclipse.team.cvs.ssh2*.jar"</span>/&gt;</span>
+<span class="tag">&lt;<span class="title">include</span> <span class="attribute">name</span>=<span class="value">"com.jcraft.jsch*.jar"</span>/&gt;</span>
+<span class="tag">&lt;/<span class="title">fileset</span>&gt;</span>
+<span class="tag">&lt;/<span class="title">path</span>&gt;</span>
+//添加这些内容
+<span class="tag">&lt;<span class="title">path</span> <span class="attribute">id</span>=<span class="value">"hadoop-lib-jars"</span>&gt;</span>
+<span class="tag">&lt;<span class="title">fileset</span> <span class="attribute">dir</span>=<span class="value">"${hadoop.root}/"</span>&gt;</span>
+<span class="tag">&lt;<span class="title">include</span> <span class="attribute">name</span>=<span class="value">"hadoop*.jar"</span> /&gt;</span>
+<span class="tag">&lt;/<span class="title">fileset</span>&gt;</span>
+<span class="tag">&lt;/<span class="title">path</span>&gt;</span>
+...
+
+<span class="tag">&lt;<span class="title">path</span> <span class="attribute">id</span>=<span class="value">"classpath"</span>&gt;</span>
+<span class="tag">&lt;<span class="title">pathelement</span> <span class="attribute">location</span>=<span class="value">"${build.classes}"</span>/&gt;</span>
+<span class="tag">&lt;<span class="title">pathelement</span> <span class="attribute">location</span>=<span class="value">"${hadoop.root}/build/classes"</span>/&gt;</span>
+<span class="tag">&lt;<span class="title">pathelement</span> <span class="attribute">location</span>=<span class="value">"${hadoop.root}/hadoop-core-1.1.2.jar"</span>/&gt;</span>
+<span class="tag">&lt;<span class="title">path</span> <span class="attribute">refid</span>=<span class="value">"eclipse-sdk-jars"</span>/&gt;</span>
+<span class="tag">&lt;<span class="title">path</span> <span class="attribute">refid</span>=<span class="value">"hadoop-lib-jars"</span> /&gt;</span>  //添加这一句
+<span class="tag">&lt;/<span class="title">path</span>&gt;</span>
+...
+先注释掉粗体内容前两项，后再添加七项
+<span class="tag">&lt;<span class="title">target</span> <span class="attribute">name</span>=<span class="value">"jar"</span> <span class="attribute">depends</span>=<span class="value">"compile"</span> <span class="attribute">unless</span>=<span class="value">"skip.contrib"</span>&gt;</span>    <span class="tag">&lt;<span class="title">mkdir</span> <span class="attribute">dir</span>=<span class="value">"${build.dir}/lib"</span>/&gt;</span>
+<span class="comment">&lt;!-- &lt;copy file="${hadoop.root}/build/hadoop-core-${version}.jar" tofile="${build.dir}/lib/hadoop-core.jar" verbose="true"/&gt;
+&lt;copy file="${hadoop.root}/build/ivy/lib/Hadoop/common/commons-cli-${commons-cli.version}.jar"  todir="${build.dir}/lib" verbose="true"/&gt;--&gt;</span>
+//添加这七项
+<span class="tag">&lt;<span class="title">copy</span> <span class="attribute">file</span>=<span class="value">"${hadoop.root}/hadoop-core-${version}.jar"</span> <span class="attribute">tofile</span>=<span class="value">"${build.dir}/lib/hadoop-core.jar"</span> <span class="attribute">verbose</span>=<span class="value">"true"</span>/&gt;</span>
+<span class="tag">&lt;<span class="title">copy</span> <span class="attribute">file</span>=<span class="value">"${hadoop.root}/lib/commons-cli-${commons-cli.version}.jar"</span> <span class="attribute">todir</span>=<span class="value">"${build.dir}/lib"</span> <span class="attribute">verbose</span>=<span class="value">"true"</span>/&gt;</span>
+<span class="tag">&lt;<span class="title">copy</span> <span class="attribute">file</span>=<span class="value">"${hadoop.root}/lib/commons-configuration-1.6.jar"</span> <span class="attribute">todir</span>=<span class="value">"${build.dir}/lib"</span> <span class="attribute">verbose</span>=<span class="value">"true"</span>/&gt;</span>
+<span class="tag">&lt;<span class="title">copy</span> <span class="attribute">file</span>=<span class="value">"${hadoop.root}/lib/commons-httpclient-3.0.1.jar"</span> <span class="attribute">todir</span>=<span class="value">"${build.dir}/lib"</span> <span class="attribute">verbose</span>=<span class="value">"true"</span>/&gt;</span>
+<span class="tag">&lt;<span class="title">copy</span> <span class="attribute">file</span>=<span class="value">"${hadoop.root}/lib/commons-lang-2.4.jar"</span> <span class="attribute">todir</span>=<span class="value">"${build.dir}/lib"</span> <span class="attribute">verbose</span>=<span class="value">"true"</span>/&gt;</span>
+<span class="tag">&lt;<span class="title">copy</span> <span class="attribute">file</span>=<span class="value">"${hadoop.root}/lib/jackson-core-asl-1.8.8.jar"</span> <span class="attribute">todir</span>=<span class="value">"${build.dir}/lib"</span> <span class="attribute">verbose</span>=<span class="value">"true"</span>/&gt;</span>
+<span class="tag">&lt;<span class="title">copy</span> <span class="attribute">file</span>=<span class="value">"${hadoop.root}/lib/jackson-mapper-asl-1.8.8.jar"</span> <span class="attribute">todir</span>=<span class="value">"${build.dir}/lib"</span> <span class="attribute">verbose</span>=<span class="value">"true"</span>/&gt;</span>
+
+找到src\contrib\build-contrib.xml，添加以下几行：
+
+<span class="tag">&lt;<span class="title">property</span> <span class="attribute">name</span>=<span class="value">"version"</span> <span class="attribute">value</span>=<span class="value">"1.2.1"</span>/&gt;</span>
+<span class="tag">&lt;<span class="title">property</span> <span class="attribute">name</span>=<span class="value">"ivy.version"</span> <span class="attribute">value</span>=<span class="value">"2.1.0"</span>/&gt;</span>
+<span class="tag">&lt;<span class="title">property</span> <span class="attribute">name</span>=<span class="value">"eclipse.home"</span> <span class="attribute">location</span>=<span class="value">"..."</span>/&gt;</span>
+eclipse的路径请换成你主机上的eclipse存放路径。
+</code></pre><h5 id="编译，并将插件拷到对应目录">编译，并将插件拷到对应目录</h5>
+<pre><code>[<span class="keyword">grid</span><span class="variable">@hadoop01</span> eclipse-plugin]$ ant
+Buildfile: /home/<span class="keyword">grid</span>/hadoop-<span class="number">1.2</span><span class="number">.1</span>/src/contrib/eclipse-plugin/build.xml
+
+check-contrib:
+
+init:
+     [echo] contrib: eclipse-plugin
+
+init-contrib:
+
+ivy-download:
+      [get] Getting: http:<span class="comment">//repo2.maven.org/maven2/org/apache/ivy/ivy/2.1.0/ivy-2.1.0.jar</span>
+      [get] To: /home/<span class="keyword">grid</span>/hadoop-<span class="number">1.2</span><span class="number">.1</span>/ivy/ivy-<span class="number">2.1</span><span class="number">.0</span>.jar
+      [get] Not modified - so not downloaded
+
+ivy-probe-antlib:
+
+ivy-init-antlib:
+
+ivy-init:
+[ivy:configure] :: Ivy <span class="number">2.1</span><span class="number">.0</span> - <span class="number">20090925235825</span> :: http:<span class="comment">//ant.apache.org/ivy/ ::</span>
+[ivy:configure] :: loading settings :: <span class="keyword">file</span> = /home/<span class="keyword">grid</span>/hadoop-<span class="number">1.2</span><span class="number">.1</span>/ivy/ivysettings.xml
+
+ivy-resolve-common:
+
+ivy-retrieve-common:
+[ivy:cachepath] DEPRECATED: <span class="string">'ivy.conf.file'</span> is deprecated, use <span class="string">'ivy.settings.file'</span> instead
+[ivy:cachepath] :: loading settings :: <span class="keyword">file</span> = /home/<span class="keyword">grid</span>/hadoop-<span class="number">1.2</span><span class="number">.1</span>/ivy/ivysettings.xml
+
+compile:
+     [echo] contrib: eclipse-plugin
+    [javac] /home/<span class="keyword">grid</span>/hadoop-<span class="number">1.2</span><span class="number">.1</span>/src/contrib/eclipse-plugin/build.xml:<span class="number">68</span>: <span class="keyword">warning</span>: <span class="string">'includeantruntime'</span> was not set, defaulting to build.sysclasspath=last; set to false <span class="keyword">for</span> repeatable builds
+
+jar:
+     [copy] Copying <span class="number">1</span> <span class="keyword">file</span> to /home/<span class="keyword">grid</span>/hadoop-<span class="number">1.2</span><span class="number">.1</span>/build/contrib/eclipse-plugin/lib
+     [copy] Copying /home/<span class="keyword">grid</span>/hadoop-<span class="number">1.2</span><span class="number">.1</span>/hadoop-core-<span class="number">1.2</span><span class="number">.1</span>.jar to /home/<span class="keyword">grid</span>/hadoop-<span class="number">1.2</span><span class="number">.1</span>/build/contrib/eclipse-plugin/lib/hadoop-core.jar
+     [copy] Copying <span class="number">1</span> <span class="keyword">file</span> to /home/<span class="keyword">grid</span>/hadoop-<span class="number">1.2</span><span class="number">.1</span>/build/contrib/eclipse-plugin/lib
+     [copy] Copying /home/<span class="keyword">grid</span>/hadoop-<span class="number">1.2</span><span class="number">.1</span>/lib/commons-cli-<span class="number">1.2</span>.jar to /home/<span class="keyword">grid</span>/hadoop-<span class="number">1.2</span><span class="number">.1</span>/build/contrib/eclipse-plugin/lib/commons-cli-<span class="number">1.2</span>.jar
+     [copy] Copying <span class="number">1</span> <span class="keyword">file</span> to /home/<span class="keyword">grid</span>/hadoop-<span class="number">1.2</span><span class="number">.1</span>/build/contrib/eclipse-plugin/lib
+     [copy] Copying /home/<span class="keyword">grid</span>/hadoop-<span class="number">1.2</span><span class="number">.1</span>/lib/commons-lang-<span class="number">2.4</span>.jar to /home/<span class="keyword">grid</span>/hadoop-<span class="number">1.2</span><span class="number">.1</span>/build/contrib/eclipse-plugin/lib/commons-lang-<span class="number">2.4</span>.jar
+     [copy] Copying <span class="number">1</span> <span class="keyword">file</span> to /home/<span class="keyword">grid</span>/hadoop-<span class="number">1.2</span><span class="number">.1</span>/build/contrib/eclipse-plugin/lib
+     [copy] Copying /home/<span class="keyword">grid</span>/hadoop-<span class="number">1.2</span><span class="number">.1</span>/lib/commons-configuration-<span class="number">1.6</span>.jar to /home/<span class="keyword">grid</span>/hadoop-<span class="number">1.2</span><span class="number">.1</span>/build/contrib/eclipse-plugin/lib/commons-configuration-<span class="number">1.6</span>.jar
+     [copy] Copying <span class="number">1</span> <span class="keyword">file</span> to /home/<span class="keyword">grid</span>/hadoop-<span class="number">1.2</span><span class="number">.1</span>/build/contrib/eclipse-plugin/lib
+     [copy] Copying /home/<span class="keyword">grid</span>/hadoop-<span class="number">1.2</span><span class="number">.1</span>/lib/jackson-mapper-asl-<span class="number">1.8</span><span class="number">.8</span>.jar to /home/<span class="keyword">grid</span>/hadoop-<span class="number">1.2</span><span class="number">.1</span>/build/contrib/eclipse-plugin/lib/jackson-mapper-asl-<span class="number">1.8</span><span class="number">.8</span>.jar
+     [copy] Copying <span class="number">1</span> <span class="keyword">file</span> to /home/<span class="keyword">grid</span>/hadoop-<span class="number">1.2</span><span class="number">.1</span>/build/contrib/eclipse-plugin/lib
+     [copy] Copying /home/<span class="keyword">grid</span>/hadoop-<span class="number">1.2</span><span class="number">.1</span>/lib/jackson-core-asl-<span class="number">1.8</span><span class="number">.8</span>.jar to /home/<span class="keyword">grid</span>/hadoop-<span class="number">1.2</span><span class="number">.1</span>/build/contrib/eclipse-plugin/lib/jackson-core-asl-<span class="number">1.8</span><span class="number">.8</span>.jar
+     [copy] Copying <span class="number">1</span> <span class="keyword">file</span> to /home/<span class="keyword">grid</span>/hadoop-<span class="number">1.2</span><span class="number">.1</span>/build/contrib/eclipse-plugin/lib
+     [copy] Copying /home/<span class="keyword">grid</span>/hadoop-<span class="number">1.2</span><span class="number">.1</span>/lib/commons-httpclient-<span class="number">3.0</span><span class="number">.1</span>.jar to /home/<span class="keyword">grid</span>/hadoop-<span class="number">1.2</span><span class="number">.1</span>/build/contrib/eclipse-plugin/lib/commons-httpclient-<span class="number">3.0</span><span class="number">.1</span>.jar
+      [jar] Building jar: /home/<span class="keyword">grid</span>/hadoop-<span class="number">1.2</span><span class="number">.1</span>/build/contrib/eclipse-plugin/hadoop-eclipse-plugin-<span class="number">1.2</span><span class="number">.1</span>.jar
+
+BUILD SUCCESSFUL
+Total time: <span class="number">10</span> seconds
+[<span class="keyword">grid</span><span class="variable">@hadoop01</span> eclipse-plugin]$ <span class="keyword">ls</span>
+build.properties  build.xml  ivy  ivy.xml  META-INF  plugin.xml  resources  src
+[<span class="keyword">grid</span><span class="variable">@hadoop01</span> eclipse-plugin]$ <span class="keyword">pwd</span>
+/home/<span class="keyword">grid</span>/hadoop-<span class="number">1.2</span><span class="number">.1</span>/src/contrib/eclipse-plugin
+[<span class="keyword">grid</span><span class="variable">@hadoop01</span> eclipse-plugin]$ cd /home/<span class="keyword">grid</span>/hadoop-<span class="number">1.2</span><span class="number">.1</span>/build/contrib/eclipse-plugin/
+[<span class="keyword">grid</span><span class="variable">@hadoop01</span> eclipse-plugin]$ <span class="keyword">ls</span>
+classes  examples  hadoop-eclipse-plugin-<span class="number">1.2</span><span class="number">.1</span>.jar  lib  <span class="keyword">system</span>  test
+[root<span class="variable">@hadoop01</span> plugins]# cp /home/<span class="keyword">grid</span>/hadoop-<span class="number">1.2</span><span class="number">.1</span>/build/contrib/eclipse-plugin/hadoop-eclipse-plugin-<span class="number">1.2</span><span class="number">.1</span>.jar  /opt/eclipse/plugins/
+</code></pre><h5 id="建立测试数据文件word-txt">建立测试数据文件word.txt</h5>
+<pre><code>[<span class="keyword">grid</span><span class="variable">@hadoop01</span> ~]$ cd hadoop-<span class="number">1.2</span><span class="number">.1</span>/myclass/
+[<span class="keyword">grid</span><span class="variable">@hadoop01</span> myclass]$ <span class="keyword">ls</span>
+FileSystemCat.class  FileSystemCat.java  noaa  <span class="keyword">python</span>
+[<span class="keyword">grid</span><span class="variable">@hadoop01</span> myclass]$ touch word.txt
+[<span class="keyword">grid</span><span class="variable">@hadoop01</span> myclass]$ vi word.txt 
+[<span class="keyword">grid</span><span class="variable">@hadoop01</span> myclass]$ hadoop fs -mkdir /tmp/wordcount
+Warning: <span class="variable">$HADOOP_HOME</span> is deprecated.
+
+[<span class="keyword">grid</span><span class="variable">@hadoop01</span> myclass]$ hadoop fs -copyFromLocal /home/<span class="keyword">grid</span>/hadoop-<span class="number">1.2</span><span class="number">.1</span>/myclass/word.txt  /tmp/wordcount/word.txt
+Warning: <span class="variable">$HADOOP_HOME</span> is deprecated.
+
+[<span class="keyword">grid</span><span class="variable">@hadoop01</span> myclass]$ cat word.txt 
+java c++ <span class="keyword">python</span> c
+java c++ javascript 
+helloworld hadoop
+mapreduce java hadoop hbase 
+[<span class="keyword">grid</span><span class="variable">@hadoop01</span> myclass]$
+</code></pre><h5 id="在eclipse上安装hadoop插件">在eclipse上安装hadoop插件</h5>
+<p>启动eclipse，配置hadoop installation directory。 如果安装插件成功，打开Window—&gt;Preferens，你会发现Hadoop Map/Reduce选项，在这个选项里你需要配置Hadoop installation directory。配置完成后退出。<br><img src="/img/Hadoop/eclipse/2.png" alt="图2"></p>
+<h5 id="配置Map/Reduce_Locations。">配置Map/Reduce Locations。</h5>
+<p>在Window—&gt;Show View中打开Map/Reduce Locations。 在Map/Reduce Locations中新建一个Hadoop Location。在这个View中，右键—&gt;New Hadoop Location。在弹出的对话框中你需要配置Location name，如Hadoop，还有Map/Reduce Master和DFS Master。这里面的Host、Port分别为你在mapred-site.xml、core-site.xml中配置的地址及端口。<br><img src="/img/Hadoop/eclipse/3.png" alt="图3"><br><img src="/img/Hadoop/eclipse/4.png" alt="图4"><br>配置完后退出。点击DFS Locations—&gt;Hadoop如果能显示文件夹(2)说明配置正确，如果显示”拒绝连接”，请检查你的配置。<br><img src="/img/Hadoop/eclipse/5.png" alt="图5"></p>
+<h5 id="建立项目">建立项目</h5>
+<p>新建项目 File—&gt;New—&gt;Other—&gt;Map/Reduce Project 项目名可以随便取，如WordCount。 复制 hadoop安装目录/src/example/org/apache/hadoop/example/WordCount.java到刚才新建的项目下面。</p>
+<p>通过hadoop的命令在HDFS上创建/tmp/workcount目录，命令如下：bin/hadoop fs -mkdir /tmp/wordcount</p>
+<p>通过copyFromLocal命令把本地的word.txt复制到HDFS上，命令如下：bin/hadoop fs -copyFromLocal /home/grid/word.txt  /tmp/wordcount/word.txt </p>
+<h5 id="运行项目">运行项目</h5>
+<p>在新建的项目Hadoop，点击WordCount.java，右键—&gt;Run As—&gt;Run Configurations  在弹出的Run Configurations对话框中，点Java Application，右键—&gt;New，这时会新建一个application名为WordCount 配置运行参数，点Arguments，在Program arguments中输入“你要传给程序的输入文件夹和你要求程序将计算结果保存的文件夹”，如：<br><img src="/img/Hadoop/eclipse/6.png" alt="图6"></p>
+<p>运行<br><img src="/img/Hadoop/eclipse/7.png" alt="图7"></p>
+]]></content>
+    
+    
+      <category term="Hadoop" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/Hadoop/"/>
+    
+      <category term="Eclipse" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/Eclipse/"/>
+    
+      <category term="Hadoop" scheme="https://github.com/DaMinger/DaMinger.github.io.git/categories/Hadoop/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[Map-Reduce入门]]></title>
+    <link href="https://github.com/DaMinger/DaMinger.github.io.git/2014/04/21/Hadoop/map_reduce/"/>
+    <id>https://github.com/DaMinger/DaMinger.github.io.git/2014/04/21/Hadoop/map_reduce/</id>
+    <published>2014-04-21T13:50:52.000Z</published>
+    <updated>2014-04-21T15:15:41.000Z</updated>
+    <content type="html"><![CDATA[<h5 id="Map-Reduce的逻辑过程">Map-Reduce的逻辑过程</h5>
+<p>假设我们需要处理一批有关天气的数据，其格式如下：按照ASCII码存储，每行一条记录,每一行字符从0开始计数，第15个到第18个字符为年,第25个到第29个字符为温度，其中第25位是符号+/-<br>    0067011990999991950051507+0000+<br>    0043011990999991950051512+0022+<br>    0043011990999991950051518-0011+<br>    0043012650999991949032412+0111+<br>    0043012650999991949032418+0078+<br>    0067011990999991937051507+0001+<br>    0043011990999991937051512-0002+<br>    0043011990999991945051518+0001+<br>    0043012650999991945032412+0002+<br>    0043012650999991945032418+0078+</p>
+<p>现在需要统计出每年的最高温度。Map-Reduce主要包括两个步骤：Map和Reduce。每一步都有key-value对作为输入和输出：map阶段的key-value对的格式是由输入的格式所决定的，如果是默认的TextInputFormat，则每行作为一个记录进程处理，其中key为此行的开头相对于文件的起始位置，value就是此行的字符文本map阶段的输出的key-value对的格式必须同reduce阶段的输入key-value对的格式相对应。</p>
+<p>对于上面的例子，在map过程，输入的key-value对如下：</p>
+<pre><code><span class="list">(<span class="title">0</span>,<span class="number"> 0067011990999991950051507</span>+0000+)</span>
+<span class="list">(<span class="title">33</span>,<span class="number"> 0043011990999991950051512</span>+0022+)</span>
+<span class="list">(<span class="title">66</span>,<span class="number"> 0043011990999991950051518</span>-0011+)</span>
+<span class="list">(<span class="title">99</span>,<span class="number"> 0043012650999991949032412</span>+0111+)</span>
+<span class="list">(<span class="title">132</span>,<span class="number"> 0043012650999991949032418</span>+0078+)</span>
+<span class="list">(<span class="title">165</span>,<span class="number"> 0067011990999991937051507</span>+0001+)</span>
+<span class="list">(<span class="title">198</span>,<span class="number"> 0043011990999991937051512</span>-0002+)</span>
+<span class="list">(<span class="title">231</span>,<span class="number"> 0043011990999991945051518</span>+0001+)</span>
+<span class="list">(<span class="title">264</span>,<span class="number"> 0043012650999991945032412</span>+0002+)</span>
+<span class="list">(<span class="title">297</span>,<span class="number"> 0043012650999991945032418</span>+0078+)</span>
+</code></pre><p>在map过程中，通过对每一行字符串的解析，得到年-温度的key-value对作为输出：</p>
+<pre><code><span class="list">(<span class="title">1950</span>,<span class="number"> 0</span>)</span>
+<span class="list">(<span class="title">1950</span>,<span class="number"> 22</span>)</span>
+<span class="list">(<span class="title">1950</span>, -11)</span>
+<span class="list">(<span class="title">1949</span>,<span class="number"> 111</span>)</span>
+<span class="list">(<span class="title">1949</span>,<span class="number"> 78</span>)</span>
+<span class="list">(<span class="title">1937</span>,<span class="number"> 1</span>)</span>
+<span class="list">(<span class="title">1937</span>, -2)</span>
+<span class="list">(<span class="title">1945</span>,<span class="number"> 1</span>)</span>
+<span class="list">(<span class="title">1945</span>,<span class="number"> 2</span>)</span>
+<span class="list">(<span class="title">1945</span>,<span class="number"> 78</span>)</span>
+</code></pre><p>在reduce过程，将map过程中的输出，按照相同的key将value放到同一个列表中作为reduce的输入</p>
+<pre><code><span class="list">(<span class="title">1950</span>, <span class="collection">[0,<span class="number"> 22</span>, –11]</span>)</span>
+<span class="list">(<span class="title">1949</span>, <span class="collection">[111,<span class="number"> 78</span>]</span>)</span>
+<span class="list">(<span class="title">1937</span>, <span class="collection">[1, -2]</span>)</span>
+<span class="list">(<span class="title">1945</span>, <span class="collection">[1,<span class="number"> 2</span>,<span class="number"> 78</span>]</span>)</span>
+</code></pre><p>在reduce过程中，在列表中选择出最大的温度，将年-最大温度的key-value作为输出：</p>
+<pre><code><span class="list">(<span class="title">1950</span>,<span class="number"> 22</span>)</span>
+<span class="list">(<span class="title">1949</span>,<span class="number"> 111</span>)</span>
+<span class="list">(<span class="title">1937</span>,<span class="number"> 1</span>)</span>
+<span class="list">(<span class="title">1945</span>,<span class="number"> 78</span>)</span>
+</code></pre><p>其逻辑过程可用如下图表示：<br><img src="/img/Hadoop/MapReduce/1.png" alt="图1"></p>
+<h5 id="编写Map-Reduce程序">编写Map-Reduce程序</h5>
+<p>编写Map-Reduce程序，一般需要实现两个函数：mapper中的map函数和reducer中的reduce函数。<br>一般遵循以下格式：</p>
+<pre><code>map: (K1, V1)  -&gt;  <span class="keyword">list</span>(K2, V2)
+<span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Mapper</span>&lt;<span class="title">K1</span>, <span class="title">V1</span>, <span class="title">K2</span>, <span class="title">V2</span>&gt; <span class="keyword">extends</span> <span class="title">JobConfigurable</span>, <span class="title">Closeable</span> {</span>
+
+  void map(K1 key, V1 value, OutputCollector&lt;K2, V2&gt; output, Reporter reporter)
+
+  throws IOException;
+
+}
+
+reduce: (K2, <span class="keyword">list</span>(V))  -&gt;  <span class="keyword">list</span>(K3, V3) 
+<span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Reducer</span>&lt;<span class="title">K2</span>, <span class="title">V2</span>, <span class="title">K3</span>, <span class="title">V3</span>&gt; <span class="keyword">extends</span> <span class="title">JobConfigurable</span>, <span class="title">Closeable</span> {</span>
+
+  void reduce(K2 key, Iterator&lt;V2&gt; values,
+
+              OutputCollector&lt;K3, V3&gt; output, Reporter reporter)
+
+    throws IOException;
+
+}
+</code></pre><p>对于上面的例子，则实现的mapper如下：</p>
+<pre><code><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MaxTemperatureMapper</span> <span class="inheritance"><span class="keyword">extends</span></span> <span class="title">MapReduceBase</span> <span class="inheritance"><span class="keyword">implements</span></span> <span class="title">Mapper</span>&lt;<span class="title">LongWritable</span>, <span class="title">Text</span>, <span class="title">Text</span>, <span class="title">IntWritable</span>&gt; {</span>
+
+    @Override
+
+    <span class="keyword">public</span> <span class="keyword">void</span> map(LongWritable key, Text value, OutputCollector&lt;Text, IntWritable&gt; output, Reporter reporter) throws IOException {
+
+        String line = value.toString();
+
+        String year = line.substring(<span class="number">15</span>, <span class="number">19</span>);
+
+        <span class="keyword">int</span> airTemperature;
+
+        <span class="keyword">if</span> (line.charAt(<span class="number">25</span>) == <span class="string">'+'</span>) {
+
+            airTemperature = Integer.parseInt(line.substring(<span class="number">26</span>, <span class="number">30</span>));
+
+        } <span class="keyword">else</span> {
+
+            airTemperature = Integer.parseInt(line.substring(<span class="number">25</span>, <span class="number">30</span>));
+
+        }
+
+        output.collect(<span class="keyword">new</span> Text(year), <span class="keyword">new</span> IntWritable(airTemperature));
+
+    }
+
+}
+</code></pre><p>实现的reducer如下：</p>
+<pre><code><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MaxTemperatureReducer</span> <span class="inheritance"><span class="keyword">extends</span></span> <span class="title">MapReduceBase</span> <span class="inheritance"><span class="keyword">implements</span></span> <span class="title">Reducer</span>&lt;<span class="title">Text</span>, <span class="title">IntWritable</span>, <span class="title">Text</span>, <span class="title">IntWritable</span>&gt; {</span>
+
+    <span class="keyword">public</span> <span class="keyword">void</span> reduce(Text key, Iterator&lt;IntWritable&gt; values, OutputCollector&lt;Text, IntWritable&gt; output, Reporter reporter) throws IOException {
+
+        <span class="keyword">int</span> maxValue = Integer.MIN_VALUE;
+
+        <span class="keyword">while</span> (values.hasNext()) {
+
+            maxValue = Math.max(maxValue, values.next().get());
+
+        }
+
+        output.collect(key, <span class="keyword">new</span> IntWritable(maxValue));
+
+    }
+
+}
+</code></pre><p>欲运行上面实现的Mapper和Reduce，则需要生成一个Map-Reduce得任务(Job)，其基本包括以下三部分：</p>
+<pre><code>输入的数据，也即需要处理的数据
+<span class="keyword">Map</span>-<span class="keyword">Reduce</span>程序，也即上面实现的Mapper和Reducer
+此任务的配置项JobConf
+</code></pre><p>欲配置JobConf，需要大致了解Hadoop运行job的基本原理：</p>
+<pre><code>Hadoop将Job分成task进行处理，共两种task：map task和reduce task
+Hadoop有两类的节点控制job的运行：JobTracker和TaskTracker
+JobTracker协调整个job的运行，将task分配到不同的TaskTracker上
+TaskTracker负责运行task，并将结果返回给JobTracker
+Hadoop将输入数据分成固定大小的块，我们称之input split
+Hadoop为每一个input split创建一个task，在此task中依次处理此split中的一个个记录(record)
+Hadoop会尽量让输入数据块所在的DataNode和task所执行的DataNode(每个DataNode上都有一个TaskTracker)为同一个，
+可以提高运行效率，所以input split的大小也一般是HDFS的block的大小。
+Reduce task的输入一般为Map Task的输出，Reduce Task的输出为整个job的输出，保存在HDFS上。
+在reduce中，相同key的所有的记录一定会到同一个TaskTracker上面运行，
+然而不同的key可以在不同的TaskTracker上面运行，我们称之为partition
+partition的规则为：(K2, V2) –&gt; Integer， 也即根据K2，生成一个partition的id，
+具有相同id的K2则进入同一个partition，被同一个TaskTracker上被同一个Reducer进行处理。
+<span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Partitioner</span>&lt;<span class="title">K2</span>, <span class="title">V2</span>&gt; <span class="inheritance"><span class="keyword">extends</span></span> <span class="title">JobConfigurable</span> {</span>
+
+<span class="keyword">int</span> getPartition(K2 key, V2 value, <span class="keyword">int</span> numPartitions);
+
+}
+</code></pre><p>下图大概描述了Map-Reduce的Job运行的基本原理：<br><img src="/img/Hadoop/MapReduce/2.png" alt="图2"></p>
+<p>下面我们讨论JobConf，其有很多的项可以进行配置：<br>1、setInputFormat：设置map的输入格式，默认为TextInputFormat，key为LongWritable, value为Text<br>2、setNumMapTasks：设置map任务的个数，此设置通常不起作用，map任务的个数取决于输入的数据所能分成的input split的个数<br>3、setMapperClass：设置Mapper，默认为IdentityMapper<br>4、setMapRunnerClass：设置MapRunner, map task是由MapRunner运行的，默认为MapRunnable，其功能为读取input split的一个个record，依次调用Mapper的map函数<br>5、setMapOutputKeyClass和setMapOutputValueClass：设置Mapper的输出的key-value对的格式<br>6、setOutputKeyClass和setOutputValueClass：设置Reducer的输出的key-value对的格式<br>7、setPartitionerClass和setNumReduceTasks：设置Partitioner，默认为HashPartitioner，其根据key的hash值来决定进入哪个partition，每个partition被一个reduce task处理，所以partition的个数等于reduce task的个数<br>8、setReducerClass：设置Reducer，默认为IdentityReducer<br>9、setOutputFormat：设置任务的输出格式，默认为TextOutputFormat<br>10、FileInputFormat.addInputPath：设置输入文件的路径，可以使一个文件，一个路径，一个通配符。可以被调用多次添加多个路径<br>11、FileOutputFormat.setOutputPath：设置输出文件的路径，在job运行前此路径不应该存在</p>
+<p>当然不用所有的都设置，由上面的例子，可以编写Map-Reduce程序如下：</p>
+<pre><code>public class MaxTemperature {
+
+    public static void main(String[] args) throws IOException {
+
+        if (args<span class="preprocessor">.length</span> != <span class="number">2</span>) {
+
+            System<span class="preprocessor">.err</span><span class="preprocessor">.println</span>(<span class="string">"Usage: MaxTemperature &lt;input path&gt; &lt;output path&gt;"</span>)<span class="comment">;</span>
+
+            System<span class="preprocessor">.exit</span>(-<span class="number">1</span>)<span class="comment">;</span>
+
+        }
+
+        JobConf conf = new JobConf(MaxTemperature<span class="preprocessor">.class</span>)<span class="comment">;</span>
+
+        conf<span class="preprocessor">.setJobName</span>(<span class="string">"Max temperature"</span>)<span class="comment">;</span>
+
+        FileInputFormat<span class="preprocessor">.addInputPath</span>(conf, new Path(args[<span class="number">0</span>]))<span class="comment">;</span>
+
+        FileOutputFormat<span class="preprocessor">.setOutputPath</span>(conf, new Path(args[<span class="number">1</span>]))<span class="comment">;</span>
+
+        conf<span class="preprocessor">.setMapperClass</span>(MaxTemperatureMapper<span class="preprocessor">.class</span>)<span class="comment">;</span>
+
+        conf<span class="preprocessor">.setReducerClass</span>(MaxTemperatureReducer<span class="preprocessor">.class</span>)<span class="comment">;</span>
+
+        conf<span class="preprocessor">.setOutputKeyClass</span>(Text<span class="preprocessor">.class</span>)<span class="comment">;</span>
+
+        conf<span class="preprocessor">.setOutputValueClass</span>(IntWritable<span class="preprocessor">.class</span>)<span class="comment">;</span>
+
+        JobClient<span class="preprocessor">.runJob</span>(conf)<span class="comment">;</span>
+
+    }
+
+}
+</code></pre><h5 id="Map-Reduce数据流(data_flow)">Map-Reduce数据流(data flow)</h5>
+<p>Map-Reduce的处理过程主要涉及以下四个部分：<br>1、客户端Client：用于提交Map-reduce任务job<br>2、JobTracker：协调整个job的运行，其为一个Java进程，其main class为JobTracker<br>3、TaskTracker：运行此job的task，处理input split，其为一个Java进程，其main class为TaskTracker<br>4、HDFS：hadoop分布式文件系统，用于在各个进程间共享Job相关的文件<br><img src="/img/Hadoop/MapReduce/3.png" alt="图3"></p>
+<h6 id="任务提交">任务提交</h6>
+<p>JobClient.runJob()创建一个新的JobClient实例，调用其submitJob()函数。</p>
+<p>向JobTracker请求一个新的job ID</p>
+<p>检测此job的output配置</p>
+<p>计算此job的input splits</p>
+<p>将Job运行所需的资源拷贝到JobTracker的文件系统中的文件夹中，包括job jar文件，job.xml配置文件，input splits</p>
+<p>通知JobTracker此Job已经可以运行了</p>
+<p>提交任务后，runJob每隔一秒钟轮询一次job的进度，将进度返回到命令行，直到任务运行完毕。</p>
+<h6 id="任务初始化">任务初始化</h6>
+<p>当JobTracker收到submitJob调用的时候，将此任务放到一个队列中，job调度器将从队列中获取任务并初始化任务。</p>
+<p>初始化首先创建一个对象来封装job运行的tasks, status以及progress。</p>
+<p>在创建task之前，job调度器首先从共享文件系统中获得JobClient计算出的input splits。</p>
+<p>其为每个input split创建一个map task。</p>
+<p>每个task被分配一个ID。</p>
+<h6 id="任务分配">任务分配</h6>
+<p>TaskTracker周期性的向JobTracker发送heartbeat。</p>
+<p>在heartbeat中，TaskTracker告知JobTracker其已经准备运行一个新的task，JobTracker将分配给其一个task。</p>
+<p>在JobTracker为TaskTracker选择一个task之前，JobTracker必须首先按照优先级选择一个Job，在最高优先级的Job中选择一个task。</p>
+<p>TaskTracker有固定数量的位置来运行map task或者reduce task。</p>
+<p>默认的调度器对待map task优先于reduce task</p>
+<p>当选择reduce task的时候，JobTracker并不在多个task之间进行选择，而是直接取下一个，因为reduce task没有数据本地化的概念。</p>
+<h6 id="任务执行">任务执行</h6>
+<p>TaskTracker被分配了一个task，下面便要运行此task。</p>
+<p>首先，TaskTracker将此job的jar从共享文件系统中拷贝到TaskTracker的文件系统中。</p>
+<p>TaskTracker从distributed cache中将job运行所需要的文件拷贝到本地磁盘。</p>
+<p>其次，其为每个task创建一个本地的工作目录，将jar解压缩到文件目录中。</p>
+<p>其三，其创建一个TaskRunner来运行task。</p>
+<p>TaskRunner创建一个新的JVM来运行task。</p>
+<p>被创建的child JVM和TaskTracker通信来报告运行进度。</p>
+<h6 id="Map的过程">Map的过程</h6>
+<p>MapRunnable从input split中读取一个个的record，然后依次调用Mapper的map函数，将结果输出。</p>
+<p>map的输出并不是直接写入硬盘，而是将其写入缓存memory buffer。</p>
+<p>当buffer中数据的到达一定的大小，一个背景线程将数据开始写入硬盘。</p>
+<p>在写入硬盘之前，内存中的数据通过partitioner分成多个partition。</p>
+<p>在同一个partition中，背景线程会将数据按照key在内存中排序。</p>
+<p>每次从内存向硬盘flush数据，都生成一个新的spill文件。</p>
+<p>当此task结束之前，所有的spill文件被合并为一个整的被partition的而且排好序的文件。</p>
+<p>reducer可以通过http协议请求map的输出文件，tracker.http.threads可以设置http服务线程数。</p>
+<h6 id="Reduce的过程">Reduce的过程</h6>
+<p>当map task结束后，其通知TaskTracker，TaskTracker通知JobTracker。</p>
+<p>对于一个job，JobTracker知道TaskTracer和map输出的对应关系。</p>
+<p>reducer中一个线程周期性的向JobTracker请求map输出的位置，直到其取得了所有的map输出。</p>
+<p>reduce task需要其对应的partition的所有的map输出。</p>
+<p>reduce task中的copy过程即当每个map task结束的时候就开始拷贝输出，因为不同的map task完成时间不同。</p>
+<p>reduce task中有多个copy线程，可以并行拷贝map输出。</p>
+<p>当很多map输出拷贝到reduce task后，一个背景线程将其合并为一个大的排好序的文件。</p>
+<p>当所有的map输出都拷贝到reduce task后，进入sort过程，将所有的map输出合并为大的排好序的文件。</p>
+<p>最后进入reduce过程，调用reducer的reduce函数，处理排好序的输出的每个key，最后的结果写入HDFS。</p>
+<p><img src="/img/Hadoop/MapReduce/4.png" alt="图4"></p>
+<h6 id="任务结束">任务结束</h6>
+<p>当JobTracker获得最后一个task的运行成功的报告后，将job得状态改为成功。</p>
+<p>当JobClient从JobTracker轮询的时候，发现此job已经成功结束，则向用户打印消息，从runJob函数中返回。</p>
+]]></content>
+    
+    
+      <category term="Hadoop" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/Hadoop/"/>
+    
+      <category term="Map-Reduce" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/Map-Reduce/"/>
+    
+      <category term="Hadoop" scheme="https://github.com/DaMinger/DaMinger.github.io.git/categories/Hadoop/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[使用hadoop流的方法来实现对气象数据集求最高温度的分析任务（使用python）]]></title>
+    <link href="https://github.com/DaMinger/DaMinger.github.io.git/2014/04/21/Hadoop/hadoop_stream_python/"/>
+    <id>https://github.com/DaMinger/DaMinger.github.io.git/2014/04/21/Hadoop/hadoop_stream_python/</id>
+    <published>2014-04-21T13:50:46.000Z</published>
+    <updated>2014-04-21T14:18:29.000Z</updated>
+    <content type="html"><![CDATA[<p>使用hadoop流的方法来实现对气象数据集求最高温度的分析任务（使用python）</p>
+<p>创建python脚本</p>
+<pre><code>[<span class="keyword">grid</span><span class="variable">@hadoop01</span> <span class="keyword">python</span>]$ <span class="keyword">ls</span>
+max_temperature_map.py  max_temperature_reduce.py
+[<span class="keyword">grid</span><span class="variable">@hadoop01</span> <span class="keyword">python</span>]$ cat max_temperature_map.py 
+#!/bin/<span class="keyword">env</span> <span class="keyword">python</span>
+import re
+import sys
+<span class="keyword">for</span> line <span class="keyword">in</span> sys.stdin:
+  val = line.<span class="keyword">strip</span>()
+  (year, temp) = (val[<span class="number">0</span>:<span class="number">4</span>], val[<span class="number">13</span>:<span class="number">19</span>])
+  <span class="keyword">if</span> (temp != <span class="string">"+9999"</span>):
+    <span class="keyword">print</span> <span class="string">"%s\t%s"</span> % (year, temp)
+[<span class="keyword">grid</span><span class="variable">@hadoop01</span> <span class="keyword">python</span>]$ cat max_temperature_reduce.py 
+#!/bin/<span class="keyword">env</span> <span class="keyword">python</span>
+import sys
+
+(last_key, max_val) = (None, -sys.maxint)
+<span class="keyword">for</span> line <span class="keyword">in</span> sys.stdin:
+  (key, val) = line.<span class="keyword">strip</span>().split(<span class="string">"\t"</span>)
+  <span class="keyword">if</span> last_key and last_key != key:
+    <span class="keyword">print</span> <span class="string">"%s\t%s"</span> % (last_key, max_val)
+    (last_key, max_val) = (key, <span class="keyword">int</span>(val))
+  <span class="keyword">else</span>:
+    (last_key, max_val) = (key, <span class="keyword">max</span>(max_val, <span class="keyword">int</span>(val)))
+
+<span class="keyword">if</span> last_key:
+  <span class="keyword">print</span> <span class="string">"%s\t%s"</span> % (last_key, max_val)
+[<span class="keyword">grid</span><span class="variable">@hadoop01</span> <span class="keyword">python</span>]$ 
+</code></pre><p>编译运行</p>
+<pre><code>[grid@hadoop01 hadoop-<span class="number">1.2</span><span class="number">.1</span>]$ bin/hadoop jar contrib/streaming/hadoop-streaming-<span class="number">1.2</span><span class="number">.1</span><span class="preprocessor">.jar</span> -input ./<span class="keyword">in</span>/noaaSample<span class="preprocessor">.txt</span> -output ./out3 -mapper /home/grid/hadoop-<span class="number">1.2</span><span class="number">.1</span>/myclass/python/max_temperature_map<span class="preprocessor">.py</span> -reducer /home/grid/hadoop-<span class="number">1.2</span><span class="number">.1</span>/myclass/python/max_temperature_reduce<span class="preprocessor">.py</span> -file /home/grid/hadoop-<span class="number">1.2</span><span class="number">.1</span>/myclass/python/max_temperature_map<span class="preprocessor">.py</span> -file /home/grid/hadoop-<span class="number">1.2</span><span class="number">.1</span>/myclass/python/max_temperature_reduce<span class="preprocessor">.py</span> 
+<span class="label">Warning:</span> $HADOOP_HOME is deprecated.
+<span class="label">packageJobJar:</span> [/home/grid/hadoop-<span class="number">1.2</span><span class="number">.1</span>/myclass/python/max_temperature_map<span class="preprocessor">.py</span>, /home/grid/hadoop-<span class="number">1.2</span><span class="number">.1</span>/myclass/python/max_temperature_reduce<span class="preprocessor">.py</span>, /home/grid/hadoop-<span class="number">1.2</span><span class="number">.1</span>/tmp/hadoop-unjar7471324797393042067/] [] /tmp/streamjob6919467714598114562<span class="preprocessor">.jar</span> tmpDir=null
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">21</span>:<span class="number">35</span>:<span class="number">12</span> INFO util<span class="preprocessor">.NativeCodeLoader</span>: Loaded the native-hadoop library
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">21</span>:<span class="number">35</span>:<span class="number">12</span> WARN snappy<span class="preprocessor">.LoadSnappy</span>: Snappy native library not loaded
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">21</span>:<span class="number">35</span>:<span class="number">12</span> INFO mapred<span class="preprocessor">.FileInputFormat</span>: Total input paths to process : <span class="number">1</span>
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">21</span>:<span class="number">35</span>:<span class="number">13</span> INFO streaming<span class="preprocessor">.StreamJob</span>: getLocalDirs(): [/home/grid/hadoop-<span class="number">1.2</span><span class="number">.1</span>/tmp/mapred/local]
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">21</span>:<span class="number">35</span>:<span class="number">13</span> INFO streaming<span class="preprocessor">.StreamJob</span>: Running job: job_201404211930_0005
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">21</span>:<span class="number">35</span>:<span class="number">13</span> INFO streaming<span class="preprocessor">.StreamJob</span>: To kill this job, run:
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">21</span>:<span class="number">35</span>:<span class="number">13</span> INFO streaming<span class="preprocessor">.StreamJob</span>: /home/grid/hadoop-<span class="number">1.2</span><span class="number">.1</span>/libexec/../bin/hadoop job  -Dmapred<span class="preprocessor">.job</span><span class="preprocessor">.tracker</span>=hadoop01<span class="preprocessor">.myhadoop</span><span class="preprocessor">.com</span>:<span class="number">9001</span> -kill job_201404211930_0005
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">21</span>:<span class="number">35</span>:<span class="number">13</span> INFO streaming<span class="preprocessor">.StreamJob</span>: Tracking URL: http://hadoop01<span class="preprocessor">.myhadoop</span><span class="preprocessor">.com</span>:<span class="number">50030</span>/jobdetails<span class="preprocessor">.jsp</span>?jobid=job_201404211930_0005
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">21</span>:<span class="number">35</span>:<span class="number">14</span> INFO streaming<span class="preprocessor">.StreamJob</span>:  map <span class="number">0</span>%  reduce <span class="number">0</span>%
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">21</span>:<span class="number">35</span>:<span class="number">26</span> INFO streaming<span class="preprocessor">.StreamJob</span>:  map <span class="number">100</span>%  reduce <span class="number">0</span>%
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">21</span>:<span class="number">35</span>:<span class="number">35</span> INFO streaming<span class="preprocessor">.StreamJob</span>:  map <span class="number">100</span>%  reduce <span class="number">33</span>%
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">21</span>:<span class="number">35</span>:<span class="number">40</span> INFO streaming<span class="preprocessor">.StreamJob</span>:  map <span class="number">100</span>%  reduce <span class="number">100</span>%
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">21</span>:<span class="number">35</span>:<span class="number">43</span> INFO streaming<span class="preprocessor">.StreamJob</span>: Job complete: job_201404211930_0005
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">21</span>:<span class="number">35</span>:<span class="number">43</span> INFO streaming<span class="preprocessor">.StreamJob</span>: Output: ./out3
+</code></pre><p>查看结果</p>
+<pre><code>[<span class="keyword">grid</span><span class="variable">@hadoop01</span> hadoop-<span class="number">1.2</span><span class="number">.1</span>]$ hadoop fs -<span class="keyword">ls</span> ./out3
+Warning: <span class="variable">$HADOOP_HOME</span> is deprecated.
+Found <span class="number">3</span> items
+-rw-r--r--   <span class="number">2</span> <span class="keyword">grid</span> supergroup          <span class="number">0</span> <span class="number">2014</span>-<span class="number">04</span>-<span class="number">21</span> <span class="number">21</span>:<span class="number">35</span> /user/<span class="keyword">grid</span>/out3/_SUCCESS
+drwxr-xr-x   - <span class="keyword">grid</span> supergroup          <span class="number">0</span> <span class="number">2014</span>-<span class="number">04</span>-<span class="number">21</span> <span class="number">21</span>:<span class="number">35</span> /user/<span class="keyword">grid</span>/out3/_logs
+-rw-r--r--   <span class="number">2</span> <span class="keyword">grid</span> supergroup       <span class="number">5184</span> <span class="number">2014</span>-<span class="number">04</span>-<span class="number">21</span> <span class="number">21</span>:<span class="number">35</span> /user/<span class="keyword">grid</span>/out3/part-<span class="number">00000</span>
+[<span class="keyword">grid</span><span class="variable">@hadoop01</span> hadoop-<span class="number">1.2</span><span class="number">.1</span>]$ 
+</code></pre>]]></content>
+    
+    
+      <category term="Hadoop" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/Hadoop/"/>
+    
+      <category term="Hadoop_Stream" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/Hadoop_Stream/"/>
+    
+      <category term="Hadoop" scheme="https://github.com/DaMinger/DaMinger.github.io.git/categories/Hadoop/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[下载气象数据集部分数据，写一个Map-Reduce作业，求每年的最低温度，部署并运行之]]></title>
+    <link href="https://github.com/DaMinger/DaMinger.github.io.git/2014/04/21/Hadoop/hadoop_mapreduce_1/"/>
+    <id>https://github.com/DaMinger/DaMinger.github.io.git/2014/04/21/Hadoop/hadoop_mapreduce_1/</id>
+    <published>2014-04-21T13:50:41.000Z</published>
+    <updated>2014-04-21T14:10:31.000Z</updated>
+    <content type="html"><![CDATA[<p>下载气象数据集部分数据，写一个Map-Reduce作业，求每年的最低温度，部署并运行之，关于下载2013noaa上的天气数据，去<a href="http://f.dataguru.cn/" target="_blank">http://f.dataguru.cn/</a> 的hadoop论坛上去搜就行</p>
+<pre><code>是这种格式，<span class="number">2013</span>的部分数据
+<span class="number">023170</span>-<span class="number">99999</span>-<span class="number">2013.</span>gz  <span class="number">032260</span>-<span class="number">99999</span>-<span class="number">2013.</span>gz  <span class="number">064280</span>-<span class="number">99999</span>-<span class="number">2013.</span>gz  <span class="number">080440</span>-<span class="number">99999</span>-<span class="number">2013.</span>gz  <span class="number">121200</span>-<span class="number">99999</span>-<span class="number">2013.</span>gz
+<span class="number">023190</span>-<span class="number">99999</span>-<span class="number">2013.</span>gz  <span class="number">032270</span>-<span class="number">99999</span>-<span class="number">2013.</span>gz  <span class="number">064310</span>-<span class="number">99999</span>-<span class="number">2013.</span>gz  <span class="number">080450</span>-<span class="number">99999</span>-<span class="number">2013.</span>gz  <span class="number">121240</span>-<span class="number">99999</span>-<span class="number">2013.</span>gz
+<span class="number">023210</span>-<span class="number">99999</span>-<span class="number">2013.</span>gz  <span class="number">032300</span>-<span class="number">99999</span>-<span class="number">2013.</span>gz  <span class="number">064320</span>-<span class="number">99999</span>-<span class="number">2013.</span>gz  <span class="number">080480</span>-<span class="number">99999</span>-<span class="number">2013.</span>gz  noaaSample<span class="preprocessor">.txt</span>
+<span class="number">023250</span>-<span class="number">99999</span>-<span class="number">2013.</span>gz  <span class="number">032380</span>-<span class="number">99999</span>-<span class="number">2013.</span>gz  <span class="number">064325</span>-<span class="number">99999</span>-<span class="number">2013.</span>gz  <span class="number">080530</span>-<span class="number">99999</span>-<span class="number">2013.</span>gz
+<span class="number">023270</span>-<span class="number">99999</span>-<span class="number">2013.</span>gz  <span class="number">032400</span>-<span class="number">99999</span>-<span class="number">2013.</span>gz  <span class="number">064340</span>-<span class="number">99999</span>-<span class="number">2013.</span>gz  <span class="number">080550</span>-<span class="number">99999</span>-<span class="number">2013.</span>gz
+[grid@hadoop01 noaa]$ zcat  *<span class="preprocessor">.gz</span> &gt; noaaSample<span class="preprocessor">.txt</span>
+</code></pre><p>编写Java文件 MinTemperatureMapper.java,MinTemperatureReducer.java, 和 MinTemperature.java</p>
+<pre><code>MinTemperatureMapper<span class="preprocessor">.java</span>
+import java<span class="preprocessor">.io</span><span class="preprocessor">.IOException</span><span class="comment">;</span>
+import org<span class="preprocessor">.apache</span><span class="preprocessor">.hadoop</span><span class="preprocessor">.io</span><span class="preprocessor">.IntWritable</span><span class="comment">;</span>
+import org<span class="preprocessor">.apache</span><span class="preprocessor">.hadoop</span><span class="preprocessor">.io</span><span class="preprocessor">.LongWritable</span><span class="comment">;</span>
+import org<span class="preprocessor">.apache</span><span class="preprocessor">.hadoop</span><span class="preprocessor">.io</span><span class="preprocessor">.Text</span><span class="comment">;</span>
+import org<span class="preprocessor">.apache</span><span class="preprocessor">.hadoop</span><span class="preprocessor">.mapreduce</span><span class="preprocessor">.Mapper</span><span class="comment">;</span>
+public class MinTemperatureMapper extends Mapper&lt;LongWritable, Text, Text, IntWritable&gt; {
+    private static final int MISSING = <span class="number">9999</span><span class="comment">;</span>
+    @Override
+    public void map(LongWritable key, Text value, Context context)
+            throws IOException, InterruptedException {
+        String line = value<span class="preprocessor">.toString</span>()<span class="comment">;</span>
+        String year = line<span class="preprocessor">.substring</span>(<span class="number">15</span>, <span class="number">19</span>)<span class="comment">;</span>
+        int airTemperature<span class="comment">;</span>
+        if (line<span class="preprocessor">.charAt</span>(<span class="number">87</span>) == <span class="string">'+'</span>) { 
+            airTemperature = Integer<span class="preprocessor">.parseInt</span>(line<span class="preprocessor">.substring</span>(<span class="number">88</span>, <span class="number">92</span>))<span class="comment">;</span>
+        } else {
+            airTemperature = Integer<span class="preprocessor">.parseInt</span>(line<span class="preprocessor">.substring</span>(<span class="number">87</span>, <span class="number">92</span>))<span class="comment">;</span>
+        }
+        String quality = line<span class="preprocessor">.substring</span>(<span class="number">92</span>, <span class="number">93</span>)<span class="comment">;</span>
+        if (airTemperature != MISSING &amp;&amp; quality<span class="preprocessor">.matches</span>(<span class="string">"[01459]"</span>)) {
+            context<span class="preprocessor">.write</span>(new Text(year), new IntWritable(airTemperature))<span class="comment">;</span>
+        }
+    }
+}
+
+MinTemperatureReducer<span class="preprocessor">.java</span>
+import java<span class="preprocessor">.io</span><span class="preprocessor">.IOException</span><span class="comment">;</span>
+import org<span class="preprocessor">.apache</span><span class="preprocessor">.hadoop</span><span class="preprocessor">.io</span><span class="preprocessor">.IntWritable</span><span class="comment">;</span>
+import org<span class="preprocessor">.apache</span><span class="preprocessor">.hadoop</span><span class="preprocessor">.io</span><span class="preprocessor">.Text</span><span class="comment">;</span>
+import org<span class="preprocessor">.apache</span><span class="preprocessor">.hadoop</span><span class="preprocessor">.mapreduce</span><span class="preprocessor">.Reducer</span><span class="comment">;</span>
+public class MinTemperatureReducer extends Reducer&lt;Text, IntWritable, Text, IntWritable&gt; {
+    @Override
+    public void reduce(Text key, Iterable&lt;IntWritable&gt; values, Context context)
+            throws IOException, InterruptedException {
+        int minValue = Integer<span class="preprocessor">.MAX</span>_VALUE<span class="comment">;</span>
+        for (IntWritable value : values) {
+            minValue = Math<span class="preprocessor">.min</span>(minValue, value<span class="preprocessor">.get</span>())<span class="comment">;</span>
+        }
+        context<span class="preprocessor">.write</span>(key, new IntWritable(minValue))<span class="comment">;</span>
+    }
+}
+
+MinTemperature<span class="preprocessor">.java</span>
+import org<span class="preprocessor">.apache</span><span class="preprocessor">.hadoop</span><span class="preprocessor">.fs</span><span class="preprocessor">.Path</span><span class="comment">;</span>
+import org<span class="preprocessor">.apache</span><span class="preprocessor">.hadoop</span><span class="preprocessor">.io</span><span class="preprocessor">.IntWritable</span><span class="comment">;</span>
+import org<span class="preprocessor">.apache</span><span class="preprocessor">.hadoop</span><span class="preprocessor">.io</span><span class="preprocessor">.Text</span><span class="comment">;</span>
+import org<span class="preprocessor">.apache</span><span class="preprocessor">.hadoop</span><span class="preprocessor">.mapreduce</span><span class="preprocessor">.Job</span><span class="comment">;</span>
+import org<span class="preprocessor">.apache</span><span class="preprocessor">.hadoop</span><span class="preprocessor">.mapreduce</span><span class="preprocessor">.lib</span><span class="preprocessor">.input</span><span class="preprocessor">.FileInputFormat</span><span class="comment">;</span>
+import org<span class="preprocessor">.apache</span><span class="preprocessor">.hadoop</span><span class="preprocessor">.mapreduce</span><span class="preprocessor">.lib</span><span class="preprocessor">.output</span><span class="preprocessor">.FileOutputFormat</span><span class="comment">;</span>
+public class MinTemperature {
+    public static void main(String[] args) throws Exception {
+        if (args<span class="preprocessor">.length</span> != <span class="number">2</span>) {
+            System<span class="preprocessor">.err</span><span class="preprocessor">.println</span>(<span class="string">"Usage: MaxTemperature &lt;input path&gt; &lt;output path&gt;"</span>)<span class="comment">;</span>
+            System<span class="preprocessor">.exit</span>(-<span class="number">1</span>)<span class="comment">;</span>
+        }
+        Job job = new Job()<span class="comment">;</span>
+        job<span class="preprocessor">.setJarByClass</span>(MinTemperature<span class="preprocessor">.class</span>)<span class="comment">;</span>
+        job<span class="preprocessor">.setJobName</span>(<span class="string">"Min temperature"</span>)<span class="comment">;</span>
+        FileInputFormat<span class="preprocessor">.addInputPath</span>(job, new Path(args[<span class="number">0</span>]))<span class="comment">;</span>
+        FileOutputFormat<span class="preprocessor">.setOutputPath</span>(job, new Path(args[<span class="number">1</span>]))<span class="comment">;</span>
+        job<span class="preprocessor">.setMapperClass</span>(MinTemperatureMapper<span class="preprocessor">.class</span>)<span class="comment">;</span>
+        job<span class="preprocessor">.setReducerClass</span>(MinTemperatureReducer<span class="preprocessor">.class</span>)<span class="comment">;</span>
+        job<span class="preprocessor">.setOutputKeyClass</span>(Text<span class="preprocessor">.class</span>)<span class="comment">;</span>
+        job<span class="preprocessor">.setOutputValueClass</span>(IntWritable<span class="preprocessor">.class</span>)<span class="comment">;</span>
+        System<span class="preprocessor">.exit</span>(job<span class="preprocessor">.waitForCompletion</span>(true) ? <span class="number">0</span> : <span class="number">1</span>)<span class="comment">;</span>
+    }
+}
+</code></pre><p>编译 打包  将jar包移到$HADOOP_HOME, 删除原class文件</p>
+<pre><code>[grid@hadoop01 noaa]$ javac -classpath  /home/grid/hadoop-<span class="number">1.2</span><span class="number">.1</span>/hadoop-core-<span class="number">1.2</span><span class="number">.1</span><span class="preprocessor">.jar</span> *<span class="preprocessor">.java</span>
+[grid@hadoop01 noaa]$ ls
+MinTemperature<span class="preprocessor">.class</span>  MinTemperatureMapper<span class="preprocessor">.class</span>  MinTemperatureReducer<span class="preprocessor">.class</span>
+MinTemperature<span class="preprocessor">.java</span>   MinTemperatureMapper<span class="preprocessor">.java</span>   MinTemperatureReducer<span class="preprocessor">.java</span>
+[grid@hadoop01 noaa]$ hadoop  fs -put  /home/grid/Downloads/noaa/noaaSample<span class="preprocessor">.txt</span>   ./<span class="keyword">in</span>
+[grid@hadoop01 noaa]$ hadoop  fs -ls ./<span class="keyword">in</span>
+<span class="label">Warning:</span> $HADOOP_HOME is deprecated.
+Found <span class="number">3</span> items
+-rw-r--r--   <span class="number">2</span> grid supergroup   <span class="number">39564893</span> <span class="number">2014</span>-<span class="number">04</span>-<span class="number">21</span> <span class="number">20</span>:<span class="number">43</span> /user/grid/<span class="keyword">in</span>/noaaSample<span class="preprocessor">.txt</span>
+-rw-r--r--   <span class="number">2</span> grid supergroup         <span class="number">12</span> <span class="number">2014</span>-<span class="number">04</span>-<span class="number">16</span> <span class="number">16</span>:<span class="number">57</span> /user/grid/<span class="keyword">in</span>/test1<span class="preprocessor">.txt</span>
+-rw-r--r--   <span class="number">2</span> grid supergroup         <span class="number">13</span> <span class="number">2014</span>-<span class="number">04</span>-<span class="number">16</span> <span class="number">16</span>:<span class="number">57</span> /user/grid/<span class="keyword">in</span>/test2<span class="preprocessor">.txt</span>
+[grid@hadoop01 noaa]$ jar cvf ./MinTemperature<span class="preprocessor">.jar</span> *<span class="preprocessor">.class</span>
+added manifest
+<span class="label">adding:</span> MinTemperature<span class="preprocessor">.class</span>(<span class="keyword">in</span> = <span class="number">1418</span>) (<span class="keyword">out</span>= <span class="number">802</span>)(deflated <span class="number">43</span>%)
+<span class="label">adding:</span> MinTemperatureMapper<span class="preprocessor">.class</span>(<span class="keyword">in</span> = <span class="number">1876</span>) (<span class="keyword">out</span>= <span class="number">804</span>)(deflated <span class="number">57</span>%)
+<span class="label">adding:</span> MinTemperatureReducer<span class="preprocessor">.class</span>(<span class="keyword">in</span> = <span class="number">1664</span>) (<span class="keyword">out</span>= <span class="number">706</span>)(deflated <span class="number">57</span>%)
+[grid@hadoop01 noaa]$ ls
+MinTemperature<span class="preprocessor">.class</span>  MinTemperature<span class="preprocessor">.java</span>         MinTemperatureMapper<span class="preprocessor">.java</span>    MinTemperatureReducer<span class="preprocessor">.java</span>
+MinTemperature<span class="preprocessor">.jar</span>    MinTemperatureMapper<span class="preprocessor">.class</span>  MinTemperatureReducer<span class="preprocessor">.class</span>
+[grid@hadoop01 noaa]$ mv MinTemperature<span class="preprocessor">.jar</span> /home/grid/hadoop-<span class="number">1.2</span><span class="number">.1</span>/
+[grid@hadoop01 noaa]$ rm  *<span class="preprocessor">.class</span>
+[grid@hadoop01 noaa]$ ls
+MinTemperature<span class="preprocessor">.java</span>  MinTemperatureMapper<span class="preprocessor">.java</span>  MinTemperatureReducer<span class="preprocessor">.java</span>
+[grid@hadoop01 hadoop-<span class="number">1.2</span><span class="number">.1</span>]$ ls
+<span class="number">7287</span>OS_Code  contrib                    Hadoop MapReduce Cookbook<span class="preprocessor">.zip</span>  lib                 NOTICE<span class="preprocessor">.txt</span>  webapps
+bin          docs                       hadoop-minicluster-<span class="number">1.2</span><span class="number">.1</span><span class="preprocessor">.jar</span>   libexec             README<span class="preprocessor">.txt</span>
+build<span class="preprocessor">.xml</span>    hadoop-ant-<span class="number">1.2</span><span class="number">.1</span><span class="preprocessor">.jar</span>       hadoop-test-<span class="number">1.2</span><span class="number">.1</span><span class="preprocessor">.jar</span>          LICENSE<span class="preprocessor">.txt</span>         sbin
+c++          hadoop-client-<span class="number">1.2</span><span class="number">.1</span><span class="preprocessor">.jar</span>    hadoop-tools-<span class="number">1.2</span><span class="number">.1</span><span class="preprocessor">.jar</span>         logs                share
+CHANGES<span class="preprocessor">.txt</span>  hadoop-core-<span class="number">1.2</span><span class="number">.1</span><span class="preprocessor">.jar</span>      ivy                            MinTemperature<span class="preprocessor">.jar</span>  src
+conf         hadoop-examples-<span class="number">1.2</span><span class="number">.1</span><span class="preprocessor">.jar</span>  ivy<span class="preprocessor">.xml</span>                        myclass             tmp
+</code></pre><p>运行程序</p>
+<pre><code>[grid@hadoop01 hadoop-<span class="number">1.2</span><span class="number">.1</span>]$ hadoop jar ./MinTemperature<span class="preprocessor">.jar</span> MinTemperature ./<span class="keyword">in</span>/noaaSample<span class="preprocessor">.txt</span> ./out2
+<span class="label">Warning:</span> $HADOOP_HOME is deprecated.
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">20</span>:<span class="number">52</span>:<span class="number">28</span> WARN mapred<span class="preprocessor">.JobClient</span>: Use GenericOptionsParser for parsing the arguments. Applications should implement Tool for the same.
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">20</span>:<span class="number">52</span>:<span class="number">28</span> INFO input<span class="preprocessor">.FileInputFormat</span>: Total input paths to process : <span class="number">1</span>
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">20</span>:<span class="number">52</span>:<span class="number">28</span> INFO util<span class="preprocessor">.NativeCodeLoader</span>: Loaded the native-hadoop library
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">20</span>:<span class="number">52</span>:<span class="number">28</span> WARN snappy<span class="preprocessor">.LoadSnappy</span>: Snappy native library not loaded
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">20</span>:<span class="number">52</span>:<span class="number">30</span> INFO mapred<span class="preprocessor">.JobClient</span>: Running job: job_201404211930_0001
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">20</span>:<span class="number">52</span>:<span class="number">31</span> INFO mapred<span class="preprocessor">.JobClient</span>:  map <span class="number">0</span>% reduce <span class="number">0</span>%
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">20</span>:<span class="number">52</span>:<span class="number">48</span> INFO mapred<span class="preprocessor">.JobClient</span>:  map <span class="number">100</span>% reduce <span class="number">0</span>%
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">20</span>:<span class="number">52</span>:<span class="number">58</span> INFO mapred<span class="preprocessor">.JobClient</span>:  map <span class="number">100</span>% reduce <span class="number">33</span>%
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">20</span>:<span class="number">53</span>:<span class="number">01</span> INFO mapred<span class="preprocessor">.JobClient</span>:  map <span class="number">100</span>% reduce <span class="number">100</span>%
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">20</span>:<span class="number">53</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>: Job complete: job_201404211930_0001
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">20</span>:<span class="number">53</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>: Counters: <span class="number">29</span>
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">20</span>:<span class="number">53</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:   Job Counters 
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">20</span>:<span class="number">53</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Launched reduce tasks=<span class="number">1</span>
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">20</span>:<span class="number">53</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:     SLOTS_MILLIS_MAPS=<span class="number">16513</span>
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">20</span>:<span class="number">53</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Total time spent by all reduces waiting after reserving slots (ms)=<span class="number">0</span>
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">20</span>:<span class="number">53</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Total time spent by all maps waiting after reserving slots (ms)=<span class="number">0</span>
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">20</span>:<span class="number">53</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Launched map tasks=<span class="number">1</span>
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">20</span>:<span class="number">53</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Data-local map tasks=<span class="number">1</span>
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">20</span>:<span class="number">53</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:     SLOTS_MILLIS_REDUCES=<span class="number">12911</span>
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">20</span>:<span class="number">53</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:   File Output Format Counters 
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">20</span>:<span class="number">53</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Bytes Written=<span class="number">10</span>
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">20</span>:<span class="number">53</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:   FileSystemCounters
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">20</span>:<span class="number">53</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:     FILE_BYTES_READ=<span class="number">1652569</span>
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">20</span>:<span class="number">53</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:     HDFS_BYTES_READ=<span class="number">39565019</span>
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">20</span>:<span class="number">53</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:     FILE_BYTES_WRITTEN=<span class="number">3419762</span>
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">20</span>:<span class="number">53</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:     HDFS_BYTES_WRITTEN=<span class="number">10</span>
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">20</span>:<span class="number">53</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:   File Input Format Counters 
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">20</span>:<span class="number">53</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Bytes Read=<span class="number">39564893</span>
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">20</span>:<span class="number">53</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:   Map-Reduce Framework
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">20</span>:<span class="number">53</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Map output materialized bytes=<span class="number">1652569</span>
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">20</span>:<span class="number">53</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Map input records=<span class="number">154375</span>
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">20</span>:<span class="number">53</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Reduce shuffle bytes=<span class="number">1652569</span>
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">20</span>:<span class="number">53</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Spilled Records=<span class="number">300466</span>
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">20</span>:<span class="number">53</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Map output bytes=<span class="number">1352097</span>
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">20</span>:<span class="number">53</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Total committed heap usage (bytes)=<span class="number">176033792</span>
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">20</span>:<span class="number">53</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:     CPU time spent (ms)=<span class="number">7420</span>
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">20</span>:<span class="number">53</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Combine input records=<span class="number">0</span>
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">20</span>:<span class="number">53</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:     SPLIT_RAW_BYTES=<span class="number">126</span>
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">20</span>:<span class="number">53</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Reduce input records=<span class="number">150233</span>
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">20</span>:<span class="number">53</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Reduce input groups=<span class="number">1</span>
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">20</span>:<span class="number">53</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Combine output records=<span class="number">0</span>
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">20</span>:<span class="number">53</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Physical memory (bytes) snapshot=<span class="number">302170112</span>
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">20</span>:<span class="number">53</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Reduce output records=<span class="number">1</span>
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">20</span>:<span class="number">53</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Virtual memory (bytes) snapshot=<span class="number">1453506560</span>
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">21</span> <span class="number">20</span>:<span class="number">53</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Map output records=<span class="number">150233</span>
+</code></pre><p>查看结果</p>
+<pre><code>[<span class="keyword">grid</span><span class="variable">@hadoop01</span> hadoop-<span class="number">1.2</span><span class="number">.1</span>]$ hadoop fs -<span class="keyword">ls</span> ./out2
+Warning: <span class="variable">$HADOOP_HOME</span> is deprecated.
+Found <span class="number">3</span> items
+-rw-r--r--   <span class="number">2</span> <span class="keyword">grid</span> supergroup          <span class="number">0</span> <span class="number">2014</span>-<span class="number">04</span>-<span class="number">21</span> <span class="number">20</span>:<span class="number">53</span> /user/<span class="keyword">grid</span>/out2/_SUCCESS
+drwxr-xr-x   - <span class="keyword">grid</span> supergroup          <span class="number">0</span> <span class="number">2014</span>-<span class="number">04</span>-<span class="number">21</span> <span class="number">20</span>:<span class="number">52</span> /user/<span class="keyword">grid</span>/out2/_logs
+-rw-r--r--   <span class="number">2</span> <span class="keyword">grid</span> supergroup         <span class="number">10</span> <span class="number">2014</span>-<span class="number">04</span>-<span class="number">21</span> <span class="number">20</span>:<span class="number">52</span> /user/<span class="keyword">grid</span>/out2/part-r-<span class="number">00000</span>
+[<span class="keyword">grid</span><span class="variable">@hadoop01</span> hadoop-<span class="number">1.2</span><span class="number">.1</span>]$ hadoop fs -cat ./out2/part-r-<span class="number">00000</span>
+Warning: <span class="variable">$HADOOP_HOME</span> is deprecated.
+<span class="number">2013</span>    -<span class="number">604</span>
+[<span class="keyword">grid</span><span class="variable">@hadoop01</span> hadoop-<span class="number">1.2</span><span class="number">.1</span>]$ 
+</code></pre>]]></content>
+    
+    
+      <category term="Hadoop" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/Hadoop/"/>
+    
+      <category term="Map-Reduce" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/Map-Reduce/"/>
+    
+      <category term="Hadoop" scheme="https://github.com/DaMinger/DaMinger.github.io.git/categories/Hadoop/"/>
+    
+  </entry>
   
   <entry>
     <title><![CDATA[Hive简单认识]]></title>

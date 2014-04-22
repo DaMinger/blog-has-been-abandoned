@@ -1,0 +1,644 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>Map-Reduce入门 | DaMinger&#39;s blog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="DaMinger">
+    
+    <meta name="description" content="Map-Reduce的逻辑过程
+假设我们需要处理一批有关天气的数据，其格式如下：按照ASCII码存储，每行一条记录,每一行字符从0开始计数，第15个到第18个字符为年,第25个到第29个字符为温度，其中第25位是符号+/-    0067011990999991950051507+0000+    ">
+    
+    
+    
+    
+    <link rel="alternative" href="/atom.xml" title="DaMinger&#39;s blog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/pacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/pacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+    <link href="/css/hover.css" rel="stylesheet">
+    <link href="/css/bottom.css" rel="stylesheet">
+</head>
+
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a rel="pulse" class="pulse" href="/"><img src="/img/pacman.png" alt="DaMinger&#39;s blog" title="DaMinger&#39;s blog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a rel="hover" class="hover" href="/" title="DaMinger&#39;s blog">DaMinger&#39;s blog</a></h1>
+				<h2 class="blog-motto"><a rel="wobble-to-bottom-right" class="wobble-to-bottom-right" href="#" title="#">信春哥，系统稳，闭眼上线不回滚</a></h2>
+			</div>
+			<div class="navbar"><a rel="buzz" class="buzz" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a rel="wobble-top" class="wobble-top" href="/">Home</a></li>
+					
+						<li><a rel="wobble-top" class="wobble-top" href="/archives">Menu</a></li>
+					
+						<li><a rel="wobble-top" class="wobble-top" href="/about">About</a></li>
+					
+				</ul>
+				
+			</nav>			
+</div>
+<div style="text-align:right;">
+<form  class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+ <input type="search" name="q" id="search" autocomplete="off" autocorrect="off" autocapitalize="off" maxlength="20" placeholder="Search" />
+ <input type="hidden" name="q" value="site:github.com/DaMinger/DaMinger.github.io.git">
+</form>
+</div>
+
+
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2014/04/21/Hadoop/map_reduce/" title="Map-Reduce入门" itemprop="url">Map-Reduce入门</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="https://github.com/DaMinger/DaMinger.github.io.git" title="DaMinger">DaMinger</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2014-04-21T13:50:52.000Z" itemprop="datePublished">4月 21 2014</time>
+    更新日期:<time datetime="2014-04-21T15:15:41.000Z" itemprop="dateModified">4月 21 2014</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		<ol class="toc"><li class="toc-item toc-level-5"><a class="toc-link" href="#Map-Reduce的逻辑过程"><span class="toc-number">1.</span> <span class="toc-text">Map-Reduce的逻辑过程</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#编写Map-Reduce程序"><span class="toc-number">2.</span> <span class="toc-text">编写Map-Reduce程序</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#Map-Reduce数据流(data_flow)"><span class="toc-number">3.</span> <span class="toc-text">Map-Reduce数据流(data flow)</span></a></li><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#任务提交"><span class="toc-number">3.1.</span> <span class="toc-text">任务提交</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#任务初始化"><span class="toc-number">3.2.</span> <span class="toc-text">任务初始化</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#任务分配"><span class="toc-number">3.3.</span> <span class="toc-text">任务分配</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#任务执行"><span class="toc-number">3.4.</span> <span class="toc-text">任务执行</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#Map的过程"><span class="toc-number">3.5.</span> <span class="toc-text">Map的过程</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#Reduce的过程"><span class="toc-number">3.6.</span> <span class="toc-text">Reduce的过程</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#任务结束"><span class="toc-number">3.7.</span> <span class="toc-text">任务结束</span></a></li></ol>
+		</div>
+		
+		<h5 id="Map-Reduce的逻辑过程">Map-Reduce的逻辑过程</h5>
+<p>假设我们需要处理一批有关天气的数据，其格式如下：按照ASCII码存储，每行一条记录,每一行字符从0开始计数，第15个到第18个字符为年,第25个到第29个字符为温度，其中第25位是符号+/-<br>    0067011990999991950051507+0000+<br>    0043011990999991950051512+0022+<br>    0043011990999991950051518-0011+<br>    0043012650999991949032412+0111+<br>    0043012650999991949032418+0078+<br>    0067011990999991937051507+0001+<br>    0043011990999991937051512-0002+<br>    0043011990999991945051518+0001+<br>    0043012650999991945032412+0002+<br>    0043012650999991945032418+0078+</p>
+<p>现在需要统计出每年的最高温度。Map-Reduce主要包括两个步骤：Map和Reduce。每一步都有key-value对作为输入和输出：map阶段的key-value对的格式是由输入的格式所决定的，如果是默认的TextInputFormat，则每行作为一个记录进程处理，其中key为此行的开头相对于文件的起始位置，value就是此行的字符文本map阶段的输出的key-value对的格式必须同reduce阶段的输入key-value对的格式相对应。</p>
+<p>对于上面的例子，在map过程，输入的key-value对如下：</p>
+<pre><code><span class="list">(<span class="title">0</span>,<span class="number"> 0067011990999991950051507</span>+0000+)</span>
+<span class="list">(<span class="title">33</span>,<span class="number"> 0043011990999991950051512</span>+0022+)</span>
+<span class="list">(<span class="title">66</span>,<span class="number"> 0043011990999991950051518</span>-0011+)</span>
+<span class="list">(<span class="title">99</span>,<span class="number"> 0043012650999991949032412</span>+0111+)</span>
+<span class="list">(<span class="title">132</span>,<span class="number"> 0043012650999991949032418</span>+0078+)</span>
+<span class="list">(<span class="title">165</span>,<span class="number"> 0067011990999991937051507</span>+0001+)</span>
+<span class="list">(<span class="title">198</span>,<span class="number"> 0043011990999991937051512</span>-0002+)</span>
+<span class="list">(<span class="title">231</span>,<span class="number"> 0043011990999991945051518</span>+0001+)</span>
+<span class="list">(<span class="title">264</span>,<span class="number"> 0043012650999991945032412</span>+0002+)</span>
+<span class="list">(<span class="title">297</span>,<span class="number"> 0043012650999991945032418</span>+0078+)</span>
+</code></pre><p>在map过程中，通过对每一行字符串的解析，得到年-温度的key-value对作为输出：</p>
+<pre><code><span class="list">(<span class="title">1950</span>,<span class="number"> 0</span>)</span>
+<span class="list">(<span class="title">1950</span>,<span class="number"> 22</span>)</span>
+<span class="list">(<span class="title">1950</span>, -11)</span>
+<span class="list">(<span class="title">1949</span>,<span class="number"> 111</span>)</span>
+<span class="list">(<span class="title">1949</span>,<span class="number"> 78</span>)</span>
+<span class="list">(<span class="title">1937</span>,<span class="number"> 1</span>)</span>
+<span class="list">(<span class="title">1937</span>, -2)</span>
+<span class="list">(<span class="title">1945</span>,<span class="number"> 1</span>)</span>
+<span class="list">(<span class="title">1945</span>,<span class="number"> 2</span>)</span>
+<span class="list">(<span class="title">1945</span>,<span class="number"> 78</span>)</span>
+</code></pre><p>在reduce过程，将map过程中的输出，按照相同的key将value放到同一个列表中作为reduce的输入</p>
+<pre><code><span class="list">(<span class="title">1950</span>, <span class="collection">[0,<span class="number"> 22</span>, –11]</span>)</span>
+<span class="list">(<span class="title">1949</span>, <span class="collection">[111,<span class="number"> 78</span>]</span>)</span>
+<span class="list">(<span class="title">1937</span>, <span class="collection">[1, -2]</span>)</span>
+<span class="list">(<span class="title">1945</span>, <span class="collection">[1,<span class="number"> 2</span>,<span class="number"> 78</span>]</span>)</span>
+</code></pre><p>在reduce过程中，在列表中选择出最大的温度，将年-最大温度的key-value作为输出：</p>
+<pre><code><span class="list">(<span class="title">1950</span>,<span class="number"> 22</span>)</span>
+<span class="list">(<span class="title">1949</span>,<span class="number"> 111</span>)</span>
+<span class="list">(<span class="title">1937</span>,<span class="number"> 1</span>)</span>
+<span class="list">(<span class="title">1945</span>,<span class="number"> 78</span>)</span>
+</code></pre><p>其逻辑过程可用如下图表示：<br><img src="/img/Hadoop/MapReduce/1.png" alt="图1"></p>
+<h5 id="编写Map-Reduce程序">编写Map-Reduce程序</h5>
+<p>编写Map-Reduce程序，一般需要实现两个函数：mapper中的map函数和reducer中的reduce函数。<br>一般遵循以下格式：</p>
+<pre><code>map: (K1, V1)  -&gt;  <span class="keyword">list</span>(K2, V2)
+<span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Mapper</span>&lt;<span class="title">K1</span>, <span class="title">V1</span>, <span class="title">K2</span>, <span class="title">V2</span>&gt; <span class="keyword">extends</span> <span class="title">JobConfigurable</span>, <span class="title">Closeable</span> {</span>
+
+  void map(K1 key, V1 value, OutputCollector&lt;K2, V2&gt; output, Reporter reporter)
+
+  throws IOException;
+
+}
+
+reduce: (K2, <span class="keyword">list</span>(V))  -&gt;  <span class="keyword">list</span>(K3, V3) 
+<span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Reducer</span>&lt;<span class="title">K2</span>, <span class="title">V2</span>, <span class="title">K3</span>, <span class="title">V3</span>&gt; <span class="keyword">extends</span> <span class="title">JobConfigurable</span>, <span class="title">Closeable</span> {</span>
+
+  void reduce(K2 key, Iterator&lt;V2&gt; values,
+
+              OutputCollector&lt;K3, V3&gt; output, Reporter reporter)
+
+    throws IOException;
+
+}
+</code></pre><p>对于上面的例子，则实现的mapper如下：</p>
+<pre><code><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MaxTemperatureMapper</span> <span class="inheritance"><span class="keyword">extends</span></span> <span class="title">MapReduceBase</span> <span class="inheritance"><span class="keyword">implements</span></span> <span class="title">Mapper</span>&lt;<span class="title">LongWritable</span>, <span class="title">Text</span>, <span class="title">Text</span>, <span class="title">IntWritable</span>&gt; {</span>
+
+    @Override
+
+    <span class="keyword">public</span> <span class="keyword">void</span> map(LongWritable key, Text value, OutputCollector&lt;Text, IntWritable&gt; output, Reporter reporter) throws IOException {
+
+        String line = value.toString();
+
+        String year = line.substring(<span class="number">15</span>, <span class="number">19</span>);
+
+        <span class="keyword">int</span> airTemperature;
+
+        <span class="keyword">if</span> (line.charAt(<span class="number">25</span>) == <span class="string">'+'</span>) {
+
+            airTemperature = Integer.parseInt(line.substring(<span class="number">26</span>, <span class="number">30</span>));
+
+        } <span class="keyword">else</span> {
+
+            airTemperature = Integer.parseInt(line.substring(<span class="number">25</span>, <span class="number">30</span>));
+
+        }
+
+        output.collect(<span class="keyword">new</span> Text(year), <span class="keyword">new</span> IntWritable(airTemperature));
+
+    }
+
+}
+</code></pre><p>实现的reducer如下：</p>
+<pre><code><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MaxTemperatureReducer</span> <span class="inheritance"><span class="keyword">extends</span></span> <span class="title">MapReduceBase</span> <span class="inheritance"><span class="keyword">implements</span></span> <span class="title">Reducer</span>&lt;<span class="title">Text</span>, <span class="title">IntWritable</span>, <span class="title">Text</span>, <span class="title">IntWritable</span>&gt; {</span>
+
+    <span class="keyword">public</span> <span class="keyword">void</span> reduce(Text key, Iterator&lt;IntWritable&gt; values, OutputCollector&lt;Text, IntWritable&gt; output, Reporter reporter) throws IOException {
+
+        <span class="keyword">int</span> maxValue = Integer.MIN_VALUE;
+
+        <span class="keyword">while</span> (values.hasNext()) {
+
+            maxValue = Math.max(maxValue, values.next().get());
+
+        }
+
+        output.collect(key, <span class="keyword">new</span> IntWritable(maxValue));
+
+    }
+
+}
+</code></pre><p>欲运行上面实现的Mapper和Reduce，则需要生成一个Map-Reduce得任务(Job)，其基本包括以下三部分：</p>
+<pre><code>输入的数据，也即需要处理的数据
+<span class="keyword">Map</span>-<span class="keyword">Reduce</span>程序，也即上面实现的Mapper和Reducer
+此任务的配置项JobConf
+</code></pre><p>欲配置JobConf，需要大致了解Hadoop运行job的基本原理：</p>
+<pre><code>Hadoop将Job分成task进行处理，共两种task：map task和reduce task
+Hadoop有两类的节点控制job的运行：JobTracker和TaskTracker
+JobTracker协调整个job的运行，将task分配到不同的TaskTracker上
+TaskTracker负责运行task，并将结果返回给JobTracker
+Hadoop将输入数据分成固定大小的块，我们称之input split
+Hadoop为每一个input split创建一个task，在此task中依次处理此split中的一个个记录(record)
+Hadoop会尽量让输入数据块所在的DataNode和task所执行的DataNode(每个DataNode上都有一个TaskTracker)为同一个，
+可以提高运行效率，所以input split的大小也一般是HDFS的block的大小。
+Reduce task的输入一般为Map Task的输出，Reduce Task的输出为整个job的输出，保存在HDFS上。
+在reduce中，相同key的所有的记录一定会到同一个TaskTracker上面运行，
+然而不同的key可以在不同的TaskTracker上面运行，我们称之为partition
+partition的规则为：(K2, V2) –&gt; Integer， 也即根据K2，生成一个partition的id，
+具有相同id的K2则进入同一个partition，被同一个TaskTracker上被同一个Reducer进行处理。
+<span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Partitioner</span>&lt;<span class="title">K2</span>, <span class="title">V2</span>&gt; <span class="inheritance"><span class="keyword">extends</span></span> <span class="title">JobConfigurable</span> {</span>
+
+<span class="keyword">int</span> getPartition(K2 key, V2 value, <span class="keyword">int</span> numPartitions);
+
+}
+</code></pre><p>下图大概描述了Map-Reduce的Job运行的基本原理：<br><img src="/img/Hadoop/MapReduce/2.png" alt="图2"></p>
+<p>下面我们讨论JobConf，其有很多的项可以进行配置：<br>1、setInputFormat：设置map的输入格式，默认为TextInputFormat，key为LongWritable, value为Text<br>2、setNumMapTasks：设置map任务的个数，此设置通常不起作用，map任务的个数取决于输入的数据所能分成的input split的个数<br>3、setMapperClass：设置Mapper，默认为IdentityMapper<br>4、setMapRunnerClass：设置MapRunner, map task是由MapRunner运行的，默认为MapRunnable，其功能为读取input split的一个个record，依次调用Mapper的map函数<br>5、setMapOutputKeyClass和setMapOutputValueClass：设置Mapper的输出的key-value对的格式<br>6、setOutputKeyClass和setOutputValueClass：设置Reducer的输出的key-value对的格式<br>7、setPartitionerClass和setNumReduceTasks：设置Partitioner，默认为HashPartitioner，其根据key的hash值来决定进入哪个partition，每个partition被一个reduce task处理，所以partition的个数等于reduce task的个数<br>8、setReducerClass：设置Reducer，默认为IdentityReducer<br>9、setOutputFormat：设置任务的输出格式，默认为TextOutputFormat<br>10、FileInputFormat.addInputPath：设置输入文件的路径，可以使一个文件，一个路径，一个通配符。可以被调用多次添加多个路径<br>11、FileOutputFormat.setOutputPath：设置输出文件的路径，在job运行前此路径不应该存在</p>
+<p>当然不用所有的都设置，由上面的例子，可以编写Map-Reduce程序如下：</p>
+<pre><code>public class MaxTemperature {
+
+    public static void main(String[] args) throws IOException {
+
+        if (args<span class="preprocessor">.length</span> != <span class="number">2</span>) {
+
+            System<span class="preprocessor">.err</span><span class="preprocessor">.println</span>(<span class="string">"Usage: MaxTemperature &lt;input path&gt; &lt;output path&gt;"</span>)<span class="comment">;</span>
+
+            System<span class="preprocessor">.exit</span>(-<span class="number">1</span>)<span class="comment">;</span>
+
+        }
+
+        JobConf conf = new JobConf(MaxTemperature<span class="preprocessor">.class</span>)<span class="comment">;</span>
+
+        conf<span class="preprocessor">.setJobName</span>(<span class="string">"Max temperature"</span>)<span class="comment">;</span>
+
+        FileInputFormat<span class="preprocessor">.addInputPath</span>(conf, new Path(args[<span class="number">0</span>]))<span class="comment">;</span>
+
+        FileOutputFormat<span class="preprocessor">.setOutputPath</span>(conf, new Path(args[<span class="number">1</span>]))<span class="comment">;</span>
+
+        conf<span class="preprocessor">.setMapperClass</span>(MaxTemperatureMapper<span class="preprocessor">.class</span>)<span class="comment">;</span>
+
+        conf<span class="preprocessor">.setReducerClass</span>(MaxTemperatureReducer<span class="preprocessor">.class</span>)<span class="comment">;</span>
+
+        conf<span class="preprocessor">.setOutputKeyClass</span>(Text<span class="preprocessor">.class</span>)<span class="comment">;</span>
+
+        conf<span class="preprocessor">.setOutputValueClass</span>(IntWritable<span class="preprocessor">.class</span>)<span class="comment">;</span>
+
+        JobClient<span class="preprocessor">.runJob</span>(conf)<span class="comment">;</span>
+
+    }
+
+}
+</code></pre><h5 id="Map-Reduce数据流(data_flow)">Map-Reduce数据流(data flow)</h5>
+<p>Map-Reduce的处理过程主要涉及以下四个部分：<br>1、客户端Client：用于提交Map-reduce任务job<br>2、JobTracker：协调整个job的运行，其为一个Java进程，其main class为JobTracker<br>3、TaskTracker：运行此job的task，处理input split，其为一个Java进程，其main class为TaskTracker<br>4、HDFS：hadoop分布式文件系统，用于在各个进程间共享Job相关的文件<br><img src="/img/Hadoop/MapReduce/3.png" alt="图3"></p>
+<h6 id="任务提交">任务提交</h6>
+<p>JobClient.runJob()创建一个新的JobClient实例，调用其submitJob()函数。</p>
+<p>向JobTracker请求一个新的job ID</p>
+<p>检测此job的output配置</p>
+<p>计算此job的input splits</p>
+<p>将Job运行所需的资源拷贝到JobTracker的文件系统中的文件夹中，包括job jar文件，job.xml配置文件，input splits</p>
+<p>通知JobTracker此Job已经可以运行了</p>
+<p>提交任务后，runJob每隔一秒钟轮询一次job的进度，将进度返回到命令行，直到任务运行完毕。</p>
+<h6 id="任务初始化">任务初始化</h6>
+<p>当JobTracker收到submitJob调用的时候，将此任务放到一个队列中，job调度器将从队列中获取任务并初始化任务。</p>
+<p>初始化首先创建一个对象来封装job运行的tasks, status以及progress。</p>
+<p>在创建task之前，job调度器首先从共享文件系统中获得JobClient计算出的input splits。</p>
+<p>其为每个input split创建一个map task。</p>
+<p>每个task被分配一个ID。</p>
+<h6 id="任务分配">任务分配</h6>
+<p>TaskTracker周期性的向JobTracker发送heartbeat。</p>
+<p>在heartbeat中，TaskTracker告知JobTracker其已经准备运行一个新的task，JobTracker将分配给其一个task。</p>
+<p>在JobTracker为TaskTracker选择一个task之前，JobTracker必须首先按照优先级选择一个Job，在最高优先级的Job中选择一个task。</p>
+<p>TaskTracker有固定数量的位置来运行map task或者reduce task。</p>
+<p>默认的调度器对待map task优先于reduce task</p>
+<p>当选择reduce task的时候，JobTracker并不在多个task之间进行选择，而是直接取下一个，因为reduce task没有数据本地化的概念。</p>
+<h6 id="任务执行">任务执行</h6>
+<p>TaskTracker被分配了一个task，下面便要运行此task。</p>
+<p>首先，TaskTracker将此job的jar从共享文件系统中拷贝到TaskTracker的文件系统中。</p>
+<p>TaskTracker从distributed cache中将job运行所需要的文件拷贝到本地磁盘。</p>
+<p>其次，其为每个task创建一个本地的工作目录，将jar解压缩到文件目录中。</p>
+<p>其三，其创建一个TaskRunner来运行task。</p>
+<p>TaskRunner创建一个新的JVM来运行task。</p>
+<p>被创建的child JVM和TaskTracker通信来报告运行进度。</p>
+<h6 id="Map的过程">Map的过程</h6>
+<p>MapRunnable从input split中读取一个个的record，然后依次调用Mapper的map函数，将结果输出。</p>
+<p>map的输出并不是直接写入硬盘，而是将其写入缓存memory buffer。</p>
+<p>当buffer中数据的到达一定的大小，一个背景线程将数据开始写入硬盘。</p>
+<p>在写入硬盘之前，内存中的数据通过partitioner分成多个partition。</p>
+<p>在同一个partition中，背景线程会将数据按照key在内存中排序。</p>
+<p>每次从内存向硬盘flush数据，都生成一个新的spill文件。</p>
+<p>当此task结束之前，所有的spill文件被合并为一个整的被partition的而且排好序的文件。</p>
+<p>reducer可以通过http协议请求map的输出文件，tracker.http.threads可以设置http服务线程数。</p>
+<h6 id="Reduce的过程">Reduce的过程</h6>
+<p>当map task结束后，其通知TaskTracker，TaskTracker通知JobTracker。</p>
+<p>对于一个job，JobTracker知道TaskTracer和map输出的对应关系。</p>
+<p>reducer中一个线程周期性的向JobTracker请求map输出的位置，直到其取得了所有的map输出。</p>
+<p>reduce task需要其对应的partition的所有的map输出。</p>
+<p>reduce task中的copy过程即当每个map task结束的时候就开始拷贝输出，因为不同的map task完成时间不同。</p>
+<p>reduce task中有多个copy线程，可以并行拷贝map输出。</p>
+<p>当很多map输出拷贝到reduce task后，一个背景线程将其合并为一个大的排好序的文件。</p>
+<p>当所有的map输出都拷贝到reduce task后，进入sort过程，将所有的map输出合并为大的排好序的文件。</p>
+<p>最后进入reduce过程，调用reducer的reduce函数，处理排好序的输出的每个key，最后的结果写入HDFS。</p>
+<p><img src="/img/Hadoop/MapReduce/4.png" alt="图4"></p>
+<h6 id="任务结束">任务结束</h6>
+<p>当JobTracker获得最后一个task的运行成功的报告后，将job得状态改为成功。</p>
+<p>当JobClient从JobTracker轮询的时候，发现此job已经成功结束，则向用户打印消息，从runJob函数中返回。</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Hadoop/">Hadoop</a><a href="/tags/Map-Reduce/">Map-Reduce</a>
+  </div>
+
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Hadoop/">Hadoop</a>
+</div>
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="https://github.com/DaMinger/DaMinger.github.io.git/2014/04/21/Hadoop/map_reduce/" data-title="Map-Reduce入门 | DaMinger&#39;s blog" data-tsina="null" class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2014/04/22/Hadoop/hadoop-eclispe/" title="eclipse连接hadoop1.2.1集群">
+  <strong>PREVIOUS:</strong><br/>
+  <span>
+  eclipse连接hadoop1.2.1集群</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2014/04/21/Hadoop/hadoop_stream_python/"  title="使用hadoop流的方法来实现对气象数据集求最高温度的分析任务（使用python）">
+ <strong>NEXT:</strong><br/> 
+ <span>使用hadoop流的方法来实现对气象数据集求最高温度的分析任务（使用python）
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section class="comment">
+	<div class="ds-thread"></div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+  <ol class="toc"><li class="toc-item toc-level-5"><a class="toc-link" href="#Map-Reduce的逻辑过程"><span class="toc-number">1.</span> <span class="toc-text">Map-Reduce的逻辑过程</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#编写Map-Reduce程序"><span class="toc-number">2.</span> <span class="toc-text">编写Map-Reduce程序</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#Map-Reduce数据流(data_flow)"><span class="toc-number">3.</span> <span class="toc-text">Map-Reduce数据流(data flow)</span></a></li><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#任务提交"><span class="toc-number">3.1.</span> <span class="toc-text">任务提交</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#任务初始化"><span class="toc-number">3.2.</span> <span class="toc-text">任务初始化</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#任务分配"><span class="toc-number">3.3.</span> <span class="toc-text">任务分配</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#任务执行"><span class="toc-number">3.4.</span> <span class="toc-text">任务执行</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#Map的过程"><span class="toc-number">3.5.</span> <span class="toc-text">Map的过程</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#Reduce的过程"><span class="toc-number">3.6.</span> <span class="toc-text">Reduce的过程</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#任务结束"><span class="toc-number">3.7.</span> <span class="toc-text">任务结束</span></a></li></ol>
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p rel="asidetitle grow" class="asidetitle grow">分类</p>
+		<ul>
+		
+			<li><a rel="grow" class="grow" href="/categories/Hadoop/" title="Hadoop">Hadoop<sup>10</sup></a></li>
+		
+			<li><a rel="grow" class="grow" href="/categories/Linux/" title="Linux">Linux<sup>4</sup></a></li>
+		
+			<li><a rel="grow" class="grow" href="/categories/杂谈/" title="杂谈">杂谈<sup>1</sup></a></li>
+		
+			<li><a rel="grow" class="grow" href="/categories/计算机网络/" title="计算机网络">计算机网络<sup>1</sup></a></li>
+		
+		</ul>
+</div>
+
+
+
+  <div class="linkslist">
+<h3 rel="grow" class="grow asidetitle">友情链接</h3>
+<ul class="entry">
+<li><a rel="grow" class="grow" href="http://tahiti.oracle.com/" title="Oracle文档">Oracle文档</a></li>
+<li><a rel="grow" class="grow" href="http://asktom.oracle.com/" title="AskTom">AskTom</a></li>
+<li><a rel="grow" class="grow" href="http://blog.csdn.net/tianlesoftware/" title="Dave">Dave</a></li>
+<li><a rel="grow" class="grow" href="http://www.eygle.com/" title="eygle">eygle</a></li>
+<li><a rel="grow" class="grow" href="http://www.dbsnake.com/" title="dbsnake">dbsnake</a></li>
+</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/Eclipse/" title="Eclipse">Eclipse<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Hadoop/" title="Hadoop">Hadoop<sup>10</sup></a></li>
+		
+			<li><a href="/tags/Hadoop_Stream/" title="Hadoop_Stream">Hadoop_Stream<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Hive/" title="Hive">Hive<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Linux/" title="Linux">Linux<sup>4</sup></a></li>
+		
+			<li><a href="/tags/Map-Reduce/" title="Map-Reduce">Map-Reduce<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Mysql/" title="Mysql">Mysql<sup>1</sup></a></li>
+		
+			<li><a href="/tags/yum/" title="yum">yum<sup>1</sup></a></li>
+		
+			<li><a href="/tags/杂谈/" title="杂谈">杂谈<sup>1</sup></a></li>
+		
+			<li><a href="/tags/网卡错误/" title="网卡错误">网卡错误<sup>1</sup></a></li>
+		
+			<li><a href="/tags/网络/" title="网络">网络<sup>1</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle"><a href="/archives">归档</a></p>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/04">四月 2014</a><span class="archive-list-count">16</span></li></ul>
+  </div>
+
+
+  
+  <div class="tagcloudlist">
+    <p class="asidetitle">标签云</p>
+    <div class="tagcloudlist clearfix">
+       <a href="/tags/Eclipse/" style="font-size: 10.00px;">Eclipse</a><a href="/tags/Hadoop/" style="font-size: 20.00px;">Hadoop</a><a href="/tags/Hadoop_Stream/" style="font-size: 10.00px;">Hadoop_Stream</a><a href="/tags/Hive/" style="font-size: 13.33px;">Hive</a><a href="/tags/Linux/" style="font-size: 16.67px;">Linux</a><a href="/tags/Map-Reduce/" style="font-size: 13.33px;">Map-Reduce</a><a href="/tags/Mysql/" style="font-size: 10.00px;">Mysql</a><a href="/tags/yum/" style="font-size: 10.00px;">yum</a><a href="/tags/杂谈/" style="font-size: 10.00px;">杂谈</a><a href="/tags/网卡错误/" style="font-size: 10.00px;">网卡错误</a><a href="/tags/网络/" style="font-size: 10.00px;">网络</a>
+    </div>
+  </div>
+
+
+  <iframe width="100%" height="550" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=2&ptype=1&speed=0&skin=1&isTitle=1&noborder=1&isWeibo=1&isFans=1&uid=3819451430&verifier=f953543e&dpc=1"></iframe>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<span class="buzz" rel="buzz"> Hello,I&#39;m liuqinming.For now I&#39;m a student at collage. <br/>
+			I will share my learning experience with you at this blog.</span>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		<a rel="push" class="push" href="https://github.com/https://github.com/DaMinger" target="_blank" title="github"></a>
+		
+		
+	</div>
+		<p class="copyright">Powered by <a rel="float-shadow" class="float-shadow" href="http://zespia.tw/hexo/" target="_blank" title="hexo">Hexo</a> and Theme by <a class="box-shadow-inset"href="https://github.com/uruir/pacmanhover" target="_blank" title="Pacman">PacmanHover</a> © 2014 
+		
+		
+		<a class="wobble-horizontal" rel="wobble-horizontal" href="https://github.com/DaMinger/DaMinger.github.io.git" target="_blank" title="DaMinger">DaMinger</a>
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+    c.click(function(){
+      ta.css('display', 'block').addClass('fadeIn');
+    });
+    o.click(function(){
+      ta.css('display', 'none');
+    });
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,320-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"null"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+<div id="totop" style="position:fixed;bottom:150px;right:50px;cursor: pointer;">
+<a title="���ض���"><img src="/img/scrollup.png"/></a>
+</div>
+<script src="/js/totop.js"></script>
+
+
+
+  </body>
+</html>
