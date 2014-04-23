@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>Hive简单认识 | DaMinger&#39;s blog</title>
+    <title>HDFS简单认识 | DaMinger&#39;s blog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="DaMinger">
@@ -73,7 +73,7 @@ HDFS(Hadoop Distributed File System)默认的最基本的存储单位是64M的�
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2014/04/18/Hadoop/hadoop_hive/" title="Hive简单认识" itemprop="url">Hive简单认识</a>
+      <a href="/2014/04/18/Hadoop/hadoop_hdfs/" title="HDFS简单认识" itemprop="url">HDFS简单认识</a>
   </h1>
   <p class="article-author">By
     
@@ -81,7 +81,7 @@ HDFS(Hadoop Distributed File System)默认的最基本的存储单位是64M的�
     </p>
   <p class="article-time">
     <time datetime="2014-04-18T11:58:57.000Z" itemprop="datePublished">4月 18 2014</time>
-    更新日期:<time datetime="2014-04-18T12:44:46.000Z" itemprop="dateModified">4月 18 2014</time>
+    更新日期:<time datetime="2014-04-23T11:48:29.000Z" itemprop="dateModified">4月 23 2014</time>
     
   </p>
 </header>
@@ -101,7 +101,7 @@ HDFS(Hadoop Distributed File System)默认的最基本的存储单位是64M的�
 <p>数据节点是文件系统中真正存储数据的地方。客户端(client)或者元数据信息(namenode)可以向数据节点请求写入或者读出数据块。其周期性的向元数据节点回报其存储的数据块信息。</p>
 <p>从元数据节点(secondary namenode)从元数据节点并不是元数据节点出现问题时候的备用节点，它和元数据节点负责不同的事情。其主要功能就是周期性将元数据节点的命名空间镜像文件和修改日志合并，以防日志文件过大。这点在下面会相信叙述。合并过后的命名空间镜像文件也在从元数据节点保存了一份，以防元数据节点失败的时候，可以恢复。</p>
 <h4 id="1-2-1、元数据节点文件夹结构">1.2.1、元数据节点文件夹结构</h4>
-<p><img src="/img/Hadoop/Hive/1.png" alt="图1"><br>VERSION文件是java properties文件，保存了HDFS的版本号。</p>
+<p><img src="/img/Hadoop/HDFS/1.png" alt="图1"><br>VERSION文件是java properties文件，保存了HDFS的版本号。</p>
 <pre><code>layoutVersion是一个负整数，保存了HDFS的持续化在硬盘上的数据结构的格式版本号。
 namespaceID是文件系统的唯一标识符，是在文件系统初次格式化时生成的。
 cTime此处为0
@@ -119,11 +119,11 @@ storageType表示此文件夹中保存的是元数据节点的数据结构。
 从元数据节点奖新的fsimage文件用<span class="keyword">http</span> <span class="built_in">post</span>传回元数据节点
 元数据节点可以将旧的fsimage文件及旧的日志文件，换为新的fsimage文件和新的日志文件(第一步生成的)，
 然后更新fstime文件，写入此次checkpoint的时间。
-</code></pre><p>这样元数据节点中的fsimage文件保存了最新的checkpoint的元数据信息，日志文件也重新开始，不会变的很大了。<br><img src="/img/Hadoop/Hive/2.png" alt="图2"></p>
+</code></pre><p>这样元数据节点中的fsimage文件保存了最新的checkpoint的元数据信息，日志文件也重新开始，不会变的很大了。<br><img src="/img/Hadoop/HDFS/2.png" alt="图2"></p>
 <h4 id="1-2-3、从元数据节点的目录结构">1.2.3、从元数据节点的目录结构</h4>
-<p><img src="/img/Hadoop/Hive/3.png" alt="图3"></p>
+<p><img src="/img/Hadoop/HDFS/3.png" alt="图3"></p>
 <h4 id="1-2-4、数据节点的目录结构">1.2.4、数据节点的目录结构</h4>
-<p><img src="/img/Hadoop/Hive/4.png" alt="图4"><br>数据节点的VERSION文件格式如下：</p>
+<p><img src="/img/Hadoop/HDFS/4.png" alt="图4"><br>数据节点的VERSION文件格式如下：</p>
 <pre><code><span class="setting">namespaceID=<span class="value"><span class="number">1232737062</span></span></span>
 <span class="setting">storageID=<span class="value">DS-<span class="number">1640411682</span>-<span class="number">127.0</span>.<span class="number">1.1</span>-<span class="number">50010</span>-<span class="number">1254997319480</span></span></span>
 <span class="setting">cTime=<span class="value"><span class="number">0</span></span></span>
@@ -135,19 +135,19 @@ storageType表示此文件夹中保存的是元数据节点的数据结构。
 <h3 id="二、数据流(data_flow)">二、数据流(data flow)</h3>
 <h4 id="2-1、读文件的过程">2.1、读文件的过程</h4>
 <p>客户端(client)用FileSystem的open()函数打开文件，DistributedFileSystem用RPC调用元数据节点，得到文件的数据块信息。对于每一个数据块，元数据节点返回保存数据块的数据节点的地址。DistributedFileSystem返回FSDataInputStream给客户端，用来读取数据。客户端调用stream的read()函数开始读取数据。DFSInputStream连接保存此文件第一个数据块的最近的数据节点。Data从数据节点读到客户端(client)。<br>当此数据块读取完毕时，DFSInputStream关闭和此数据节点的连接，然后连接此文件下一个数据块的最近的数据节点。</p>
-<p>当客户端读取完毕数据的时候，调用FSDataInputStream的close函数。在读取数据的过程中，如果客户端在与数据节点通信出现错误，则尝试连接包含此数据块的下一个数据节点。失败的数据节点将被记录，以后不再连接。<br><img src="/img/Hadoop/Hive/5.png" alt="图5"></p>
+<p>当客户端读取完毕数据的时候，调用FSDataInputStream的close函数。在读取数据的过程中，如果客户端在与数据节点通信出现错误，则尝试连接包含此数据块的下一个数据节点。失败的数据节点将被记录，以后不再连接。<br><img src="/img/Hadoop/HDFS/5.png" alt="图5"></p>
 <h4 id="2-2、写文件的过程">2.2、写文件的过程</h4>
 <p>客户端调用create()来创建文件，DistributedFileSystem用RPC调用元数据节点，在文件系统的命名空间中创建一个新的文件。元数据节点首先确定文件原来不存在，并且客户端有创建文件的权限，然后创建新文件。DistributedFileSystem返回DFSOutputStream，客户端用于写数据。</p>
 <p>客户端开始写入数据，DFSOutputStream将数据分成块，写入data queue。Data queue由Data Streamer读取，并通知元数据节点分配数据节点，用来存储数据块(每块默认复制3块)。分配的数据节点放在一个pipeline里。Data Streamer将数据块写入pipeline中的第一个数据节点。第一个数据节点将数据块发送给第二个数据节点。第二个数据节点将数据发送给第三个数据节点。DFSOutputStream为发出去的数据块保存了ack queue，等待pipeline中的数据节点告知数据已经写入成功。</p>
 <p>如果数据节点在写入的过程中失败：关闭pipeline，将ack queue中的数据块放入data queue的开始。当前的数据块在已经写入的数据节点中被元数据节点赋予新的标示，则错误节点重启后能够察觉其数据块是过时的，会被删除。失败的数据节点从pipeline中移除，另外的数据块则写入pipeline中的另外两个数据节点。元数据节点则被通知此数据块是复制块数不足，将来会再创建第三份备份。</p>
-<p>当客户端结束写入数据，则调用stream的close函数。此操作将所有的数据块写入pipeline中的数据节点，并等待ack queue返回成功。最后通知元数据节点写入完毕。<br><img src="/img/Hadoop/Hive/6.png" alt="图6"></p>
+<p>当客户端结束写入数据，则调用stream的close函数。此操作将所有的数据块写入pipeline中的数据节点，并等待ack queue返回成功。最后通知元数据节点写入完毕。<br><img src="/img/Hadoop/HDFS/6.png" alt="图6"></p>
   
 	</div>
 		<footer class="article-footer clearfix">
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/Hadoop/">Hadoop</a><a href="/tags/Hive/">Hive</a>
+  <span></span> <a href="/tags/Hadoop/">Hadoop</a><a href="/tags/HDFS/">HDFS</a>
   </div>
 
 
@@ -160,7 +160,7 @@ storageType表示此文件夹中保存的是元数据节点的数据结构。
 
 <div class="article-share" id="share">
 
-  <div data-url="https://github.com/DaMinger/DaMinger.github.io.git/2014/04/18/Hadoop/hadoop_hive/" data-title="Hive简单认识 | DaMinger&#39;s blog" data-tsina="null" class="share clearfix">
+  <div data-url="https://github.com/DaMinger/DaMinger.github.io.git/2014/04/18/Hadoop/hadoop_hdfs/" data-title="HDFS简单认识 | DaMinger&#39;s blog" data-tsina="null" class="share clearfix">
   </div>
 
 </div>
@@ -242,11 +242,11 @@ storageType表示此文件夹中保存的是元数据节点的数据结构。
 		
 			<li><a href="/tags/Eclipse/" title="Eclipse">Eclipse<sup>1</sup></a></li>
 		
+			<li><a href="/tags/HDFS/" title="HDFS">HDFS<sup>2</sup></a></li>
+		
 			<li><a href="/tags/Hadoop/" title="Hadoop">Hadoop<sup>11</sup></a></li>
 		
 			<li><a href="/tags/Hadoop_Stream/" title="Hadoop_Stream">Hadoop_Stream<sup>1</sup></a></li>
-		
-			<li><a href="/tags/Hive/" title="Hive">Hive<sup>2</sup></a></li>
 		
 			<li><a href="/tags/Linux/" title="Linux">Linux<sup>4</sup></a></li>
 		
@@ -283,7 +283,7 @@ storageType表示此文件夹中保存的是元数据节点的数据结构。
   <div class="tagcloudlist">
     <p class="asidetitle">标签云</p>
     <div class="tagcloudlist clearfix">
-       <a href="/tags/Eclipse/" style="font-size: 10.00px;">Eclipse</a><a href="/tags/Hadoop/" style="font-size: 20.00px;">Hadoop</a><a href="/tags/Hadoop_Stream/" style="font-size: 10.00px;">Hadoop_Stream</a><a href="/tags/Hive/" style="font-size: 13.33px;">Hive</a><a href="/tags/Linux/" style="font-size: 16.67px;">Linux</a><a href="/tags/Map-Reduce/" style="font-size: 13.33px;">Map-Reduce</a><a href="/tags/Mysql/" style="font-size: 10.00px;">Mysql</a><a href="/tags/Pig/" style="font-size: 10.00px;">Pig</a><a href="/tags/yum/" style="font-size: 10.00px;">yum</a><a href="/tags/杂谈/" style="font-size: 10.00px;">杂谈</a><a href="/tags/网卡错误/" style="font-size: 10.00px;">网卡错误</a><a href="/tags/网络/" style="font-size: 10.00px;">网络</a>
+       <a href="/tags/Eclipse/" style="font-size: 10.00px;">Eclipse</a><a href="/tags/HDFS/" style="font-size: 13.33px;">HDFS</a><a href="/tags/Hadoop/" style="font-size: 20.00px;">Hadoop</a><a href="/tags/Hadoop_Stream/" style="font-size: 10.00px;">Hadoop_Stream</a><a href="/tags/Linux/" style="font-size: 16.67px;">Linux</a><a href="/tags/Map-Reduce/" style="font-size: 13.33px;">Map-Reduce</a><a href="/tags/Mysql/" style="font-size: 10.00px;">Mysql</a><a href="/tags/Pig/" style="font-size: 10.00px;">Pig</a><a href="/tags/yum/" style="font-size: 10.00px;">yum</a><a href="/tags/杂谈/" style="font-size: 10.00px;">杂谈</a><a href="/tags/网卡错误/" style="font-size: 10.00px;">网卡错误</a><a href="/tags/网络/" style="font-size: 10.00px;">网络</a>
     </div>
   </div>
 
