@@ -4,7 +4,7 @@
   <subtitle><![CDATA[信春哥，系统稳，闭眼上线不回滚]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="https://github.com/DaMinger/DaMinger.github.io.git/"/>
-  <updated>2014-04-22T13:42:37.678Z</updated>
+  <updated>2014-04-23T11:39:15.984Z</updated>
   <id>https://github.com/DaMinger/DaMinger.github.io.git/</id>
   
   <author>
@@ -13,6 +13,321 @@
   </author>
   
   <generator uri="http://zespia.tw/hexo/">Hexo</generator>
+  
+  <entry>
+    <title><![CDATA[Pig的简单使用]]></title>
+    <link href="https://github.com/DaMinger/DaMinger.github.io.git/2014/04/23/Hadoop/hadoop_pig/"/>
+    <id>https://github.com/DaMinger/DaMinger.github.io.git/2014/04/23/Hadoop/hadoop_pig/</id>
+    <published>2014-04-23T10:53:16.000Z</published>
+    <updated>2014-04-23T11:38:12.000Z</updated>
+    <content type="html"><![CDATA[<h5 id="安装配置pig">安装配置pig</h5>
+<p>下载你对应hadoop的pig版本,解压</p>
+<h5 id="本地模式">本地模式</h5>
+<pre><code>配置环境变量
+vi <span class="preprocessor">.bash</span>_profile
+PATH=$PATH:/home/grid/pig-<span class="number">0.12</span><span class="number">.1</span>/bin:$HOME/bin
+JAVA_HOME=/usr/jdk1<span class="number">.7</span><span class="number">.0</span>_51
+
+export PATH
+export JAVA_HOME
+[grid@hadoop01 ~]$ pig -<span class="built_in">x</span> local
+<span class="label">Warning:</span> $HADOOP_HOME is deprecated.
+
+<span class="number">2014</span>-<span class="number">04</span>-<span class="number">23</span> <span class="number">15</span>:<span class="number">37</span>:<span class="number">34</span>,<span class="number">815</span> [main] INFO  org<span class="preprocessor">.apache</span><span class="preprocessor">.pig</span><span class="preprocessor">.Main</span> - Apache Pig version <span class="number">0.12</span><span class="number">.1</span> (r1585011) compiled Apr <span class="number">05</span> <span class="number">2014</span>, <span class="number">01</span>:<span class="number">41</span>:<span class="number">34</span>
+<span class="number">2014</span>-<span class="number">04</span>-<span class="number">23</span> <span class="number">15</span>:<span class="number">37</span>:<span class="number">34</span>,<span class="number">815</span> [main] INFO  org<span class="preprocessor">.apache</span><span class="preprocessor">.pig</span><span class="preprocessor">.Main</span> - Logging error messages to: /home/grid/pig_1398238654807<span class="preprocessor">.log</span>
+<span class="number">2014</span>-<span class="number">04</span>-<span class="number">23</span> <span class="number">15</span>:<span class="number">37</span>:<span class="number">35</span>,<span class="number">040</span> [main] INFO  org<span class="preprocessor">.apache</span><span class="preprocessor">.pig</span><span class="preprocessor">.impl</span><span class="preprocessor">.util</span><span class="preprocessor">.Utils</span> - Default bootup file /home/grid/<span class="preprocessor">.pigbootup</span> not found
+<span class="number">2014</span>-<span class="number">04</span>-<span class="number">23</span> <span class="number">15</span>:<span class="number">37</span>:<span class="number">35</span>,<span class="number">843</span> [main] INFO  org<span class="preprocessor">.apache</span><span class="preprocessor">.pig</span><span class="preprocessor">.backend</span><span class="preprocessor">.hadoop</span><span class="preprocessor">.executionengine</span><span class="preprocessor">.HExecutionEngine</span> - Connecting to hadoop file system at: file:///
+grunt&gt; 
+</code></pre><h5 id="mapreduce模式">mapreduce模式</h5>
+<pre><code>配置环境变量
+PATH=$PATH:/home/grid/hadoop-<span class="number">1.2</span><span class="number">.1</span>:/bin:/home/grid/pig-<span class="number">0.12</span><span class="number">.1</span>/bin:$HOME/bin
+JAVA_HOME=/usr/jdk1<span class="number">.7</span><span class="number">.0</span>_51
+PIG_CLASSPATH=/home/grid/hadoop-<span class="number">1.2</span><span class="number">.1</span>/conf/
+
+export PIG_CLASSPATH
+export PATH
+export JAVA_HOME
+[grid@hadoop01 ~]$ cat /etc/hosts
+<span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span>   localhost localhost<span class="preprocessor">.localdomain</span> localhost4 localhost4<span class="preprocessor">.localdomain</span>4
+::<span class="number">1</span>         localhost localhost<span class="preprocessor">.localdomain</span> localhost6 localhost6<span class="preprocessor">.localdomain</span>6
+<span class="number">192.168</span><span class="number">.255</span><span class="number">.151</span> hadoop01<span class="preprocessor">.myhadoop</span><span class="preprocessor">.com</span>
+<span class="number">192.168</span><span class="number">.255</span><span class="number">.152</span> hadoop02<span class="preprocessor">.myhadoop</span><span class="preprocessor">.com</span>
+<span class="number">192.168</span><span class="number">.255</span><span class="number">.153</span> hadoop03<span class="preprocessor">.myhadoop</span><span class="preprocessor">.com</span>
+
+[grid@hadoop01 ~]$ pig
+<span class="label">Warning:</span> $HADOOP_HOME is deprecated.
+
+<span class="number">2014</span>-<span class="number">04</span>-<span class="number">23</span> <span class="number">15</span>:<span class="number">53</span>:<span class="number">06</span>,<span class="number">090</span> [main] INFO  org<span class="preprocessor">.apache</span><span class="preprocessor">.pig</span><span class="preprocessor">.Main</span> - Apache Pig version <span class="number">0.12</span><span class="number">.1</span> (r1585011) compiled Apr <span class="number">05</span> <span class="number">2014</span>, <span class="number">01</span>:<span class="number">41</span>:<span class="number">34</span>
+<span class="number">2014</span>-<span class="number">04</span>-<span class="number">23</span> <span class="number">15</span>:<span class="number">53</span>:<span class="number">06</span>,<span class="number">090</span> [main] INFO  org<span class="preprocessor">.apache</span><span class="preprocessor">.pig</span><span class="preprocessor">.Main</span> - Logging error messages to: /home/grid/pig_1398239586082<span class="preprocessor">.log</span>
+<span class="number">2014</span>-<span class="number">04</span>-<span class="number">23</span> <span class="number">15</span>:<span class="number">53</span>:<span class="number">06</span>,<span class="number">171</span> [main] INFO  org<span class="preprocessor">.apache</span><span class="preprocessor">.pig</span><span class="preprocessor">.impl</span><span class="preprocessor">.util</span><span class="preprocessor">.Utils</span> - Default bootup file /home/grid/<span class="preprocessor">.pigbootup</span> not found
+<span class="number">2014</span>-<span class="number">04</span>-<span class="number">23</span> <span class="number">15</span>:<span class="number">53</span>:<span class="number">07</span>,<span class="number">199</span> [main] INFO  org<span class="preprocessor">.apache</span><span class="preprocessor">.pig</span><span class="preprocessor">.backend</span><span class="preprocessor">.hadoop</span><span class="preprocessor">.executionengine</span><span class="preprocessor">.HExecutionEngine</span> - Connecting to hadoop file system at: hdfs://hadoop01<span class="preprocessor">.myhadoop</span><span class="preprocessor">.com</span>:<span class="number">9000</span>
+<span class="number">2014</span>-<span class="number">04</span>-<span class="number">23</span> <span class="number">15</span>:<span class="number">53</span>:<span class="number">08</span>,<span class="number">712</span> [main] INFO  org<span class="preprocessor">.apache</span><span class="preprocessor">.pig</span><span class="preprocessor">.backend</span><span class="preprocessor">.hadoop</span><span class="preprocessor">.executionengine</span><span class="preprocessor">.HExecutionEngine</span> - Connecting to map-reduce job tracker at: hadoop01<span class="preprocessor">.myhadoop</span><span class="preprocessor">.com</span>:<span class="number">9001</span>
+</code></pre><h5 id="简单操作，可以help查看">简单操作，可以help查看</h5>
+<pre><code>grunt&gt; ls
+<span class="label">hdfs:</span>//hadoop01<span class="preprocessor">.myhadoop</span><span class="preprocessor">.com</span>:<span class="number">9000</span>/user/grid/demo<span class="preprocessor">.txt</span>&lt;r <span class="number">2</span>&gt;       <span class="number">29</span>
+<span class="label">hdfs:</span>//hadoop01<span class="preprocessor">.myhadoop</span><span class="preprocessor">.com</span>:<span class="number">9000</span>/user/grid/<span class="keyword">in</span>  &lt;dir&gt;
+<span class="label">hdfs:</span>//hadoop01<span class="preprocessor">.myhadoop</span><span class="preprocessor">.com</span>:<span class="number">9000</span>/user/grid/<span class="keyword">out</span> &lt;dir&gt;
+<span class="label">hdfs:</span>//hadoop01<span class="preprocessor">.myhadoop</span><span class="preprocessor">.com</span>:<span class="number">9000</span>/user/grid/out2        &lt;dir&gt;
+<span class="label">hdfs:</span>//hadoop01<span class="preprocessor">.myhadoop</span><span class="preprocessor">.com</span>:<span class="number">9000</span>/user/grid/out3        &lt;dir&gt;
+<span class="label">hdfs:</span>//hadoop01<span class="preprocessor">.myhadoop</span><span class="preprocessor">.com</span>:<span class="number">9000</span>/user/grid/out4        &lt;dir&gt;
+grunt&gt; cd <span class="keyword">in</span>
+grunt&gt; ls
+<span class="label">hdfs:</span>//hadoop01<span class="preprocessor">.myhadoop</span><span class="preprocessor">.com</span>:<span class="number">9000</span>/user/grid/<span class="keyword">in</span>/noaaSample<span class="preprocessor">.txt</span>&lt;r <span class="number">2</span>&gt;      <span class="number">39564893</span>
+<span class="label">hdfs:</span>//hadoop01<span class="preprocessor">.myhadoop</span><span class="preprocessor">.com</span>:<span class="number">9000</span>/user/grid/<span class="keyword">in</span>/test1<span class="preprocessor">.txt</span>&lt;r <span class="number">2</span>&gt;   <span class="number">12</span>
+<span class="label">hdfs:</span>//hadoop01<span class="preprocessor">.myhadoop</span><span class="preprocessor">.com</span>:<span class="number">9000</span>/user/grid/<span class="keyword">in</span>/test2<span class="preprocessor">.txt</span>&lt;r <span class="number">2</span>&gt;   <span class="number">13</span>
+grunt&gt; cat test1<span class="preprocessor">.txt</span>
+hello world
+</code></pre><h5 id="做两个实验">做两个实验</h5>
+<h6 id="实验一：准备数据">实验一：准备数据</h6>
+<pre><code>[grid@hadoop01 ~]$ cat score<span class="preprocessor">.txt</span> 
+James,Network,Tiger,<span class="number">100</span>
+James,Database,Tiger,<span class="number">99</span>
+James,PDE,Yao,<span class="number">95</span>
+Vincent,Network,Tiger,<span class="number">95</span>
+Vincent,PDE,Yao,<span class="number">98</span>
+Vincent,PDE,
+NocWei,PDE,Yao,<span class="number">100</span>
+grunt&gt; copyFromLocal  /home/grid/score<span class="preprocessor">.txt</span> pig/score<span class="preprocessor">.txt</span>
+grunt&gt; ls
+<span class="label">hdfs:</span>//hadoop01<span class="preprocessor">.myhadoop</span><span class="preprocessor">.com</span>:<span class="number">9000</span>/user/grid/demo<span class="preprocessor">.txt</span>&lt;r <span class="number">2</span>&gt;       <span class="number">29</span>
+<span class="label">hdfs:</span>//hadoop01<span class="preprocessor">.myhadoop</span><span class="preprocessor">.com</span>:<span class="number">9000</span>/user/grid/<span class="keyword">in</span>  &lt;dir&gt;
+<span class="label">hdfs:</span>//hadoop01<span class="preprocessor">.myhadoop</span><span class="preprocessor">.com</span>:<span class="number">9000</span>/user/grid/<span class="keyword">out</span> &lt;dir&gt;
+<span class="label">hdfs:</span>//hadoop01<span class="preprocessor">.myhadoop</span><span class="preprocessor">.com</span>:<span class="number">9000</span>/user/grid/out2        &lt;dir&gt;
+<span class="label">hdfs:</span>//hadoop01<span class="preprocessor">.myhadoop</span><span class="preprocessor">.com</span>:<span class="number">9000</span>/user/grid/out3        &lt;dir&gt;
+<span class="label">hdfs:</span>//hadoop01<span class="preprocessor">.myhadoop</span><span class="preprocessor">.com</span>:<span class="number">9000</span>/user/grid/out4        &lt;dir&gt;
+<span class="label">hdfs:</span>//hadoop01<span class="preprocessor">.myhadoop</span><span class="preprocessor">.com</span>:<span class="number">9000</span>/user/grid/pig &lt;dir&gt;
+grunt&gt; cd pig
+grunt&gt; ls
+<span class="label">hdfs:</span>//hadoop01<span class="preprocessor">.myhadoop</span><span class="preprocessor">.com</span>:<span class="number">9000</span>/user/grid/pig/score<span class="preprocessor">.txt</span>&lt;r <span class="number">2</span>&gt;  <span class="number">141</span>
+grunt&gt; cat score<span class="preprocessor">.txt</span>
+James,Network,Tiger,<span class="number">100</span>
+James,Database,Tiger,<span class="number">99</span>
+James,PDE,Yao,<span class="number">95</span>
+Vincent,Network,Tiger,<span class="number">95</span>
+Vincent,PDE,Yao,<span class="number">98</span>
+Vincent,PDE,
+NocWei,PDE,Yao,<span class="number">100</span>
+</code></pre><h6 id="任务目标：计算一名学生被多少老师教过(这里用到了Pig_Latin)">任务目标：计算一名学生被多少老师教过(这里用到了Pig Latin)</h6>
+<p>先DISTINCT,再计数。-使用DISTINCT 能够对所有数据去重</p>
+<pre><code>grunt&gt; A = LOAD 'score.txt' USING PigStorage(',') AS (student,course,teacher,score:int);
+grunt&gt; DESCRIBE A;
+A: {student: bytearray,course: bytearray,teacher: bytearray,score: int}
+grunt&gt; B = FOREACH A GENERATE student,teacher;
+grunt&gt; DESCRIBE B;
+B: {student: bytearray,teacher: bytearray}
+grunt&gt; C = DISTINCT B;
+grunt&gt; D = GROUP C BY student
+grunt&gt; D = FOREACH (GROUP C BY student ) GENERATE group AS student,COUNT(C);
+grunt&gt; DUMP D;
+<span class="number">2014</span>-<span class="number">04</span>-<span class="number">23</span> <span class="number">16</span>:<span class="number">35</span>:<span class="number">56</span>,<span class="number">076</span> [main] INFO  org.apache.pig.tools.pigstats.ScriptState - Pig features used <span class="keyword">in</span> the script: GROUP_BY,DISTINCT
+<span class="number">2014</span>-<span class="number">04</span>-<span class="number">23</span> <span class="number">16</span>:<span class="number">35</span>:<span class="number">56</span>,<span class="number">241</span> [main] INFO  org.apache.pig.newplan.logical.optimizer.LogicalPlanOptimizer - {RULES_ENABLED=[AddForEach, ColumnMapKeyPrune, GroupByConstParallelSetter, LimitOptimizer, LoadTypeCastInserter, MergeFilter, MergeForEach, NewPartitionFilterOptimizer, PartitionFilterOptimizer, PushDownForEachFlatten, PushUpFilter, SplitFilter, StreamTypeCastInserter], RULES_DISABLED=[FilterLogicExpressionSimplifier]}
+<span class="number">2014</span>-<span class="number">04</span>-<span class="number">23</span> <span class="number">16</span>:<span class="number">35</span>:<span class="number">56</span>,<span class="number">326</span> [main] INFO  org.apache.pig.newplan.logical.rules.ColumnPruneVisitor - Columns pruned <span class="keyword">for</span> A: $<span class="number">1</span>, $<span class="number">3</span>
+<span class="number">2014</span>-<span class="number">04</span>-<span class="number">23</span> <span class="number">16</span>:<span class="number">35</span>:<span class="number">56</span>,<span class="number">760</span> [main] INFO  org.apache.pig.backend.hadoop.executionengine.mapReduceLayer.MRCompiler - File concatenation threshold: <span class="number">100</span> optimistic? <span class="keyword">false</span>
+<span class="number">2014</span>-<span class="number">04</span>-<span class="number">23</span> <span class="number">16</span>:<span class="number">35</span>:<span class="number">56</span>,<span class="number">866</span> [main] INFO  org.apache.pig.backend.hadoop.executionengine.mapReduceLayer.CombinerOptimizer - Choosing <span class="keyword">to</span> move algebraic foreach <span class="keyword">to</span> combiner
+<span class="number">2014</span>-<span class="number">04</span>-<span class="number">23</span> <span class="number">16</span>:<span class="number">35</span>:<span class="number">57</span>,<span class="number">011</span> [main] INFO  org.apache.pig.backend.hadoop.executionengine.mapReduceLayer.MultiQueryOptimizer - MR plan size before optimization: <span class="number">2</span>
+<span class="number">2014</span>-<span class="number">04</span>-<span class="number">23</span> <span class="number">16</span>:<span class="number">35</span>:<span class="number">57</span>,<span class="number">018</span> [main] INFO  org.apache.pig.backend.hadoop.executionengine.mapReduceLayer.MultiQueryOptimizer - MR plan size after optimization: <span class="number">2</span>
+<span class="number">2014</span>-<span class="number">04</span>-<span class="number">23</span> <span class="number">16</span>:<span class="number">35</span>:<span class="number">57</span>,<span class="number">388</span> [main] INFO  org.apache.pig.tools.pigstats.ScriptState - Pig script settings are added <span class="keyword">to</span> the job
+<span class="number">2014</span>-<span class="number">04</span>-<span class="number">23</span> <span class="number">16</span>:<span class="number">35</span>:<span class="number">57</span>,<span class="number">453</span> [main] INFO  org.apache.pig.backend.hadoop.executionengine.mapReduceLayer.JobControlCompiler - mapred.job.reduce.markreset.buffer.percent is not set, set <span class="keyword">to</span> <span class="keyword">default</span> <span class="number">0.3</span>
+<span class="number">2014</span>-<span class="number">04</span>-<span class="number">23</span> <span class="number">16</span>:<span class="number">35</span>:<span class="number">57</span>,<span class="number">463</span> [main] INFO  org.apache.pig.backend.hadoop.executionengine.mapReduceLayer.JobControlCompiler - Reduce phase detected, estimating # <span class="keyword">of</span> required reducers.
+<span class="number">2014</span>-<span class="number">04</span>-<span class="number">23</span> <span class="number">16</span>:<span class="number">35</span>:<span class="number">57</span>,<span class="number">464</span> [main] INFO  org.apache.pig.backend.hadoop.executionengine.mapReduceLayer.JobControlCompiler - Using reducer estimator: org.apache.pig.backend.hadoop.executionengine.mapReduceLayer.InputSizeReducerEstimator
+<span class="number">2014</span>-<span class="number">04</span>-<span class="number">23</span> <span class="number">16</span>:<span class="number">35</span>:<span class="number">57</span>,<span class="number">528</span> [main] INFO  org.apache.pig.backend.hadoop.executionengine.mapReduceLayer.InputSizeReducerEstimator - BytesPerReducer=<span class="number">1000000000</span> maxReducers=<span class="number">999</span> totalInputFileSize=<span class="number">141</span>
+<span class="number">2014</span>-<span class="number">04</span>-<span class="number">23</span> <span class="number">16</span>:<span class="number">35</span>:<span class="number">57</span>,<span class="number">535</span> [main] INFO  org.apache.pig.backend.hadoop.executionengine.mapReduceLayer.JobControlCompiler - Setting Parallelism <span class="keyword">to</span> <span class="number">1</span>
+<span class="number">2014</span>-<span class="number">04</span>-<span class="number">23</span> <span class="number">16</span>:<span class="number">35</span>:<span class="number">57</span>,<span class="number">536</span> [main] INFO  org.apache.pig.backend.hadoop.executionengine.mapReduceLayer.JobControlCompiler - creating jar file Job8437033109018168730.jar
+<span class="number">2014</span>-<span class="number">04</span>-<span class="number">23</span> <span class="number">16</span>:<span class="number">36</span>:<span class="number">11</span>,<span class="number">994</span> [main] INFO  org.apache.pig.backend.hadoop.executionengine.mapReduceLayer.JobControlCompiler - jar file Job8437033109018168730.jar created
+<span class="number">2014</span>-<span class="number">04</span>-<span class="number">23</span> <span class="number">16</span>:<span class="number">36</span>:<span class="number">12</span>,<span class="number">071</span> [main] INFO  org.apache.pig.backend.hadoop.executionengine.mapReduceLayer.JobControlCompiler - Setting up single store job
+<span class="number">2014</span>-<span class="number">04</span>-<span class="number">23</span> <span class="number">16</span>:<span class="number">36</span>:<span class="number">12</span>,<span class="number">106</span> [main] INFO  org.apache.pig.data.SchemaTupleFrontend - Key [pig.schematuple] is <span class="keyword">false</span>, will not generate code.
+<span class="number">2014</span>-<span class="number">04</span>-<span class="number">23</span> <span class="number">16</span>:<span class="number">36</span>:<span class="number">12</span>,<span class="number">106</span> [main] INFO  org.apache.pig.data.SchemaTupleFrontend - Starting process <span class="keyword">to</span> move generated code <span class="keyword">to</span> distributed cache
+<span class="number">2014</span>-<span class="number">04</span>-<span class="number">23</span> <span class="number">16</span>:<span class="number">36</span>:<span class="number">12</span>,<span class="number">121</span> [main] INFO  org.apache.pig.data.SchemaTupleFrontend - Setting key [pig.schematuple.classes] <span class="keyword">with</span> classes <span class="keyword">to</span> deserialize []
+<span class="number">2014</span>-<span class="number">04</span>-<span class="number">23</span> <span class="number">16</span>:<span class="number">36</span>:<span class="number">12</span>,<span class="number">126</span> [main] INFO  org.apache.pig.backend.hadoop.executionengine.mapReduceLayer.JobControlCompiler - Setting identity combiner <span class="keyword">class</span>.
+<span class="number">2014</span>-<span class="number">04</span>-<span class="number">23</span> <span class="number">16</span>:<span class="number">36</span>:<span class="number">12</span>,<span class="number">386</span> [main] INFO  org.apache.pig.backend.hadoop.executionengine.mapReduceLayer.MapReduceLauncher - <span class="number">1</span> map-reduce job(s) waiting <span class="keyword">for</span> submission.
+<span class="number">2014</span>-<span class="number">04</span>-<span class="number">23</span> <span class="number">16</span>:<span class="number">36</span>:<span class="number">12</span>,<span class="number">892</span> [main] INFO  org.apache.pig.backend.hadoop.executionengine.mapReduceLayer.MapReduceLauncher - <span class="number">0</span>% complete
+<span class="number">2014</span>-<span class="number">04</span>-<span class="number">23</span> <span class="number">16</span>:<span class="number">36</span>:<span class="number">13</span>,<span class="number">591</span> [JobControl] INFO  org.apache.hadoop.mapreduce.lib.input.FileInputFormat - Total input paths <span class="keyword">to</span> process : <span class="number">1</span>
+<span class="number">2014</span>-<span class="number">04</span>-<span class="number">23</span> <span class="number">16</span>:<span class="number">36</span>:<span class="number">13</span>,<span class="number">592</span> [JobControl] INFO  org.apache.pig.backend.hadoop.executionengine.util.MapRedUtil - Total input paths <span class="keyword">to</span> process : <span class="number">1</span>
+<span class="number">2014</span>-<span class="number">04</span>-<span class="number">23</span> <span class="number">16</span>:<span class="number">36</span>:<span class="number">13</span>,<span class="number">639</span> [JobControl] INFO  org.apache.hadoop.util.NativeCodeLoader - Loaded the native-hadoop library
+<span class="number">2014</span>-<span class="number">04</span>-<span class="number">23</span> <span class="number">16</span>:<span class="number">36</span>:<span class="number">13</span>,<span class="number">639</span> [JobControl] WARN  org.apache.hadoop.io.compress.snappy.LoadSnappy - Snappy native library not loaded
+<span class="number">2014</span>-<span class="number">04</span>-<span class="number">23</span> <span class="number">16</span>:<span class="number">36</span>:<span class="number">13</span>,<span class="number">645</span> [JobControl] INFO  org.apache.pig.backend.hadoop.executionengine.util.MapRedUtil - Total input paths (combined) <span class="keyword">to</span> process : <span class="number">1</span>
+<span class="number">2014</span>-<span class="number">04</span>-<span class="number">23</span> <span class="number">16</span>:<span class="number">36</span>:<span class="number">16</span>,<span class="number">303</span> [main] INFO  org.apache.pig.backend.hadoop.executionengine.mapReduceLayer.MapReduceLauncher - HadoopJobId: job_201404231546_0001
+<span class="number">2014</span>-<span class="number">04</span>-<span class="number">23</span> <span class="number">16</span>:<span class="number">36</span>:<span class="number">16</span>,<span class="number">303</span> [main] INFO  org.apache.pig.backend.hadoop.executionengine.mapReduceLayer.MapReduceLauncher - Processing aliases A,B
+<span class="number">2014</span>-<span class="number">04</span>-<span class="number">23</span> <span class="number">16</span>:<span class="number">36</span>:<span class="number">16</span>,<span class="number">303</span> [main] INFO  org.apache.pig.backend.hadoop.executionengine.mapReduceLayer.MapReduceLauncher - detailed locations: M: A[<span class="number">1</span>,<span class="number">4</span>],B[-<span class="number">1</span>,-<span class="number">1</span>] C:  R: 
+<span class="number">2014</span>-<span class="number">04</span>-<span class="number">23</span> <span class="number">16</span>:<span class="number">36</span>:<span class="number">16</span>,<span class="number">303</span> [main] INFO  org.apache.pig.backend.hadoop.executionengine.mapReduceLayer.MapReduceLauncher - More information at: http:<span class="comment">//hadoop01.myhadoop.com:50030/jobdetails.jsp?jobid=job_201404231546_0001</span>
+<span class="number">2014</span>-<span class="number">04</span>-<span class="number">23</span> <span class="number">16</span>:<span class="number">36</span>:<span class="number">32</span>,<span class="number">455</span> [main] INFO  org.apache.pig.backend.hadoop.executionengine.mapReduceLayer.MapReduceLauncher - <span class="number">25</span>% complete
+<span class="number">2014</span>-<span class="number">04</span>-<span class="number">23</span> <span class="number">16</span>:<span class="number">36</span>:<span class="number">45</span>,<span class="number">009</span> [main] INFO  org.apache.pig.backend.hadoop.executionengine.mapReduceLayer.MapReduceLauncher - <span class="number">50</span>% complete
+<span class="number">2014</span>-<span class="number">04</span>-<span class="number">23</span> <span class="number">16</span>:<span class="number">36</span>:<span class="number">51</span>,<span class="number">152</span> [main] INFO  org.apache.pig.tools.pigstats.ScriptState - Pig script settings are added <span class="keyword">to</span> the job
+<span class="number">2014</span>-<span class="number">04</span>-<span class="number">23</span> <span class="number">16</span>:<span class="number">36</span>:<span class="number">51</span>,<span class="number">154</span> [main] INFO  org.apache.pig.backend.hadoop.executionengine.mapReduceLayer.JobControlCompiler - mapred.job.reduce.markreset.buffer.percent is not set, set <span class="keyword">to</span> <span class="keyword">default</span> <span class="number">0.3</span>
+<span class="number">2014</span>-<span class="number">04</span>-<span class="number">23</span> <span class="number">16</span>:<span class="number">36</span>:<span class="number">51</span>,<span class="number">155</span> [main] INFO  org.apache.pig.backend.hadoop.executionengine.mapReduceLayer.JobControlCompiler - Reduce phase detected, estimating # <span class="keyword">of</span> required reducers.
+<span class="number">2014</span>-<span class="number">04</span>-<span class="number">23</span> <span class="number">16</span>:<span class="number">36</span>:<span class="number">51</span>,<span class="number">155</span> [main] INFO  org.apache.pig.backend.hadoop.executionengine.mapReduceLayer.JobControlCompiler - Using reducer estimator: org.apache.pig.backend.hadoop.executionengine.mapReduceLayer.InputSizeReducerEstimator
+<span class="number">2014</span>-<span class="number">04</span>-<span class="number">23</span> <span class="number">16</span>:<span class="number">36</span>:<span class="number">51</span>,<span class="number">378</span> [main] INFO  org.apache.pig.backend.hadoop.executionengine.mapReduceLayer.InputSizeReducerEstimator - BytesPerReducer=<span class="number">1000000000</span> maxReducers=<span class="number">999</span> totalInputFileSize=<span class="number">103</span>
+<span class="number">2014</span>-<span class="number">04</span>-<span class="number">23</span> <span class="number">16</span>:<span class="number">36</span>:<span class="number">51</span>,<span class="number">378</span> [main] INFO  org.apache.pig.backend.hadoop.executionengine.mapReduceLayer.JobControlCompiler - Setting Parallelism <span class="keyword">to</span> <span class="number">1</span>
+<span class="number">2014</span>-<span class="number">04</span>-<span class="number">23</span> <span class="number">16</span>:<span class="number">36</span>:<span class="number">51</span>,<span class="number">379</span> [main] INFO  org.apache.pig.backend.hadoop.executionengine.mapReduceLayer.JobControlCompiler - creating jar file Job4848190506187042517.jar
+<span class="number">2014</span>-<span class="number">04</span>-<span class="number">23</span> <span class="number">16</span>:<span class="number">37</span>:<span class="number">04</span>,<span class="number">009</span> [main] INFO  org.apache.pig.backend.hadoop.executionengine.mapReduceLayer.JobControlCompiler - jar file Job4848190506187042517.jar created
+<span class="number">2014</span>-<span class="number">04</span>-<span class="number">23</span> <span class="number">16</span>:<span class="number">37</span>:<span class="number">04</span>,<span class="number">047</span> [main] INFO  org.apache.pig.backend.hadoop.executionengine.mapReduceLayer.JobControlCompiler - Setting up single store job
+<span class="number">2014</span>-<span class="number">04</span>-<span class="number">23</span> <span class="number">16</span>:<span class="number">37</span>:<span class="number">04</span>,<span class="number">052</span> [main] INFO  org.apache.pig.data.SchemaTupleFrontend - Key [pig.schematuple] is <span class="keyword">false</span>, will not generate code.
+<span class="number">2014</span>-<span class="number">04</span>-<span class="number">23</span> <span class="number">16</span>:<span class="number">37</span>:<span class="number">04</span>,<span class="number">052</span> [main] INFO  org.apache.pig.data.SchemaTupleFrontend - Starting process <span class="keyword">to</span> move generated code <span class="keyword">to</span> distributed cache
+<span class="number">2014</span>-<span class="number">04</span>-<span class="number">23</span> <span class="number">16</span>:<span class="number">37</span>:<span class="number">04</span>,<span class="number">052</span> [main] INFO  org.apache.pig.data.SchemaTupleFrontend - Setting key [pig.schematuple.classes] <span class="keyword">with</span> classes <span class="keyword">to</span> deserialize []
+<span class="number">2014</span>-<span class="number">04</span>-<span class="number">23</span> <span class="number">16</span>:<span class="number">37</span>:<span class="number">04</span>,<span class="number">182</span> [main] INFO  org.apache.pig.backend.hadoop.executionengine.mapReduceLayer.MapReduceLauncher - <span class="number">1</span> map-reduce job(s) waiting <span class="keyword">for</span> submission.
+<span class="number">2014</span>-<span class="number">04</span>-<span class="number">23</span> <span class="number">16</span>:<span class="number">37</span>:<span class="number">04</span>,<span class="number">663</span> [JobControl] INFO  org.apache.hadoop.mapreduce.lib.input.FileInputFormat - Total input paths <span class="keyword">to</span> process : <span class="number">1</span>
+<span class="number">2014</span>-<span class="number">04</span>-<span class="number">23</span> <span class="number">16</span>:<span class="number">37</span>:<span class="number">04</span>,<span class="number">663</span> [JobControl] INFO  org.apache.pig.backend.hadoop.executionengine.util.MapRedUtil - Total input paths <span class="keyword">to</span> process : <span class="number">1</span>
+<span class="number">2014</span>-<span class="number">04</span>-<span class="number">23</span> <span class="number">16</span>:<span class="number">37</span>:<span class="number">04</span>,<span class="number">671</span> [JobControl] INFO  org.apache.pig.backend.hadoop.executionengine.util.MapRedUtil - Total input paths (combined) <span class="keyword">to</span> process : <span class="number">1</span>
+<span class="number">2014</span>-<span class="number">04</span>-<span class="number">23</span> <span class="number">16</span>:<span class="number">37</span>:<span class="number">05</span>,<span class="number">676</span> [main] INFO  org.apache.pig.backend.hadoop.executionengine.mapReduceLayer.MapReduceLauncher - HadoopJobId: job_201404231546_0002
+<span class="number">2014</span>-<span class="number">04</span>-<span class="number">23</span> <span class="number">16</span>:<span class="number">37</span>:<span class="number">05</span>,<span class="number">676</span> [main] INFO  org.apache.pig.backend.hadoop.executionengine.mapReduceLayer.MapReduceLauncher - Processing aliases <span class="number">1</span>-<span class="number">17</span>,D
+<span class="number">2014</span>-<span class="number">04</span>-<span class="number">23</span> <span class="number">16</span>:<span class="number">37</span>:<span class="number">05</span>,<span class="number">676</span> [main] INFO  org.apache.pig.backend.hadoop.executionengine.mapReduceLayer.MapReduceLauncher - detailed locations: M: D[<span class="number">5</span>,<span class="number">4</span>],<span class="number">1</span>-<span class="number">17</span>[<span class="number">5</span>,<span class="number">13</span>] C: D[<span class="number">5</span>,<span class="number">4</span>],<span class="number">1</span>-<span class="number">17</span>[<span class="number">5</span>,<span class="number">13</span>] R: D[<span class="number">5</span>,<span class="number">4</span>]
+<span class="number">2014</span>-<span class="number">04</span>-<span class="number">23</span> <span class="number">16</span>:<span class="number">37</span>:<span class="number">05</span>,<span class="number">676</span> [main] INFO  org.apache.pig.backend.hadoop.executionengine.mapReduceLayer.MapReduceLauncher - More information at: http:<span class="comment">//hadoop01.myhadoop.com:50030/jobdetails.jsp?jobid=job_201404231546_0002</span>
+<span class="number">2014</span>-<span class="number">04</span>-<span class="number">23</span> <span class="number">16</span>:<span class="number">37</span>:<span class="number">17</span>,<span class="number">750</span> [main] INFO  org.apache.pig.backend.hadoop.executionengine.mapReduceLayer.MapReduceLauncher - <span class="number">75</span>% complete
+<span class="number">2014</span>-<span class="number">04</span>-<span class="number">23</span> <span class="number">16</span>:<span class="number">37</span>:<span class="number">27</span>,<span class="number">518</span> [main] INFO  org.apache.pig.backend.hadoop.executionengine.mapReduceLayer.MapReduceLauncher - <span class="number">83</span>% complete
+<span class="number">2014</span>-<span class="number">04</span>-<span class="number">23</span> <span class="number">16</span>:<span class="number">37</span>:<span class="number">35</span>,<span class="number">568</span> [main] INFO  org.apache.pig.backend.hadoop.executionengine.mapReduceLayer.MapReduceLauncher - <span class="number">100</span>% complete
+<span class="number">2014</span>-<span class="number">04</span>-<span class="number">23</span> <span class="number">16</span>:<span class="number">37</span>:<span class="number">35</span>,<span class="number">591</span> [main] INFO  org.apache.pig.tools.pigstats.SimplePigStats - Script Statistics: 
+
+HadoopVersion   PigVersion      UserId  StartedAt       FinishedAt      Features
+<span class="number">1.2</span><span class="number">.1</span>   <span class="number">0.12</span><span class="number">.1</span>  grid    <span class="number">2014</span>-<span class="number">04</span>-<span class="number">23</span> <span class="number">16</span>:<span class="number">35</span>:<span class="number">57</span>     <span class="number">2014</span>-<span class="number">04</span>-<span class="number">23</span> <span class="number">16</span>:<span class="number">37</span>:<span class="number">35</span>     GROUP_BY,DISTINCT
+
+Success!
+
+Job Stats (time <span class="keyword">in</span> seconds):
+JobId   Maps    Reduces MaxMapTime      MinMapTIme      AvgMapTime      MedianMapTime   MaxReduceTime   MinReduceTime        AvgReduceTime   MedianReducetime        Alias   Feature Outputs
+job_201404231546_0001   <span class="number">1</span>       <span class="number">1</span>       <span class="number">5</span>       <span class="number">5</span>       <span class="number">5</span>       <span class="number">5</span>       <span class="number">12</span>      <span class="number">12</span>      <span class="number">12</span>      <span class="number">12</span>      A,B DISTINCT
+job_201404231546_0002   <span class="number">1</span>       <span class="number">1</span>       <span class="number">5</span>       <span class="number">5</span>       <span class="number">5</span>       <span class="number">5</span>       <span class="number">12</span>      <span class="number">12</span>      <span class="number">12</span>      <span class="number">12</span>      <span class="number">1</span>-<span class="number">17</span>,D       GROUP_BY,COMBINER       hdfs:<span class="comment">//hadoop01.myhadoop.com:9000/tmp/temp1433820585/tmp1152433391,</span>
+
+Input(s):
+Successfully read <span class="number">7</span> records (<span class="number">517</span> bytes) from: <span class="string">"hdfs://hadoop01.myhadoop.com:9000/user/grid/pig/score.txt"</span>
+
+Output(s):
+Successfully stored <span class="number">3</span> records (<span class="number">41</span> bytes) <span class="keyword">in</span>: <span class="string">"hdfs://hadoop01.myhadoop.com:9000/tmp/temp1433820585/tmp1152433391"</span>
+
+Counters:
+Total records written : <span class="number">3</span>
+Total bytes written : <span class="number">41</span>
+Spillable Memory Manager spill count : <span class="number">0</span>
+Total bags proactively spilled: <span class="number">0</span>
+Total records proactively spilled: <span class="number">0</span>
+
+Job DAG:
+job_201404231546_0001   -&gt;      job_201404231546_0002,
+job_201404231546_0002
+
+
+<span class="number">2014</span>-<span class="number">04</span>-<span class="number">23</span> <span class="number">16</span>:<span class="number">37</span>:<span class="number">35</span>,<span class="number">627</span> [main] INFO  org.apache.pig.backend.hadoop.executionengine.mapReduceLayer.MapReduceLauncher - Success!
+<span class="number">2014</span>-<span class="number">04</span>-<span class="number">23</span> <span class="number">16</span>:<span class="number">37</span>:<span class="number">35</span>,<span class="number">641</span> [main] INFO  org.apache.pig.data.SchemaTupleBackend - Key [pig.schematuple] was not set... will not generate code.
+<span class="number">2014</span>-<span class="number">04</span>-<span class="number">23</span> <span class="number">16</span>:<span class="number">37</span>:<span class="number">35</span>,<span class="number">654</span> [main] INFO  org.apache.hadoop.mapreduce.lib.input.FileInputFormat - Total input paths <span class="keyword">to</span> process : <span class="number">1</span>
+<span class="number">2014</span>-<span class="number">04</span>-<span class="number">23</span> <span class="number">16</span>:<span class="number">37</span>:<span class="number">35</span>,<span class="number">655</span> [main] INFO  org.apache.pig.backend.hadoop.executionengine.util.MapRedUtil - Total input paths <span class="keyword">to</span> process : <span class="number">1</span>
+(James,<span class="number">2</span>)
+(NocWei,<span class="number">1</span>)
+(Vincent,<span class="number">3</span>）
+</code></pre><p>最后几行展现了结果</p>
+<h6 id="实验二：请使用Pig_latin语言处理access_log-txt日志，计算出每个IP的点击数">实验二：请使用Pig latin语言处理access_log.txt日志，计算出每个IP的点击数</h6>
+<p>这个实验是采用了大牛刘盛的BLOG <a href="http://blog.itpub.net/26686207" target="_blank">http://blog.itpub.net/26686207</a><br>做实验的时候我没有做操作日志，下面是他的操作日志</p>
+<pre><code>grunt&gt; cat <span class="filename">access_log.txt 我们来看一下文件的内容之后进行数据分析
+119.146.220.12 - - [31/Jan/2012</span>:<span class="number">23</span>:<span class="number">59</span>:<span class="number">51</span> +<span class="number">0800</span>] <span class="string">"GET /static/js/jquery-1.6.js HTTP/1.1"</span> <span class="number">404</span> <span class="number">299</span> <span class="string">"http://f.dataguru.cn/forum.php?mod=forumdisplay&amp;fid=53&amp;page=1"</span> <span class="string">"Mozilla/5.0 (Windows NT 5.1; rv:8.0.1) Gecko/20100101 Firefox/8.0.1"</span>
+<span class="number">119.146</span><span class="number">.220</span><span class="number">.12</span> - - [<span class="number">31</span>/Jan/<span class="number">2012</span>:<span class="number">23</span>:<span class="number">59</span>:<span class="number">52</span> +<span class="number">0800</span>] <span class="string">"GET /static/js/floating-jf.js HTTP/1.1"</span> <span class="number">404</span> <span class="number">300</span> <span class="string">"http://f.dataguru.cn/forum.php?mod=forumdisplay&amp;fid=53&amp;page=1"</span> <span class="string">"Mozilla/5.0 (Windows NT 5.1; rv:8.0.1) Gecko/20100101 Firefox/8.0.1"</span>
+<span class="number">119.146</span><span class="number">.220</span><span class="number">.12</span> - - [<span class="number">31</span>/Jan/<span class="number">2012</span>:<span class="number">23</span>:<span class="number">59</span>:<span class="number">55</span> +<span class="number">0800</span>] <span class="string">"GET /popwin_js.php?fid=53 HTTP/1.1"</span> <span class="number">404</span> <span class="number">289</span> <span class="string">"http://f.dataguru.cn/forum.php?mod=forumdisplay&amp;fid=53&amp;page=1"</span> <span class="string">"Mozilla/5.0 (Windows NT 5.1; rv:8.0.1) Gecko/20100101 Firefox/8.0.1"</span>
+<span class="number">119.146</span><span class="number">.220</span><span class="number">.12</span> - - [<span class="number">31</span>/Jan/<span class="number">2012</span>:<span class="number">23</span>:<span class="number">59</span>:<span class="number">55</span> +<span class="number">0800</span>] <span class="string">"GET /static/js/smilies.js?AZH HTTP/1.1"</span> <span class="number">304</span> - <span class="string">"http://f.dataguru.cn/forum.php?mod=forumdisplay&amp;fid=53&amp;page=1"</span> <span class="string">"Mozilla/5.0 (Windows NT 5.1; rv:8.0.1) Gecko/20100101 Firefox/8.0.1"</span>
+<span class="number">119.146</span><span class="number">.220</span><span class="number">.12</span> - - [<span class="number">31</span>/Jan/<span class="number">2012</span>:<span class="number">23</span>:<span class="number">59</span>:<span class="number">55</span> +<span class="number">0800</span>] <span class="string">"GET /data/cache/common_smilies_var.js?AZH HTTP/1.1"</span> <span class="number">304</span> - <span class="string">"http://f.dataguru.cn/forum.php?mod=forumdisplay&amp;fid=53&amp;page=1"</span> <span class="string">"Mozilla/5.0 (Windows NT 5.1; rv:8.0.1) Gecko/20100101 Firefox/8.0.1"</span>
+</code></pre><p>数据算法：这是一部分dataguru上网日志，从日志内容结构看，ip地址是放在前面的，我们只要抽取出ip地址写入一张ip_text表，然后对ip列进行分组相当于分成若干个小表，每个ip集合为一个小表，再单独算出每个小表总行数即ip点击次数</p>
+<p>（1）加载HDFS文件系统中access_log.txt文件内容放到pig的一个关系(表)里</p>
+<pre><code>使用空格作为分隔符，只加载ip列即可。
+grunt&gt; ip_text = LOAD <span class="string">'pig/access_log.txt'</span> <span class="keyword">USING</span> PigStorage(<span class="string">' '</span>) <span class="keyword">AS</span> (ip:chararray);
+ip_text：代表一个关系，一个表，一个变量，这个表中存放了所有ip记录
+LOAD <span class="string">'pig/access_log.txt'</span>：要加载的文件
+<span class="keyword">USING</span> PigStorage(<span class="string">' '</span>)：使用空格作为分隔符
+ip:chararray：表中第一列名ip，数据类型chararray字符型
+</code></pre><p>（2）查看ip_text表结构与内容</p>
+<pre><code>一定要仔细，例如命令结尾符不要丢掉，当我们执行一条<span class="tag">pig</span> <span class="tag">latin</span>语句时，
+<span class="tag">pig</span>自动转换成<span class="tag">MapReduce</span>作业对用户来说是透明的，先创建一个<span class="tag">jar</span>包，再提交<span class="tag">MR</span> <span class="tag">job</span>，
+生成<span class="tag">Hadoop</span> <span class="tag">job</span> <span class="tag">id</span>在执行，最后显示结果
+<span class="tag">grunt</span>&gt; <span class="tag">DESCRIBE</span> <span class="tag">ip_text</span>; 显示表的结构，只有一列，类型为字符型
+<span class="tag">ip_text</span>: <span class="rules">{<span class="rule"><span class="attribute">ip</span>:<span class="value"> chararray</span></span></span>}
+<span class="tag">grunt</span>&gt; <span class="tag">DUMP</span> <span class="tag">ip_text</span>; 显示表的内容，只截取部分内容
+<span class="tag">creating</span> <span class="tag">jar</span> <span class="tag">file</span> <span class="tag">Job2594979755419279957</span><span class="class">.jar</span>
+1 <span class="tag">map-reduce</span> <span class="tag">job</span>(<span class="tag">s</span>) <span class="tag">waiting</span> <span class="tag">for</span> <span class="tag">submission</span>
+<span class="tag">HadoopJobId</span>: <span class="tag">job_201210121146_0002</span>
+(119<span class="class">.146</span><span class="class">.220</span><span class="class">.12</span>)
+(180<span class="class">.153</span><span class="class">.227</span><span class="class">.41</span>)
+(180<span class="class">.153</span><span class="class">.227</span><span class="class">.44</span>)
+(180<span class="class">.153</span><span class="class">.227</span><span class="class">.44</span>)
+(180<span class="class">.153</span><span class="class">.227</span><span class="class">.44</span>)
+(221<span class="class">.194</span><span class="class">.180</span><span class="class">.166</span>)
+(119<span class="class">.146</span><span class="class">.220</span><span class="class">.12</span>)
+....
+</code></pre><p>（3）对ip列进行分组，并查看分组后表的内容和结构，注意关键字大小写</p>
+<p>把每个ip集合分成一个个小表，把分组后的结果存放在 group_ip 这个表中</p>
+<pre><code>grunt<span class="subst">&gt;</span> group_ip <span class="subst">=</span> <span class="keyword">GROUP</span> ip_text <span class="keyword">BY</span> ip; 按照ip进行分组赋给group_ip表
+grunt<span class="subst">&gt;</span> DESCRIBE group_ip; 查看group_ip表结构
+group_ip: {<span class="keyword">group</span>: chararray,ip_text: {(ip: chararray)}}
+我们一眼就看出group_ip表是一个嵌套表，第一个field是<span class="keyword">group</span>，这就是分组后的ip值
+第二个field是一个嵌套的小表又叫包，是前面分组ip的整个集合
+grunt<span class="subst">&gt;</span> DUMP group_ip; 又提交一个MR job运行
+Pig script settings are added <span class="keyword">to</span> the job Pig脚本自动转换MR job
+creating jar file Job2785495206577164389<span class="built_in">.</span>jar 创建jar包
+jar file Job2785495206577164389<span class="built_in">.</span>jar created jar包创建完毕
+<span class="built_in">map</span><span class="attribute">-reduce</span> job(s) waiting for submission<span class="built_in">.</span> 提交job
+HadoopJobId: job_201210121146_0003 job id：job_201210121146_0003
+(<span class="number">221.194</span><span class="number">.180</span><span class="number">.166</span>),(<span class="number">221.194</span><span class="number">.180</span><span class="number">.166</span>),(<span class="number">221.194</span><span class="number">.180</span><span class="number">.166</span>),(<span class="number">221.194</span><span class="number">.180</span><span class="number">.166</span>),(<span class="number">221.194</span><span class="number">.180</span><span class="number">.166</span>),(<span class="number">221.194</span><span class="number">.180</span><span class="number">.166</span>),(<span class="number">221.194</span><span class="number">.180</span><span class="number">.166</span>),(<span class="number">221.194</span><span class="number">.180</span><span class="number">.166</span>),(<span class="number">221.194</span><span class="number">.180</span><span class="number">.166</span>),(<span class="number">221.194</span><span class="number">.180</span><span class="number">.166</span>),(<span class="number">221.194</span><span class="built_in">.</span>
+<span class="number">180.166</span>),(<span class="number">221.194</span><span class="number">.180</span><span class="number">.166</span>),(<span class="number">221.194</span><span class="number">.180</span><span class="number">.166</span>),(<span class="number">221.194</span><span class="number">.180</span><span class="number">.166</span>),(<span class="number">221.194</span><span class="number">.180</span><span class="number">.166</span>),(<span class="number">221.194</span><span class="number">.180</span><span class="number">.166</span>
+<span class="attribute">...</span><span class="built_in">.</span>
+</code></pre><p>（4）统计每个小表总行数即ip点击次数</p>
+<pre><code>grunt&gt; count_ip = FOREACH group_ip GENERATE <span class="keyword">group</span>,COUNT($<span class="number">1</span>) <span class="keyword">AS</span> count_ip;
+FOREACH group_ip：逐行扫描group_ip表，赋给count_ip表
+GENERATE <span class="keyword">group</span>：读取分组ip值
+COUNT($<span class="number">1</span>) <span class="keyword">AS</span> count_ip：统计嵌套小表(包)总行数即ip点击次数，把此列取别名叫count_ip方便倒序排列，$<span class="number">1</span>统计第一列，等价于COUNT(ip_text.ip)
+grunt&gt; sort_count_ip = <span class="keyword">ORDER</span> count_ip <span class="keyword">BY</span> count_ip <span class="keyword">DESC</span>; 按照count_ip列从大到小排序
+# grunt&gt; sort_count_ip = <span class="keyword">ORDER</span> count_ip <span class="keyword">BY</span> count_ip <span class="keyword">ASC</span>; 从小到大排序
+</code></pre><p>（5）查看sort_count_ip表结构和内容</p>
+<pre><code>grunt&gt; DESCRIBE sort_count_ip; 显示表的结构，有二列
+sort_count_ip: {group: chararray,count_ip: long} 第一个field是group字符型（分组ip值），第二个field是count_ip长类型（ip点击次数）
+grunt&gt; DUMP sort_count_ip; 显示表的内容，只截取部分结果，先输出统计信息后显示结果
+HadoopVersion PigVersion UserId StartedAt FinishedAt Features
+<span class="number">0.20</span><span class="number">.2</span> <span class="number">0.9</span><span class="number">.2</span> grid <span class="number">2012</span>-<span class="number">11</span>-<span class="number">03</span> <span class="number">21</span>:<span class="number">13</span>:<span class="number">05</span> <span class="number">2012</span>-<span class="number">11</span>-<span class="number">03</span> <span class="number">21</span>:<span class="number">18</span>:<span class="number">39</span> GROUP_BY,ORDER_BY
+Success!
+Input(s):
+Successfully read <span class="number">28134</span> records (<span class="number">7118627</span> bytes) from:
+<span class="keyword">...</span>
+Job DAG:
+job_201210121146_0004 -&gt; job_201210121146_0005,
+job_201210121146_0005 -&gt; job_201210121146_0006,
+job_201210121146_0006
+(<span class="number">218.20</span><span class="number">.24</span><span class="number">.203</span>,<span class="number">4597</span>)
+(<span class="number">221.194</span><span class="number">.180</span><span class="number">.166</span>,<span class="number">4576</span>)
+(<span class="number">119.146</span><span class="number">.220</span><span class="number">.12</span>,<span class="number">1850</span>)
+(<span class="number">117.136</span><span class="number">.31</span><span class="number">.144</span>,<span class="number">1647</span>)
+(<span class="number">121.28</span><span class="number">.95</span><span class="number">.48</span>,<span class="number">1597</span>)
+<span class="keyword">...</span>
+</code></pre><p>（6）把sort_count_ip表内容写入HDFS文件系统中，即固化到硬盘存入文件</p>
+<pre><code>grunt<span class="subst">&gt;</span> STORE sort_count_ip <span class="keyword">INTO</span> <span class="string">'pig/sort_count_ip'</span>;
+Counters:
+Total <span class="keyword">records</span> written : <span class="number">476</span>
+Total <span class="built_in">bytes</span> written : <span class="number">8051</span>
+Spillable Memory Manager spill count : <span class="number">0</span>
+Total bags proactively spilled: <span class="number">0</span>
+Total <span class="keyword">records</span> proactively spilled: <span class="number">0</span>
+Job DAG:
+job_201210121146_0007 <span class="subst">-&gt; </span>job_201210121146_0008,
+job_201210121146_0008 <span class="subst">-&gt; </span>job_201210121146_0009,
+job_201210121146_0009
+<span class="number">2012</span><span class="subst">-</span><span class="number">11</span><span class="subst">-</span><span class="number">03</span> <span class="number">21</span>:<span class="number">28</span>:<span class="number">41</span>,<span class="number">520</span> <span class="preprocessor">[</span>main<span class="preprocessor">]</span><span class="markup"> INFO org.apache.pig.backend.hadoop.executionengine.mapReduceLayer.MapReduceLauncher - Success!</span>
+</code></pre><p>当我们看到Success时就说明我们已经保存成功！</p>
+<p>（7）查看保存在HDFS中的结果文件</p>
+<pre><code>grunt&gt; <span class="built_in">cat</span> sort_count_ip
+<span class="number">218.20</span><span class="number">.24</span><span class="number">.203</span> <span class="number">4597</span>
+<span class="number">221.194</span><span class="number">.180</span><span class="number">.166</span> <span class="number">4576</span>
+<span class="number">119.146</span><span class="number">.220</span><span class="number">.12</span> <span class="number">1850</span>
+<span class="number">117.136</span><span class="number">.31</span><span class="number">.144</span> <span class="number">1647</span>
+<span class="number">121.28</span><span class="number">.95</span><span class="number">.48</span> <span class="number">1597</span>
+<span class="number">113.109</span><span class="number">.183</span><span class="number">.126</span> <span class="number">1596</span>
+<span class="number">182.48</span><span class="number">.112</span><span class="number">.2</span> <span class="number">870</span>
+<span class="number">120.84</span><span class="number">.24</span><span class="number">.200</span> <span class="number">773</span>
+<span class="number">61.144</span><span class="number">.125</span><span class="number">.162</span> <span class="number">750</span>
+<span class="number">27.115</span><span class="number">.124</span><span class="number">.75</span> <span class="number">470</span>
+<span class="number">115.236</span><span class="number">.48</span><span class="number">.226</span> <span class="number">439</span>
+</code></pre><p>OK！！！</p>
+]]></content>
+    
+    
+      <category term="Hadoop" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/Hadoop/"/>
+    
+      <category term="Pig" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/Pig/"/>
+    
+      <category term="Hadoop" scheme="https://github.com/DaMinger/DaMinger.github.io.git/categories/Hadoop/"/>
+    
+  </entry>
   
   <entry>
     <title><![CDATA[eclipse连接hadoop1.2.1集群]]></title>
