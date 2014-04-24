@@ -1,0 +1,585 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>Hive与Mysql本地安装 | DaMinger&#39;s blog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="DaMinger">
+    
+    <meta name="description" content="解压hive包
+[grid@hadoop01 ~]$ tar -xzvf apache-hive-0.13.0-bin.tar.gz 
+配置环境变量
+[root@hadoop01 apache-hive-0.13.0-bin]# cat /etc/profile
+export JAVA_HOME=/">
+    
+    
+    
+    
+    <link rel="alternative" href="/atom.xml" title="DaMinger&#39;s blog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/pacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/pacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+    <link href="/css/hover.css" rel="stylesheet">
+    <link href="/css/bottom.css" rel="stylesheet">
+</head>
+
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a rel="pulse" class="pulse" href="/"><img src="/img/pacman.png" alt="DaMinger&#39;s blog" title="DaMinger&#39;s blog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a rel="hover" class="hover" href="/" title="DaMinger&#39;s blog">DaMinger&#39;s blog</a></h1>
+				<h2 class="blog-motto"><a rel="wobble-to-bottom-right" class="wobble-to-bottom-right" href="#" title="#">信春哥，系统稳，闭眼上线不回滚</a></h2>
+			</div>
+			<div class="navbar"><a rel="buzz" class="buzz" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a rel="wobble-top" class="wobble-top" href="/">Home</a></li>
+					
+						<li><a rel="wobble-top" class="wobble-top" href="/archives">Menu</a></li>
+					
+						<li><a rel="wobble-top" class="wobble-top" href="/about">About</a></li>
+					
+				</ul>
+				
+			</nav>			
+</div>
+<div style="text-align:right;">
+<form  class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+ <input type="search" name="q" id="search" autocomplete="off" autocorrect="off" autocapitalize="off" maxlength="20" placeholder="Search" />
+ <input type="hidden" name="q" value="site:github.com/DaMinger/DaMinger.github.io.git">
+</form>
+</div>
+
+
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2014/04/24/Hadoop/hadoop_hive&mysql/" title="Hive与Mysql本地安装" itemprop="url">Hive与Mysql本地安装</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="https://github.com/DaMinger/DaMinger.github.io.git" title="DaMinger">DaMinger</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2014-04-24T10:49:28.000Z" itemprop="datePublished">4月 24 2014</time>
+    更新日期:<time datetime="2014-04-24T11:59:03.000Z" itemprop="dateModified">4月 24 2014</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		<ol class="toc"><li class="toc-item toc-level-5"><a class="toc-link" href="#解压hive包"><span class="toc-number">1.</span> <span class="toc-text">解压hive包</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#配置环境变量"><span class="toc-number">2.</span> <span class="toc-text">配置环境变量</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#更改配置文件"><span class="toc-number">3.</span> <span class="toc-text">更改配置文件</span></a></li><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#这里有技巧"><span class="toc-number">3.1.</span> <span class="toc-text">这里有技巧</span></a></li></ol><li class="toc-item toc-level-5"><a class="toc-link" href="#加入连接器jar包"><span class="toc-number">4.</span> <span class="toc-text">加入连接器jar包</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#安装mysql"><span class="toc-number">5.</span> <span class="toc-text">安装mysql</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#卸载已安装的MySQL"><span class="toc-number">6.</span> <span class="toc-text">卸载已安装的MySQL</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#安装MySQL"><span class="toc-number">7.</span> <span class="toc-text">安装MySQL</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#创建hive元数据库及创建hive用户并授权"><span class="toc-number">8.</span> <span class="toc-text">创建hive元数据库及创建hive用户并授权</span></a></li><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#创建hive元数据库"><span class="toc-number">8.1.</span> <span class="toc-text">创建hive元数据库</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#对hive用户并授权,注意,此处的密码必须和hive-site-xml的javax-jdo-option-ConnectionPassword的密码相一致"><span class="toc-number">8.2.</span> <span class="toc-text">对hive用户并授权,注意,此处的密码必须和hive-site.xml的javax.jdo.option.ConnectionPassword的密码相一致</span></a></li></ol><li class="toc-item toc-level-5"><a class="toc-link" href="#查看hive用户是否已创建成功"><span class="toc-number">9.</span> <span class="toc-text">查看hive用户是否已创建成功</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#配置hadoop的hadoop-env-sh文件"><span class="toc-number">10.</span> <span class="toc-text">配置hadoop的hadoop-env.sh文件</span></a></li></ol>
+		</div>
+		
+		<h5 id="解压hive包">解压hive包</h5>
+<pre><code>[grid<span class="variable">@hadoop01</span> ~]<span class="variable">$ </span>tar -xzvf apache-hive-<span class="number">0</span>.<span class="number">13.0</span>-bin.tar.gz 
+</code></pre><h5 id="配置环境变量">配置环境变量</h5>
+<pre><code>[root@hadoop01 apache-hive-<span class="number">0.13</span>.<span class="number">0</span>-bin]<span class="comment"># cat /etc/profile</span>
+<span class="keyword">export</span> JAVA_HOME=/usr/jdk1.<span class="number">7.0</span>_51
+<span class="keyword">export</span> HADOOP_FREFIX=/home/grid/hadoop-<span class="number">1.2</span>.<span class="number">1</span>
+<span class="keyword">export</span> HADOOP_COMMON_HOME=<span class="variable">${HADOOP_FREFIX}</span>
+<span class="keyword">export</span> HADOOP_CONF_DIR=<span class="variable">${HADOOP_FREFIX}</span>/conf
+<span class="keyword">export</span> CLASSPATH=.:<span class="variable">$JAVA_HOME</span>/lib:<span class="variable">$JAVA_HOME</span>/lib/tools.jar
+<span class="keyword">export</span> PATH=<span class="variable">$JAVA_HOME</span>/bin:<span class="variable">${HADOOP_FREFIX}</span>/bin:<span class="variable">${HADOOP_FREFIX}</span>/sbin:<span class="variable">$PATH</span>
+<span class="keyword">export</span> HADOOP_HOME=/home/grid/hadoop-<span class="number">1.2</span>.<span class="number">1</span>
+<span class="keyword">export</span> PATH=/home/grid/apache-ant-<span class="number">1.9</span>.<span class="number">3</span>/bin:<span class="variable">$PATH</span>
+<span class="keyword">export</span> HIVE_HOME=/home/grid/apache-hive-<span class="number">0.13</span>.<span class="number">0</span>-bin
+<span class="keyword">export</span> PATH=<span class="variable">$HIVE_HOME</span>/bin:<span class="variable">$PATH</span>
+[root@hadoop01 apache-hive-<span class="number">0.13</span>.<span class="number">0</span>-bin]<span class="comment"># source  /etc/profile</span>
+</code></pre><h5 id="更改配置文件">更改配置文件</h5>
+<pre><code>[grid@hadoop01 conf]$ cp hive-env.sh.template  hive-env.sh
+[grid@hadoop01 conf]$ vi hive-env.sh
+HADOOP_HOME=/home/grid/hadoop-1.2.1
+[grid@hadoop01 conf]$ cp hive-default.xml.template hive-site.xml
+<span class="tag">&lt;<span class="title">property</span>&gt;</span>
+    <span class="tag">&lt;<span class="title">name</span>&gt;</span>hive.metastore.warehouse.dir<span class="tag">&lt;/<span class="title">name</span>&gt;</span>
+    <span class="tag">&lt;<span class="title">value</span>&gt;</span>/home/grid/apache-hive-0.13.0-bin/warehouse<span class="tag">&lt;/<span class="title">value</span>&gt;</span>
+<span class="tag">&lt;<span class="title">description</span>&gt;</span>location of default database for the warehouse<span class="tag">&lt;/<span class="title">description</span>&gt;</span>
+<span class="tag">&lt;/<span class="title">property</span>&gt;</span>
+<span class="tag">&lt;<span class="title">property</span>&gt;</span>
+  <span class="tag">&lt;<span class="title">name</span>&gt;</span>hive.exec.scratchdir<span class="tag">&lt;/<span class="title">name</span>&gt;</span>
+  <span class="tag">&lt;<span class="title">value</span>&gt;</span>/home/grid/apache-hive-0.13.0-bin/temp<span class="tag">&lt;/<span class="title">value</span>&gt;</span>
+  <span class="tag">&lt;<span class="title">description</span>&gt;</span>Scratch space for Hive jobs<span class="tag">&lt;/<span class="title">description</span>&gt;</span>
+  <span class="tag">&lt;/<span class="title">property</span>&gt;</span>
+    <span class="tag">&lt;<span class="title">property</span>&gt;</span>
+          <span class="tag">&lt;<span class="title">name</span>&gt;</span>javax.jdo.option.ConnectionURL<span class="tag">&lt;/<span class="title">name</span>&gt;</span>
+         <span class="tag">&lt;<span class="title">value</span>&gt;</span> jdbc:mysql://localhost:3306/hive?createDatabaseIfNotExist=true <span class="tag">&lt;/<span class="title">value</span>&gt;</span>
+<span class="tag">&lt;/<span class="title">property</span>&gt;</span>
+    <span class="tag">&lt;<span class="title">property</span>&gt;</span>
+         <span class="tag">&lt;<span class="title">name</span>&gt;</span>javax.jdo.option.ConnectionDriverName<span class="tag">&lt;/<span class="title">name</span>&gt;</span>
+         <span class="tag">&lt;<span class="title">value</span>&gt;</span>com.mysql.jdbc.Driver<span class="tag">&lt;/<span class="title">value</span>&gt;</span>
+ <span class="tag">&lt;/<span class="title">property</span>&gt;</span>
+    <span class="tag">&lt;<span class="title">property</span>&gt;</span>
+         <span class="tag">&lt;<span class="title">name</span>&gt;</span>javax.jdo.option.ConnectionUserName<span class="tag">&lt;/<span class="title">name</span>&gt;</span>
+          <span class="tag">&lt;<span class="title">value</span>&gt;</span>hive<span class="tag">&lt;/<span class="title">value</span>&gt;</span>
+ <span class="tag">&lt;/<span class="title">property</span>&gt;</span>
+    <span class="tag">&lt;<span class="title">property</span>&gt;</span>
+          <span class="tag">&lt;<span class="title">name</span>&gt;</span>javax.jdo.option.ConnectionPassword<span class="tag">&lt;/<span class="title">name</span>&gt;</span>
+          <span class="tag">&lt;<span class="title">value</span>&gt;</span>hive <span class="tag">&lt;/<span class="title">value</span>&gt;</span>
+<span class="tag">&lt;/<span class="title">property</span>&gt;</span>
+<span class="tag">&lt;<span class="title">property</span>&gt;</span>
+<span class="tag">&lt;<span class="title">name</span>&gt;</span>hive.metastore.schema.verification<span class="tag">&lt;/<span class="title">name</span>&gt;</span>
+<span class="tag">&lt;<span class="title">value</span>&gt;</span>false<span class="tag">&lt;/<span class="title">value</span>&gt;</span>
+<span class="tag">&lt;<span class="title">description</span>&gt;</span>
+<span class="tag">&lt;/<span class="title">description</span>&gt;</span>
+<span class="tag">&lt;/<span class="title">property</span>&gt;</span>
+</code></pre><h6 id="这里有技巧">这里有技巧</h6>
+<p>例如在一个文件里面有几千行，这样查找：</p>
+<pre><code>[grid@hadoop01 conf]$ cat hive-site<span class="preprocessor">.xml</span> |grep -n hive<span class="preprocessor">.metastore</span><span class="preprocessor">.schema</span><span class="preprocessor">.verification</span> 
+<span class="number">2371</span>:  &lt;name&gt;hive<span class="preprocessor">.metastore</span><span class="preprocessor">.schema</span><span class="preprocessor">.verification</span>&lt;/name&gt;
+vi  <span class="keyword">set</span> nu显示行号
+</code></pre><h5 id="加入连接器jar包">加入连接器jar包</h5>
+<p>lib文件夹缺少mysql的连接器mysql-connector-java-5.1.25-bin.jar,下载地址<a href="http://download.csdn.net/detail/xqj198404/6338973" target="_blank">http://download.csdn.net/detail/xqj198404/6338973</a> 将其放到hive的lib目录下</p>
+<h5 id="安装mysql">安装mysql</h5>
+<p>查看系统是否安装了MySQL，使用命令：</p>
+<pre><code><span class="preprocessor">#rpm -qa | grep mysql </span>
+</code></pre><h5 id="卸载已安装的MySQL">卸载已安装的MySQL</h5>
+<p>卸载mysql命令如下：</p>
+<pre><code><span class="variable">#rpm</span> <span class="attribute">-e</span> <span class="subst">--</span>nodeps  mysql<span class="attribute">-libs</span><span class="subst">-</span><span class="number">5.1</span><span class="number">.61</span><span class="subst">-</span><span class="number">4.</span>el6<span class="built_in">.</span>x86_64
+要将 /<span class="built_in">var</span>/lib/mysql文件夹下的所有文件都删除干净
+</code></pre><h5 id="安装MySQL">安装MySQL</h5>
+<p>安装顺序: 先安装服务器,然后再安装客户端。找到安装包所在位置，直接安装即可。</p>
+<pre><code>[root<span class="variable">@hadoop01</span> soft]<span class="comment"># rpm -ivh MySQL-server-5.5.37-1.linux2.6.x86_64.rpm </span>
+[root<span class="variable">@hadoop01</span> soft]<span class="comment"># rpm -ivh MySQL-client-5.5.37-1.linux2.6.x86_64.rpm </span>
+[root<span class="variable">@hadoop01</span> soft]<span class="comment"># /etc/init.d/mysql start</span>
+<span class="constant">Starting</span> <span class="constant">MySQL</span>...                                          [  <span class="constant">OK</span>  ]
+</code></pre><p>修改mysql配置文件并重启MySQL,安装完成后在/usr/share/mysql目录中会有一个mysql的启动脚本mysql.server及示例配置文件等(如my-huge.cnf、my-large.cnf、my-medium.cnf)，拷贝一个示例配置文件作为mysql的配置文件：</p>
+<pre><code>cp /usr/share/mysql/<span class="keyword">my</span>-medium.cnf /etc/<span class="keyword">my</span>.cnf
+[root<span class="variable">@hadoop01</span> mysql]<span class="comment"># /etc/init.d/mysql restart</span>
+Shutting down MySQL.                                       [  OK  ]
+Starting MySQL...                                          [  OK  ]
+[root<span class="variable">@hadoop01</span> mysql]<span class="comment"># </span>
+</code></pre><p>登陆mysql，下面给root用户设置密码</p>
+<pre><code>/usr/bin/mysqladmin <span class="attribute">-u</span> root password <span class="number">123456</span> 
+mysql <span class="attribute">-u</span> root <span class="attribute">-p</span> 
+Enter password: (输入修改后的密码<span class="number">123456</span>) <span class="built_in">.</span>
+mysql<span class="subst">&gt;</span>
+</code></pre><h5 id="创建hive元数据库及创建hive用户并授权">创建hive元数据库及创建hive用户并授权</h5>
+<h6 id="创建hive元数据库">创建hive元数据库</h6>
+<pre><code>mysql&gt; <span class="keyword">create</span> database hive;
+</code></pre><h6 id="对hive用户并授权,注意,此处的密码必须和hive-site-xml的javax-jdo-option-ConnectionPassword的密码相一致">对hive用户并授权,注意,此处的密码必须和hive-site.xml的javax.jdo.option.ConnectionPassword的密码相一致</h6>
+<pre><code>mysql<span class="subst">&gt;</span> grant <span class="literal">all</span> privileges <span class="keyword">on</span> hive<span class="built_in">.</span><span class="subst">*</span> <span class="keyword">to</span> <span class="string">'hive'</span>@<span class="string">'localhost'</span>  IDENTIFIED <span class="keyword">BY</span> <span class="string">"hive"</span>;
+mysql<span class="subst">&gt;</span> GRANT <span class="literal">ALL</span>  PRIVILEGES <span class="keyword">ON</span> hive<span class="built_in">.</span><span class="subst">*</span> <span class="keyword">TO</span> <span class="string">'hive'</span>@<span class="string">'%'</span> IDENTIFIED <span class="keyword">BY</span> <span class="string">'hive'</span>;
+mysql<span class="subst">&gt;</span> GRANT <span class="literal">ALL</span>  PRIVILEGES <span class="keyword">ON</span> hive<span class="built_in">.</span><span class="subst">*</span> <span class="keyword">TO</span> <span class="string">'hive'</span>@<span class="string">'localhost'</span> IDENTIFIED <span class="keyword">BY</span> <span class="string">'hive'</span>;
+mysql<span class="subst">&gt;</span> GRANT <span class="literal">ALL</span>  PRIVILEGES <span class="keyword">ON</span> hive<span class="built_in">.</span><span class="subst">*</span> <span class="keyword">TO</span> <span class="string">'hive'</span>@<span class="string">'127.0.0.1'</span> IDENTIFIED <span class="keyword">BY</span> <span class="string">'hive'</span>;
+mysql<span class="subst">&gt;</span> GRANT <span class="literal">ALL</span>  PRIVILEGES <span class="keyword">ON</span> hived<span class="built_in">.</span><span class="subst">*</span> <span class="keyword">TO</span> <span class="string">'hive'</span>@<span class="string">'192.168.255.151'</span> IDENTIFIED <span class="keyword">BY</span> <span class="string">'hive'</span>;
+mysql<span class="subst">&gt;</span>flush privileges;
+</code></pre><h5 id="查看hive用户是否已创建成功">查看hive用户是否已创建成功</h5>
+<pre><code>mysql&gt; use mysql;
+Database changed
+<span class="header">mysql&gt;  select Host,User,Password from user;
++-----------+------+-------------------------------------------+</span>
+<span class="header">| Host      | User | Password                                  |
++-----------+------+-------------------------------------------+</span>
+| %         | root | <span class="strong">*6BB4837EB74329105EE4568DDA7DC67ED2CA2AD9 |
+| master    | root |                                           |
+| 127.0.0.1 | root |                                           |
+| ::1       | root |                                           |
+| localhost | hive | *</span>4DF1D66463C18D44E3B001A8FB1BBFBEA13E27FC |
+<span class="code">+-----------+</span>------<span class="code">+-------------------------------------------+</span>
+5 rows in set (0.00 sec)
+</code></pre><h5 id="配置hadoop的hadoop-env-sh文件">配置hadoop的hadoop-env.sh文件</h5>
+<p>增加$HADOOP_CLASSPATH,要不然启动hive时会出错</p>
+<pre><code>export <span class="constant">HADOOP_CLASSPATH</span>=<span class="variable">$HADOOP_CLASSPATH</span><span class="symbol">:/home/grid/hadoop-</span><span class="number">1.2</span>.<span class="number">1</span>/myclass
+</code></pre><p>Hive调试技巧,打开调试可以看到详细错误信息</p>
+<pre><code>./hive -hiveconf hive<span class="preprocessor">.root</span><span class="preprocessor">.logger</span>=DEBUG,console  
+</code></pre><p>Hive简单操作</p>
+<pre><code>[grid@hadoop01 apache-hive-<span class="number">0.13</span><span class="number">.0</span>-bin]$ bin/hive
+<span class="number">14</span>/<span class="number">04</span>/<span class="number">24</span> <span class="number">16</span>:<span class="number">24</span>:<span class="number">23</span> WARN conf.HiveConf: DEPRECATED: hive.metastore.ds.retry.* no longer has any effect.  <span class="keyword">Use</span> hive.hmshandler.retry.* instead
+Logging initialized using <span class="keyword">configuration</span> <span class="keyword">in</span> jar:<span class="keyword">file</span>:/home/grid/apache-hive-<span class="number">0.13</span><span class="number">.0</span>-bin/lib/hive-common-<span class="number">0.13</span><span class="number">.0</span>.jar!/hive-log4j.properties
+hive&gt; show tables;
+OK
+<span class="typename">Time</span> taken: <span class="number">2.062</span> seconds
+hive&gt; create table hivetest(id int,name <span class="typename">string</span>);
+OK
+<span class="typename">Time</span> taken: <span class="number">0.962</span> seconds
+hive&gt; show tables;
+OK
+hivetest
+<span class="typename">Time</span> taken: <span class="number">0.084</span> seconds, Fetched: <span class="number">1</span> row(s)
+hive&gt; <span class="keyword">select</span> count(*) from hivetest;
+Total jobs = <span class="number">1</span>
+Launching Job <span class="number">1</span> <span class="keyword">out</span> <span class="keyword">of</span> <span class="number">1</span>
+Number <span class="keyword">of</span> reduce tasks determined at compile <span class="typename">time</span>: <span class="number">1</span>
+<span class="keyword">In</span> order <span class="keyword">to</span> change the average load <span class="keyword">for</span> a reducer (<span class="keyword">in</span> bytes):
+  set hive.exec.reducers.bytes.per.reducer=&lt;number&gt;
+<span class="keyword">In</span> order <span class="keyword">to</span> limit the maximum number <span class="keyword">of</span> reducers:
+  set hive.exec.reducers.max=&lt;number&gt;
+<span class="keyword">In</span> order <span class="keyword">to</span> set a <span class="keyword">constant</span> number <span class="keyword">of</span> reducers:
+  set mapred.reduce.tasks=&lt;number&gt;
+Starting Job = job_201404241623_0001, Tracking URL = http://hadoop01.myhadoop.com:<span class="number">50030</span>/jobdetails.jsp?jobid=job_201404241623_0001
+Kill Command = /home/grid/hadoop-<span class="number">1.2</span><span class="number">.1</span>/libexec/../bin/hadoop job  -kill job_201404241623_0001
+Hadoop job information <span class="keyword">for</span> Stage-<span class="number">1</span>: number <span class="keyword">of</span> mappers: <span class="number">0</span>; number <span class="keyword">of</span> reducers: <span class="number">1</span>
+<span class="number">2014</span>-<span class="number">04</span>-<span class="number">24</span> <span class="number">16</span>:<span class="number">28</span>:<span class="number">53</span>,<span class="number">414</span> Stage-<span class="number">1</span> <span class="keyword">map</span> = <span class="number">0</span>%,  reduce = <span class="number">0</span>%
+<span class="number">2014</span>-<span class="number">04</span>-<span class="number">24</span> <span class="number">16</span>:<span class="number">28</span>:<span class="number">59</span>,<span class="number">466</span> Stage-<span class="number">1</span> <span class="keyword">map</span> = <span class="number">0</span>%,  reduce = <span class="number">100</span>%, Cumulative CPU <span class="number">1.27</span> sec
+<span class="number">2014</span>-<span class="number">04</span>-<span class="number">24</span> <span class="number">16</span>:<span class="number">29</span>:<span class="number">04</span>,<span class="number">511</span> Stage-<span class="number">1</span> <span class="keyword">map</span> = <span class="number">100</span>%,  reduce = <span class="number">100</span>%, Cumulative CPU <span class="number">1.27</span> sec
+MapReduce Total cumulative CPU <span class="typename">time</span>: <span class="number">1</span> seconds <span class="number">270</span> msec
+Ended Job = job_201404241623_0001
+MapReduce Jobs Launched: 
+Job <span class="number">0</span>: Reduce: <span class="number">1</span>   Cumulative CPU: <span class="number">1.27</span> sec   HDFS Read: <span class="number">0</span> HDFS Write: <span class="number">2</span> SUCCESS
+Total MapReduce CPU <span class="typename">Time</span> Spent: <span class="number">1</span> seconds <span class="number">270</span> msec
+OK
+<span class="number">0</span>
+<span class="typename">Time</span> taken: <span class="number">29.117</span> seconds, Fetched: <span class="number">1</span> row(s)
+hive&gt; desc hivetest;
+OK
+id                      int                                         
+name                    <span class="typename">string</span>                                      
+<span class="typename">Time</span> taken: <span class="number">0.376</span> seconds, Fetched: <span class="number">2</span> row(s)
+hive&gt; 
+</code></pre><p>以hive用户进入mysql    </p>
+<pre><code>mysql &gt; <span class="keyword">select</span> * <span class="keyword">from</span> tbls 查看元数据
+</code></pre>  
+	</div>
+		<footer class="article-footer clearfix">
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Hadoop/">Hadoop</a><a href="/tags/Hive/">Hive</a>
+  </div>
+
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Hadoop/">Hadoop</a>
+</div>
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="https://github.com/DaMinger/DaMinger.github.io.git/2014/04/24/Hadoop/hadoop_hive&mysql/" data-title="Hive与Mysql本地安装 | DaMinger&#39;s blog" data-tsina="null" class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+
+<div class="next">
+<a href="/2014/04/24/Hadoop/hadoop_hive/"  title="Hive 体系结构入门">
+ <strong>NEXT:</strong><br/> 
+ <span>Hive 体系结构入门
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section class="comment">
+	<div class="ds-thread"></div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+  <ol class="toc"><li class="toc-item toc-level-5"><a class="toc-link" href="#解压hive包"><span class="toc-number">1.</span> <span class="toc-text">解压hive包</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#配置环境变量"><span class="toc-number">2.</span> <span class="toc-text">配置环境变量</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#更改配置文件"><span class="toc-number">3.</span> <span class="toc-text">更改配置文件</span></a></li><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#这里有技巧"><span class="toc-number">3.1.</span> <span class="toc-text">这里有技巧</span></a></li></ol><li class="toc-item toc-level-5"><a class="toc-link" href="#加入连接器jar包"><span class="toc-number">4.</span> <span class="toc-text">加入连接器jar包</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#安装mysql"><span class="toc-number">5.</span> <span class="toc-text">安装mysql</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#卸载已安装的MySQL"><span class="toc-number">6.</span> <span class="toc-text">卸载已安装的MySQL</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#安装MySQL"><span class="toc-number">7.</span> <span class="toc-text">安装MySQL</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#创建hive元数据库及创建hive用户并授权"><span class="toc-number">8.</span> <span class="toc-text">创建hive元数据库及创建hive用户并授权</span></a></li><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#创建hive元数据库"><span class="toc-number">8.1.</span> <span class="toc-text">创建hive元数据库</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#对hive用户并授权,注意,此处的密码必须和hive-site-xml的javax-jdo-option-ConnectionPassword的密码相一致"><span class="toc-number">8.2.</span> <span class="toc-text">对hive用户并授权,注意,此处的密码必须和hive-site.xml的javax.jdo.option.ConnectionPassword的密码相一致</span></a></li></ol><li class="toc-item toc-level-5"><a class="toc-link" href="#查看hive用户是否已创建成功"><span class="toc-number">9.</span> <span class="toc-text">查看hive用户是否已创建成功</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#配置hadoop的hadoop-env-sh文件"><span class="toc-number">10.</span> <span class="toc-text">配置hadoop的hadoop-env.sh文件</span></a></li></ol>
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p rel="asidetitle grow" class="asidetitle grow">分类</p>
+		<ul>
+		
+			<li><a rel="grow" class="grow" href="/categories/Hadoop/" title="Hadoop">Hadoop<sup>13</sup></a></li>
+		
+			<li><a rel="grow" class="grow" href="/categories/Linux/" title="Linux">Linux<sup>4</sup></a></li>
+		
+			<li><a rel="grow" class="grow" href="/categories/杂谈/" title="杂谈">杂谈<sup>1</sup></a></li>
+		
+			<li><a rel="grow" class="grow" href="/categories/计算机网络/" title="计算机网络">计算机网络<sup>1</sup></a></li>
+		
+		</ul>
+</div>
+
+
+
+  <div class="linkslist">
+<h3 rel="grow" class="grow asidetitle">友情链接</h3>
+<ul class="entry">
+<li><a rel="grow" class="grow" href="http://tahiti.oracle.com/" title="Oracle文档">Oracle文档</a></li>
+<li><a rel="grow" class="grow" href="http://asktom.oracle.com/" title="AskTom">AskTom</a></li>
+<li><a rel="grow" class="grow" href="http://blog.csdn.net/tianlesoftware/" title="Dave">Dave</a></li>
+<li><a rel="grow" class="grow" href="http://www.eygle.com/" title="eygle">eygle</a></li>
+<li><a rel="grow" class="grow" href="http://www.dbsnake.com/" title="dbsnake">dbsnake</a></li>
+</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/Eclipse/" title="Eclipse">Eclipse<sup>1</sup></a></li>
+		
+			<li><a href="/tags/HDFS/" title="HDFS">HDFS<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Hadoop/" title="Hadoop">Hadoop<sup>13</sup></a></li>
+		
+			<li><a href="/tags/Hadoop_Stream/" title="Hadoop_Stream">Hadoop_Stream<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Hive/" title="Hive">Hive<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Linux/" title="Linux">Linux<sup>4</sup></a></li>
+		
+			<li><a href="/tags/Map-Reduce/" title="Map-Reduce">Map-Reduce<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Mysql/" title="Mysql">Mysql<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Pig/" title="Pig">Pig<sup>1</sup></a></li>
+		
+			<li><a href="/tags/yum/" title="yum">yum<sup>1</sup></a></li>
+		
+			<li><a href="/tags/杂谈/" title="杂谈">杂谈<sup>1</sup></a></li>
+		
+			<li><a href="/tags/网卡错误/" title="网卡错误">网卡错误<sup>1</sup></a></li>
+		
+			<li><a href="/tags/网络/" title="网络">网络<sup>1</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle"><a href="/archives">归档</a></p>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/04">四月 2014</a><span class="archive-list-count">19</span></li></ul>
+  </div>
+
+
+  
+  <div class="tagcloudlist">
+    <p class="asidetitle">标签云</p>
+    <div class="tagcloudlist clearfix">
+       <a href="/tags/Eclipse/" style="font-size: 10.00px;">Eclipse</a><a href="/tags/HDFS/" style="font-size: 13.33px;">HDFS</a><a href="/tags/Hadoop/" style="font-size: 20.00px;">Hadoop</a><a href="/tags/Hadoop_Stream/" style="font-size: 10.00px;">Hadoop_Stream</a><a href="/tags/Hive/" style="font-size: 13.33px;">Hive</a><a href="/tags/Linux/" style="font-size: 16.67px;">Linux</a><a href="/tags/Map-Reduce/" style="font-size: 13.33px;">Map-Reduce</a><a href="/tags/Mysql/" style="font-size: 10.00px;">Mysql</a><a href="/tags/Pig/" style="font-size: 10.00px;">Pig</a><a href="/tags/yum/" style="font-size: 10.00px;">yum</a><a href="/tags/杂谈/" style="font-size: 10.00px;">杂谈</a><a href="/tags/网卡错误/" style="font-size: 10.00px;">网卡错误</a><a href="/tags/网络/" style="font-size: 10.00px;">网络</a>
+    </div>
+  </div>
+
+
+  <iframe width="100%" height="550" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=2&ptype=1&speed=0&skin=1&isTitle=1&noborder=1&isWeibo=1&isFans=1&uid=3819451430&verifier=f953543e&dpc=1"></iframe>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<span class="buzz" rel="buzz"> Hello,I&#39;m liuqinming.For now I&#39;m a student at collage. <br/>
+			I will share my learning experience with you at this blog.</span>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		<a rel="push" class="push" href="https://github.com/https://github.com/DaMinger" target="_blank" title="github"></a>
+		
+		
+	</div>
+		<p class="copyright">Powered by <a rel="float-shadow" class="float-shadow" href="http://zespia.tw/hexo/" target="_blank" title="hexo">Hexo</a> and Theme by <a class="box-shadow-inset"href="https://github.com/uruir/pacmanhover" target="_blank" title="Pacman">PacmanHover</a> © 2014 
+		
+		
+		<a class="wobble-horizontal" rel="wobble-horizontal" href="https://github.com/DaMinger/DaMinger.github.io.git" target="_blank" title="DaMinger">DaMinger</a>
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+    c.click(function(){
+      ta.css('display', 'block').addClass('fadeIn');
+    });
+    o.click(function(){
+      ta.css('display', 'none');
+    });
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,320-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"null"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+<div id="totop" style="position:fixed;bottom:150px;right:50px;cursor: pointer;">
+<a title="���ض���"><img src="/img/scrollup.png"/></a>
+</div>
+<script src="/js/totop.js"></script>
+
+
+
+  </body>
+</html>
