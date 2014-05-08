@@ -1,0 +1,624 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>Mahout利用朴素贝叶斯分类处理20个新闻组案例 | DaMinger&#39;s blog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="DaMinger">
+    
+    <meta name="description" content="朴素贝叶斯分类算法
+朴素贝叶斯分类算法
+下载20个新闻组数据
+20个新闻组
+[grid@hadoop01 data]$ ls
+20news-bydate.tar.gz  20news-bydate-test  20news-bydate-train
+[grid@hadoop01 data]$ pwd">
+    
+    
+    
+    
+    <link rel="alternative" href="/atom.xml" title="DaMinger&#39;s blog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/pacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/pacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+    <link href="/css/hover.css" rel="stylesheet">
+    <link href="/css/bottom.css" rel="stylesheet">
+</head>
+
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a rel="pulse" class="pulse" href="/"><img src="/img/pacman.png" alt="DaMinger&#39;s blog" title="DaMinger&#39;s blog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a rel="hover" class="hover" href="/" title="DaMinger&#39;s blog">DaMinger&#39;s blog</a></h1>
+				<h2 class="blog-motto"><a rel="wobble-to-bottom-right" class="wobble-to-bottom-right" href="#" title="#">信春哥，系统稳，闭眼上线不回滚</a></h2>
+			</div>
+			<div class="navbar"><a rel="buzz" class="buzz" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a rel="wobble-top" class="wobble-top" href="/">Home</a></li>
+					
+						<li><a rel="wobble-top" class="wobble-top" href="/archives">Menu</a></li>
+					
+						<li><a rel="wobble-top" class="wobble-top" href="/about">About</a></li>
+					
+				</ul>
+				
+			</nav>			
+</div>
+<div style="text-align:right;">
+<form  class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+ <input type="search" name="q" id="search" autocomplete="off" autocorrect="off" autocapitalize="off" maxlength="20" placeholder="Search" />
+ <input type="hidden" name="q" value="site:github.com/DaMinger/DaMinger.github.io.git">
+</form>
+</div>
+
+
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2014/05/08/Hadoop/mahout_2/" title="Mahout利用朴素贝叶斯分类处理20个新闻组案例" itemprop="url">Mahout利用朴素贝叶斯分类处理20个新闻组案例</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="https://github.com/DaMinger/DaMinger.github.io.git" title="DaMinger">DaMinger</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2014-05-08T00:40:51.000Z" itemprop="datePublished">5月 8 2014</time>
+    更新日期:<time datetime="2014-05-08T01:09:10.000Z" itemprop="dateModified">5月 8 2014</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#朴素贝叶斯分类算法"><span class="toc-number">1.</span> <span class="toc-text">朴素贝叶斯分类算法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#下载20个新闻组数据"><span class="toc-number">2.</span> <span class="toc-text">下载20个新闻组数据</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#建立训练集"><span class="toc-number">3.</span> <span class="toc-text">建立训练集</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#建立测试集"><span class="toc-number">4.</span> <span class="toc-text">建立测试集</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#上传生成数据到HDFS"><span class="toc-number">5.</span> <span class="toc-text">上传生成数据到HDFS</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#训练贝叶斯分类器"><span class="toc-number">6.</span> <span class="toc-text">训练贝叶斯分类器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#测试贝叶斯分类器"><span class="toc-number">7.</span> <span class="toc-text">测试贝叶斯分类器</span></a></li><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#这里报错了，查找原因是JVM分配内存不足"><span class="toc-number">7.1.</span> <span class="toc-text">这里报错了，查找原因是JVM分配内存不足</span></a></li></ol><li class="toc-item toc-level-3"><a class="toc-link" href="#运行成功后"><span class="toc-number">8.</span> <span class="toc-text">运行成功后</span></a></li></ol>
+		</div>
+		
+		<h3 id="朴素贝叶斯分类算法">朴素贝叶斯分类算法</h3>
+<p><a href="http://www.cnblogs.com/leoo2sk/archive/2010/09/17/naive-bayesian-classifier.html" target="_blank">朴素贝叶斯分类算法</a></p>
+<h3 id="下载20个新闻组数据">下载20个新闻组数据</h3>
+<p><a href="http://people.csail.mit.edu/jrennie/20Newsgroups/20news-bydate.tar.gz" target="_blank">20个新闻组</a></p>
+<pre><code>[<span class="keyword">grid</span><span class="variable">@hadoop01</span> data]$ <span class="keyword">ls</span>
+<span class="number">20</span>news-bydate.tar.gz  <span class="number">20</span>news-bydate-test  <span class="number">20</span>news-bydate-train
+[<span class="keyword">grid</span><span class="variable">@hadoop01</span> data]$ <span class="keyword">pwd</span>
+/home/<span class="keyword">grid</span>/data
+</code></pre><h3 id="建立训练集">建立训练集</h3>
+<pre><code>bin/mahout org<span class="preprocessor">.apache</span><span class="preprocessor">.mahout</span><span class="preprocessor">.classifier</span><span class="preprocessor">.bayes</span><span class="preprocessor">.PrepareTwentyNewsgroups</span> \ 
+-p /home/grid/data/<span class="number">20</span>news-bydate-train \   指定数据源
+-o /home/grid/data/bayes-train-input \     指定生成目录
+-a org<span class="preprocessor">.apache</span><span class="preprocessor">.mahout</span><span class="preprocessor">.vectorizer</span><span class="preprocessor">.DefaultAnalyzer</span> \ 
+-c UTF-<span class="number">8</span>
+
+[grid@hadoop01 mahout-distribution-<span class="number">0.6</span>]$ bin/mahout org<span class="preprocessor">.apache</span><span class="preprocessor">.mahout</span><span class="preprocessor">.classifier</span><span class="preprocessor">.bayes</span><span class="preprocessor">.PrepareTwentyNewsgroups</span> -p /home/grid/data/<span class="number">20</span>news-bydate-train -o /home/grid/data/bayes-train-input -a org<span class="preprocessor">.apache</span><span class="preprocessor">.mahout</span><span class="preprocessor">.vectorizer</span><span class="preprocessor">.DefaultAnalyzer</span> -c UTF-<span class="number">8</span>
+MAHOUT_LOCAL is not <span class="keyword">set</span><span class="comment">; adding HADOOP_CONF_DIR to classpath.</span>
+Running on hadoop, using HADOOP_HOME=/home/grid/hadoop-<span class="number">1.2</span><span class="number">.1</span>
+HADOOP_CONF_DIR=/home/grid/hadoop-<span class="number">1.2</span><span class="number">.1</span>/conf
+MAHOUT-JOB: /home/grid/mahout-distribution-<span class="number">0.6</span>/mahout-examples-<span class="number">0.6</span>-job<span class="preprocessor">.jar</span>
+<span class="label">Warning:</span> $HADOOP_HOME is deprecated.
+
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">07</span> <span class="number">17</span>:<span class="number">57</span>:<span class="number">30</span> WARN driver<span class="preprocessor">.MahoutDriver</span>: No org<span class="preprocessor">.apache</span><span class="preprocessor">.mahout</span><span class="preprocessor">.classifier</span><span class="preprocessor">.bayes</span><span class="preprocessor">.PrepareTwentyNewsgroups</span><span class="preprocessor">.props</span> found on classpath, will use command-line arguments only
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">07</span> <span class="number">17</span>:<span class="number">57</span>:<span class="number">37</span> INFO driver<span class="preprocessor">.MahoutDriver</span>: Program took <span class="number">7635</span> ms (Minutes: <span class="number">0.12726666666666667</span>)
+[grid@hadoop01 data]$ ls
+<span class="number">20</span>news-bydate<span class="preprocessor">.tar</span><span class="preprocessor">.gz</span>  <span class="number">20</span>news-bydate-test  <span class="number">20</span>news-bydate-train  bayes-train-input
+[grid@hadoop01 data]$ cd bayes-train-input/
+[grid@hadoop01 bayes-train-input]$ ls
+alt<span class="preprocessor">.atheism</span><span class="preprocessor">.txt</span>               comp<span class="preprocessor">.windows</span><span class="preprocessor">.x</span><span class="preprocessor">.txt</span>      rec<span class="preprocessor">.sport</span><span class="preprocessor">.hockey</span><span class="preprocessor">.txt</span>  soc<span class="preprocessor">.religion</span><span class="preprocessor">.christian</span><span class="preprocessor">.txt</span>
+comp<span class="preprocessor">.graphics</span><span class="preprocessor">.txt</span>             misc<span class="preprocessor">.forsale</span><span class="preprocessor">.txt</span>        sci<span class="preprocessor">.crypt</span><span class="preprocessor">.txt</span>         talk<span class="preprocessor">.politics</span><span class="preprocessor">.guns</span><span class="preprocessor">.txt</span>
+comp<span class="preprocessor">.os</span><span class="preprocessor">.ms</span>-windows<span class="preprocessor">.misc</span><span class="preprocessor">.txt</span>   rec<span class="preprocessor">.autos</span><span class="preprocessor">.txt</span>           sci<span class="preprocessor">.electronics</span><span class="preprocessor">.txt</span>   talk<span class="preprocessor">.politics</span><span class="preprocessor">.mideast</span><span class="preprocessor">.txt</span>
+comp<span class="preprocessor">.sys</span><span class="preprocessor">.ibm</span><span class="preprocessor">.pc</span><span class="preprocessor">.hardware</span><span class="preprocessor">.txt</span>  rec<span class="preprocessor">.motorcycles</span><span class="preprocessor">.txt</span>     sci<span class="preprocessor">.med</span><span class="preprocessor">.txt</span>           talk<span class="preprocessor">.politics</span><span class="preprocessor">.misc</span><span class="preprocessor">.txt</span>
+comp<span class="preprocessor">.sys</span><span class="preprocessor">.mac</span><span class="preprocessor">.hardware</span><span class="preprocessor">.txt</span>     rec<span class="preprocessor">.sport</span><span class="preprocessor">.baseball</span><span class="preprocessor">.txt</span>  sci<span class="preprocessor">.space</span><span class="preprocessor">.txt</span>         talk<span class="preprocessor">.religion</span><span class="preprocessor">.misc</span><span class="preprocessor">.txt</span>
+</code></pre><h3 id="建立测试集">建立测试集</h3>
+<pre><code>bin/mahout org<span class="preprocessor">.apache</span><span class="preprocessor">.mahout</span><span class="preprocessor">.classifier</span><span class="preprocessor">.bayes</span><span class="preprocessor">.PrepareTwentyNewsgroups</span> \
+-p /home/grid/data/<span class="number">20</span>news-bydate-test \     指定数据源
+-o /home/grid/data/bayes-test-input \       指定生成目录
+-a org<span class="preprocessor">.apache</span><span class="preprocessor">.mahout</span><span class="preprocessor">.vectorizer</span><span class="preprocessor">.DefaultAnalyzer</span> \
+-c UTF-<span class="number">8</span> \
+
+[grid@hadoop01 mahout-distribution-<span class="number">0.6</span>]$ bin/mahout org<span class="preprocessor">.apache</span><span class="preprocessor">.mahout</span><span class="preprocessor">.classifier</span><span class="preprocessor">.bayes</span><span class="preprocessor">.PrepareTwentyNewsgroups</span> -p /home/grid/data/<span class="number">20</span>news-bydate-test -o /home/grid/data/bayes-test-input -a org<span class="preprocessor">.apache</span><span class="preprocessor">.mahout</span><span class="preprocessor">.vectorizer</span><span class="preprocessor">.DefaultAnalyzer</span> -c UTF-<span class="number">8</span>
+MAHOUT_LOCAL is not <span class="keyword">set</span><span class="comment">; adding HADOOP_CONF_DIR to classpath.</span>
+Running on hadoop, using HADOOP_HOME=/home/grid/hadoop-<span class="number">1.2</span><span class="number">.1</span>
+HADOOP_CONF_DIR=/home/grid/hadoop-<span class="number">1.2</span><span class="number">.1</span>/conf
+MAHOUT-JOB: /home/grid/mahout-distribution-<span class="number">0.6</span>/mahout-examples-<span class="number">0.6</span>-job<span class="preprocessor">.jar</span>
+<span class="label">Warning:</span> $HADOOP_HOME is deprecated.
+
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">07</span> <span class="number">17</span>:<span class="number">59</span>:<span class="number">38</span> WARN driver<span class="preprocessor">.MahoutDriver</span>: No org<span class="preprocessor">.apache</span><span class="preprocessor">.mahout</span><span class="preprocessor">.classifier</span><span class="preprocessor">.bayes</span><span class="preprocessor">.PrepareTwentyNewsgroups</span><span class="preprocessor">.props</span> found on classpath, will use command-line arguments only
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">07</span> <span class="number">18</span>:<span class="number">00</span>:<span class="number">00</span> INFO driver<span class="preprocessor">.MahoutDriver</span>: Program took <span class="number">21875</span> ms (Minutes: <span class="number">0.3645833333333333</span>)
+
+[grid@hadoop01 data]$ ls
+<span class="number">20</span>news-bydate<span class="preprocessor">.tar</span><span class="preprocessor">.gz</span>  <span class="number">20</span>news-bydate-test  <span class="number">20</span>news-bydate-train  bayes-test-input  bayes-train-input
+[grid@hadoop01 data]$ cd bayes-test-input/
+[grid@hadoop01 bayes-test-input]$ ls
+alt<span class="preprocessor">.atheism</span><span class="preprocessor">.txt</span>               comp<span class="preprocessor">.windows</span><span class="preprocessor">.x</span><span class="preprocessor">.txt</span>      rec<span class="preprocessor">.sport</span><span class="preprocessor">.hockey</span><span class="preprocessor">.txt</span>  soc<span class="preprocessor">.religion</span><span class="preprocessor">.christian</span><span class="preprocessor">.txt</span>
+comp<span class="preprocessor">.graphics</span><span class="preprocessor">.txt</span>             misc<span class="preprocessor">.forsale</span><span class="preprocessor">.txt</span>        sci<span class="preprocessor">.crypt</span><span class="preprocessor">.txt</span>         talk<span class="preprocessor">.politics</span><span class="preprocessor">.guns</span><span class="preprocessor">.txt</span>
+comp<span class="preprocessor">.os</span><span class="preprocessor">.ms</span>-windows<span class="preprocessor">.misc</span><span class="preprocessor">.txt</span>   rec<span class="preprocessor">.autos</span><span class="preprocessor">.txt</span>           sci<span class="preprocessor">.electronics</span><span class="preprocessor">.txt</span>   talk<span class="preprocessor">.politics</span><span class="preprocessor">.mideast</span><span class="preprocessor">.txt</span>
+comp<span class="preprocessor">.sys</span><span class="preprocessor">.ibm</span><span class="preprocessor">.pc</span><span class="preprocessor">.hardware</span><span class="preprocessor">.txt</span>  rec<span class="preprocessor">.motorcycles</span><span class="preprocessor">.txt</span>     sci<span class="preprocessor">.med</span><span class="preprocessor">.txt</span>           talk<span class="preprocessor">.politics</span><span class="preprocessor">.misc</span><span class="preprocessor">.txt</span>
+comp<span class="preprocessor">.sys</span><span class="preprocessor">.mac</span><span class="preprocessor">.hardware</span><span class="preprocessor">.txt</span>     rec<span class="preprocessor">.sport</span><span class="preprocessor">.baseball</span><span class="preprocessor">.txt</span>  sci<span class="preprocessor">.space</span><span class="preprocessor">.txt</span>         talk<span class="preprocessor">.religion</span><span class="preprocessor">.misc</span><span class="preprocessor">.txt</span>
+[grid@hadoop01 bayes-test-input]$ 
+</code></pre><h3 id="上传生成数据到HDFS">上传生成数据到HDFS</h3>
+<pre><code>[<span class="keyword">grid</span><span class="variable">@hadoop01</span> ~]$ hadoop fs -mkdir ./<span class="number">20</span>news
+Warning: <span class="variable">$HADOOP_HOME</span> is deprecated.
+
+[<span class="keyword">grid</span><span class="variable">@hadoop01</span> ~]$ hadoop fs -put ./data/bayes-train-input ./<span class="number">20</span>news
+Warning: <span class="variable">$HADOOP_HOME</span> is deprecated.
+
+[<span class="keyword">grid</span><span class="variable">@hadoop01</span> ~]$ hadoop fs -put ./data/bayes-test-input ./<span class="number">20</span>news    
+Warning: <span class="variable">$HADOOP_HOME</span> is deprecated.
+
+[<span class="keyword">grid</span><span class="variable">@hadoop01</span> ~]$ hadoop fs -<span class="keyword">ls</span> ./<span class="number">20</span>news
+Warning: <span class="variable">$HADOOP_HOME</span> is deprecated.
+
+Found <span class="number">2</span> items
+drwxr-xr-x   - <span class="keyword">grid</span> supergroup          <span class="number">0</span> <span class="number">2014</span>-<span class="number">05</span>-<span class="number">07</span> <span class="number">18</span>:<span class="number">05</span> /user/<span class="keyword">grid</span>/<span class="number">20</span>news/bayes-test-input
+drwxr-xr-x   - <span class="keyword">grid</span> supergroup          <span class="number">0</span> <span class="number">2014</span>-<span class="number">05</span>-<span class="number">07</span> <span class="number">18</span>:<span class="number">05</span> /user/<span class="keyword">grid</span>/<span class="number">20</span>news/bayes-train-input
+[<span class="keyword">grid</span><span class="variable">@hadoop01</span> ~]$ 
+</code></pre><h3 id="训练贝叶斯分类器">训练贝叶斯分类器</h3>
+<pre><code>[<span class="keyword">grid</span><span class="variable">@hadoop01</span> mahout-distribution-<span class="number">0.6</span>]<span class="variable">$bin</span>/mahout trainclassifier -i /user/<span class="keyword">grid</span>/<span class="number">20</span>news/bayes-train-input -o /user/<span class="keyword">grid</span>/<span class="number">20</span>news/newsmodel -type cbayes -ng <span class="number">3</span> -<span class="keyword">source</span> hdfs
+等着吧，跑个几十分钟
+最后的显示信息
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">07</span> <span class="number">18</span>:<span class="number">53</span>:<span class="number">53</span> INFO mapred.JobClient:     Combine output records=<span class="number">4916</span>
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">07</span> <span class="number">18</span>:<span class="number">53</span>:<span class="number">53</span> INFO mapred.JobClient:     Physical <span class="keyword">memory</span> (bytes) <span class="keyword">snapshot</span>=<span class="number">1415671808</span>
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">07</span> <span class="number">18</span>:<span class="number">53</span>:<span class="number">53</span> INFO mapred.JobClient:     Reduce output records=<span class="number">20</span>
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">07</span> <span class="number">18</span>:<span class="number">53</span>:<span class="number">53</span> INFO mapred.JobClient:     Virtual <span class="keyword">memory</span> (bytes) <span class="keyword">snapshot</span>=<span class="number">5063999488</span>
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">07</span> <span class="number">18</span>:<span class="number">53</span>:<span class="number">53</span> INFO mapred.JobClient:     Map output records=<span class="number">66413901</span>
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">07</span> <span class="number">18</span>:<span class="number">53</span>:<span class="number">53</span> INFO common.HadoopUtil: Deleting /user/<span class="keyword">grid</span>/<span class="number">20</span>news/newsmodel/trainer-docCount
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">07</span> <span class="number">18</span>:<span class="number">53</span>:<span class="number">53</span> INFO common.HadoopUtil: Deleting /user/<span class="keyword">grid</span>/<span class="number">20</span>news/newsmodel/trainer-termDocCount
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">07</span> <span class="number">18</span>:<span class="number">53</span>:<span class="number">53</span> INFO common.HadoopUtil: Deleting /user/<span class="keyword">grid</span>/<span class="number">20</span>news/newsmodel/trainer-featureCount
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">07</span> <span class="number">18</span>:<span class="number">53</span>:<span class="number">53</span> INFO common.HadoopUtil: Deleting /user/<span class="keyword">grid</span>/<span class="number">20</span>news/newsmodel/trainer-wordFreq
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">07</span> <span class="number">18</span>:<span class="number">53</span>:<span class="number">53</span> INFO common.HadoopUtil: Deleting /user/<span class="keyword">grid</span>/<span class="number">20</span>news/newsmodel/trainer-tfIdf/trainer-vocabCount
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">07</span> <span class="number">18</span>:<span class="number">53</span>:<span class="number">53</span> INFO driver.MahoutDriver: Program took <span class="number">2584721</span> ms (Minutes: <span class="number">43.07868333333333</span>)
+[<span class="keyword">grid</span><span class="variable">@hadoop01</span> bayes-test-input]$ hadoop fs -<span class="keyword">ls</span> ./<span class="number">20</span>news
+Warning: <span class="variable">$HADOOP_HOME</span> is deprecated.
+
+Found <span class="number">4</span> items
+drwxr-xr-x   - <span class="keyword">grid</span> supergroup          <span class="number">0</span> <span class="number">2014</span>-<span class="number">05</span>-<span class="number">07</span> <span class="number">18</span>:<span class="number">05</span> /user/<span class="keyword">grid</span>/<span class="number">20</span>news/bayes-test-input
+drwxr-xr-x   - <span class="keyword">grid</span> supergroup          <span class="number">0</span> <span class="number">2014</span>-<span class="number">05</span>-<span class="number">07</span> <span class="number">18</span>:<span class="number">55</span> /user/<span class="keyword">grid</span>/<span class="number">20</span>news/bayes-test-input-output
+drwxr-xr-x   - <span class="keyword">grid</span> supergroup          <span class="number">0</span> <span class="number">2014</span>-<span class="number">05</span>-<span class="number">07</span> <span class="number">18</span>:<span class="number">05</span> /user/<span class="keyword">grid</span>/<span class="number">20</span>news/bayes-train-input
+drwxr-xr-x   - <span class="keyword">grid</span> supergroup          <span class="number">0</span> <span class="number">2014</span>-<span class="number">05</span>-<span class="number">07</span> <span class="number">18</span>:<span class="number">53</span> /user/<span class="keyword">grid</span>/<span class="number">20</span>news/newsmodel
+
+[<span class="keyword">grid</span><span class="variable">@hadoop01</span> bayes-test-input]$ hadoop fs -<span class="keyword">ls</span> ./<span class="number">20</span>news/newsmodel 
+Warning: <span class="variable">$HADOOP_HOME</span> is deprecated.
+
+Found <span class="number">5</span> items
+-rw-r--r--   <span class="number">2</span> <span class="keyword">grid</span> supergroup          <span class="number">0</span> <span class="number">2014</span>-<span class="number">05</span>-<span class="number">07</span> <span class="number">18</span>:<span class="number">30</span> /user/<span class="keyword">grid</span>/<span class="number">20</span>news/newsmodel/_SUCCESS
+drwxr-xr-x   - <span class="keyword">grid</span> supergroup          <span class="number">0</span> <span class="number">2014</span>-<span class="number">05</span>-<span class="number">07</span> <span class="number">18</span>:<span class="number">10</span> /user/<span class="keyword">grid</span>/<span class="number">20</span>news/newsmodel/_logs
+drwxr-xr-x   - <span class="keyword">grid</span> supergroup          <span class="number">0</span> <span class="number">2014</span>-<span class="number">05</span>-<span class="number">07</span> <span class="number">18</span>:<span class="number">53</span> /user/<span class="keyword">grid</span>/<span class="number">20</span>news/newsmodel/trainer-tfIdf
+drwxr-xr-x   - <span class="keyword">grid</span> supergroup          <span class="number">0</span> <span class="number">2014</span>-<span class="number">05</span>-<span class="number">07</span> <span class="number">18</span>:<span class="number">53</span> /user/<span class="keyword">grid</span>/<span class="number">20</span>news/newsmodel/trainer-thetaNormalizer
+drwxr-xr-x   - <span class="keyword">grid</span> supergroup          <span class="number">0</span> <span class="number">2014</span>-<span class="number">05</span>-<span class="number">07</span> <span class="number">18</span>:<span class="number">43</span> /user/<span class="keyword">grid</span>/<span class="number">20</span>news/newsmodel/trainer-weights
+</code></pre><h3 id="测试贝叶斯分类器">测试贝叶斯分类器</h3>
+<pre><code>[grid@hadoop01 data]bin/mahout testclassifier -m /user/grid/<span class="number">20</span>news/newsmodel -d /user/grid/<span class="number">20</span>news/bayes-test-input -<span class="keyword">type</span> cbayes -ng <span class="number">3</span> -source hdfs -<span class="function"><span class="keyword">method</span> <span class="title">mapreduce</span></span>
+</code></pre><h4 id="这里报错了，查找原因是JVM分配内存不足">这里报错了，查找原因是JVM分配内存不足</h4>
+<pre><code>Caused by: java<span class="preprocessor">.lang</span><span class="preprocessor">.OutOfMemoryError</span>: Java heap space
+        at java<span class="preprocessor">.nio</span><span class="preprocessor">.HeapCharBuffer</span>.&lt;init&gt;(HeapCharBuffer<span class="preprocessor">.java</span>:<span class="number">57</span>)
+        at java<span class="preprocessor">.nio</span><span class="preprocessor">.CharBuffer</span><span class="preprocessor">.allocate</span>(CharBuffer<span class="preprocessor">.java</span>:<span class="number">331</span>)
+        at java<span class="preprocessor">.nio</span><span class="preprocessor">.charset</span><span class="preprocessor">.CharsetDecoder</span><span class="preprocessor">.decode</span>(CharsetDecoder<span class="preprocessor">.java</span>:<span class="number">777</span>)
+        at org<span class="preprocessor">.apache</span><span class="preprocessor">.hadoop</span><span class="preprocessor">.io</span><span class="preprocessor">.Text</span><span class="preprocessor">.decode</span>(Text<span class="preprocessor">.java</span>:<span class="number">350</span>)
+        at org<span class="preprocessor">.apache</span><span class="preprocessor">.hadoop</span><span class="preprocessor">.io</span><span class="preprocessor">.Text</span><span class="preprocessor">.decode</span>(Text<span class="preprocessor">.java</span>:<span class="number">327</span>)
+        at org<span class="preprocessor">.apache</span><span class="preprocessor">.hadoop</span><span class="preprocessor">.io</span><span class="preprocessor">.Text</span><span class="preprocessor">.toString</span>(Text<span class="preprocessor">.java</span>:<span class="number">254</span>)
+        at org<span class="preprocessor">.apache</span><span class="preprocessor">.mahout</span><span class="preprocessor">.common</span><span class="preprocessor">.StringTuple</span><span class="preprocessor">.readFields</span>(StringTuple<span class="preprocessor">.java</span>:<span class="number">143</span>)
+        at org<span class="preprocessor">.apache</span><span class="preprocessor">.hadoop</span><span class="preprocessor">.io</span><span class="preprocessor">.SequenceFile</span>$Reader<span class="preprocessor">.next</span>(SequenceFile<span class="preprocessor">.java</span>:<span class="number">1898</span>)
+        at org<span class="preprocessor">.apache</span><span class="preprocessor">.hadoop</span><span class="preprocessor">.io</span><span class="preprocessor">.SequenceFile</span>$Reader<span class="preprocessor">.next</span>(SequenceFile<span class="preprocessor">.java</span>:<span class="number">1938</span>)
+        at org<span class="preprocessor">.apache</span><span class="preprocessor">.mahout</span><span class="preprocessor">.common</span><span class="preprocessor">.iterator</span><span class="preprocessor">.sequencefile</span><span class="preprocessor">.SequenceFileIterator</span><span class="preprocessor">.computeNext</span>(SequenceFileIterator<span class="preprocessor">.java</span>:<span class="number">95</span>)
+        at org<span class="preprocessor">.apache</span><span class="preprocessor">.mahout</span><span class="preprocessor">.common</span><span class="preprocessor">.iterator</span><span class="preprocessor">.sequencefile</span><span class="preprocessor">.SequenceFileIterator</span><span class="preprocessor">.computeNext</span>(SequenceFileIterator<span class="preprocessor">.java</span>:<span class="number">38</span>)
+        at <span class="keyword">com</span><span class="preprocessor">.google</span><span class="preprocessor">.common</span><span class="preprocessor">.collect</span><span class="preprocessor">.AbstractIterator</span><span class="preprocessor">.tryToComputeNext</span>(AbstractIterator<span class="preprocessor">.java</span>:<span class="number">141</span>)
+        at <span class="keyword">com</span><span class="preprocessor">.google</span><span class="preprocessor">.common</span><span class="preprocessor">.collect</span><span class="preprocessor">.AbstractIterator</span><span class="preprocessor">.hasNext</span>(AbstractIterator<span class="preprocessor">.java</span>:<span class="number">136</span>)
+        at <span class="keyword">com</span><span class="preprocessor">.google</span><span class="preprocessor">.common</span><span class="preprocessor">.collect</span><span class="preprocessor">.Iterators</span>$5<span class="preprocessor">.hasNext</span>(Iterators<span class="preprocessor">.java</span>:<span class="number">525</span>)
+        at <span class="keyword">com</span><span class="preprocessor">.google</span><span class="preprocessor">.common</span><span class="preprocessor">.collect</span><span class="preprocessor">.ForwardingIterator</span><span class="preprocessor">.hasNext</span>(ForwardingIterator<span class="preprocessor">.java</span>:<span class="number">43</span>)
+        at org<span class="preprocessor">.apache</span><span class="preprocessor">.mahout</span><span class="preprocessor">.classifier</span><span class="preprocessor">.bayes</span><span class="preprocessor">.SequenceFileModelReader</span><span class="preprocessor">.loadFeatureWeights</span>(SequenceFileModelReader<span class="preprocessor">.java</span>:<span class="number">72</span>)
+每个节点修改mapred-site<span class="preprocessor">.xml</span>文件
+    [grid@hadoop02 conf]$ cat mapred-site<span class="preprocessor">.xml</span> 
+    &lt;?xml version=<span class="string">"1.0"</span>?&gt;
+    &lt;?xml-stylesheet type=<span class="string">"text/xsl"</span> href=<span class="string">"configuration.xsl"</span>?&gt;
+
+    &lt;!-- Put site-specific property overrides <span class="keyword">in</span> this file. --&gt;
+
+    &lt;configuration&gt;
+            &lt;property&gt;
+                    &lt;name&gt;mapred<span class="preprocessor">.job</span><span class="preprocessor">.tracker</span>&lt;/name&gt;
+                            &lt;value&gt;hadoop01<span class="preprocessor">.myhadoop</span><span class="preprocessor">.com</span>:<span class="number">9001</span>&lt;/value&gt;
+            &lt;/property&gt;
+            &lt;property&gt;
+                     &lt;name&gt;mapred<span class="preprocessor">.child</span><span class="preprocessor">.java</span><span class="preprocessor">.opts</span>&lt;/name&gt;
+                            &lt;value&gt;-Xmx1000m&lt;/value&gt;
+            &lt;/property&gt;
+    &lt;/configuration&gt;
+</code></pre><h3 id="运行成功后">运行成功后</h3>
+<pre><code>[grid@hadoop01 data]$ hadoop fs -ls ./<span class="number">20</span>news/
+<span class="label">Warning:</span> $HADOOP_HOME is deprecated.
+
+Found <span class="number">4</span> items
+drwxr-xr-<span class="built_in">x</span>   - grid supergroup          <span class="number">0</span> <span class="number">2014</span>-<span class="number">05</span>-<span class="number">07</span> <span class="number">18</span>:<span class="number">05</span> /user/grid/<span class="number">20</span>news/bayes-test-input
+drwxr-xr-<span class="built_in">x</span>   - grid supergroup          <span class="number">0</span> <span class="number">2014</span>-<span class="number">05</span>-<span class="number">07</span> <span class="number">19</span>:<span class="number">28</span> /user/grid/<span class="number">20</span>news/bayes-test-input-output
+drwxr-xr-<span class="built_in">x</span>   - grid supergroup          <span class="number">0</span> <span class="number">2014</span>-<span class="number">05</span>-<span class="number">07</span> <span class="number">18</span>:<span class="number">05</span> /user/grid/<span class="number">20</span>news/bayes-train-input
+drwxr-xr-<span class="built_in">x</span>   - grid supergroup          <span class="number">0</span> <span class="number">2014</span>-<span class="number">05</span>-<span class="number">07</span> <span class="number">18</span>:<span class="number">53</span> /user/grid/<span class="number">20</span>news/newsmodel
+
+运行成功后最后的屏幕信息
+Summary 
+------------------------------------------------------- 
+Correctly Classified Instances          :      <span class="number">18369</span>   <span class="number">97.5621</span>% 
+Incorrectly Classified Instances        :        <span class="number">459</span>    <span class="number">2.4379</span>% 
+Total Classified Instances              :      <span class="number">18828</span> 
+
+======================================================= 
+Confusion Matrix 
+------------------------------------------------------- 
+a    b    c    d    e    f    g    h    i    j    k    l    m    n    o    p    q    r    s    t    &lt;--Classified as 
+<span class="number">994</span>  <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>     |  <span class="number">994</span>   a     = rec<span class="preprocessor">.motorcycles</span> 
+<span class="number">0</span>    <span class="number">976</span>  <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">1</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">2</span>    <span class="number">1</span>     |  <span class="number">980</span>   b     = comp<span class="preprocessor">.windows</span><span class="preprocessor">.x</span> 
+<span class="number">7</span>    <span class="number">0</span>    <span class="number">929</span>  <span class="number">1</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">1</span>    <span class="number">0</span>    <span class="number">2</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>     |  <span class="number">940</span>   c     = talk<span class="preprocessor">.politics</span><span class="preprocessor">.mideast</span>
+<span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">905</span>  <span class="number">0</span>    <span class="number">0</span>    <span class="number">1</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">3</span>    <span class="number">0</span>    <span class="number">1</span>    <span class="number">0</span>     |  <span class="number">910</span>   d     = talk<span class="preprocessor">.politics</span><span class="preprocessor">.guns</span> 
+<span class="number">4</span>    <span class="number">1</span>    <span class="number">4</span>    <span class="number">27</span>   <span class="number">388</span>  <span class="number">1</span>    <span class="number">0</span>    <span class="number">1</span>    <span class="number">0</span>    <span class="number">5</span>    <span class="number">1</span>    <span class="number">1</span>    <span class="number">2</span>    <span class="number">2</span>    <span class="number">149</span>  <span class="number">7</span>    <span class="number">2</span>    <span class="number">33</span>   <span class="number">0</span>    <span class="number">0</span>     |  <span class="number">628</span>   e     = talk<span class="preprocessor">.religion</span><span class="preprocessor">.misc</span>
+<span class="number">3</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">985</span>  <span class="number">0</span>    <span class="number">1</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">1</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>     |  <span class="number">990</span>   f     = rec<span class="preprocessor">.autos</span> 
+<span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">993</span>  <span class="number">1</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>     |  <span class="number">994</span>   g     = rec<span class="preprocessor">.sport</span><span class="preprocessor">.baseball</span> 
+<span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">1</span>    <span class="number">998</span>  <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>     |  <span class="number">999</span>   h     = rec<span class="preprocessor">.sport</span><span class="preprocessor">.hockey</span> 
+<span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">956</span>  <span class="number">0</span>    <span class="number">2</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">2</span>    <span class="number">1</span>     |  <span class="number">961</span>   i     = comp<span class="preprocessor">.sys</span><span class="preprocessor">.mac</span><span class="preprocessor">.hardware</span> 
+<span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">981</span>  <span class="number">0</span>    <span class="number">0</span>    <span class="number">5</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">1</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>     |  <span class="number">987</span>   j     = sci<span class="preprocessor">.space</span> 
+<span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">978</span>  <span class="number">0</span>    <span class="number">1</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">2</span>    <span class="number">1</span>     |  <span class="number">982</span>   k     = comp<span class="preprocessor">.sys</span><span class="preprocessor">.ibm</span><span class="preprocessor">.pc</span><span class="preprocessor">.hardware</span> 
+<span class="number">1</span>    <span class="number">0</span>    <span class="number">3</span>    <span class="number">36</span>   <span class="number">0</span>    <span class="number">1</span>    <span class="number">2</span>    <span class="number">1</span>    <span class="number">0</span>    <span class="number">5</span>    <span class="number">0</span>    <span class="number">697</span>  <span class="number">4</span>    <span class="number">0</span>    <span class="number">3</span>    <span class="number">3</span>    <span class="number">19</span>   <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>     |  <span class="number">775</span>   l     = talk<span class="preprocessor">.politics</span><span class="preprocessor">.misc</span> 
+<span class="number">0</span>    <span class="number">2</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">2</span>    <span class="number">0</span>    <span class="number">966</span>  <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">2</span>    <span class="number">1</span>     |  <span class="number">973</span>   m     = comp<span class="preprocessor">.graphics</span> 
+<span class="number">1</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">6</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">971</span>  <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">3</span>    <span class="number">0</span>     |  <span class="number">981</span>   n     = sci<span class="preprocessor">.electronics</span> 
+<span class="number">1</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">1</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">992</span>  <span class="number">1</span>    <span class="number">0</span>    <span class="number">1</span>    <span class="number">0</span>    <span class="number">1</span>     |  <span class="number">997</span>   o     = soc<span class="preprocessor">.religion</span><span class="preprocessor">.christian</span> 
+<span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">1</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">988</span>  <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">1</span>     |  <span class="number">990</span>   p     = sci<span class="preprocessor">.med</span> 
+<span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">2</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">2</span>    <span class="number">1</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">985</span>  <span class="number">0</span>    <span class="number">1</span>    <span class="number">0</span>     |  <span class="number">991</span>   q     = sci<span class="preprocessor">.crypt</span> 
+<span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">1</span>    <span class="number">1</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">1</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">1</span>    <span class="number">0</span>    <span class="number">19</span>   <span class="number">0</span>    <span class="number">1</span>    <span class="number">775</span>  <span class="number">0</span>    <span class="number">0</span>     |  <span class="number">799</span>   r     = alt<span class="preprocessor">.atheism</span> 
+<span class="number">1</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">3</span>    <span class="number">1</span>    <span class="number">2</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">3</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">5</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">957</span>  <span class="number">0</span>     |  <span class="number">972</span>   s     = misc<span class="preprocessor">.forsale</span> 
+<span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">8</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">6</span>    <span class="number">0</span>    <span class="number">6</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">10</span>   <span class="number">955</span>   |  <span class="number">985</span>   t     = comp<span class="preprocessor">.os</span><span class="preprocessor">.ms</span>-windows<span class="preprocessor">.misc</span> 
+</code></pre><p>这个混合矩阵的意思说明： 上述a到t分别是代表了有20类别，这就是我们之前给的20个输入文件，列中的数据说明每个类别中被分配到的字节个数，classified说明应该被分配到的总数<br>    994  0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0   |  994  a     = rec.motorcycles<br>意思为rec.motorcycles 本来是属于 a，有381篇文档被划为了a类，这个是正确的数据，其它的分别表示划到 b~t类中的数目。我们可以看到其正确率为 994/994=1,可见其正确率还是很高的了。</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Hadoop/">Hadoop</a><a href="/tags/Mahout/">Mahout</a>
+  </div>
+
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Hadoop/">Hadoop</a>
+</div>
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="https://github.com/DaMinger/DaMinger.github.io.git/2014/05/08/Hadoop/mahout_2/" data-title="Mahout利用朴素贝叶斯分类处理20个新闻组案例 | DaMinger&#39;s blog" data-tsina="null" class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+
+<div class="next">
+<a href="/2014/05/08/Hadoop/mahout_1/"  title="Mahout的初步体验">
+ <strong>NEXT:</strong><br/> 
+ <span>Mahout的初步体验
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section class="comment">
+	<div class="ds-thread"></div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+  <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#朴素贝叶斯分类算法"><span class="toc-number">1.</span> <span class="toc-text">朴素贝叶斯分类算法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#下载20个新闻组数据"><span class="toc-number">2.</span> <span class="toc-text">下载20个新闻组数据</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#建立训练集"><span class="toc-number">3.</span> <span class="toc-text">建立训练集</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#建立测试集"><span class="toc-number">4.</span> <span class="toc-text">建立测试集</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#上传生成数据到HDFS"><span class="toc-number">5.</span> <span class="toc-text">上传生成数据到HDFS</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#训练贝叶斯分类器"><span class="toc-number">6.</span> <span class="toc-text">训练贝叶斯分类器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#测试贝叶斯分类器"><span class="toc-number">7.</span> <span class="toc-text">测试贝叶斯分类器</span></a></li><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#这里报错了，查找原因是JVM分配内存不足"><span class="toc-number">7.1.</span> <span class="toc-text">这里报错了，查找原因是JVM分配内存不足</span></a></li></ol><li class="toc-item toc-level-3"><a class="toc-link" href="#运行成功后"><span class="toc-number">8.</span> <span class="toc-text">运行成功后</span></a></li></ol>
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p rel="asidetitle grow" class="asidetitle grow">分类</p>
+		<ul>
+		
+			<li><a rel="grow" class="grow" href="/categories/Hadoop/" title="Hadoop">Hadoop<sup>15</sup></a></li>
+		
+			<li><a rel="grow" class="grow" href="/categories/Linux/" title="Linux">Linux<sup>4</sup></a></li>
+		
+			<li><a rel="grow" class="grow" href="/categories/操作系统/" title="操作系统">操作系统<sup>1</sup></a></li>
+		
+			<li><a rel="grow" class="grow" href="/categories/杂谈/" title="杂谈">杂谈<sup>1</sup></a></li>
+		
+			<li><a rel="grow" class="grow" href="/categories/计算机网络/" title="计算机网络">计算机网络<sup>1</sup></a></li>
+		
+		</ul>
+</div>
+
+
+
+  <div class="linkslist">
+<h3 rel="grow" class="grow asidetitle">友情链接</h3>
+<ul class="entry">
+<li><a rel="grow" class="grow" href="http://tahiti.oracle.com/" title="Oracle文档">Oracle文档</a></li>
+<li><a rel="grow" class="grow" href="http://asktom.oracle.com/" title="AskTom">AskTom</a></li>
+<li><a rel="grow" class="grow" href="http://blog.csdn.net/tianlesoftware/" title="Dave">Dave</a></li>
+<li><a rel="grow" class="grow" href="http://www.eygle.com/" title="eygle">eygle</a></li>
+<li><a rel="grow" class="grow" href="http://www.dbsnake.com/" title="dbsnake">dbsnake</a></li>
+</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/Eclipse/" title="Eclipse">Eclipse<sup>1</sup></a></li>
+		
+			<li><a href="/tags/HDFS/" title="HDFS">HDFS<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Hadoop/" title="Hadoop">Hadoop<sup>15</sup></a></li>
+		
+			<li><a href="/tags/Hadoop_Stream/" title="Hadoop_Stream">Hadoop_Stream<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Hive/" title="Hive">Hive<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Linux/" title="Linux">Linux<sup>4</sup></a></li>
+		
+			<li><a href="/tags/Mahout/" title="Mahout">Mahout<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Map-Reduce/" title="Map-Reduce">Map-Reduce<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Mysql/" title="Mysql">Mysql<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Pig/" title="Pig">Pig<sup>1</sup></a></li>
+		
+			<li><a href="/tags/yum/" title="yum">yum<sup>1</sup></a></li>
+		
+			<li><a href="/tags/杂谈/" title="杂谈">杂谈<sup>1</sup></a></li>
+		
+			<li><a href="/tags/网卡错误/" title="网卡错误">网卡错误<sup>1</sup></a></li>
+		
+			<li><a href="/tags/网络/" title="网络">网络<sup>1</sup></a></li>
+		
+			<li><a href="/tags/进程与线程/" title="进程与线程">进程与线程<sup>1</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle"><a href="/archives">归档</a></p>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/05">五月 2014</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/04">四月 2014</a><span class="archive-list-count">19</span></li></ul>
+  </div>
+
+
+  
+  <div class="tagcloudlist">
+    <p class="asidetitle">标签云</p>
+    <div class="tagcloudlist clearfix">
+       <a href="/tags/Eclipse/" style="font-size: 10.00px;">Eclipse</a><a href="/tags/HDFS/" style="font-size: 13.33px;">HDFS</a><a href="/tags/Hadoop/" style="font-size: 20.00px;">Hadoop</a><a href="/tags/Hadoop_Stream/" style="font-size: 10.00px;">Hadoop_Stream</a><a href="/tags/Hive/" style="font-size: 13.33px;">Hive</a><a href="/tags/Linux/" style="font-size: 16.67px;">Linux</a><a href="/tags/Mahout/" style="font-size: 13.33px;">Mahout</a><a href="/tags/Map-Reduce/" style="font-size: 13.33px;">Map-Reduce</a><a href="/tags/Mysql/" style="font-size: 10.00px;">Mysql</a><a href="/tags/Pig/" style="font-size: 10.00px;">Pig</a><a href="/tags/yum/" style="font-size: 10.00px;">yum</a><a href="/tags/杂谈/" style="font-size: 10.00px;">杂谈</a><a href="/tags/网卡错误/" style="font-size: 10.00px;">网卡错误</a><a href="/tags/网络/" style="font-size: 10.00px;">网络</a><a href="/tags/进程与线程/" style="font-size: 10.00px;">进程与线程</a>
+    </div>
+  </div>
+
+
+  <iframe width="100%" height="550" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=2&ptype=1&speed=0&skin=1&isTitle=1&noborder=1&isWeibo=1&isFans=1&uid=3819451430&verifier=f953543e&dpc=1"></iframe>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<span class="buzz" rel="buzz"> Hello,I&#39;m liuqinming.For now I&#39;m a student at collage. <br/>
+			I will share my learning experience with you at this blog.</span>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		<a rel="push" class="push" href="https://github.com/https://github.com/DaMinger" target="_blank" title="github"></a>
+		
+		
+	</div>
+		<p class="copyright">Powered by <a rel="float-shadow" class="float-shadow" href="http://zespia.tw/hexo/" target="_blank" title="hexo">Hexo</a> and Theme by <a class="box-shadow-inset"href="https://github.com/uruir/pacmanhover" target="_blank" title="Pacman">PacmanHover</a> © 2014 
+		
+		
+		<a class="wobble-horizontal" rel="wobble-horizontal" href="https://github.com/DaMinger/DaMinger.github.io.git" target="_blank" title="DaMinger">DaMinger</a>
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+    c.click(function(){
+      ta.css('display', 'block').addClass('fadeIn');
+    });
+    o.click(function(){
+      ta.css('display', 'none');
+    });
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,320-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"null"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+<div id="totop" style="position:fixed;bottom:150px;right:50px;cursor: pointer;">
+<a title="���ض���"><img src="/img/scrollup.png"/></a>
+</div>
+<script src="/js/totop.js"></script>
+
+
+
+  </body>
+</html>

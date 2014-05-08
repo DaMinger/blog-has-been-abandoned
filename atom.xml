@@ -4,7 +4,7 @@
   <subtitle><![CDATA[信春哥，系统稳，闭眼上线不回滚]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="https://github.com/DaMinger/DaMinger.github.io.git/"/>
-  <updated>2014-05-04T12:52:26.199Z</updated>
+  <updated>2014-05-08T01:10:08.102Z</updated>
   <id>https://github.com/DaMinger/DaMinger.github.io.git/</id>
   
   <author>
@@ -13,6 +13,308 @@
   </author>
   
   <generator uri="http://zespia.tw/hexo/">Hexo</generator>
+  
+  <entry>
+    <title><![CDATA[Mahout利用朴素贝叶斯分类处理20个新闻组案例]]></title>
+    <link href="https://github.com/DaMinger/DaMinger.github.io.git/2014/05/08/Hadoop/mahout_2/"/>
+    <id>https://github.com/DaMinger/DaMinger.github.io.git/2014/05/08/Hadoop/mahout_2/</id>
+    <published>2014-05-08T00:40:51.000Z</published>
+    <updated>2014-05-08T01:09:10.000Z</updated>
+    <content type="html"><![CDATA[<h3 id="朴素贝叶斯分类算法">朴素贝叶斯分类算法</h3>
+<p><a href="http://www.cnblogs.com/leoo2sk/archive/2010/09/17/naive-bayesian-classifier.html" target="_blank">朴素贝叶斯分类算法</a></p>
+<h3 id="下载20个新闻组数据">下载20个新闻组数据</h3>
+<p><a href="http://people.csail.mit.edu/jrennie/20Newsgroups/20news-bydate.tar.gz" target="_blank">20个新闻组</a></p>
+<pre><code>[<span class="keyword">grid</span><span class="variable">@hadoop01</span> data]$ <span class="keyword">ls</span>
+<span class="number">20</span>news-bydate.tar.gz  <span class="number">20</span>news-bydate-test  <span class="number">20</span>news-bydate-train
+[<span class="keyword">grid</span><span class="variable">@hadoop01</span> data]$ <span class="keyword">pwd</span>
+/home/<span class="keyword">grid</span>/data
+</code></pre><h3 id="建立训练集">建立训练集</h3>
+<pre><code>bin/mahout org<span class="preprocessor">.apache</span><span class="preprocessor">.mahout</span><span class="preprocessor">.classifier</span><span class="preprocessor">.bayes</span><span class="preprocessor">.PrepareTwentyNewsgroups</span> \ 
+-p /home/grid/data/<span class="number">20</span>news-bydate-train \   指定数据源
+-o /home/grid/data/bayes-train-input \     指定生成目录
+-a org<span class="preprocessor">.apache</span><span class="preprocessor">.mahout</span><span class="preprocessor">.vectorizer</span><span class="preprocessor">.DefaultAnalyzer</span> \ 
+-c UTF-<span class="number">8</span>
+
+[grid@hadoop01 mahout-distribution-<span class="number">0.6</span>]$ bin/mahout org<span class="preprocessor">.apache</span><span class="preprocessor">.mahout</span><span class="preprocessor">.classifier</span><span class="preprocessor">.bayes</span><span class="preprocessor">.PrepareTwentyNewsgroups</span> -p /home/grid/data/<span class="number">20</span>news-bydate-train -o /home/grid/data/bayes-train-input -a org<span class="preprocessor">.apache</span><span class="preprocessor">.mahout</span><span class="preprocessor">.vectorizer</span><span class="preprocessor">.DefaultAnalyzer</span> -c UTF-<span class="number">8</span>
+MAHOUT_LOCAL is not <span class="keyword">set</span><span class="comment">; adding HADOOP_CONF_DIR to classpath.</span>
+Running on hadoop, using HADOOP_HOME=/home/grid/hadoop-<span class="number">1.2</span><span class="number">.1</span>
+HADOOP_CONF_DIR=/home/grid/hadoop-<span class="number">1.2</span><span class="number">.1</span>/conf
+MAHOUT-JOB: /home/grid/mahout-distribution-<span class="number">0.6</span>/mahout-examples-<span class="number">0.6</span>-job<span class="preprocessor">.jar</span>
+<span class="label">Warning:</span> $HADOOP_HOME is deprecated.
+
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">07</span> <span class="number">17</span>:<span class="number">57</span>:<span class="number">30</span> WARN driver<span class="preprocessor">.MahoutDriver</span>: No org<span class="preprocessor">.apache</span><span class="preprocessor">.mahout</span><span class="preprocessor">.classifier</span><span class="preprocessor">.bayes</span><span class="preprocessor">.PrepareTwentyNewsgroups</span><span class="preprocessor">.props</span> found on classpath, will use command-line arguments only
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">07</span> <span class="number">17</span>:<span class="number">57</span>:<span class="number">37</span> INFO driver<span class="preprocessor">.MahoutDriver</span>: Program took <span class="number">7635</span> ms (Minutes: <span class="number">0.12726666666666667</span>)
+[grid@hadoop01 data]$ ls
+<span class="number">20</span>news-bydate<span class="preprocessor">.tar</span><span class="preprocessor">.gz</span>  <span class="number">20</span>news-bydate-test  <span class="number">20</span>news-bydate-train  bayes-train-input
+[grid@hadoop01 data]$ cd bayes-train-input/
+[grid@hadoop01 bayes-train-input]$ ls
+alt<span class="preprocessor">.atheism</span><span class="preprocessor">.txt</span>               comp<span class="preprocessor">.windows</span><span class="preprocessor">.x</span><span class="preprocessor">.txt</span>      rec<span class="preprocessor">.sport</span><span class="preprocessor">.hockey</span><span class="preprocessor">.txt</span>  soc<span class="preprocessor">.religion</span><span class="preprocessor">.christian</span><span class="preprocessor">.txt</span>
+comp<span class="preprocessor">.graphics</span><span class="preprocessor">.txt</span>             misc<span class="preprocessor">.forsale</span><span class="preprocessor">.txt</span>        sci<span class="preprocessor">.crypt</span><span class="preprocessor">.txt</span>         talk<span class="preprocessor">.politics</span><span class="preprocessor">.guns</span><span class="preprocessor">.txt</span>
+comp<span class="preprocessor">.os</span><span class="preprocessor">.ms</span>-windows<span class="preprocessor">.misc</span><span class="preprocessor">.txt</span>   rec<span class="preprocessor">.autos</span><span class="preprocessor">.txt</span>           sci<span class="preprocessor">.electronics</span><span class="preprocessor">.txt</span>   talk<span class="preprocessor">.politics</span><span class="preprocessor">.mideast</span><span class="preprocessor">.txt</span>
+comp<span class="preprocessor">.sys</span><span class="preprocessor">.ibm</span><span class="preprocessor">.pc</span><span class="preprocessor">.hardware</span><span class="preprocessor">.txt</span>  rec<span class="preprocessor">.motorcycles</span><span class="preprocessor">.txt</span>     sci<span class="preprocessor">.med</span><span class="preprocessor">.txt</span>           talk<span class="preprocessor">.politics</span><span class="preprocessor">.misc</span><span class="preprocessor">.txt</span>
+comp<span class="preprocessor">.sys</span><span class="preprocessor">.mac</span><span class="preprocessor">.hardware</span><span class="preprocessor">.txt</span>     rec<span class="preprocessor">.sport</span><span class="preprocessor">.baseball</span><span class="preprocessor">.txt</span>  sci<span class="preprocessor">.space</span><span class="preprocessor">.txt</span>         talk<span class="preprocessor">.religion</span><span class="preprocessor">.misc</span><span class="preprocessor">.txt</span>
+</code></pre><h3 id="建立测试集">建立测试集</h3>
+<pre><code>bin/mahout org<span class="preprocessor">.apache</span><span class="preprocessor">.mahout</span><span class="preprocessor">.classifier</span><span class="preprocessor">.bayes</span><span class="preprocessor">.PrepareTwentyNewsgroups</span> \
+-p /home/grid/data/<span class="number">20</span>news-bydate-test \     指定数据源
+-o /home/grid/data/bayes-test-input \       指定生成目录
+-a org<span class="preprocessor">.apache</span><span class="preprocessor">.mahout</span><span class="preprocessor">.vectorizer</span><span class="preprocessor">.DefaultAnalyzer</span> \
+-c UTF-<span class="number">8</span> \
+
+[grid@hadoop01 mahout-distribution-<span class="number">0.6</span>]$ bin/mahout org<span class="preprocessor">.apache</span><span class="preprocessor">.mahout</span><span class="preprocessor">.classifier</span><span class="preprocessor">.bayes</span><span class="preprocessor">.PrepareTwentyNewsgroups</span> -p /home/grid/data/<span class="number">20</span>news-bydate-test -o /home/grid/data/bayes-test-input -a org<span class="preprocessor">.apache</span><span class="preprocessor">.mahout</span><span class="preprocessor">.vectorizer</span><span class="preprocessor">.DefaultAnalyzer</span> -c UTF-<span class="number">8</span>
+MAHOUT_LOCAL is not <span class="keyword">set</span><span class="comment">; adding HADOOP_CONF_DIR to classpath.</span>
+Running on hadoop, using HADOOP_HOME=/home/grid/hadoop-<span class="number">1.2</span><span class="number">.1</span>
+HADOOP_CONF_DIR=/home/grid/hadoop-<span class="number">1.2</span><span class="number">.1</span>/conf
+MAHOUT-JOB: /home/grid/mahout-distribution-<span class="number">0.6</span>/mahout-examples-<span class="number">0.6</span>-job<span class="preprocessor">.jar</span>
+<span class="label">Warning:</span> $HADOOP_HOME is deprecated.
+
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">07</span> <span class="number">17</span>:<span class="number">59</span>:<span class="number">38</span> WARN driver<span class="preprocessor">.MahoutDriver</span>: No org<span class="preprocessor">.apache</span><span class="preprocessor">.mahout</span><span class="preprocessor">.classifier</span><span class="preprocessor">.bayes</span><span class="preprocessor">.PrepareTwentyNewsgroups</span><span class="preprocessor">.props</span> found on classpath, will use command-line arguments only
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">07</span> <span class="number">18</span>:<span class="number">00</span>:<span class="number">00</span> INFO driver<span class="preprocessor">.MahoutDriver</span>: Program took <span class="number">21875</span> ms (Minutes: <span class="number">0.3645833333333333</span>)
+
+[grid@hadoop01 data]$ ls
+<span class="number">20</span>news-bydate<span class="preprocessor">.tar</span><span class="preprocessor">.gz</span>  <span class="number">20</span>news-bydate-test  <span class="number">20</span>news-bydate-train  bayes-test-input  bayes-train-input
+[grid@hadoop01 data]$ cd bayes-test-input/
+[grid@hadoop01 bayes-test-input]$ ls
+alt<span class="preprocessor">.atheism</span><span class="preprocessor">.txt</span>               comp<span class="preprocessor">.windows</span><span class="preprocessor">.x</span><span class="preprocessor">.txt</span>      rec<span class="preprocessor">.sport</span><span class="preprocessor">.hockey</span><span class="preprocessor">.txt</span>  soc<span class="preprocessor">.religion</span><span class="preprocessor">.christian</span><span class="preprocessor">.txt</span>
+comp<span class="preprocessor">.graphics</span><span class="preprocessor">.txt</span>             misc<span class="preprocessor">.forsale</span><span class="preprocessor">.txt</span>        sci<span class="preprocessor">.crypt</span><span class="preprocessor">.txt</span>         talk<span class="preprocessor">.politics</span><span class="preprocessor">.guns</span><span class="preprocessor">.txt</span>
+comp<span class="preprocessor">.os</span><span class="preprocessor">.ms</span>-windows<span class="preprocessor">.misc</span><span class="preprocessor">.txt</span>   rec<span class="preprocessor">.autos</span><span class="preprocessor">.txt</span>           sci<span class="preprocessor">.electronics</span><span class="preprocessor">.txt</span>   talk<span class="preprocessor">.politics</span><span class="preprocessor">.mideast</span><span class="preprocessor">.txt</span>
+comp<span class="preprocessor">.sys</span><span class="preprocessor">.ibm</span><span class="preprocessor">.pc</span><span class="preprocessor">.hardware</span><span class="preprocessor">.txt</span>  rec<span class="preprocessor">.motorcycles</span><span class="preprocessor">.txt</span>     sci<span class="preprocessor">.med</span><span class="preprocessor">.txt</span>           talk<span class="preprocessor">.politics</span><span class="preprocessor">.misc</span><span class="preprocessor">.txt</span>
+comp<span class="preprocessor">.sys</span><span class="preprocessor">.mac</span><span class="preprocessor">.hardware</span><span class="preprocessor">.txt</span>     rec<span class="preprocessor">.sport</span><span class="preprocessor">.baseball</span><span class="preprocessor">.txt</span>  sci<span class="preprocessor">.space</span><span class="preprocessor">.txt</span>         talk<span class="preprocessor">.religion</span><span class="preprocessor">.misc</span><span class="preprocessor">.txt</span>
+[grid@hadoop01 bayes-test-input]$ 
+</code></pre><h3 id="上传生成数据到HDFS">上传生成数据到HDFS</h3>
+<pre><code>[<span class="keyword">grid</span><span class="variable">@hadoop01</span> ~]$ hadoop fs -mkdir ./<span class="number">20</span>news
+Warning: <span class="variable">$HADOOP_HOME</span> is deprecated.
+
+[<span class="keyword">grid</span><span class="variable">@hadoop01</span> ~]$ hadoop fs -put ./data/bayes-train-input ./<span class="number">20</span>news
+Warning: <span class="variable">$HADOOP_HOME</span> is deprecated.
+
+[<span class="keyword">grid</span><span class="variable">@hadoop01</span> ~]$ hadoop fs -put ./data/bayes-test-input ./<span class="number">20</span>news    
+Warning: <span class="variable">$HADOOP_HOME</span> is deprecated.
+
+[<span class="keyword">grid</span><span class="variable">@hadoop01</span> ~]$ hadoop fs -<span class="keyword">ls</span> ./<span class="number">20</span>news
+Warning: <span class="variable">$HADOOP_HOME</span> is deprecated.
+
+Found <span class="number">2</span> items
+drwxr-xr-x   - <span class="keyword">grid</span> supergroup          <span class="number">0</span> <span class="number">2014</span>-<span class="number">05</span>-<span class="number">07</span> <span class="number">18</span>:<span class="number">05</span> /user/<span class="keyword">grid</span>/<span class="number">20</span>news/bayes-test-input
+drwxr-xr-x   - <span class="keyword">grid</span> supergroup          <span class="number">0</span> <span class="number">2014</span>-<span class="number">05</span>-<span class="number">07</span> <span class="number">18</span>:<span class="number">05</span> /user/<span class="keyword">grid</span>/<span class="number">20</span>news/bayes-train-input
+[<span class="keyword">grid</span><span class="variable">@hadoop01</span> ~]$ 
+</code></pre><h3 id="训练贝叶斯分类器">训练贝叶斯分类器</h3>
+<pre><code>[<span class="keyword">grid</span><span class="variable">@hadoop01</span> mahout-distribution-<span class="number">0.6</span>]<span class="variable">$bin</span>/mahout trainclassifier -i /user/<span class="keyword">grid</span>/<span class="number">20</span>news/bayes-train-input -o /user/<span class="keyword">grid</span>/<span class="number">20</span>news/newsmodel -type cbayes -ng <span class="number">3</span> -<span class="keyword">source</span> hdfs
+等着吧，跑个几十分钟
+最后的显示信息
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">07</span> <span class="number">18</span>:<span class="number">53</span>:<span class="number">53</span> INFO mapred.JobClient:     Combine output records=<span class="number">4916</span>
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">07</span> <span class="number">18</span>:<span class="number">53</span>:<span class="number">53</span> INFO mapred.JobClient:     Physical <span class="keyword">memory</span> (bytes) <span class="keyword">snapshot</span>=<span class="number">1415671808</span>
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">07</span> <span class="number">18</span>:<span class="number">53</span>:<span class="number">53</span> INFO mapred.JobClient:     Reduce output records=<span class="number">20</span>
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">07</span> <span class="number">18</span>:<span class="number">53</span>:<span class="number">53</span> INFO mapred.JobClient:     Virtual <span class="keyword">memory</span> (bytes) <span class="keyword">snapshot</span>=<span class="number">5063999488</span>
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">07</span> <span class="number">18</span>:<span class="number">53</span>:<span class="number">53</span> INFO mapred.JobClient:     Map output records=<span class="number">66413901</span>
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">07</span> <span class="number">18</span>:<span class="number">53</span>:<span class="number">53</span> INFO common.HadoopUtil: Deleting /user/<span class="keyword">grid</span>/<span class="number">20</span>news/newsmodel/trainer-docCount
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">07</span> <span class="number">18</span>:<span class="number">53</span>:<span class="number">53</span> INFO common.HadoopUtil: Deleting /user/<span class="keyword">grid</span>/<span class="number">20</span>news/newsmodel/trainer-termDocCount
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">07</span> <span class="number">18</span>:<span class="number">53</span>:<span class="number">53</span> INFO common.HadoopUtil: Deleting /user/<span class="keyword">grid</span>/<span class="number">20</span>news/newsmodel/trainer-featureCount
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">07</span> <span class="number">18</span>:<span class="number">53</span>:<span class="number">53</span> INFO common.HadoopUtil: Deleting /user/<span class="keyword">grid</span>/<span class="number">20</span>news/newsmodel/trainer-wordFreq
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">07</span> <span class="number">18</span>:<span class="number">53</span>:<span class="number">53</span> INFO common.HadoopUtil: Deleting /user/<span class="keyword">grid</span>/<span class="number">20</span>news/newsmodel/trainer-tfIdf/trainer-vocabCount
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">07</span> <span class="number">18</span>:<span class="number">53</span>:<span class="number">53</span> INFO driver.MahoutDriver: Program took <span class="number">2584721</span> ms (Minutes: <span class="number">43.07868333333333</span>)
+[<span class="keyword">grid</span><span class="variable">@hadoop01</span> bayes-test-input]$ hadoop fs -<span class="keyword">ls</span> ./<span class="number">20</span>news
+Warning: <span class="variable">$HADOOP_HOME</span> is deprecated.
+
+Found <span class="number">4</span> items
+drwxr-xr-x   - <span class="keyword">grid</span> supergroup          <span class="number">0</span> <span class="number">2014</span>-<span class="number">05</span>-<span class="number">07</span> <span class="number">18</span>:<span class="number">05</span> /user/<span class="keyword">grid</span>/<span class="number">20</span>news/bayes-test-input
+drwxr-xr-x   - <span class="keyword">grid</span> supergroup          <span class="number">0</span> <span class="number">2014</span>-<span class="number">05</span>-<span class="number">07</span> <span class="number">18</span>:<span class="number">55</span> /user/<span class="keyword">grid</span>/<span class="number">20</span>news/bayes-test-input-output
+drwxr-xr-x   - <span class="keyword">grid</span> supergroup          <span class="number">0</span> <span class="number">2014</span>-<span class="number">05</span>-<span class="number">07</span> <span class="number">18</span>:<span class="number">05</span> /user/<span class="keyword">grid</span>/<span class="number">20</span>news/bayes-train-input
+drwxr-xr-x   - <span class="keyword">grid</span> supergroup          <span class="number">0</span> <span class="number">2014</span>-<span class="number">05</span>-<span class="number">07</span> <span class="number">18</span>:<span class="number">53</span> /user/<span class="keyword">grid</span>/<span class="number">20</span>news/newsmodel
+
+[<span class="keyword">grid</span><span class="variable">@hadoop01</span> bayes-test-input]$ hadoop fs -<span class="keyword">ls</span> ./<span class="number">20</span>news/newsmodel 
+Warning: <span class="variable">$HADOOP_HOME</span> is deprecated.
+
+Found <span class="number">5</span> items
+-rw-r--r--   <span class="number">2</span> <span class="keyword">grid</span> supergroup          <span class="number">0</span> <span class="number">2014</span>-<span class="number">05</span>-<span class="number">07</span> <span class="number">18</span>:<span class="number">30</span> /user/<span class="keyword">grid</span>/<span class="number">20</span>news/newsmodel/_SUCCESS
+drwxr-xr-x   - <span class="keyword">grid</span> supergroup          <span class="number">0</span> <span class="number">2014</span>-<span class="number">05</span>-<span class="number">07</span> <span class="number">18</span>:<span class="number">10</span> /user/<span class="keyword">grid</span>/<span class="number">20</span>news/newsmodel/_logs
+drwxr-xr-x   - <span class="keyword">grid</span> supergroup          <span class="number">0</span> <span class="number">2014</span>-<span class="number">05</span>-<span class="number">07</span> <span class="number">18</span>:<span class="number">53</span> /user/<span class="keyword">grid</span>/<span class="number">20</span>news/newsmodel/trainer-tfIdf
+drwxr-xr-x   - <span class="keyword">grid</span> supergroup          <span class="number">0</span> <span class="number">2014</span>-<span class="number">05</span>-<span class="number">07</span> <span class="number">18</span>:<span class="number">53</span> /user/<span class="keyword">grid</span>/<span class="number">20</span>news/newsmodel/trainer-thetaNormalizer
+drwxr-xr-x   - <span class="keyword">grid</span> supergroup          <span class="number">0</span> <span class="number">2014</span>-<span class="number">05</span>-<span class="number">07</span> <span class="number">18</span>:<span class="number">43</span> /user/<span class="keyword">grid</span>/<span class="number">20</span>news/newsmodel/trainer-weights
+</code></pre><h3 id="测试贝叶斯分类器">测试贝叶斯分类器</h3>
+<pre><code>[grid@hadoop01 data]bin/mahout testclassifier -m /user/grid/<span class="number">20</span>news/newsmodel -d /user/grid/<span class="number">20</span>news/bayes-test-input -<span class="keyword">type</span> cbayes -ng <span class="number">3</span> -source hdfs -<span class="function"><span class="keyword">method</span> <span class="title">mapreduce</span></span>
+</code></pre><h4 id="这里报错了，查找原因是JVM分配内存不足">这里报错了，查找原因是JVM分配内存不足</h4>
+<pre><code>Caused by: java<span class="preprocessor">.lang</span><span class="preprocessor">.OutOfMemoryError</span>: Java heap space
+        at java<span class="preprocessor">.nio</span><span class="preprocessor">.HeapCharBuffer</span>.&lt;init&gt;(HeapCharBuffer<span class="preprocessor">.java</span>:<span class="number">57</span>)
+        at java<span class="preprocessor">.nio</span><span class="preprocessor">.CharBuffer</span><span class="preprocessor">.allocate</span>(CharBuffer<span class="preprocessor">.java</span>:<span class="number">331</span>)
+        at java<span class="preprocessor">.nio</span><span class="preprocessor">.charset</span><span class="preprocessor">.CharsetDecoder</span><span class="preprocessor">.decode</span>(CharsetDecoder<span class="preprocessor">.java</span>:<span class="number">777</span>)
+        at org<span class="preprocessor">.apache</span><span class="preprocessor">.hadoop</span><span class="preprocessor">.io</span><span class="preprocessor">.Text</span><span class="preprocessor">.decode</span>(Text<span class="preprocessor">.java</span>:<span class="number">350</span>)
+        at org<span class="preprocessor">.apache</span><span class="preprocessor">.hadoop</span><span class="preprocessor">.io</span><span class="preprocessor">.Text</span><span class="preprocessor">.decode</span>(Text<span class="preprocessor">.java</span>:<span class="number">327</span>)
+        at org<span class="preprocessor">.apache</span><span class="preprocessor">.hadoop</span><span class="preprocessor">.io</span><span class="preprocessor">.Text</span><span class="preprocessor">.toString</span>(Text<span class="preprocessor">.java</span>:<span class="number">254</span>)
+        at org<span class="preprocessor">.apache</span><span class="preprocessor">.mahout</span><span class="preprocessor">.common</span><span class="preprocessor">.StringTuple</span><span class="preprocessor">.readFields</span>(StringTuple<span class="preprocessor">.java</span>:<span class="number">143</span>)
+        at org<span class="preprocessor">.apache</span><span class="preprocessor">.hadoop</span><span class="preprocessor">.io</span><span class="preprocessor">.SequenceFile</span>$Reader<span class="preprocessor">.next</span>(SequenceFile<span class="preprocessor">.java</span>:<span class="number">1898</span>)
+        at org<span class="preprocessor">.apache</span><span class="preprocessor">.hadoop</span><span class="preprocessor">.io</span><span class="preprocessor">.SequenceFile</span>$Reader<span class="preprocessor">.next</span>(SequenceFile<span class="preprocessor">.java</span>:<span class="number">1938</span>)
+        at org<span class="preprocessor">.apache</span><span class="preprocessor">.mahout</span><span class="preprocessor">.common</span><span class="preprocessor">.iterator</span><span class="preprocessor">.sequencefile</span><span class="preprocessor">.SequenceFileIterator</span><span class="preprocessor">.computeNext</span>(SequenceFileIterator<span class="preprocessor">.java</span>:<span class="number">95</span>)
+        at org<span class="preprocessor">.apache</span><span class="preprocessor">.mahout</span><span class="preprocessor">.common</span><span class="preprocessor">.iterator</span><span class="preprocessor">.sequencefile</span><span class="preprocessor">.SequenceFileIterator</span><span class="preprocessor">.computeNext</span>(SequenceFileIterator<span class="preprocessor">.java</span>:<span class="number">38</span>)
+        at <span class="keyword">com</span><span class="preprocessor">.google</span><span class="preprocessor">.common</span><span class="preprocessor">.collect</span><span class="preprocessor">.AbstractIterator</span><span class="preprocessor">.tryToComputeNext</span>(AbstractIterator<span class="preprocessor">.java</span>:<span class="number">141</span>)
+        at <span class="keyword">com</span><span class="preprocessor">.google</span><span class="preprocessor">.common</span><span class="preprocessor">.collect</span><span class="preprocessor">.AbstractIterator</span><span class="preprocessor">.hasNext</span>(AbstractIterator<span class="preprocessor">.java</span>:<span class="number">136</span>)
+        at <span class="keyword">com</span><span class="preprocessor">.google</span><span class="preprocessor">.common</span><span class="preprocessor">.collect</span><span class="preprocessor">.Iterators</span>$5<span class="preprocessor">.hasNext</span>(Iterators<span class="preprocessor">.java</span>:<span class="number">525</span>)
+        at <span class="keyword">com</span><span class="preprocessor">.google</span><span class="preprocessor">.common</span><span class="preprocessor">.collect</span><span class="preprocessor">.ForwardingIterator</span><span class="preprocessor">.hasNext</span>(ForwardingIterator<span class="preprocessor">.java</span>:<span class="number">43</span>)
+        at org<span class="preprocessor">.apache</span><span class="preprocessor">.mahout</span><span class="preprocessor">.classifier</span><span class="preprocessor">.bayes</span><span class="preprocessor">.SequenceFileModelReader</span><span class="preprocessor">.loadFeatureWeights</span>(SequenceFileModelReader<span class="preprocessor">.java</span>:<span class="number">72</span>)
+每个节点修改mapred-site<span class="preprocessor">.xml</span>文件
+    [grid@hadoop02 conf]$ cat mapred-site<span class="preprocessor">.xml</span> 
+    &lt;?xml version=<span class="string">"1.0"</span>?&gt;
+    &lt;?xml-stylesheet type=<span class="string">"text/xsl"</span> href=<span class="string">"configuration.xsl"</span>?&gt;
+
+    &lt;!-- Put site-specific property overrides <span class="keyword">in</span> this file. --&gt;
+
+    &lt;configuration&gt;
+            &lt;property&gt;
+                    &lt;name&gt;mapred<span class="preprocessor">.job</span><span class="preprocessor">.tracker</span>&lt;/name&gt;
+                            &lt;value&gt;hadoop01<span class="preprocessor">.myhadoop</span><span class="preprocessor">.com</span>:<span class="number">9001</span>&lt;/value&gt;
+            &lt;/property&gt;
+            &lt;property&gt;
+                     &lt;name&gt;mapred<span class="preprocessor">.child</span><span class="preprocessor">.java</span><span class="preprocessor">.opts</span>&lt;/name&gt;
+                            &lt;value&gt;-Xmx1000m&lt;/value&gt;
+            &lt;/property&gt;
+    &lt;/configuration&gt;
+</code></pre><h3 id="运行成功后">运行成功后</h3>
+<pre><code>[grid@hadoop01 data]$ hadoop fs -ls ./<span class="number">20</span>news/
+<span class="label">Warning:</span> $HADOOP_HOME is deprecated.
+
+Found <span class="number">4</span> items
+drwxr-xr-<span class="built_in">x</span>   - grid supergroup          <span class="number">0</span> <span class="number">2014</span>-<span class="number">05</span>-<span class="number">07</span> <span class="number">18</span>:<span class="number">05</span> /user/grid/<span class="number">20</span>news/bayes-test-input
+drwxr-xr-<span class="built_in">x</span>   - grid supergroup          <span class="number">0</span> <span class="number">2014</span>-<span class="number">05</span>-<span class="number">07</span> <span class="number">19</span>:<span class="number">28</span> /user/grid/<span class="number">20</span>news/bayes-test-input-output
+drwxr-xr-<span class="built_in">x</span>   - grid supergroup          <span class="number">0</span> <span class="number">2014</span>-<span class="number">05</span>-<span class="number">07</span> <span class="number">18</span>:<span class="number">05</span> /user/grid/<span class="number">20</span>news/bayes-train-input
+drwxr-xr-<span class="built_in">x</span>   - grid supergroup          <span class="number">0</span> <span class="number">2014</span>-<span class="number">05</span>-<span class="number">07</span> <span class="number">18</span>:<span class="number">53</span> /user/grid/<span class="number">20</span>news/newsmodel
+
+运行成功后最后的屏幕信息
+Summary 
+------------------------------------------------------- 
+Correctly Classified Instances          :      <span class="number">18369</span>   <span class="number">97.5621</span>% 
+Incorrectly Classified Instances        :        <span class="number">459</span>    <span class="number">2.4379</span>% 
+Total Classified Instances              :      <span class="number">18828</span> 
+
+======================================================= 
+Confusion Matrix 
+------------------------------------------------------- 
+a    b    c    d    e    f    g    h    i    j    k    l    m    n    o    p    q    r    s    t    &lt;--Classified as 
+<span class="number">994</span>  <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>     |  <span class="number">994</span>   a     = rec<span class="preprocessor">.motorcycles</span> 
+<span class="number">0</span>    <span class="number">976</span>  <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">1</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">2</span>    <span class="number">1</span>     |  <span class="number">980</span>   b     = comp<span class="preprocessor">.windows</span><span class="preprocessor">.x</span> 
+<span class="number">7</span>    <span class="number">0</span>    <span class="number">929</span>  <span class="number">1</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">1</span>    <span class="number">0</span>    <span class="number">2</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>     |  <span class="number">940</span>   c     = talk<span class="preprocessor">.politics</span><span class="preprocessor">.mideast</span>
+<span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">905</span>  <span class="number">0</span>    <span class="number">0</span>    <span class="number">1</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">3</span>    <span class="number">0</span>    <span class="number">1</span>    <span class="number">0</span>     |  <span class="number">910</span>   d     = talk<span class="preprocessor">.politics</span><span class="preprocessor">.guns</span> 
+<span class="number">4</span>    <span class="number">1</span>    <span class="number">4</span>    <span class="number">27</span>   <span class="number">388</span>  <span class="number">1</span>    <span class="number">0</span>    <span class="number">1</span>    <span class="number">0</span>    <span class="number">5</span>    <span class="number">1</span>    <span class="number">1</span>    <span class="number">2</span>    <span class="number">2</span>    <span class="number">149</span>  <span class="number">7</span>    <span class="number">2</span>    <span class="number">33</span>   <span class="number">0</span>    <span class="number">0</span>     |  <span class="number">628</span>   e     = talk<span class="preprocessor">.religion</span><span class="preprocessor">.misc</span>
+<span class="number">3</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">985</span>  <span class="number">0</span>    <span class="number">1</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">1</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>     |  <span class="number">990</span>   f     = rec<span class="preprocessor">.autos</span> 
+<span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">993</span>  <span class="number">1</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>     |  <span class="number">994</span>   g     = rec<span class="preprocessor">.sport</span><span class="preprocessor">.baseball</span> 
+<span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">1</span>    <span class="number">998</span>  <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>     |  <span class="number">999</span>   h     = rec<span class="preprocessor">.sport</span><span class="preprocessor">.hockey</span> 
+<span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">956</span>  <span class="number">0</span>    <span class="number">2</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">2</span>    <span class="number">1</span>     |  <span class="number">961</span>   i     = comp<span class="preprocessor">.sys</span><span class="preprocessor">.mac</span><span class="preprocessor">.hardware</span> 
+<span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">981</span>  <span class="number">0</span>    <span class="number">0</span>    <span class="number">5</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">1</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>     |  <span class="number">987</span>   j     = sci<span class="preprocessor">.space</span> 
+<span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">978</span>  <span class="number">0</span>    <span class="number">1</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">2</span>    <span class="number">1</span>     |  <span class="number">982</span>   k     = comp<span class="preprocessor">.sys</span><span class="preprocessor">.ibm</span><span class="preprocessor">.pc</span><span class="preprocessor">.hardware</span> 
+<span class="number">1</span>    <span class="number">0</span>    <span class="number">3</span>    <span class="number">36</span>   <span class="number">0</span>    <span class="number">1</span>    <span class="number">2</span>    <span class="number">1</span>    <span class="number">0</span>    <span class="number">5</span>    <span class="number">0</span>    <span class="number">697</span>  <span class="number">4</span>    <span class="number">0</span>    <span class="number">3</span>    <span class="number">3</span>    <span class="number">19</span>   <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>     |  <span class="number">775</span>   l     = talk<span class="preprocessor">.politics</span><span class="preprocessor">.misc</span> 
+<span class="number">0</span>    <span class="number">2</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">2</span>    <span class="number">0</span>    <span class="number">966</span>  <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">2</span>    <span class="number">1</span>     |  <span class="number">973</span>   m     = comp<span class="preprocessor">.graphics</span> 
+<span class="number">1</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">6</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">971</span>  <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">3</span>    <span class="number">0</span>     |  <span class="number">981</span>   n     = sci<span class="preprocessor">.electronics</span> 
+<span class="number">1</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">1</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">992</span>  <span class="number">1</span>    <span class="number">0</span>    <span class="number">1</span>    <span class="number">0</span>    <span class="number">1</span>     |  <span class="number">997</span>   o     = soc<span class="preprocessor">.religion</span><span class="preprocessor">.christian</span> 
+<span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">1</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">988</span>  <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">1</span>     |  <span class="number">990</span>   p     = sci<span class="preprocessor">.med</span> 
+<span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">2</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">2</span>    <span class="number">1</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">985</span>  <span class="number">0</span>    <span class="number">1</span>    <span class="number">0</span>     |  <span class="number">991</span>   q     = sci<span class="preprocessor">.crypt</span> 
+<span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">1</span>    <span class="number">1</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">1</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">1</span>    <span class="number">0</span>    <span class="number">19</span>   <span class="number">0</span>    <span class="number">1</span>    <span class="number">775</span>  <span class="number">0</span>    <span class="number">0</span>     |  <span class="number">799</span>   r     = alt<span class="preprocessor">.atheism</span> 
+<span class="number">1</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">3</span>    <span class="number">1</span>    <span class="number">2</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">3</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">5</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">957</span>  <span class="number">0</span>     |  <span class="number">972</span>   s     = misc<span class="preprocessor">.forsale</span> 
+<span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">8</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">6</span>    <span class="number">0</span>    <span class="number">6</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">10</span>   <span class="number">955</span>   |  <span class="number">985</span>   t     = comp<span class="preprocessor">.os</span><span class="preprocessor">.ms</span>-windows<span class="preprocessor">.misc</span> 
+</code></pre><p>这个混合矩阵的意思说明： 上述a到t分别是代表了有20类别，这就是我们之前给的20个输入文件，列中的数据说明每个类别中被分配到的字节个数，classified说明应该被分配到的总数<br>    994  0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0   |  994  a     = rec.motorcycles<br>意思为rec.motorcycles 本来是属于 a，有381篇文档被划为了a类，这个是正确的数据，其它的分别表示划到 b~t类中的数目。我们可以看到其正确率为 994/994=1,可见其正确率还是很高的了。</p>
+]]></content>
+    
+    
+      <category term="Hadoop" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/Hadoop/"/>
+    
+      <category term="Mahout" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/Mahout/"/>
+    
+      <category term="Hadoop" scheme="https://github.com/DaMinger/DaMinger.github.io.git/categories/Hadoop/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[Mahout的初步体验]]></title>
+    <link href="https://github.com/DaMinger/DaMinger.github.io.git/2014/05/08/Hadoop/mahout_1/"/>
+    <id>https://github.com/DaMinger/DaMinger.github.io.git/2014/05/08/Hadoop/mahout_1/</id>
+    <published>2014-05-08T00:19:47.000Z</published>
+    <updated>2014-05-08T00:37:40.000Z</updated>
+    <content type="html"><![CDATA[<h3 id="下载解压Mahout">下载解压Mahout</h3>
+<pre><code>[grid@hadoop01 ~]$ ls
+access_log<span class="preprocessor">.txt</span>                 Documents                       Music                  Public
+apache-ant-<span class="number">1.9</span><span class="number">.3</span>               Downloads                       Pictures               score<span class="preprocessor">.txt</span>
+apache-ant-<span class="number">1.9</span><span class="number">.3</span>-bin<span class="preprocessor">.tar</span><span class="preprocessor">.gz</span>    hadoop-<span class="number">1.2</span><span class="number">.1</span>                    pig-<span class="number">0.12</span><span class="number">.1</span>             share
+apache-hive-<span class="number">0.13</span><span class="number">.0</span>-bin         hadoop-<span class="number">1.2</span><span class="number">.1</span><span class="preprocessor">.tar</span><span class="preprocessor">.gz</span>             pig-<span class="number">0.12</span><span class="number">.1</span><span class="preprocessor">.tar</span><span class="preprocessor">.gz</span>      Templates
+apache-hive-<span class="number">0.13</span><span class="number">.0</span>-bin<span class="preprocessor">.tar</span><span class="preprocessor">.gz</span>  input                           pig_1398238654807<span class="preprocessor">.log</span>  Videos
+Desktop                        mahout-distribution-<span class="number">0.6</span><span class="preprocessor">.tar</span><span class="preprocessor">.gz</span>  pig_1398239586082<span class="preprocessor">.log</span>  workspace
+[grid@hadoop01 ~]$ tar -xzvf mahout-distribution-<span class="number">0.6</span><span class="preprocessor">.tar</span><span class="preprocessor">.gz</span>
+[grid@hadoop01 ~]$ ls
+access_log<span class="preprocessor">.txt</span>                 Downloads                       Pictures               share
+apache-ant-<span class="number">1.9</span><span class="number">.3</span>               hadoop-<span class="number">1.2</span><span class="number">.1</span>                    pig-<span class="number">0.12</span><span class="number">.1</span>             Templates
+apache-ant-<span class="number">1.9</span><span class="number">.3</span>-bin<span class="preprocessor">.tar</span><span class="preprocessor">.gz</span>    hadoop-<span class="number">1.2</span><span class="number">.1</span><span class="preprocessor">.tar</span><span class="preprocessor">.gz</span>             pig-<span class="number">0.12</span><span class="number">.1</span><span class="preprocessor">.tar</span><span class="preprocessor">.gz</span>      Videos
+apache-hive-<span class="number">0.13</span><span class="number">.0</span>-bin         input                           pig_1398238654807<span class="preprocessor">.log</span>  workspace
+apache-hive-<span class="number">0.13</span><span class="number">.0</span>-bin<span class="preprocessor">.tar</span><span class="preprocessor">.gz</span>  mahout-distribution-<span class="number">0.6</span>         pig_1398239586082<span class="preprocessor">.log</span>
+Desktop                        mahout-distribution-<span class="number">0.6</span><span class="preprocessor">.tar</span><span class="preprocessor">.gz</span>  Public
+Documents                      Music                           score<span class="preprocessor">.txt</span>
+</code></pre><h3 id="配置环境变量">配置环境变量</h3>
+<pre><code>[<span class="keyword">grid</span><span class="variable">@hadoop01</span> ~]<span class="variable">$vi</span> .bash_profile 
+PATH=<span class="variable">$PATH</span>:/home/<span class="keyword">grid</span>/hadoop-<span class="number">1.2</span><span class="number">.1</span>:/bin:/home/<span class="keyword">grid</span>/pig-<span class="number">0.12</span><span class="number">.1</span>/bin:<span class="variable">$HOME</span>/bin
+JAVA_HOME=/usr/jdk1<span class="number">.7</span><span class="number">.0</span>_51
+PIG_CLASSPATH=/home/<span class="keyword">grid</span>/hadoop-<span class="number">1.2</span><span class="number">.1</span>/conf/
+MAHOUT_HOME=/home/<span class="keyword">grid</span>/mahout-distribution-<span class="number">0.6</span>
+MAHOUT_CONF_DIR=/home/<span class="keyword">grid</span>/mahout-distribution-<span class="number">0.6</span>/conf
+PATH=<span class="variable">$PATH</span>:<span class="variable">$MAHOUT_HOME</span>/conf:<span class="variable">$MAHOUT_HOME</span>/bin
+export MAHOUT_HOME
+export MAHOUT_CONF_DIR
+export PIG_CLASSPATH
+export PATH
+export JAVA_HOME
+[<span class="keyword">grid</span><span class="variable">@hadoop01</span> ~]$ <span class="keyword">source</span>  .bash_profile  
+</code></pre><h3 id="启动hadoop">启动hadoop</h3>
+<h3 id="检验Mohout是否安装成功">检验Mohout是否安装成功</h3>
+<pre><code>[grid<span class="variable">@hadoop01</span> mahout-distribution-<span class="number">0</span>.<span class="number">6</span>]<span class="variable">$ </span>bin/mahout 
+看到一些算法就<span class="constant">OK</span>了
+</code></pre><h3 id="利用Mohout运行一个简单的k-means算法">利用Mohout运行一个简单的k-means算法</h3>
+<p><a href="http://www.cnblogs.com/leoo2sk/archive/2010/09/20/k-means.html" target="_blank">关于Kmeans的详解</a></p>
+<h4 id="下载数据">下载数据</h4>
+<p>下载一个文件synthetic_control.data，<a href="http://archive.ics.uci.edu/ml/databases/synthetic_control/synthetic_control.data" target="_blank">下载地址</a>,并把这个文件放在$MAHOUT_HOME目录下</p>
+<h4 id="上传数据">上传数据</h4>
+<pre><code>[<span class="keyword">grid</span><span class="variable">@hadoop01</span> mahout-distribution-<span class="number">0.6</span>]$ hadoop fs -mkdir testdata
+Warning: <span class="variable">$HADOOP_HOME</span> is deprecated.
+
+[<span class="keyword">grid</span><span class="variable">@hadoop01</span> mahout-distribution-<span class="number">0.6</span>]$ hadoop fs -put /home/<span class="keyword">grid</span>/mahout-distribution-<span class="number">0.6</span>/synthetic_control.data  testdata
+[<span class="keyword">grid</span><span class="variable">@hadoop01</span> mahout-distribution-<span class="number">0.6</span>]$ hadoop fs -<span class="keyword">ls</span>  ./testdata
+Warning: <span class="variable">$HADOOP_HOME</span> is deprecated.
+
+Found <span class="number">1</span> items
+-rw-r--r--   <span class="number">2</span> <span class="keyword">grid</span> supergroup     <span class="number">288374</span> <span class="number">2014</span>-<span class="number">05</span>-<span class="number">07</span> <span class="number">16</span>:<span class="number">49</span> /user/<span class="keyword">grid</span>/testdata/synthetic_control.data
+</code></pre><h4 id="运行k-means算法">运行k-means算法</h4>
+<pre><code>[grid@hadoop01 mahout-distribution-<span class="number">0.6</span>]$ mahout org<span class="preprocessor">.apache</span><span class="preprocessor">.mahout</span><span class="preprocessor">.clustering</span><span class="preprocessor">.syntheticcontrol</span><span class="preprocessor">.kmeans</span><span class="preprocessor">.Job</span>
+等待一会
+最后屏幕刷出结果（部分）
+<span class="number">1.0</span> : [distance=<span class="number">28.040983886281218</span>]: [<span class="number">30.461</span>, <span class="number">29.172</span>, <span class="number">32.510</span>, <span class="number">29.727</span>, <span class="number">23.834</span>, <span class="number">26.091</span>, <span class="number">23.735</span>, <span class="number">23.111</span>, <span class="number">31.726</span>, <span class="number">22.930</span>, <span class="number">31.051</span>, <span class="number">23.321</span>, <span class="number">27.188</span>, <span class="number">18.231</span>, <span class="number">22.951</span>, <span class="number">21.944</span>, <span class="number">25.388</span>, <span class="number">26.809</span>, <span class="number">20.733</span>, <span class="number">16.576</span>, <span class="number">23.558</span>, <span class="number">20.733</span>, <span class="number">18.346</span>, <span class="number">24.153</span>, <span class="number">16.649</span>, <span class="number">16.234</span>, <span class="number">17.985</span>, <span class="number">11.772</span>, <span class="number">19.873</span>, <span class="number">19.622</span>, <span class="number">19.365</span>, <span class="number">14.608</span>, <span class="number">11.265</span>, <span class="number">20.604</span>, <span class="number">11.180</span>, <span class="number">18.643</span>, <span class="number">14.246</span>, <span class="number">10.830</span>, <span class="number">7.235</span>, <span class="number">10.194</span>, <span class="number">16.731</span>, <span class="number">11.470</span>, <span class="number">7.311</span>, <span class="number">10.611</span>, <span class="number">6.924</span>, <span class="number">3.440</span>, <span class="number">9.465</span>, <span class="number">4.764</span>, <span class="number">2.838</span>, <span class="number">8.807</span>, <span class="number">1.960</span>, <span class="number">2.864</span>, <span class="number">6.728</span>, <span class="number">0.369</span>, <span class="number">1.374</span>, -<span class="number">0.167</span>, <span class="number">2.125</span>, <span class="number">8.306</span>, <span class="number">4.908</span>, -<span class="number">0.432</span>]
+        <span class="number">1.0</span> : [distance=<span class="number">26.945992695091952</span>]: [<span class="number">30.817</span>, <span class="number">28.079</span>, <span class="number">24.628</span>, <span class="number">23.933</span>, <span class="number">28.660</span>, <span class="number">25.704</span>, <span class="number">27.501</span>, <span class="number">23.513</span>, <span class="number">30.377</span>, <span class="number">27.595</span>, <span class="number">22.938</span>, <span class="number">26.684</span>, <span class="number">25.208</span>, <span class="number">26.834</span>, <span class="number">22.931</span>, <span class="number">17.732</span>, <span class="number">17.544</span>, <span class="number">24.167</span>, <span class="number">25.602</span>, <span class="number">19.269</span>, <span class="number">14.978</span>, <span class="number">17.223</span>, <span class="number">18.962</span>, <span class="number">22.281</span>, <span class="number">17.035</span>, <span class="number">23.789</span>, <span class="number">14.878</span>, <span class="number">18.113</span>, <span class="number">10.981</span>, <span class="number">11.661</span>, <span class="number">14.331</span>, <span class="number">19.942</span>, <span class="number">11.175</span>, <span class="number">10.714</span>, <span class="number">15.675</span>, <span class="number">15.468</span>, <span class="number">16.010</span>, <span class="number">14.972</span>, <span class="number">15.101</span>, <span class="number">15.131</span>, <span class="number">15.154</span>, <span class="number">10.492</span>, <span class="number">14.754</span>, <span class="number">5.222</span>, <span class="number">5.393</span>, <span class="number">13.606</span>, <span class="number">11.775</span>, <span class="number">6.307</span>, <span class="number">3.370</span>, <span class="number">10.107</span>, <span class="number">7.779</span>, <span class="number">10.209</span>, <span class="number">1.493</span>, <span class="number">4.822</span>, <span class="number">0.019</span>, <span class="number">8.019</span>, -<span class="number">0.279</span>, -<span class="number">0.049</span>, <span class="number">5.757</span>, <span class="number">2.718</span>]
+        <span class="number">1.0</span> : [distance=<span class="number">25.05284328269594</span>]: [<span class="number">31.347</span>, <span class="number">28.245</span>, <span class="number">34.275</span>, <span class="number">29.885</span>, <span class="number">30.573</span>, <span class="number">32.373</span>, <span class="number">24.031</span>, <span class="number">24.057</span>, <span class="number">24.099</span>, <span class="number">23.777</span>, <span class="number">28.993</span>, <span class="number">29.853</span>, <span class="number">26.485</span>, <span class="number">29.245</span>, <span class="number">28.145</span>, <span class="number">22.528</span>, <span class="number">20.390</span>, <span class="number">20.570</span>, <span class="number">27.921</span>, <span class="number">18.786</span>, <span class="number">22.144</span>, <span class="number">20.163</span>, <span class="number">17.616</span>, <span class="number">19.541</span>, <span class="number">20.342</span>, <span class="number">22.061</span>, <span class="number">21.358</span>, <span class="number">23.951</span>, <span class="number">13.447</span>, <span class="number">12.974</span>, <span class="number">18.406</span>, <span class="number">17.349</span>, <span class="number">17.425</span>, <span class="number">11.041</span>, <span class="number">14.912</span>, <span class="number">10.147</span>, <span class="number">16.731</span>, <span class="number">9.845</span>, <span class="number">14.840</span>, <span class="number">18.283</span>, <span class="number">18.426</span>, <span class="number">10.059</span>, <span class="number">16.760</span>, <span class="number">14.187</span>, <span class="number">14.301</span>, <span class="number">14.277</span>, <span class="number">12.823</span>, <span class="number">15.574</span>, <span class="number">10.789</span>, <span class="number">10.957</span>, <span class="number">8.361</span>, <span class="number">4.116</span>, <span class="number">3.732</span>, <span class="number">3.508</span>, <span class="number">2.288</span>, <span class="number">9.768</span>, <span class="number">9.661</span>, <span class="number">2.183</span>, <span class="number">6.933</span>, <span class="number">4.670</span>]
+        <span class="number">1.0</span> : [distance=<span class="number">25.150872291523466</span>]: [<span class="number">26.273</span>, <span class="number">31.229</span>, <span class="number">29.741</span>, <span class="number">34.208</span>, <span class="number">33.329</span>, <span class="number">33.610</span>, <span class="number">31.072</span>, <span class="number">22.530</span>, <span class="number">28.587</span>, <span class="number">21.130</span>, <span class="number">23.557</span>, <span class="number">28.078</span>, <span class="number">27.546</span>, <span class="number">25.825</span>, <span class="number">18.454</span>, <span class="number">25.903</span>, <span class="number">24.448</span>, <span class="number">24.003</span>, <span class="number">23.199</span>, <span class="number">22.158</span>, <span class="number">17.711</span>, <span class="number">23.922</span>, <span class="number">20.550</span>, <span class="number">15.913</span>, <span class="number">17.699</span>, <span class="number">13.883</span>, <span class="number">17.494</span>, <span class="number">16.360</span>, <span class="number">20.679</span>, <span class="number">11.790</span>, <span class="number">18.424</span>, <span class="number">10.493</span>, <span class="number">11.001</span>, <span class="number">17.994</span>, <span class="number">11.673</span>, <span class="number">11.014</span>, <span class="number">11.437</span>, <span class="number">16.197</span>, <span class="number">16.435</span>, <span class="number">7.331</span>, <span class="number">15.089</span>, <span class="number">16.779</span>, <span class="number">14.449</span>, <span class="number">9.551</span>, <span class="number">11.331</span>, <span class="number">10.564</span>, <span class="number">5.992</span>, <span class="number">8.369</span>, <span class="number">11.402</span>, <span class="number">7.865</span>, <span class="number">2.526</span>, <span class="number">4.632</span>, <span class="number">9.335</span>, <span class="number">6.772</span>, <span class="number">3.018</span>, <span class="number">3.675</span>, <span class="number">0.455</span>, <span class="number">5.362</span>, <span class="number">6.945</span>, <span class="number">7.901</span>]
+        <span class="number">1.0</span> : [distance=<span class="number">29.28744984720542</span>]: [<span class="number">26.148</span>, <span class="number">30.828</span>, <span class="number">27.122</span>, <span class="number">31.797</span>, <span class="number">26.812</span>, <span class="number">24.681</span>, <span class="number">31.379</span>, <span class="number">22.047</span>, <span class="number">22.034</span>, <span class="number">24.293</span>, <span class="number">30.875</span>, <span class="number">22.493</span>, <span class="number">30.889</span>, <span class="number">19.167</span>, <span class="number">19.199</span>, <span class="number">27.696</span>, <span class="number">17.370</span>, <span class="number">27.648</span>, <span class="number">23.842</span>, <span class="number">26.493</span>, <span class="number">23.635</span>, <span class="number">23.577</span>, <span class="number">20.884</span>, <span class="number">18.786</span>, <span class="number">18.898</span>, <span class="number">18.091</span>, <span class="number">22.021</span>, <span class="number">20.674</span>, <span class="number">23.890</span>, <span class="number">12.646</span>, <span class="number">18.448</span>, <span class="number">17.732</span>, <span class="number">17.897</span>, <span class="number">14.679</span>, <span class="number">13.598</span>, <span class="number">12.689</span>, <span class="number">19.832</span>, <span class="number">12.489</span>, <span class="number">9.745</span>, <span class="number">18.990</span>, <span class="number">18.820</span>, <span class="number">16.517</span>, <span class="number">12.024</span>, <span class="number">14.131</span>, <span class="number">13.394</span>, <span class="number">15.473</span>, <span class="number">11.140</span>, <span class="number">5.094</span>, <span class="number">15.265</span>, <span class="number">14.651</span>, <span class="number">8.299</span>, <span class="number">3.163</span>, <span class="number">12.039</span>, <span class="number">4.893</span>, <span class="number">7.552</span>, <span class="number">12.315</span>, <span class="number">9.581</span>, <span class="number">5.462</span>, <span class="number">2.984</span>, <span class="number">8.981</span>]
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">07</span> <span class="number">17</span>:<span class="number">10</span>:<span class="number">13</span> INFO clustering<span class="preprocessor">.ClusterDumper</span>: Wrote <span class="number">6</span> clusters
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">07</span> <span class="number">17</span>:<span class="number">10</span>:<span class="number">13</span> INFO driver<span class="preprocessor">.MahoutDriver</span>: Program took <span class="number">456695</span> ms (Minutes: <span class="number">7.611583333333333</span>)
+</code></pre><h4 id="看到一系列clusters，就算成功">看到一系列clusters，就算成功</h4>
+<pre><code>[<span class="keyword">grid</span><span class="variable">@hadoop01</span> ~]$ hadoop fs -<span class="keyword">ls</span> ./output
+Warning: <span class="variable">$HADOOP_HOME</span> is deprecated.
+
+Found <span class="number">13</span> items
+drwxr-xr-x   - <span class="keyword">grid</span> supergroup          <span class="number">0</span> <span class="number">2014</span>-<span class="number">05</span>-<span class="number">07</span> <span class="number">17</span>:<span class="number">10</span> /user/<span class="keyword">grid</span>/output/clusteredPoints
+drwxr-xr-x   - <span class="keyword">grid</span> supergroup          <span class="number">0</span> <span class="number">2014</span>-<span class="number">05</span>-<span class="number">07</span> <span class="number">17</span>:<span class="number">03</span> /user/<span class="keyword">grid</span>/output/clusters-<span class="number">0</span>
+drwxr-xr-x   - <span class="keyword">grid</span> supergroup          <span class="number">0</span> <span class="number">2014</span>-<span class="number">05</span>-<span class="number">07</span> <span class="number">17</span>:<span class="number">03</span> /user/<span class="keyword">grid</span>/output/clusters-<span class="number">1</span>
+drwxr-xr-x   - <span class="keyword">grid</span> supergroup          <span class="number">0</span> <span class="number">2014</span>-<span class="number">05</span>-<span class="number">07</span> <span class="number">17</span>:<span class="number">09</span> /user/<span class="keyword">grid</span>/output/clusters-<span class="number">10</span>-final
+drwxr-xr-x   - <span class="keyword">grid</span> supergroup          <span class="number">0</span> <span class="number">2014</span>-<span class="number">05</span>-<span class="number">07</span> <span class="number">17</span>:<span class="number">04</span> /user/<span class="keyword">grid</span>/output/clusters-<span class="number">2</span>
+drwxr-xr-x   - <span class="keyword">grid</span> supergroup          <span class="number">0</span> <span class="number">2014</span>-<span class="number">05</span>-<span class="number">07</span> <span class="number">17</span>:<span class="number">05</span> /user/<span class="keyword">grid</span>/output/clusters-<span class="number">3</span>
+drwxr-xr-x   - <span class="keyword">grid</span> supergroup          <span class="number">0</span> <span class="number">2014</span>-<span class="number">05</span>-<span class="number">07</span> <span class="number">17</span>:<span class="number">05</span> /user/<span class="keyword">grid</span>/output/clusters-<span class="number">4</span>
+drwxr-xr-x   - <span class="keyword">grid</span> supergroup          <span class="number">0</span> <span class="number">2014</span>-<span class="number">05</span>-<span class="number">07</span> <span class="number">17</span>:<span class="number">06</span> /user/<span class="keyword">grid</span>/output/clusters-<span class="number">5</span>
+drwxr-xr-x   - <span class="keyword">grid</span> supergroup          <span class="number">0</span> <span class="number">2014</span>-<span class="number">05</span>-<span class="number">07</span> <span class="number">17</span>:<span class="number">07</span> /user/<span class="keyword">grid</span>/output/clusters-<span class="number">6</span>
+drwxr-xr-x   - <span class="keyword">grid</span> supergroup          <span class="number">0</span> <span class="number">2014</span>-<span class="number">05</span>-<span class="number">07</span> <span class="number">17</span>:<span class="number">07</span> /user/<span class="keyword">grid</span>/output/clusters-<span class="number">7</span>
+drwxr-xr-x   - <span class="keyword">grid</span> supergroup          <span class="number">0</span> <span class="number">2014</span>-<span class="number">05</span>-<span class="number">07</span> <span class="number">17</span>:<span class="number">08</span> /user/<span class="keyword">grid</span>/output/clusters-<span class="number">8</span>
+drwxr-xr-x   - <span class="keyword">grid</span> supergroup          <span class="number">0</span> <span class="number">2014</span>-<span class="number">05</span>-<span class="number">07</span> <span class="number">17</span>:<span class="number">08</span> /user/<span class="keyword">grid</span>/output/clusters-<span class="number">9</span>
+drwxr-xr-x   - <span class="keyword">grid</span> supergroup          <span class="number">0</span> <span class="number">2014</span>-<span class="number">05</span>-<span class="number">07</span> <span class="number">17</span>:<span class="number">03</span> /user/<span class="keyword">grid</span>/output/data
+[<span class="keyword">grid</span><span class="variable">@hadoop01</span> ~]$ 
+</code></pre>]]></content>
+    
+    
+      <category term="Hadoop" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/Hadoop/"/>
+    
+      <category term="Mahout" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/Mahout/"/>
+    
+      <category term="Hadoop" scheme="https://github.com/DaMinger/DaMinger.github.io.git/categories/Hadoop/"/>
+    
+  </entry>
   
   <entry>
     <title><![CDATA[Linux下进程与线程]]></title>
@@ -2313,72 +2615,6 @@ ln -s /usr/<span class="keyword">local</span>/mysql/data/mysql.sock /tmp/mysql.s
       <category term="Mysql" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/Mysql/"/>
     
       <category term="Linux" scheme="https://github.com/DaMinger/DaMinger.github.io.git/categories/Linux/"/>
-    
-  </entry>
-  
-  <entry>
-    <title><![CDATA[CENTOS 6.5搭建本地YUM源]]></title>
-    <link href="https://github.com/DaMinger/DaMinger.github.io.git/2014/04/09/Linux/linux_yum/"/>
-    <id>https://github.com/DaMinger/DaMinger.github.io.git/2014/04/09/Linux/linux_yum/</id>
-    <published>2014-04-09T12:01:08.000Z</published>
-    <updated>2014-04-13T12:04:03.000Z</updated>
-    <content type="html"><![CDATA[<h1 id="CENTOS_6-5搭建本地YUM源">CENTOS 6.5搭建本地YUM源</h1>
-<h2 id="方法一：用系统光盘镜像创建">方法一：用系统光盘镜像创建</h2>
-<h3 id="创建yum源目录并挂载系统光盘镜像">创建yum源目录并挂载系统光盘镜像</h3>
-<pre><code>mkdir /opt/<span class="built_in">local</span><span class="attribute">-mirror</span>
-mount /dev/cdrom  /opt/<span class="built_in">local</span><span class="attribute">-mirror</span>
-</code></pre><h3 id="新建local-mirror-repo文件">新建local-mirror.repo文件</h3>
-<pre><code>cd /etc/yum.repos.d/
-rm -f  *  (删掉原来的repo文件，如果以后还想用，也可以重命名或者移到其他目录，我这里删掉)
-vi /etc/yum.repos.d/local-mirror.repo
-[local-mirror]
-name=This <span class="keyword">is</span> a local repo
-baseurl=file:<span class="comment"><span class="xmlDocTag">///</span>opt/local-mirror</span>
-enabled=<span class="number">1</span>
-gpgcheck=<span class="number">1</span>
-gpgkey=file:<span class="comment"><span class="xmlDocTag">///</span>etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-6</span>
-</code></pre><h3 id="设置开机自动挂载">设置开机自动挂载</h3>
-<p>vi  /etc/fstab   //在最后一行加上：</p>
-<pre><code>/dev/cdrom    /opt/local-mirror     iso9660        <span class="default"><span class="keyword">default</span>      0    0</span>
-</code></pre><h3 id="测试">测试</h3>
-<pre><code>yum clean <span class="literal">all</span>
-yum  makecache
-yum <span class="attribute">-y</span> install ftp(或者安装其他软件包)
-</code></pre><p>如果没有提示错误，就说明本地yum源搭建成功了！</p>
-<h2 id="方法二：将所有rpm包复制到指定文件夹，通过createrepo命令创建">方法二：将所有rpm包复制到指定文件夹，通过createrepo命令创建</h2>
-<h3 id="创建yum源目录并且挂载系统光盘镜像之后，将所有rpm包复制到yum源目录，如果镜像文件像CentOS6-5一样是分为2个iso文件的，分2次挂载并且复制即可">创建yum源目录并且挂载系统光盘镜像之后，将所有rpm包复制到yum源目录，如果镜像文件像CentOS6.5一样是分为2个iso文件的，分2次挂载并且复制即可</h3>
-<pre><code>mkdir /opt/<span class="keyword">local</span>-mirror
-mount /dev/cdrom  /mnt (临时供<span class="keyword">copy</span>的目录）
-cp /mnt/Packages/*   /opt/<span class="keyword">local</span>-mirror
-</code></pre><h3 id="通过rpm命令手动安装createrepo命令创建yum仓库">通过rpm命令手动安装createrepo命令创建yum仓库</h3>
-<pre><code>rpm <span class="attribute">-ivh</span> createrepo     (若提示需要安装依赖包，根据提示安装即可）
-createrepo <span class="attribute">-v</span>  /opt/<span class="built_in">local</span><span class="attribute">-mirror</span>  (创建索引信息）
-</code></pre><h3 id="同方法一的第二步">同方法一的第二步</h3>
-<h3 id="测试同方法一的第四步">测试同方法一的第四步</h3>
-]]></content>
-    
-    
-      <category term="Linux" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/Linux/"/>
-    
-      <category term="yum" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/yum/"/>
-    
-      <category term="Linux" scheme="https://github.com/DaMinger/DaMinger.github.io.git/categories/Linux/"/>
-    
-  </entry>
-  
-  <entry>
-    <title><![CDATA[第一篇Blog都是扯淡]]></title>
-    <link href="https://github.com/DaMinger/DaMinger.github.io.git/2014/04/07/%E6%9D%82%E8%B0%88/first_blog/"/>
-    <id>https://github.com/DaMinger/DaMinger.github.io.git/2014/04/07/杂谈/first_blog/</id>
-    <published>2014-04-07T04:18:40.000Z</published>
-    <updated>2014-04-09T09:05:06.000Z</updated>
-    <content type="html"><![CDATA[<p>所谓的第一篇文章都是扯淡，原先学习都是用OneNote来管理个人笔记，现在整个Blog分享点学习心得,共享知识，共同进步。</p>
-]]></content>
-    
-    
-      <category term="杂谈" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/%E6%9D%82%E8%B0%88/"/>
-    
-      <category term="杂谈" scheme="https://github.com/DaMinger/DaMinger.github.io.git/categories/%E6%9D%82%E8%B0%88/"/>
     
   </entry>
   
