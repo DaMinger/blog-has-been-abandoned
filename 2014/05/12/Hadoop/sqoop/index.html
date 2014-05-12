@@ -1,0 +1,667 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>Sqoop的安装及数据在Mysql与HDFS之间的导入导出 | DaMinger&#39;s blog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="DaMinger">
+    
+    <meta name="description" content="解压Sqoop并cp相应的hadoop以及mysql的jar包
+[grid@hadoop01 ~]$ tar -xzvf sqoop-1.4.4.bin__hadoop-1.0.0.tar.gz 
+
+[grid@hadoop01 hadoop-1.2.1]$ cp hadoop-core-1.2.1">
+    
+    
+    
+    
+    <link rel="alternative" href="/atom.xml" title="DaMinger&#39;s blog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/pacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/pacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+    <link href="/css/hover.css" rel="stylesheet">
+    <link href="/css/bottom.css" rel="stylesheet">
+</head>
+
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a rel="pulse" class="pulse" href="/"><img src="/img/pacman.png" alt="DaMinger&#39;s blog" title="DaMinger&#39;s blog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a rel="hover" class="hover" href="/" title="DaMinger&#39;s blog">DaMinger&#39;s blog</a></h1>
+				<h2 class="blog-motto"><a rel="wobble-to-bottom-right" class="wobble-to-bottom-right" href="#" title="#">信春哥，系统稳，闭眼上线不回滚</a></h2>
+			</div>
+			<div class="navbar"><a rel="buzz" class="buzz" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a rel="wobble-top" class="wobble-top" href="/">Home</a></li>
+					
+						<li><a rel="wobble-top" class="wobble-top" href="/archives">Menu</a></li>
+					
+						<li><a rel="wobble-top" class="wobble-top" href="/about">About</a></li>
+					
+				</ul>
+				
+			</nav>			
+</div>
+<div style="text-align:right;">
+<form  class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+ <input type="search" name="q" id="search" autocomplete="off" autocorrect="off" autocapitalize="off" maxlength="20" placeholder="Search" />
+ <input type="hidden" name="q" value="site:github.com/DaMinger/DaMinger.github.io.git">
+</form>
+</div>
+
+
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2014/05/12/Hadoop/sqoop/" title="Sqoop的安装及数据在Mysql与HDFS之间的导入导出" itemprop="url">Sqoop的安装及数据在Mysql与HDFS之间的导入导出</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="https://github.com/DaMinger/DaMinger.github.io.git" title="DaMinger">DaMinger</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2014-05-12T07:16:57.000Z" itemprop="datePublished">5月 12 2014</time>
+    更新日期:<time datetime="2014-05-12T07:19:00.000Z" itemprop="dateModified">5月 12 2014</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		<ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#解压Sqoop并cp相应的hadoop以及mysql的jar包"><span class="toc-number">1.</span> <span class="toc-text">解压Sqoop并cp相应的hadoop以及mysql的jar包</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#编辑环境变量"><span class="toc-number">2.</span> <span class="toc-text">编辑环境变量</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#建立测试表"><span class="toc-number">3.</span> <span class="toc-text">建立测试表</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#用Sqoop把该表里的数据拷贝到HDFS上"><span class="toc-number">4.</span> <span class="toc-text">用Sqoop把该表里的数据拷贝到HDFS上</span></a></li><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#测试连接"><span class="toc-number">4.1.</span> <span class="toc-text">测试连接</span></a></li></ol><li class="toc-item toc-level-4"><a class="toc-link" href="#将数据拷贝到HDFS上"><span class="toc-number">5.</span> <span class="toc-text">将数据拷贝到HDFS上</span></a></li><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#解决办法，其他节点也要设置权限"><span class="toc-number">5.1.</span> <span class="toc-text">解决办法，其他节点也要设置权限</span></a></li></ol><li class="toc-item toc-level-4"><a class="toc-link" href="#重新导入"><span class="toc-number">6.</span> <span class="toc-text">重新导入</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#查看导入的文件"><span class="toc-number">7.</span> <span class="toc-text">查看导入的文件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#把HDFS的数据导回去mysql"><span class="toc-number">8.</span> <span class="toc-text">把HDFS的数据导回去mysql</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#验证"><span class="toc-number">9.</span> <span class="toc-text">验证</span></a></li></ol>
+		</div>
+		
+		<h4 id="解压Sqoop并cp相应的hadoop以及mysql的jar包">解压Sqoop并cp相应的hadoop以及mysql的jar包</h4>
+<pre><code>[grid@hadoop01 ~]$ tar -xzvf sqoop-<span class="number">1.4</span><span class="number">.4</span><span class="preprocessor">.bin</span>__hadoop-<span class="number">1.0</span><span class="number">.0</span><span class="preprocessor">.tar</span><span class="preprocessor">.gz</span> 
+
+[grid@hadoop01 hadoop-<span class="number">1.2</span><span class="number">.1</span>]$ <span class="keyword">cp</span> hadoop-core-<span class="number">1.2</span><span class="number">.1</span><span class="preprocessor">.jar</span> ~/sqoop-<span class="number">1.4</span><span class="number">.4</span><span class="preprocessor">.bin</span>__hadoop-<span class="number">1.0</span><span class="number">.0</span>/lib/
+
+[grid@hadoop01 lib]$ <span class="keyword">cp</span> ~/mysql-connector-java-<span class="number">5.1</span><span class="number">.25</span>-bin<span class="preprocessor">.jar</span>   ~/sqoop-<span class="number">1.4</span><span class="number">.4</span><span class="preprocessor">.bin</span>__hadoop-<span class="number">1.0</span><span class="number">.0</span>/lib/
+[grid@hadoop01 ~]$ <span class="keyword">cp</span> mysql-connector-java-<span class="number">5.1</span><span class="number">.25</span>-bin<span class="preprocessor">.jar</span>  hadoop-<span class="number">1.2</span><span class="number">.1</span>/lib
+</code></pre><h4 id="编辑环境变量">编辑环境变量</h4>
+<pre><code>export SQOOP_HOME=/home/<span class="keyword">grid</span>/sqoop-<span class="number">1.4</span><span class="number">.4</span>.bin__hadoop-<span class="number">1.0</span><span class="number">.0</span>
+export PATH=<span class="variable">$PATH</span>:<span class="variable">$SQOOP_HOME</span>/bin:<span class="variable">$SQOOP_HOME</span>
+[root<span class="variable">@hadoop01</span> ~]# <span class="keyword">source</span> /etc/profile
+
+[<span class="keyword">grid</span><span class="variable">@hadoop01</span> conf]# cp sqoop-<span class="keyword">env</span>-template.sh  sqoop-<span class="keyword">env</span>.sh
+
+#Set path to where bin/hadoop is available
+ export HADOOP_COMMON_HOME=/home/<span class="keyword">grid</span>/hadoop-<span class="number">1.2</span><span class="number">.1</span>
+
+#Set path to where hadoop-<span class="variable">*-</span>core.jar is available
+ export HADOOP_MAPRED_HOME=/home/<span class="keyword">grid</span>/hadoop-<span class="number">1.2</span><span class="number">.1</span>
+</code></pre><h4 id="建立测试表">建立测试表</h4>
+<pre><code><span class="operator"><span class="keyword">create</span> <span class="keyword">database</span> sqoop;</span>
+<span class="operator"><span class="keyword">grant</span> <span class="keyword">all</span> <span class="keyword">privileges</span> <span class="keyword">on</span> *.* <span class="keyword">to</span> <span class="string">'sqoop'</span>@<span class="string">'192.168.255.151'</span> identified <span class="keyword">by</span> <span class="string">'sqoop'</span> <span class="keyword">with</span> <span class="keyword">grant</span> <span class="keyword">option</span>;</span>
+flush privileges;
+
+use sqoop;
+<span class="operator"><span class="keyword">create</span> <span class="keyword">table</span> tb1 <span class="keyword">as</span> <span class="keyword">select</span> table_schema,table_name,table_type <span class="keyword">from</span> information_schema.TABLES;</span>
+<span class="operator"><span class="keyword">show</span> tables;</span>
+</code></pre><h4 id="用Sqoop把该表里的数据拷贝到HDFS上">用Sqoop把该表里的数据拷贝到HDFS上</h4>
+<h5 id="测试连接">测试连接</h5>
+<pre><code>sqoop <span class="type">list</span>-databases <span class="comment">--connect jdbc:mysql://192.168.255.151:3306/ --username sqoop --password sqoop</span>
+sqoop <span class="type">list</span>-tables <span class="comment">--connect jdbc:mysql://192.168.255.151:3306/sqoop --username sqoop --password sqoop</span>
+
+[grid@hadoop01 ~]$ sqoop <span class="type">list</span>-databases <span class="comment">--connect jdbc:mysql://192.168.255.151:3306/ --username sqoop password sqoop</span>
+Warning: /usr/lib/hcatalog <span class="keyword">does</span> <span class="keyword">not</span> exist! HCatalog jobs will fail.
+Please <span class="keyword">set</span> $HCAT_HOME <span class="keyword">to</span> <span class="keyword">the</span> root <span class="keyword">of</span> your HCatalog installation.
+Warning: $HADOOP_HOME <span class="keyword">is</span> deprecated.
+
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">11</span>:<span class="number">43</span>:<span class="number">12</span> WARN tool.BaseSqoopTool: Setting your password <span class="function_start"><span class="keyword">on</span></span> <span class="keyword">the</span> command-line <span class="keyword">is</span> insecure. Consider using -P instead.
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">11</span>:<span class="number">43</span>:<span class="number">12</span> INFO manager.MySQLManager: Preparing <span class="keyword">to</span> use a MySQL streaming resultset.
+information_schema
+hive
+mysql
+performance_schema
+sqoop
+test
+</code></pre><h4 id="将数据拷贝到HDFS上">将数据拷贝到HDFS上</h4>
+<pre><code>sqoop import --connect jdbc:mysql:<span class="comment">//192.168.255.151:3306/sqoop --username sqoop --password sqoop --table tb1 -m 1</span>
+这个时候报错了
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">11</span>:<span class="number">45</span>:<span class="number">52</span> INFO mapred.JobClient: Task Id : attempt_201405101008_0008_m_000000_0, Status : FAILED
+java.lang.RuntimeException: java.lang.RuntimeException: java.sql.SQLException: Access denied <span class="keyword">for</span> user <span class="string">'sqoop'</span>@<span class="string">'hadoop03.myhadoop.com'</span> (<span class="keyword">using</span> password: YES)
+        at org.apache.sqoop.mapreduce.db.DBInputFormat.setConf(DBInputFormat.java:<span class="number">167</span>)
+        at org.apache.hadoop.util.ReflectionUtils.setConf(ReflectionUtils.java:<span class="number">62</span>)
+        at org.apache.hadoop.util.ReflectionUtils.newInstance(ReflectionUtils.java:<span class="number">117</span>)
+        at org.apache.hadoop.mapred.MapTask.runNewMapper(MapTask.java:<span class="number">722</span>)
+        at org.apache.hadoop.mapred.MapTask.run(MapTask.java:<span class="number">364</span>)
+        at org.apache.hadoop.mapred.Child$<span class="number">4</span>.run(Child.java:<span class="number">255</span>)
+        at java.security.AccessController.doPrivileged(Native <span class="function"><span class="keyword">Method</span>)</span>
+</code></pre><h5 id="解决办法，其他节点也要设置权限">解决办法，其他节点也要设置权限</h5>
+<pre><code><span class="operator"><span class="keyword">grant</span> <span class="keyword">all</span> <span class="keyword">privileges</span> <span class="keyword">on</span> *.* <span class="keyword">to</span> <span class="string">'sqoop'</span>@<span class="string">'192.168.255.152'</span> identified <span class="keyword">by</span> <span class="string">'sqoop'</span> <span class="keyword">with</span> <span class="keyword">grant</span> <span class="keyword">option</span>;</span>
+<span class="operator"><span class="keyword">grant</span> <span class="keyword">all</span> <span class="keyword">privileges</span> <span class="keyword">on</span> *.* <span class="keyword">to</span> <span class="string">'sqoop'</span>@<span class="string">'192.168.255.153'</span> identified <span class="keyword">by</span> <span class="string">'sqoop'</span> <span class="keyword">with</span> <span class="keyword">grant</span> <span class="keyword">option</span>;</span>
+flush privileges;
+<span class="operator"><span class="keyword">SELECT</span> <span class="keyword">DISTINCT</span> CONCAT(<span class="string">'User: '''</span>,<span class="keyword">user</span>,<span class="string">'''@'''</span>,host,<span class="string">''';'</span>) <span class="keyword">AS</span> query <span class="keyword">FROM</span> mysql.<span class="keyword">user</span>;</span>
+</code></pre><h4 id="重新导入">重新导入</h4>
+<pre><code>[grid@hadoop01 ~]$ sqoop import --connect jdbc:mysql://<span class="number">192.168</span><span class="number">.255</span><span class="number">.151</span>:<span class="number">3306</span>/sqoop --username sqoop --password sqoop --table tb1 -m <span class="number">1</span>
+<span class="label">Warning:</span> /usr/lib/hcatalog does not exist! HCatalog jobs will fail.
+Please <span class="keyword">set</span> $HCAT_HOME to the root of your HCatalog installation.
+<span class="label">Warning:</span> $HADOOP_HOME is deprecated.
+
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">11</span>:<span class="number">50</span>:<span class="number">30</span> WARN tool<span class="preprocessor">.BaseSqoopTool</span>: Setting your password on the command-line is insecure. Consider using -P instead.
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">11</span>:<span class="number">50</span>:<span class="number">30</span> INFO manager<span class="preprocessor">.MySQLManager</span>: Preparing to use a MySQL streaming resultset.
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">11</span>:<span class="number">50</span>:<span class="number">30</span> INFO tool<span class="preprocessor">.CodeGenTool</span>: Beginning code generation
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">11</span>:<span class="number">50</span>:<span class="number">31</span> INFO manager<span class="preprocessor">.SqlManager</span>: Executing SQL statement: SELECT t.* FROM `tb1` AS t LIMIT <span class="number">1</span>
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">11</span>:<span class="number">50</span>:<span class="number">31</span> INFO manager<span class="preprocessor">.SqlManager</span>: Executing SQL statement: SELECT t.* FROM `tb1` AS t LIMIT <span class="number">1</span>
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">11</span>:<span class="number">50</span>:<span class="number">31</span> INFO orm<span class="preprocessor">.CompilationManager</span>: HADOOP_MAPRED_HOME is /home/grid/hadoop-<span class="number">1.2</span><span class="number">.1</span>
+<span class="label">Note:</span> /tmp/sqoop-grid/compile/<span class="number">4</span>a0739c3b0538ec549c03cafb8dace32/tb1<span class="preprocessor">.java</span> uses <span class="keyword">or</span> overrides a deprecated API.
+<span class="label">Note:</span> Recompile with -Xlint:deprecation for details.
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">11</span>:<span class="number">50</span>:<span class="number">38</span> INFO orm<span class="preprocessor">.CompilationManager</span>: Writing jar file: /tmp/sqoop-grid/compile/<span class="number">4</span>a0739c3b0538ec549c03cafb8dace32/tb1<span class="preprocessor">.jar</span>
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">11</span>:<span class="number">50</span>:<span class="number">38</span> WARN manager<span class="preprocessor">.MySQLManager</span>: It looks like you are importing from mysql.
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">11</span>:<span class="number">50</span>:<span class="number">38</span> WARN manager<span class="preprocessor">.MySQLManager</span>: This transfer can be faster! Use the --direct
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">11</span>:<span class="number">50</span>:<span class="number">38</span> WARN manager<span class="preprocessor">.MySQLManager</span>: option to exercise a MySQL-specific fast path.
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">11</span>:<span class="number">50</span>:<span class="number">38</span> INFO manager<span class="preprocessor">.MySQLManager</span>: Setting zero DATETIME behavior to convertToNull (mysql)
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">11</span>:<span class="number">50</span>:<span class="number">38</span> INFO mapreduce<span class="preprocessor">.ImportJobBase</span>: Beginning import of tb1
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">11</span>:<span class="number">50</span>:<span class="number">43</span> INFO mapred<span class="preprocessor">.JobClient</span>: Running job: job_201405101008_0009
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">11</span>:<span class="number">50</span>:<span class="number">44</span> INFO mapred<span class="preprocessor">.JobClient</span>:  map <span class="number">0</span>% reduce <span class="number">0</span>%
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">11</span>:<span class="number">50</span>:<span class="number">59</span> INFO mapred<span class="preprocessor">.JobClient</span>:  map <span class="number">100</span>% reduce <span class="number">0</span>%
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">11</span>:<span class="number">51</span>:<span class="number">03</span> INFO mapred<span class="preprocessor">.JobClient</span>: Job complete: job_201405101008_0009
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">11</span>:<span class="number">51</span>:<span class="number">03</span> INFO mapred<span class="preprocessor">.JobClient</span>: Counters: <span class="number">18</span>
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">11</span>:<span class="number">51</span>:<span class="number">03</span> INFO mapred<span class="preprocessor">.JobClient</span>:   Job Counters 
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">11</span>:<span class="number">51</span>:<span class="number">03</span> INFO mapred<span class="preprocessor">.JobClient</span>:     SLOTS_MILLIS_MAPS=<span class="number">16169</span>
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">11</span>:<span class="number">51</span>:<span class="number">03</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Total time spent by all reduces waiting after reserving slots (ms)=<span class="number">0</span>
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">11</span>:<span class="number">51</span>:<span class="number">03</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Total time spent by all maps waiting after reserving slots (ms)=<span class="number">0</span>
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">11</span>:<span class="number">51</span>:<span class="number">03</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Launched map tasks=<span class="number">1</span>
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">11</span>:<span class="number">51</span>:<span class="number">03</span> INFO mapred<span class="preprocessor">.JobClient</span>:     SLOTS_MILLIS_REDUCES=<span class="number">0</span>
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">11</span>:<span class="number">51</span>:<span class="number">03</span> INFO mapred<span class="preprocessor">.JobClient</span>:   File Output Format Counters 
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">11</span>:<span class="number">51</span>:<span class="number">03</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Bytes Written=<span class="number">4249</span>
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">11</span>:<span class="number">51</span>:<span class="number">03</span> INFO mapred<span class="preprocessor">.JobClient</span>:   FileSystemCounters
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">11</span>:<span class="number">51</span>:<span class="number">03</span> INFO mapred<span class="preprocessor">.JobClient</span>:     HDFS_BYTES_READ=<span class="number">87</span>
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">11</span>:<span class="number">51</span>:<span class="number">03</span> INFO mapred<span class="preprocessor">.JobClient</span>:     FILE_BYTES_WRITTEN=<span class="number">70026</span>
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">11</span>:<span class="number">51</span>:<span class="number">03</span> INFO mapred<span class="preprocessor">.JobClient</span>:     HDFS_BYTES_WRITTEN=<span class="number">4249</span>
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">11</span>:<span class="number">51</span>:<span class="number">03</span> INFO mapred<span class="preprocessor">.JobClient</span>:   File Input Format Counters 
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">11</span>:<span class="number">51</span>:<span class="number">03</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Bytes Read=<span class="number">0</span>
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">11</span>:<span class="number">51</span>:<span class="number">03</span> INFO mapred<span class="preprocessor">.JobClient</span>:   Map-Reduce Framework
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">11</span>:<span class="number">51</span>:<span class="number">03</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Map input records=<span class="number">112</span>
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">11</span>:<span class="number">51</span>:<span class="number">03</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Physical memory (bytes) snapshot=<span class="number">73797632</span>
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">11</span>:<span class="number">51</span>:<span class="number">03</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Spilled Records=<span class="number">0</span>
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">11</span>:<span class="number">51</span>:<span class="number">03</span> INFO mapred<span class="preprocessor">.JobClient</span>:     CPU time spent (ms)=<span class="number">1540</span>
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">11</span>:<span class="number">51</span>:<span class="number">03</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Total committed heap usage (bytes)=<span class="number">15728640</span>
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">11</span>:<span class="number">51</span>:<span class="number">03</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Virtual memory (bytes) snapshot=<span class="number">1564905472</span>
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">11</span>:<span class="number">51</span>:<span class="number">03</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Map output records=<span class="number">112</span>
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">11</span>:<span class="number">51</span>:<span class="number">03</span> INFO mapred<span class="preprocessor">.JobClient</span>:     SPLIT_RAW_BYTES=<span class="number">87</span>
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">11</span>:<span class="number">51</span>:<span class="number">03</span> INFO mapreduce<span class="preprocessor">.ImportJobBase</span>: Transferred <span class="number">4.1494</span> KB <span class="keyword">in</span> <span class="number">24.7602</span> seconds (<span class="number">171.6062</span> bytes/<span class="keyword">sec</span>)
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">11</span>:<span class="number">51</span>:<span class="number">03</span> INFO mapreduce<span class="preprocessor">.ImportJobBase</span>: Retrieved <span class="number">112</span> records.
+</code></pre><h4 id="查看导入的文件">查看导入的文件</h4>
+<pre><code>[<span class="keyword">grid</span><span class="variable">@hadoop01</span> bin]$ hadoop fs -<span class="keyword">ls</span> tb1
+Warning: <span class="variable">$HADOOP_HOME</span> is deprecated.
+
+Found <span class="number">3</span> items
+-rw-r--r--   <span class="number">2</span> <span class="keyword">grid</span> supergroup          <span class="number">0</span> <span class="number">2014</span>-<span class="number">05</span>-<span class="number">10</span> <span class="number">11</span>:<span class="number">51</span> /user/<span class="keyword">grid</span>/tb1/_SUCCESS
+drwxr-xr-x   - <span class="keyword">grid</span> supergroup          <span class="number">0</span> <span class="number">2014</span>-<span class="number">05</span>-<span class="number">10</span> <span class="number">11</span>:<span class="number">50</span> /user/<span class="keyword">grid</span>/tb1/_logs
+-rw-r--r--   <span class="number">2</span> <span class="keyword">grid</span> supergroup       <span class="number">4249</span> <span class="number">2014</span>-<span class="number">05</span>-<span class="number">10</span> <span class="number">11</span>:<span class="number">50</span> /user/<span class="keyword">grid</span>/tb1/part-m-<span class="number">00000</span>
+
+[<span class="keyword">grid</span><span class="variable">@hadoop01</span> bin]$ hadoop fs -cat tb1/part-m-<span class="number">00000</span>
+Warning: <span class="variable">$HADOOP_HOME</span> is deprecated.
+
+information_schema,CHARACTER_SETS,SYSTEM VIEW
+information_schema,COLLATIONS,SYSTEM VIEW
+information_schema,COLLATION_CHARACTER_SET_APPLICABILITY,SYSTEM VIEW
+information_schema,COLUMNS,SYSTEM VIEW
+information_schema,COLUMN_PRIVILEGES,SYSTEM VIEW
+information_schema,ENGINES,SYSTEM VIEW
+information_schema,EVENTS,SYSTEM VIEW
+information_schema,FILES,SYSTEM VIEW
+information_schema,GLOBAL_STATUS,SYSTEM VIEW
+information_schema,GLOBAL_VARIABLES,SYSTEM VIEW
+information_schema,KEY_COLUMN_USAGE,SYSTEM VIEW
+information_schema,PARAMETERS,SYSTEM VIEW
+information_schema,PARTITIONS,SYSTEM VIEW
+information_schema,PLUGINS,SYSTEM VIEW
+information_schema,PROCESSLIST,SYSTEM VIEW
+information_schema,PROFILING,SYSTEM VIEW
+information_schema,REFERENTIAL_CONSTRAINTS,SYSTEM VIEW
+information_schema,ROUTINES,SYSTEM VIEW
+information_schema,SCHEMATA,SYSTEM VIEW
+information_schema,SCHEMA_PRIVILEGES,SYSTEM VIEW
+information_schema,SESSION_STATUS,SYSTEM VIEW
+information_schema,SESSION_VARIABLES,SYSTEM VIEW
+information_schema,STATISTICS,SYSTEM VIEW
+information_schema,TABLES,SYSTEM VIEW
+information_schema,TABLESPACES,SYSTEM VIEW
+information_schema,TABLE_CONSTRAINTS,SYSTEM VIEW
+information_schema,TABLE_PRIVILEGES,SYSTEM VIEW
+information_schema,TRIGGERS,SYSTEM VIEW
+
+OK
+</code></pre><h4 id="把HDFS的数据导回去mysql">把HDFS的数据导回去mysql</h4>
+<pre><code>mysql&gt; use sqoop
+Database changed
+mysql&gt; show tables<span class="comment">;</span>
++-----------------+
+| Tables_in_sqoop |
++-----------------+
+| tb1             |
++-----------------+
+<span class="number">1</span> row <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> <span class="keyword">sec</span>)
+
+mysql&gt; truncate tb1<span class="comment">;</span>
+Query OK, <span class="number">0</span> rows affected (<span class="number">0.01</span> <span class="keyword">sec</span>)
+
+sqoop export  --connect jdbc:mysql://<span class="number">192.168</span><span class="number">.255</span><span class="number">.151</span>:<span class="number">3306</span>/sqoop --username sqoop --password sqoop --table tb1 --export-dir hdfs://<span class="number">192.168</span><span class="number">.255</span><span class="number">.151</span>:<span class="number">9000</span>/user/grid/tb1/
+
+[grid@hadoop01 ~]$ sqoop export  --connect jdbc:mysql://<span class="number">192.168</span><span class="number">.255</span><span class="number">.151</span>:<span class="number">3306</span>/sqoop --username sqoop --password sqoop --table tb1 --export-dir hdfs://<span class="number">192.168</span><span class="number">.255</span><span class="number">.151</span>:<span class="number">9000</span>/user/grid/tb1/
+<span class="label">Warning:</span> /usr/lib/hcatalog does not exist! HCatalog jobs will fail.
+Please <span class="keyword">set</span> $HCAT_HOME to the root of your HCatalog installation.
+<span class="label">Warning:</span> $HADOOP_HOME is deprecated.
+
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">12</span>:<span class="number">06</span>:<span class="number">19</span> WARN tool<span class="preprocessor">.BaseSqoopTool</span>: Setting your password on the command-line is insecure. Consider using -P instead.
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">12</span>:<span class="number">06</span>:<span class="number">20</span> INFO manager<span class="preprocessor">.MySQLManager</span>: Preparing to use a MySQL streaming resultset.
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">12</span>:<span class="number">06</span>:<span class="number">20</span> INFO tool<span class="preprocessor">.CodeGenTool</span>: Beginning code generation
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">12</span>:<span class="number">06</span>:<span class="number">21</span> INFO manager<span class="preprocessor">.SqlManager</span>: Executing SQL statement: SELECT t.* FROM `tb1` AS t LIMIT <span class="number">1</span>
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">12</span>:<span class="number">06</span>:<span class="number">21</span> INFO manager<span class="preprocessor">.SqlManager</span>: Executing SQL statement: SELECT t.* FROM `tb1` AS t LIMIT <span class="number">1</span>
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">12</span>:<span class="number">06</span>:<span class="number">21</span> INFO orm<span class="preprocessor">.CompilationManager</span>: HADOOP_MAPRED_HOME is /home/grid/hadoop-<span class="number">1.2</span><span class="number">.1</span>
+<span class="label">Note:</span> /tmp/sqoop-grid/compile/<span class="number">605</span>c350fea684271f2c51e2f616406c7/tb1<span class="preprocessor">.java</span> uses <span class="keyword">or</span> overrides a deprecated API.
+<span class="label">Note:</span> Recompile with -Xlint:deprecation for details.
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">12</span>:<span class="number">06</span>:<span class="number">27</span> INFO orm<span class="preprocessor">.CompilationManager</span>: Writing jar file: /tmp/sqoop-grid/compile/<span class="number">605</span>c350fea684271f2c51e2f616406c7/tb1<span class="preprocessor">.jar</span>
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">12</span>:<span class="number">06</span>:<span class="number">27</span> INFO mapreduce<span class="preprocessor">.ExportJobBase</span>: Beginning export of tb1
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">12</span>:<span class="number">06</span>:<span class="number">32</span> INFO input<span class="preprocessor">.FileInputFormat</span>: Total input paths to process : <span class="number">1</span>
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">12</span>:<span class="number">06</span>:<span class="number">32</span> INFO input<span class="preprocessor">.FileInputFormat</span>: Total input paths to process : <span class="number">1</span>
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">12</span>:<span class="number">06</span>:<span class="number">32</span> INFO util<span class="preprocessor">.NativeCodeLoader</span>: Loaded the native-hadoop library
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">12</span>:<span class="number">06</span>:<span class="number">32</span> WARN snappy<span class="preprocessor">.LoadSnappy</span>: Snappy native library not loaded
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">12</span>:<span class="number">06</span>:<span class="number">33</span> INFO mapred<span class="preprocessor">.JobClient</span>: Running job: job_201405101008_0010
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">12</span>:<span class="number">06</span>:<span class="number">34</span> INFO mapred<span class="preprocessor">.JobClient</span>:  map <span class="number">0</span>% reduce <span class="number">0</span>%
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">12</span>:<span class="number">06</span>:<span class="number">58</span> INFO mapred<span class="preprocessor">.JobClient</span>:  map <span class="number">50</span>% reduce <span class="number">0</span>%
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">12</span>:<span class="number">07</span>:<span class="number">00</span> INFO mapred<span class="preprocessor">.JobClient</span>:  map <span class="number">100</span>% reduce <span class="number">0</span>%
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">12</span>:<span class="number">07</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>: Job complete: job_201405101008_0010
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">12</span>:<span class="number">07</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>: Counters: <span class="number">19</span>
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">12</span>:<span class="number">07</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:   Job Counters 
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">12</span>:<span class="number">07</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:     SLOTS_MILLIS_MAPS=<span class="number">71976</span>
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">12</span>:<span class="number">07</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Total time spent by all reduces waiting after reserving slots (ms)=<span class="number">0</span>
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">12</span>:<span class="number">07</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Total time spent by all maps waiting after reserving slots (ms)=<span class="number">0</span>
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">12</span>:<span class="number">07</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Rack-local map tasks=<span class="number">2</span>
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">12</span>:<span class="number">07</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Launched map tasks=<span class="number">4</span>
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">12</span>:<span class="number">07</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Data-local map tasks=<span class="number">2</span>
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">12</span>:<span class="number">07</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:     SLOTS_MILLIS_REDUCES=<span class="number">0</span>
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">12</span>:<span class="number">07</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:   File Output Format Counters 
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">12</span>:<span class="number">07</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Bytes Written=<span class="number">0</span>
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">12</span>:<span class="number">07</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:   FileSystemCounters
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">12</span>:<span class="number">07</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:     HDFS_BYTES_READ=<span class="number">11629</span>
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">12</span>:<span class="number">07</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:     FILE_BYTES_WRITTEN=<span class="number">279312</span>
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">12</span>:<span class="number">07</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:   File Input Format Counters 
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">12</span>:<span class="number">07</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Bytes Read=<span class="number">0</span>
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">12</span>:<span class="number">07</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:   Map-Reduce Framework
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">12</span>:<span class="number">07</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Map input records=<span class="number">112</span>
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">12</span>:<span class="number">07</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Physical memory (bytes) snapshot=<span class="number">301490176</span>
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">12</span>:<span class="number">07</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Spilled Records=<span class="number">0</span>
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">12</span>:<span class="number">07</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:     CPU time spent (ms)=<span class="number">5450</span>
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">12</span>:<span class="number">07</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Total committed heap usage (bytes)=<span class="number">62914560</span>
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">12</span>:<span class="number">07</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Virtual memory (bytes) snapshot=<span class="number">6251151360</span>
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">12</span>:<span class="number">07</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Map output records=<span class="number">112</span>
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">12</span>:<span class="number">07</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:     SPLIT_RAW_BYTES=<span class="number">611</span>
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">12</span>:<span class="number">07</span>:<span class="number">04</span> INFO mapreduce<span class="preprocessor">.ExportJobBase</span>: Transferred <span class="number">11.3564</span> KB <span class="keyword">in</span> <span class="number">34.5615</span> seconds (<span class="number">336.4727</span> bytes/<span class="keyword">sec</span>)
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">12</span>:<span class="number">07</span>:<span class="number">04</span> INFO mapreduce<span class="preprocessor">.ExportJobBase</span>: Exported <span class="number">112</span> records.
+</code></pre><h4 id="验证">验证</h4>
+<pre><code>mysql&gt; use sqoop;
+Database changed
+<span class="header">mysql&gt; show tables;
++-----------------+</span>
+<span class="header">| Tables_in_sqoop |
++-----------------+</span>
+<span class="header">| tb1             |
++-----------------+</span>
+1 row in set (0.00 sec)
+</code></pre>  
+	</div>
+		<footer class="article-footer clearfix">
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Hadoop/">Hadoop</a><a href="/tags/Sqoop/">Sqoop</a>
+  </div>
+
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Hadoop/">Hadoop</a>
+</div>
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="https://github.com/DaMinger/DaMinger.github.io.git/2014/05/12/Hadoop/sqoop/" data-title="Sqoop的安装及数据在Mysql与HDFS之间的导入导出 | DaMinger&#39;s blog" data-tsina="null" class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+
+<div class="next">
+<a href="/2014/05/12/Hadoop/hbase_shell/"  title="HBase shell的使用">
+ <strong>NEXT:</strong><br/> 
+ <span>HBase shell的使用
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section class="comment">
+	<div class="ds-thread"></div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+  <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#解压Sqoop并cp相应的hadoop以及mysql的jar包"><span class="toc-number">1.</span> <span class="toc-text">解压Sqoop并cp相应的hadoop以及mysql的jar包</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#编辑环境变量"><span class="toc-number">2.</span> <span class="toc-text">编辑环境变量</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#建立测试表"><span class="toc-number">3.</span> <span class="toc-text">建立测试表</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#用Sqoop把该表里的数据拷贝到HDFS上"><span class="toc-number">4.</span> <span class="toc-text">用Sqoop把该表里的数据拷贝到HDFS上</span></a></li><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#测试连接"><span class="toc-number">4.1.</span> <span class="toc-text">测试连接</span></a></li></ol><li class="toc-item toc-level-4"><a class="toc-link" href="#将数据拷贝到HDFS上"><span class="toc-number">5.</span> <span class="toc-text">将数据拷贝到HDFS上</span></a></li><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#解决办法，其他节点也要设置权限"><span class="toc-number">5.1.</span> <span class="toc-text">解决办法，其他节点也要设置权限</span></a></li></ol><li class="toc-item toc-level-4"><a class="toc-link" href="#重新导入"><span class="toc-number">6.</span> <span class="toc-text">重新导入</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#查看导入的文件"><span class="toc-number">7.</span> <span class="toc-text">查看导入的文件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#把HDFS的数据导回去mysql"><span class="toc-number">8.</span> <span class="toc-text">把HDFS的数据导回去mysql</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#验证"><span class="toc-number">9.</span> <span class="toc-text">验证</span></a></li></ol>
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p rel="asidetitle grow" class="asidetitle grow">分类</p>
+		<ul>
+		
+			<li><a rel="grow" class="grow" href="/categories/Hadoop/" title="Hadoop">Hadoop<sup>20</sup></a></li>
+		
+			<li><a rel="grow" class="grow" href="/categories/Linux/" title="Linux">Linux<sup>4</sup></a></li>
+		
+			<li><a rel="grow" class="grow" href="/categories/操作系统/" title="操作系统">操作系统<sup>1</sup></a></li>
+		
+			<li><a rel="grow" class="grow" href="/categories/杂谈/" title="杂谈">杂谈<sup>1</sup></a></li>
+		
+			<li><a rel="grow" class="grow" href="/categories/计算机网络/" title="计算机网络">计算机网络<sup>1</sup></a></li>
+		
+		</ul>
+</div>
+
+
+
+  <div class="linkslist">
+<h3 rel="grow" class="grow asidetitle">友情链接</h3>
+<ul class="entry">
+<li><a rel="grow" class="grow" href="http://tahiti.oracle.com/" title="Oracle文档">Oracle文档</a></li>
+<li><a rel="grow" class="grow" href="http://asktom.oracle.com/" title="AskTom">AskTom</a></li>
+<li><a rel="grow" class="grow" href="http://blog.csdn.net/tianlesoftware/" title="Dave">Dave</a></li>
+<li><a rel="grow" class="grow" href="http://www.eygle.com/" title="eygle">eygle</a></li>
+<li><a rel="grow" class="grow" href="http://www.dbsnake.com/" title="dbsnake">dbsnake</a></li>
+</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/Eclipse/" title="Eclipse">Eclipse<sup>1</sup></a></li>
+		
+			<li><a href="/tags/HBase/" title="HBase">HBase<sup>4</sup></a></li>
+		
+			<li><a href="/tags/HDFS/" title="HDFS">HDFS<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Hadoop/" title="Hadoop">Hadoop<sup>20</sup></a></li>
+		
+			<li><a href="/tags/Hadoop_Stream/" title="Hadoop_Stream">Hadoop_Stream<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Hive/" title="Hive">Hive<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Linux/" title="Linux">Linux<sup>4</sup></a></li>
+		
+			<li><a href="/tags/Mahout/" title="Mahout">Mahout<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Map-Reduce/" title="Map-Reduce">Map-Reduce<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Mysql/" title="Mysql">Mysql<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Pig/" title="Pig">Pig<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Sqoop/" title="Sqoop">Sqoop<sup>1</sup></a></li>
+		
+			<li><a href="/tags/yum/" title="yum">yum<sup>1</sup></a></li>
+		
+			<li><a href="/tags/杂谈/" title="杂谈">杂谈<sup>1</sup></a></li>
+		
+			<li><a href="/tags/网卡错误/" title="网卡错误">网卡错误<sup>1</sup></a></li>
+		
+			<li><a href="/tags/网络/" title="网络">网络<sup>1</sup></a></li>
+		
+			<li><a href="/tags/进程与线程/" title="进程与线程">进程与线程<sup>1</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle"><a href="/archives">归档</a></p>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/05">五月 2014</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/04">四月 2014</a><span class="archive-list-count">19</span></li></ul>
+  </div>
+
+
+  
+  <div class="tagcloudlist">
+    <p class="asidetitle">标签云</p>
+    <div class="tagcloudlist clearfix">
+       <a href="/tags/Eclipse/" style="font-size: 10.00px;">Eclipse</a><a href="/tags/HBase/" style="font-size: 16.67px;">HBase</a><a href="/tags/HDFS/" style="font-size: 13.33px;">HDFS</a><a href="/tags/Hadoop/" style="font-size: 20.00px;">Hadoop</a><a href="/tags/Hadoop_Stream/" style="font-size: 10.00px;">Hadoop_Stream</a><a href="/tags/Hive/" style="font-size: 13.33px;">Hive</a><a href="/tags/Linux/" style="font-size: 16.67px;">Linux</a><a href="/tags/Mahout/" style="font-size: 13.33px;">Mahout</a><a href="/tags/Map-Reduce/" style="font-size: 13.33px;">Map-Reduce</a><a href="/tags/Mysql/" style="font-size: 10.00px;">Mysql</a><a href="/tags/Pig/" style="font-size: 10.00px;">Pig</a><a href="/tags/Sqoop/" style="font-size: 10.00px;">Sqoop</a><a href="/tags/yum/" style="font-size: 10.00px;">yum</a><a href="/tags/杂谈/" style="font-size: 10.00px;">杂谈</a><a href="/tags/网卡错误/" style="font-size: 10.00px;">网卡错误</a><a href="/tags/网络/" style="font-size: 10.00px;">网络</a><a href="/tags/进程与线程/" style="font-size: 10.00px;">进程与线程</a>
+    </div>
+  </div>
+
+
+  <iframe width="100%" height="550" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=2&ptype=1&speed=0&skin=1&isTitle=1&noborder=1&isWeibo=1&isFans=1&uid=3819451430&verifier=f953543e&dpc=1"></iframe>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<span class="buzz" rel="buzz"> Hello,I&#39;m liuqinming.For now I&#39;m a student at collage. <br/>
+			I will share my learning experience with you at this blog.</span>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		<a rel="push" class="push" href="https://github.com/https://github.com/DaMinger" target="_blank" title="github"></a>
+		
+		
+	</div>
+		<p class="copyright">Powered by <a rel="float-shadow" class="float-shadow" href="http://zespia.tw/hexo/" target="_blank" title="hexo">Hexo</a> and Theme by <a class="box-shadow-inset"href="https://github.com/uruir/pacmanhover" target="_blank" title="Pacman">PacmanHover</a> © 2014 
+		
+		
+		<a class="wobble-horizontal" rel="wobble-horizontal" href="https://github.com/DaMinger/DaMinger.github.io.git" target="_blank" title="DaMinger">DaMinger</a>
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+    c.click(function(){
+      ta.css('display', 'block').addClass('fadeIn');
+    });
+    o.click(function(){
+      ta.css('display', 'none');
+    });
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,320-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"null"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+<div id="totop" style="position:fixed;bottom:150px;right:50px;cursor: pointer;">
+<a title="���ض���"><img src="/img/scrollup.png"/></a>
+</div>
+<script src="/js/totop.js"></script>
+
+
+
+  </body>
+</html>

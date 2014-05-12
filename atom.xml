@@ -4,7 +4,7 @@
   <subtitle><![CDATA[信春哥，系统稳，闭眼上线不回滚]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="https://github.com/DaMinger/DaMinger.github.io.git/"/>
-  <updated>2014-05-08T10:30:55.193Z</updated>
+  <updated>2014-05-12T13:18:50.594Z</updated>
   <id>https://github.com/DaMinger/DaMinger.github.io.git/</id>
   
   <author>
@@ -13,6 +13,677 @@
   </author>
   
   <generator uri="http://zespia.tw/hexo/">Hexo</generator>
+  
+  <entry>
+    <title><![CDATA[Sqoop的安装及数据在Mysql与HDFS之间的导入导出]]></title>
+    <link href="https://github.com/DaMinger/DaMinger.github.io.git/2014/05/12/Hadoop/sqoop/"/>
+    <id>https://github.com/DaMinger/DaMinger.github.io.git/2014/05/12/Hadoop/sqoop/</id>
+    <published>2014-05-12T07:16:57.000Z</published>
+    <updated>2014-05-12T07:19:00.000Z</updated>
+    <content type="html"><![CDATA[<h4 id="解压Sqoop并cp相应的hadoop以及mysql的jar包">解压Sqoop并cp相应的hadoop以及mysql的jar包</h4>
+<pre><code>[grid@hadoop01 ~]$ tar -xzvf sqoop-<span class="number">1.4</span><span class="number">.4</span><span class="preprocessor">.bin</span>__hadoop-<span class="number">1.0</span><span class="number">.0</span><span class="preprocessor">.tar</span><span class="preprocessor">.gz</span> 
+
+[grid@hadoop01 hadoop-<span class="number">1.2</span><span class="number">.1</span>]$ <span class="keyword">cp</span> hadoop-core-<span class="number">1.2</span><span class="number">.1</span><span class="preprocessor">.jar</span> ~/sqoop-<span class="number">1.4</span><span class="number">.4</span><span class="preprocessor">.bin</span>__hadoop-<span class="number">1.0</span><span class="number">.0</span>/lib/
+
+[grid@hadoop01 lib]$ <span class="keyword">cp</span> ~/mysql-connector-java-<span class="number">5.1</span><span class="number">.25</span>-bin<span class="preprocessor">.jar</span>   ~/sqoop-<span class="number">1.4</span><span class="number">.4</span><span class="preprocessor">.bin</span>__hadoop-<span class="number">1.0</span><span class="number">.0</span>/lib/
+[grid@hadoop01 ~]$ <span class="keyword">cp</span> mysql-connector-java-<span class="number">5.1</span><span class="number">.25</span>-bin<span class="preprocessor">.jar</span>  hadoop-<span class="number">1.2</span><span class="number">.1</span>/lib
+</code></pre><h4 id="编辑环境变量">编辑环境变量</h4>
+<pre><code>export SQOOP_HOME=/home/<span class="keyword">grid</span>/sqoop-<span class="number">1.4</span><span class="number">.4</span>.bin__hadoop-<span class="number">1.0</span><span class="number">.0</span>
+export PATH=<span class="variable">$PATH</span>:<span class="variable">$SQOOP_HOME</span>/bin:<span class="variable">$SQOOP_HOME</span>
+[root<span class="variable">@hadoop01</span> ~]# <span class="keyword">source</span> /etc/profile
+
+[<span class="keyword">grid</span><span class="variable">@hadoop01</span> conf]# cp sqoop-<span class="keyword">env</span>-template.sh  sqoop-<span class="keyword">env</span>.sh
+
+#Set path to where bin/hadoop is available
+ export HADOOP_COMMON_HOME=/home/<span class="keyword">grid</span>/hadoop-<span class="number">1.2</span><span class="number">.1</span>
+
+#Set path to where hadoop-<span class="variable">*-</span>core.jar is available
+ export HADOOP_MAPRED_HOME=/home/<span class="keyword">grid</span>/hadoop-<span class="number">1.2</span><span class="number">.1</span>
+</code></pre><h4 id="建立测试表">建立测试表</h4>
+<pre><code><span class="operator"><span class="keyword">create</span> <span class="keyword">database</span> sqoop;</span>
+<span class="operator"><span class="keyword">grant</span> <span class="keyword">all</span> <span class="keyword">privileges</span> <span class="keyword">on</span> *.* <span class="keyword">to</span> <span class="string">'sqoop'</span>@<span class="string">'192.168.255.151'</span> identified <span class="keyword">by</span> <span class="string">'sqoop'</span> <span class="keyword">with</span> <span class="keyword">grant</span> <span class="keyword">option</span>;</span>
+flush privileges;
+
+use sqoop;
+<span class="operator"><span class="keyword">create</span> <span class="keyword">table</span> tb1 <span class="keyword">as</span> <span class="keyword">select</span> table_schema,table_name,table_type <span class="keyword">from</span> information_schema.TABLES;</span>
+<span class="operator"><span class="keyword">show</span> tables;</span>
+</code></pre><h4 id="用Sqoop把该表里的数据拷贝到HDFS上">用Sqoop把该表里的数据拷贝到HDFS上</h4>
+<h5 id="测试连接">测试连接</h5>
+<pre><code>sqoop <span class="type">list</span>-databases <span class="comment">--connect jdbc:mysql://192.168.255.151:3306/ --username sqoop --password sqoop</span>
+sqoop <span class="type">list</span>-tables <span class="comment">--connect jdbc:mysql://192.168.255.151:3306/sqoop --username sqoop --password sqoop</span>
+
+[grid@hadoop01 ~]$ sqoop <span class="type">list</span>-databases <span class="comment">--connect jdbc:mysql://192.168.255.151:3306/ --username sqoop password sqoop</span>
+Warning: /usr/lib/hcatalog <span class="keyword">does</span> <span class="keyword">not</span> exist! HCatalog jobs will fail.
+Please <span class="keyword">set</span> $HCAT_HOME <span class="keyword">to</span> <span class="keyword">the</span> root <span class="keyword">of</span> your HCatalog installation.
+Warning: $HADOOP_HOME <span class="keyword">is</span> deprecated.
+
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">11</span>:<span class="number">43</span>:<span class="number">12</span> WARN tool.BaseSqoopTool: Setting your password <span class="function_start"><span class="keyword">on</span></span> <span class="keyword">the</span> command-line <span class="keyword">is</span> insecure. Consider using -P instead.
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">11</span>:<span class="number">43</span>:<span class="number">12</span> INFO manager.MySQLManager: Preparing <span class="keyword">to</span> use a MySQL streaming resultset.
+information_schema
+hive
+mysql
+performance_schema
+sqoop
+test
+</code></pre><h4 id="将数据拷贝到HDFS上">将数据拷贝到HDFS上</h4>
+<pre><code>sqoop import --connect jdbc:mysql:<span class="comment">//192.168.255.151:3306/sqoop --username sqoop --password sqoop --table tb1 -m 1</span>
+这个时候报错了
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">11</span>:<span class="number">45</span>:<span class="number">52</span> INFO mapred.JobClient: Task Id : attempt_201405101008_0008_m_000000_0, Status : FAILED
+java.lang.RuntimeException: java.lang.RuntimeException: java.sql.SQLException: Access denied <span class="keyword">for</span> user <span class="string">'sqoop'</span>@<span class="string">'hadoop03.myhadoop.com'</span> (<span class="keyword">using</span> password: YES)
+        at org.apache.sqoop.mapreduce.db.DBInputFormat.setConf(DBInputFormat.java:<span class="number">167</span>)
+        at org.apache.hadoop.util.ReflectionUtils.setConf(ReflectionUtils.java:<span class="number">62</span>)
+        at org.apache.hadoop.util.ReflectionUtils.newInstance(ReflectionUtils.java:<span class="number">117</span>)
+        at org.apache.hadoop.mapred.MapTask.runNewMapper(MapTask.java:<span class="number">722</span>)
+        at org.apache.hadoop.mapred.MapTask.run(MapTask.java:<span class="number">364</span>)
+        at org.apache.hadoop.mapred.Child$<span class="number">4</span>.run(Child.java:<span class="number">255</span>)
+        at java.security.AccessController.doPrivileged(Native <span class="function"><span class="keyword">Method</span>)</span>
+</code></pre><h5 id="解决办法，其他节点也要设置权限">解决办法，其他节点也要设置权限</h5>
+<pre><code><span class="operator"><span class="keyword">grant</span> <span class="keyword">all</span> <span class="keyword">privileges</span> <span class="keyword">on</span> *.* <span class="keyword">to</span> <span class="string">'sqoop'</span>@<span class="string">'192.168.255.152'</span> identified <span class="keyword">by</span> <span class="string">'sqoop'</span> <span class="keyword">with</span> <span class="keyword">grant</span> <span class="keyword">option</span>;</span>
+<span class="operator"><span class="keyword">grant</span> <span class="keyword">all</span> <span class="keyword">privileges</span> <span class="keyword">on</span> *.* <span class="keyword">to</span> <span class="string">'sqoop'</span>@<span class="string">'192.168.255.153'</span> identified <span class="keyword">by</span> <span class="string">'sqoop'</span> <span class="keyword">with</span> <span class="keyword">grant</span> <span class="keyword">option</span>;</span>
+flush privileges;
+<span class="operator"><span class="keyword">SELECT</span> <span class="keyword">DISTINCT</span> CONCAT(<span class="string">'User: '''</span>,<span class="keyword">user</span>,<span class="string">'''@'''</span>,host,<span class="string">''';'</span>) <span class="keyword">AS</span> query <span class="keyword">FROM</span> mysql.<span class="keyword">user</span>;</span>
+</code></pre><h4 id="重新导入">重新导入</h4>
+<pre><code>[grid@hadoop01 ~]$ sqoop import --connect jdbc:mysql://<span class="number">192.168</span><span class="number">.255</span><span class="number">.151</span>:<span class="number">3306</span>/sqoop --username sqoop --password sqoop --table tb1 -m <span class="number">1</span>
+<span class="label">Warning:</span> /usr/lib/hcatalog does not exist! HCatalog jobs will fail.
+Please <span class="keyword">set</span> $HCAT_HOME to the root of your HCatalog installation.
+<span class="label">Warning:</span> $HADOOP_HOME is deprecated.
+
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">11</span>:<span class="number">50</span>:<span class="number">30</span> WARN tool<span class="preprocessor">.BaseSqoopTool</span>: Setting your password on the command-line is insecure. Consider using -P instead.
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">11</span>:<span class="number">50</span>:<span class="number">30</span> INFO manager<span class="preprocessor">.MySQLManager</span>: Preparing to use a MySQL streaming resultset.
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">11</span>:<span class="number">50</span>:<span class="number">30</span> INFO tool<span class="preprocessor">.CodeGenTool</span>: Beginning code generation
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">11</span>:<span class="number">50</span>:<span class="number">31</span> INFO manager<span class="preprocessor">.SqlManager</span>: Executing SQL statement: SELECT t.* FROM `tb1` AS t LIMIT <span class="number">1</span>
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">11</span>:<span class="number">50</span>:<span class="number">31</span> INFO manager<span class="preprocessor">.SqlManager</span>: Executing SQL statement: SELECT t.* FROM `tb1` AS t LIMIT <span class="number">1</span>
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">11</span>:<span class="number">50</span>:<span class="number">31</span> INFO orm<span class="preprocessor">.CompilationManager</span>: HADOOP_MAPRED_HOME is /home/grid/hadoop-<span class="number">1.2</span><span class="number">.1</span>
+<span class="label">Note:</span> /tmp/sqoop-grid/compile/<span class="number">4</span>a0739c3b0538ec549c03cafb8dace32/tb1<span class="preprocessor">.java</span> uses <span class="keyword">or</span> overrides a deprecated API.
+<span class="label">Note:</span> Recompile with -Xlint:deprecation for details.
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">11</span>:<span class="number">50</span>:<span class="number">38</span> INFO orm<span class="preprocessor">.CompilationManager</span>: Writing jar file: /tmp/sqoop-grid/compile/<span class="number">4</span>a0739c3b0538ec549c03cafb8dace32/tb1<span class="preprocessor">.jar</span>
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">11</span>:<span class="number">50</span>:<span class="number">38</span> WARN manager<span class="preprocessor">.MySQLManager</span>: It looks like you are importing from mysql.
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">11</span>:<span class="number">50</span>:<span class="number">38</span> WARN manager<span class="preprocessor">.MySQLManager</span>: This transfer can be faster! Use the --direct
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">11</span>:<span class="number">50</span>:<span class="number">38</span> WARN manager<span class="preprocessor">.MySQLManager</span>: option to exercise a MySQL-specific fast path.
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">11</span>:<span class="number">50</span>:<span class="number">38</span> INFO manager<span class="preprocessor">.MySQLManager</span>: Setting zero DATETIME behavior to convertToNull (mysql)
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">11</span>:<span class="number">50</span>:<span class="number">38</span> INFO mapreduce<span class="preprocessor">.ImportJobBase</span>: Beginning import of tb1
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">11</span>:<span class="number">50</span>:<span class="number">43</span> INFO mapred<span class="preprocessor">.JobClient</span>: Running job: job_201405101008_0009
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">11</span>:<span class="number">50</span>:<span class="number">44</span> INFO mapred<span class="preprocessor">.JobClient</span>:  map <span class="number">0</span>% reduce <span class="number">0</span>%
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">11</span>:<span class="number">50</span>:<span class="number">59</span> INFO mapred<span class="preprocessor">.JobClient</span>:  map <span class="number">100</span>% reduce <span class="number">0</span>%
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">11</span>:<span class="number">51</span>:<span class="number">03</span> INFO mapred<span class="preprocessor">.JobClient</span>: Job complete: job_201405101008_0009
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">11</span>:<span class="number">51</span>:<span class="number">03</span> INFO mapred<span class="preprocessor">.JobClient</span>: Counters: <span class="number">18</span>
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">11</span>:<span class="number">51</span>:<span class="number">03</span> INFO mapred<span class="preprocessor">.JobClient</span>:   Job Counters 
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">11</span>:<span class="number">51</span>:<span class="number">03</span> INFO mapred<span class="preprocessor">.JobClient</span>:     SLOTS_MILLIS_MAPS=<span class="number">16169</span>
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">11</span>:<span class="number">51</span>:<span class="number">03</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Total time spent by all reduces waiting after reserving slots (ms)=<span class="number">0</span>
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">11</span>:<span class="number">51</span>:<span class="number">03</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Total time spent by all maps waiting after reserving slots (ms)=<span class="number">0</span>
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">11</span>:<span class="number">51</span>:<span class="number">03</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Launched map tasks=<span class="number">1</span>
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">11</span>:<span class="number">51</span>:<span class="number">03</span> INFO mapred<span class="preprocessor">.JobClient</span>:     SLOTS_MILLIS_REDUCES=<span class="number">0</span>
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">11</span>:<span class="number">51</span>:<span class="number">03</span> INFO mapred<span class="preprocessor">.JobClient</span>:   File Output Format Counters 
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">11</span>:<span class="number">51</span>:<span class="number">03</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Bytes Written=<span class="number">4249</span>
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">11</span>:<span class="number">51</span>:<span class="number">03</span> INFO mapred<span class="preprocessor">.JobClient</span>:   FileSystemCounters
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">11</span>:<span class="number">51</span>:<span class="number">03</span> INFO mapred<span class="preprocessor">.JobClient</span>:     HDFS_BYTES_READ=<span class="number">87</span>
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">11</span>:<span class="number">51</span>:<span class="number">03</span> INFO mapred<span class="preprocessor">.JobClient</span>:     FILE_BYTES_WRITTEN=<span class="number">70026</span>
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">11</span>:<span class="number">51</span>:<span class="number">03</span> INFO mapred<span class="preprocessor">.JobClient</span>:     HDFS_BYTES_WRITTEN=<span class="number">4249</span>
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">11</span>:<span class="number">51</span>:<span class="number">03</span> INFO mapred<span class="preprocessor">.JobClient</span>:   File Input Format Counters 
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">11</span>:<span class="number">51</span>:<span class="number">03</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Bytes Read=<span class="number">0</span>
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">11</span>:<span class="number">51</span>:<span class="number">03</span> INFO mapred<span class="preprocessor">.JobClient</span>:   Map-Reduce Framework
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">11</span>:<span class="number">51</span>:<span class="number">03</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Map input records=<span class="number">112</span>
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">11</span>:<span class="number">51</span>:<span class="number">03</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Physical memory (bytes) snapshot=<span class="number">73797632</span>
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">11</span>:<span class="number">51</span>:<span class="number">03</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Spilled Records=<span class="number">0</span>
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">11</span>:<span class="number">51</span>:<span class="number">03</span> INFO mapred<span class="preprocessor">.JobClient</span>:     CPU time spent (ms)=<span class="number">1540</span>
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">11</span>:<span class="number">51</span>:<span class="number">03</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Total committed heap usage (bytes)=<span class="number">15728640</span>
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">11</span>:<span class="number">51</span>:<span class="number">03</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Virtual memory (bytes) snapshot=<span class="number">1564905472</span>
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">11</span>:<span class="number">51</span>:<span class="number">03</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Map output records=<span class="number">112</span>
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">11</span>:<span class="number">51</span>:<span class="number">03</span> INFO mapred<span class="preprocessor">.JobClient</span>:     SPLIT_RAW_BYTES=<span class="number">87</span>
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">11</span>:<span class="number">51</span>:<span class="number">03</span> INFO mapreduce<span class="preprocessor">.ImportJobBase</span>: Transferred <span class="number">4.1494</span> KB <span class="keyword">in</span> <span class="number">24.7602</span> seconds (<span class="number">171.6062</span> bytes/<span class="keyword">sec</span>)
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">11</span>:<span class="number">51</span>:<span class="number">03</span> INFO mapreduce<span class="preprocessor">.ImportJobBase</span>: Retrieved <span class="number">112</span> records.
+</code></pre><h4 id="查看导入的文件">查看导入的文件</h4>
+<pre><code>[<span class="keyword">grid</span><span class="variable">@hadoop01</span> bin]$ hadoop fs -<span class="keyword">ls</span> tb1
+Warning: <span class="variable">$HADOOP_HOME</span> is deprecated.
+
+Found <span class="number">3</span> items
+-rw-r--r--   <span class="number">2</span> <span class="keyword">grid</span> supergroup          <span class="number">0</span> <span class="number">2014</span>-<span class="number">05</span>-<span class="number">10</span> <span class="number">11</span>:<span class="number">51</span> /user/<span class="keyword">grid</span>/tb1/_SUCCESS
+drwxr-xr-x   - <span class="keyword">grid</span> supergroup          <span class="number">0</span> <span class="number">2014</span>-<span class="number">05</span>-<span class="number">10</span> <span class="number">11</span>:<span class="number">50</span> /user/<span class="keyword">grid</span>/tb1/_logs
+-rw-r--r--   <span class="number">2</span> <span class="keyword">grid</span> supergroup       <span class="number">4249</span> <span class="number">2014</span>-<span class="number">05</span>-<span class="number">10</span> <span class="number">11</span>:<span class="number">50</span> /user/<span class="keyword">grid</span>/tb1/part-m-<span class="number">00000</span>
+
+[<span class="keyword">grid</span><span class="variable">@hadoop01</span> bin]$ hadoop fs -cat tb1/part-m-<span class="number">00000</span>
+Warning: <span class="variable">$HADOOP_HOME</span> is deprecated.
+
+information_schema,CHARACTER_SETS,SYSTEM VIEW
+information_schema,COLLATIONS,SYSTEM VIEW
+information_schema,COLLATION_CHARACTER_SET_APPLICABILITY,SYSTEM VIEW
+information_schema,COLUMNS,SYSTEM VIEW
+information_schema,COLUMN_PRIVILEGES,SYSTEM VIEW
+information_schema,ENGINES,SYSTEM VIEW
+information_schema,EVENTS,SYSTEM VIEW
+information_schema,FILES,SYSTEM VIEW
+information_schema,GLOBAL_STATUS,SYSTEM VIEW
+information_schema,GLOBAL_VARIABLES,SYSTEM VIEW
+information_schema,KEY_COLUMN_USAGE,SYSTEM VIEW
+information_schema,PARAMETERS,SYSTEM VIEW
+information_schema,PARTITIONS,SYSTEM VIEW
+information_schema,PLUGINS,SYSTEM VIEW
+information_schema,PROCESSLIST,SYSTEM VIEW
+information_schema,PROFILING,SYSTEM VIEW
+information_schema,REFERENTIAL_CONSTRAINTS,SYSTEM VIEW
+information_schema,ROUTINES,SYSTEM VIEW
+information_schema,SCHEMATA,SYSTEM VIEW
+information_schema,SCHEMA_PRIVILEGES,SYSTEM VIEW
+information_schema,SESSION_STATUS,SYSTEM VIEW
+information_schema,SESSION_VARIABLES,SYSTEM VIEW
+information_schema,STATISTICS,SYSTEM VIEW
+information_schema,TABLES,SYSTEM VIEW
+information_schema,TABLESPACES,SYSTEM VIEW
+information_schema,TABLE_CONSTRAINTS,SYSTEM VIEW
+information_schema,TABLE_PRIVILEGES,SYSTEM VIEW
+information_schema,TRIGGERS,SYSTEM VIEW
+
+OK
+</code></pre><h4 id="把HDFS的数据导回去mysql">把HDFS的数据导回去mysql</h4>
+<pre><code>mysql&gt; use sqoop
+Database changed
+mysql&gt; show tables<span class="comment">;</span>
++-----------------+
+| Tables_in_sqoop |
++-----------------+
+| tb1             |
++-----------------+
+<span class="number">1</span> row <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> <span class="keyword">sec</span>)
+
+mysql&gt; truncate tb1<span class="comment">;</span>
+Query OK, <span class="number">0</span> rows affected (<span class="number">0.01</span> <span class="keyword">sec</span>)
+
+sqoop export  --connect jdbc:mysql://<span class="number">192.168</span><span class="number">.255</span><span class="number">.151</span>:<span class="number">3306</span>/sqoop --username sqoop --password sqoop --table tb1 --export-dir hdfs://<span class="number">192.168</span><span class="number">.255</span><span class="number">.151</span>:<span class="number">9000</span>/user/grid/tb1/
+
+[grid@hadoop01 ~]$ sqoop export  --connect jdbc:mysql://<span class="number">192.168</span><span class="number">.255</span><span class="number">.151</span>:<span class="number">3306</span>/sqoop --username sqoop --password sqoop --table tb1 --export-dir hdfs://<span class="number">192.168</span><span class="number">.255</span><span class="number">.151</span>:<span class="number">9000</span>/user/grid/tb1/
+<span class="label">Warning:</span> /usr/lib/hcatalog does not exist! HCatalog jobs will fail.
+Please <span class="keyword">set</span> $HCAT_HOME to the root of your HCatalog installation.
+<span class="label">Warning:</span> $HADOOP_HOME is deprecated.
+
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">12</span>:<span class="number">06</span>:<span class="number">19</span> WARN tool<span class="preprocessor">.BaseSqoopTool</span>: Setting your password on the command-line is insecure. Consider using -P instead.
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">12</span>:<span class="number">06</span>:<span class="number">20</span> INFO manager<span class="preprocessor">.MySQLManager</span>: Preparing to use a MySQL streaming resultset.
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">12</span>:<span class="number">06</span>:<span class="number">20</span> INFO tool<span class="preprocessor">.CodeGenTool</span>: Beginning code generation
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">12</span>:<span class="number">06</span>:<span class="number">21</span> INFO manager<span class="preprocessor">.SqlManager</span>: Executing SQL statement: SELECT t.* FROM `tb1` AS t LIMIT <span class="number">1</span>
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">12</span>:<span class="number">06</span>:<span class="number">21</span> INFO manager<span class="preprocessor">.SqlManager</span>: Executing SQL statement: SELECT t.* FROM `tb1` AS t LIMIT <span class="number">1</span>
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">12</span>:<span class="number">06</span>:<span class="number">21</span> INFO orm<span class="preprocessor">.CompilationManager</span>: HADOOP_MAPRED_HOME is /home/grid/hadoop-<span class="number">1.2</span><span class="number">.1</span>
+<span class="label">Note:</span> /tmp/sqoop-grid/compile/<span class="number">605</span>c350fea684271f2c51e2f616406c7/tb1<span class="preprocessor">.java</span> uses <span class="keyword">or</span> overrides a deprecated API.
+<span class="label">Note:</span> Recompile with -Xlint:deprecation for details.
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">12</span>:<span class="number">06</span>:<span class="number">27</span> INFO orm<span class="preprocessor">.CompilationManager</span>: Writing jar file: /tmp/sqoop-grid/compile/<span class="number">605</span>c350fea684271f2c51e2f616406c7/tb1<span class="preprocessor">.jar</span>
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">12</span>:<span class="number">06</span>:<span class="number">27</span> INFO mapreduce<span class="preprocessor">.ExportJobBase</span>: Beginning export of tb1
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">12</span>:<span class="number">06</span>:<span class="number">32</span> INFO input<span class="preprocessor">.FileInputFormat</span>: Total input paths to process : <span class="number">1</span>
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">12</span>:<span class="number">06</span>:<span class="number">32</span> INFO input<span class="preprocessor">.FileInputFormat</span>: Total input paths to process : <span class="number">1</span>
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">12</span>:<span class="number">06</span>:<span class="number">32</span> INFO util<span class="preprocessor">.NativeCodeLoader</span>: Loaded the native-hadoop library
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">12</span>:<span class="number">06</span>:<span class="number">32</span> WARN snappy<span class="preprocessor">.LoadSnappy</span>: Snappy native library not loaded
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">12</span>:<span class="number">06</span>:<span class="number">33</span> INFO mapred<span class="preprocessor">.JobClient</span>: Running job: job_201405101008_0010
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">12</span>:<span class="number">06</span>:<span class="number">34</span> INFO mapred<span class="preprocessor">.JobClient</span>:  map <span class="number">0</span>% reduce <span class="number">0</span>%
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">12</span>:<span class="number">06</span>:<span class="number">58</span> INFO mapred<span class="preprocessor">.JobClient</span>:  map <span class="number">50</span>% reduce <span class="number">0</span>%
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">12</span>:<span class="number">07</span>:<span class="number">00</span> INFO mapred<span class="preprocessor">.JobClient</span>:  map <span class="number">100</span>% reduce <span class="number">0</span>%
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">12</span>:<span class="number">07</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>: Job complete: job_201405101008_0010
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">12</span>:<span class="number">07</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>: Counters: <span class="number">19</span>
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">12</span>:<span class="number">07</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:   Job Counters 
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">12</span>:<span class="number">07</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:     SLOTS_MILLIS_MAPS=<span class="number">71976</span>
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">12</span>:<span class="number">07</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Total time spent by all reduces waiting after reserving slots (ms)=<span class="number">0</span>
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">12</span>:<span class="number">07</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Total time spent by all maps waiting after reserving slots (ms)=<span class="number">0</span>
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">12</span>:<span class="number">07</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Rack-local map tasks=<span class="number">2</span>
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">12</span>:<span class="number">07</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Launched map tasks=<span class="number">4</span>
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">12</span>:<span class="number">07</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Data-local map tasks=<span class="number">2</span>
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">12</span>:<span class="number">07</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:     SLOTS_MILLIS_REDUCES=<span class="number">0</span>
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">12</span>:<span class="number">07</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:   File Output Format Counters 
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">12</span>:<span class="number">07</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Bytes Written=<span class="number">0</span>
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">12</span>:<span class="number">07</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:   FileSystemCounters
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">12</span>:<span class="number">07</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:     HDFS_BYTES_READ=<span class="number">11629</span>
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">12</span>:<span class="number">07</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:     FILE_BYTES_WRITTEN=<span class="number">279312</span>
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">12</span>:<span class="number">07</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:   File Input Format Counters 
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">12</span>:<span class="number">07</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Bytes Read=<span class="number">0</span>
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">12</span>:<span class="number">07</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:   Map-Reduce Framework
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">12</span>:<span class="number">07</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Map input records=<span class="number">112</span>
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">12</span>:<span class="number">07</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Physical memory (bytes) snapshot=<span class="number">301490176</span>
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">12</span>:<span class="number">07</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Spilled Records=<span class="number">0</span>
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">12</span>:<span class="number">07</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:     CPU time spent (ms)=<span class="number">5450</span>
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">12</span>:<span class="number">07</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Total committed heap usage (bytes)=<span class="number">62914560</span>
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">12</span>:<span class="number">07</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Virtual memory (bytes) snapshot=<span class="number">6251151360</span>
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">12</span>:<span class="number">07</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:     Map output records=<span class="number">112</span>
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">12</span>:<span class="number">07</span>:<span class="number">04</span> INFO mapred<span class="preprocessor">.JobClient</span>:     SPLIT_RAW_BYTES=<span class="number">611</span>
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">12</span>:<span class="number">07</span>:<span class="number">04</span> INFO mapreduce<span class="preprocessor">.ExportJobBase</span>: Transferred <span class="number">11.3564</span> KB <span class="keyword">in</span> <span class="number">34.5615</span> seconds (<span class="number">336.4727</span> bytes/<span class="keyword">sec</span>)
+<span class="number">14</span>/<span class="number">05</span>/<span class="number">10</span> <span class="number">12</span>:<span class="number">07</span>:<span class="number">04</span> INFO mapreduce<span class="preprocessor">.ExportJobBase</span>: Exported <span class="number">112</span> records.
+</code></pre><h4 id="验证">验证</h4>
+<pre><code>mysql&gt; use sqoop;
+Database changed
+<span class="header">mysql&gt; show tables;
++-----------------+</span>
+<span class="header">| Tables_in_sqoop |
++-----------------+</span>
+<span class="header">| tb1             |
++-----------------+</span>
+1 row in set (0.00 sec)
+</code></pre>]]></content>
+    
+    
+      <category term="Hadoop" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/Hadoop/"/>
+    
+      <category term="Sqoop" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/Sqoop/"/>
+    
+      <category term="Hadoop" scheme="https://github.com/DaMinger/DaMinger.github.io.git/categories/Hadoop/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[HBase shell的使用]]></title>
+    <link href="https://github.com/DaMinger/DaMinger.github.io.git/2014/05/12/Hadoop/hbase_shell/"/>
+    <id>https://github.com/DaMinger/DaMinger.github.io.git/2014/05/12/Hadoop/hbase_shell/</id>
+    <published>2014-05-12T07:16:49.000Z</published>
+    <updated>2014-05-12T07:18:28.000Z</updated>
+    <content type="html"><![CDATA[<h4 id="HBase_Shell的一些基本操作命令">HBase Shell的一些基本操作命令</h4>
+<p><table><tr><td>名称</td><td>命令表达式</td></tr><tr><td>创建表</td><td>create ‘表名称’, ‘列名称1’,’列名称2’,’列名称N’</td></tr><tr><td>添加记录</td><td>put ‘表名称’, ‘行名称’, ‘列名称:’, ‘值</td></tr><tr><td>查看记录</td><td>get ‘表名称’, ‘行名称’</td></tr><tr><td>查看表中的记录总数</td><td>count  ‘表名称’</td></tr></p>
+<p><tr><td>删除记录</td><td>delete  ‘表名’ ,’行名称’ , ‘列名称’</td></tr><tr><td>删除一张表</td><td>先要屏蔽该表，才能对该表进行删除，第一步 disable ‘表名称’ 第二步  drop ‘表名称’</td></tr><tr><td>查看所有记录</td><td>scan “表名称”</td></tr><tr><td>查看某个表某个列中所有数据</td><td>scan “表名称” , [‘列名称:’]</td></tr><tr><td>更新记录</td><td>就是重写一遍进行覆盖</td></tr></table></p>
+<h4 id="HBase_例子说明">HBase 例子说明</h4>
+<p>我们用一个学生成绩表作为例子,对HBase的基本操作和基本概念进行讲解:</p>
+<pre><code>下面是学生的成绩表:
+<span class="tag">name</span>     <span class="tag">grad</span>    <span class="tag">course</span><span class="pseudo">:math</span>    <span class="tag">course</span><span class="pseudo">:art</span>
+<span class="tag">Tom</span>      1       87             97
+
+<span class="tag">Jerry</span>    2       100            80
+</code></pre><p>这里grad对于表来说是一个列,course对于表来说是一个列族,这个列族由两个列组成:math和art,当然我们可以根据我们的需要在course中建立更多的列族,如computer,physics等相应的列添加入course列族.</p>
+<p>有了上面的想法和需求,我们就可以在HBase中建立相应的数据表啦!</p>
+<h5 id="建立一个表格_scores_具有两个列族grade和courese">建立一个表格 scores 具有两个列族grade和courese</h5>
+<pre><code>hbase(main):<span class="number">002</span>:<span class="number">0</span>&gt; <span class="built_in">create</span> <span class="string">'scores'</span>, <span class="string">'grade'</span>, <span class="string">'course'</span>
+
+<span class="number">0</span> row(s) <span class="operator">in</span> <span class="number">4.1610</span> <span class="built_in">seconds</span>
+</code></pre><h5 id="查看当先HBase中具有哪些表">查看当先HBase中具有哪些表</h5>
+<pre><code><span class="tag">hbase</span>(<span class="tag">main</span>)<span class="pseudo">:003</span><span class="pseudo">:0</span>&gt; <span class="tag">list</span>
+
+<span class="tag">scores</span>
+
+1 <span class="tag">row</span>(<span class="tag">s</span>) <span class="tag">in</span> 0<span class="class">.0210</span> <span class="tag">seconds</span>
+</code></pre><h5 id="查看表的构造">查看表的构造</h5>
+<pre><code>hbase(main):<span class="number">004</span>:<span class="number">0</span>&gt; describe <span class="string">'scores'</span>
+
+{NAME<span class="function"> =&gt;</span> <span class="string">'scores'</span>, IS_ROOT<span class="function"> =&gt;</span> <span class="string">'false'</span>, IS_META<span class="function"> =&gt;</span> <span class="string">'false'</span>, 
+FAMILIES<span class="function"> =&gt;</span> [{NAME<span class="function"> =&gt;</span> <span class="string">'course'</span>, BLOOMFILTER<span class="function"> =&gt;</span> <span class="string">'false'</span>, IN_MEMORY<span class="function"> =&gt;</span> <span class="string">'false'</span>,LENGTH<span class="function"> =&gt;</span> <span class="string">'2147483647'</span>, BLOCKCACHE<span class="function"> =&gt;</span> <span class="string">'false'</span>, VERSIONS<span class="function"> =&gt;</span> <span class="string">'3'</span>, TTL<span class="function"> =&gt;</span> <span class="string">'-1'</span>, COMPRESSION<span class="function"> =&gt;</span> <span class="string">'NONE'</span>}, 
+{NAME<span class="function"> =&gt;</span> <span class="string">'grade'</span>, BLOOMFILTER<span class="function"> =&gt;</span> <span class="string">'false'</span>, IN_MEMORY<span class="function"> =&gt;</span> <span class="string">'false'</span>, LENGTH<span class="function"> =&gt;</span> <span class="string">'2147483647'</span>,BLOCKCACHE<span class="function"> =&gt;</span> <span class="string">'false'</span>, VERSIONS<span class="function"> =&gt;</span> <span class="string">'3'</span>, TTL<span class="function"> =&gt;</span> <span class="string">'-1'</span>, COMPRESSION<span class="function"> =&gt;</span> <span class="string">'NONE'</span>}]}
+
+<span class="number">1</span> row(s) <span class="keyword">in</span> <span class="number">0.0130</span> seconds
+</code></pre><h5 id="加入一行数据,行名称为_Tom_列族grade的列名为””_值位1">加入一行数据,行名称为 Tom 列族grade的列名为”” 值位1</h5>
+<pre><code>hbase(main):<span class="number">005</span>:<span class="number">0</span>&gt; <span class="built_in">put</span> <span class="string">'scores'</span>, <span class="string">'Tom'</span>, <span class="string">'grade:'</span>, <span class="string">'1'</span>
+
+<span class="number">0</span> row(s) <span class="operator">in</span> <span class="number">0.0070</span> <span class="built_in">seconds</span>
+</code></pre><h5 id="给Tom这一行的数据的列族添加一列_<math,87>">给Tom这一行的数据的列族添加一列 <math,87></h5>
+<pre><code>hbase(main):<span class="number">006</span>:<span class="number">0</span>&gt; <span class="built_in">put</span> <span class="string">'scores'</span>, <span class="string">'Tom'</span>, <span class="string">'course:math'</span>, <span class="string">'87'</span>
+
+<span class="number">0</span> row(s) <span class="operator">in</span> <span class="number">0.0040</span> <span class="built_in">seconds</span>
+</code></pre><h5 id="给Tom这一行的数据的列族添加一列_<art,97>">给Tom这一行的数据的列族添加一列 <art,97></h5>
+<pre><code>hbase(main):<span class="number">007</span>:<span class="number">0</span>&gt; <span class="built_in">put</span> <span class="string">'scores'</span>, <span class="string">'Tom'</span>, <span class="string">'course:art'</span>, <span class="string">'97'</span>
+
+<span class="number">0</span> row(s) <span class="operator">in</span> <span class="number">0.0030</span> <span class="built_in">seconds</span>
+</code></pre><h5 id="加入一行数据,行名称为_Jerry_列族grad的列名为””_值位2">加入一行数据,行名称为 Jerry 列族grad的列名为”” 值位2</h5>
+<pre><code>hbase(main):<span class="number">008</span>:<span class="number">0</span>&gt; <span class="built_in">put</span> <span class="string">'scores'</span>, <span class="string">'Jerry'</span>, <span class="string">'grade:'</span>, <span class="string">'2'</span>
+
+<span class="number">0</span> row(s) <span class="operator">in</span> <span class="number">0.0040</span> <span class="built_in">seconds</span>
+</code></pre><h5 id="给Jerry这一行的数据的列族添加一列_<math,100>">给Jerry这一行的数据的列族添加一列 <math,100></h5>
+<pre><code>hbase(main):<span class="number">009</span>:<span class="number">0</span>&gt; <span class="built_in">put</span> <span class="string">'scores'</span>, <span class="string">'Jerry'</span>, <span class="string">'course:math'</span>, <span class="string">'100'</span>
+
+<span class="number">0</span> row(s) <span class="operator">in</span> <span class="number">0.0030</span> <span class="built_in">seconds</span>
+</code></pre><h5 id="给Jerry这一行的数据的列族添加一列_<art,80>">给Jerry这一行的数据的列族添加一列 <art,80></h5>
+<pre><code>hbase(main):<span class="number">010</span>:<span class="number">0</span>&gt; <span class="built_in">put</span> <span class="string">'scores'</span>, <span class="string">'Jerry'</span>, <span class="string">'course:art'</span>, <span class="string">'80'</span>
+
+<span class="number">0</span> row(s) <span class="operator">in</span> <span class="number">0.0050</span> <span class="built_in">seconds</span>
+</code></pre><h5 id="查看scores表中Tom的相关数据">查看scores表中Tom的相关数据</h5>
+<pre><code>hbase(main):<span class="number">011</span>:<span class="number">0</span>&gt; <span class="built_in">get</span> <span class="string">'scores'</span>, <span class="string">'Tom'</span>
+
+COLUMN                       CELL
+
+course:art                  timestamp=<span class="number">1224726394286</span>, <span class="built_in">value</span>=<span class="number">97</span>
+
+course:math                 timestamp=<span class="number">1224726377027</span>, <span class="built_in">value</span>=<span class="number">87</span>
+
+grade:                      timestamp=<span class="number">1224726360727</span>, <span class="built_in">value</span>=<span class="number">1</span>
+
+<span class="number">3</span> row(s) <span class="operator">in</span> <span class="number">0.0070</span> <span class="built_in">seconds</span>
+</code></pre><h5 id="查看scores表中所有数据">查看scores表中所有数据</h5>
+<pre><code>hbase(main):<span class="number">012</span>:<span class="number">0</span>&gt; scan <span class="string">'scores'</span>
+
+ROW                          COLUMN+CELL
+
+Tom                         column=course:art, timestamp=<span class="number">1224726394286</span>, <span class="built_in">value</span>=<span class="number">97</span>
+
+Tom                         column=course:math, timestamp=<span class="number">1224726377027</span>, <span class="built_in">value</span>=<span class="number">87</span>
+
+Tom                         column=grade:, timestamp=<span class="number">1224726360727</span>, <span class="built_in">value</span>=<span class="number">1</span>
+
+Jerry                        column=course:art, timestamp=<span class="number">1224726424967</span>, <span class="built_in">value</span>=<span class="number">80</span>
+
+Jerry                        column=course:math, timestamp=<span class="number">1224726416145</span>, <span class="built_in">value</span>=<span class="number">100</span>
+
+Jerry                        column=grade:, timestamp=<span class="number">1224726404965</span>, <span class="built_in">value</span>=<span class="number">2</span>
+
+<span class="number">6</span> row(s) <span class="operator">in</span> <span class="number">0.0410</span> <span class="built_in">seconds</span>
+</code></pre><h5 id="查看scores表中所有数据courses列族的所有数据">查看scores表中所有数据courses列族的所有数据</h5>
+<pre><code>hbase(main):<span class="number">013</span>:<span class="number">0</span>&gt; scan <span class="string">'scores'</span>, [<span class="string">'course:'</span>]
+
+ROW                          COLUMN+CELL
+
+Tom                         column=course:art, timestamp=<span class="number">1224726394286</span>, <span class="built_in">value</span>=<span class="number">97</span>
+
+Tom                         column=course:math, timestamp=<span class="number">1224726377027</span>, <span class="built_in">value</span>=<span class="number">87</span>
+
+Jerry                        column=course:art, timestamp=<span class="number">1224726424967</span>, <span class="built_in">value</span>=<span class="number">80</span>
+
+Jerry                        column=course:math, timestamp=<span class="number">1224726416145</span>, <span class="built_in">value</span>=<span class="number">100</span>
+
+<span class="number">4</span> row(s) <span class="operator">in</span> <span class="number">0.0200</span> <span class="built_in">seconds</span>
+</code></pre><p>上面就是HBase的基本shell操作的一个例子,可以看出,hbase的shell还是比较简单易用的,从中也可以看出HBase shell缺少很多传统sql中的一些类似于like等相关操作,当然,HBase作为BigTable的一个开源实现,而BigTable是作为 google业务的支持模型,很多sql语句中的一些东西可能还真的不需要.</p>
+]]></content>
+    
+    
+      <category term="Hadoop" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/Hadoop/"/>
+    
+      <category term="HBase" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/HBase/"/>
+    
+      <category term="Hadoop" scheme="https://github.com/DaMinger/DaMinger.github.io.git/categories/Hadoop/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[HBse的安装]]></title>
+    <link href="https://github.com/DaMinger/DaMinger.github.io.git/2014/05/12/Hadoop/hbase_install/"/>
+    <id>https://github.com/DaMinger/DaMinger.github.io.git/2014/05/12/Hadoop/hbase_install/</id>
+    <published>2014-05-12T07:16:29.000Z</published>
+    <updated>2014-05-12T07:17:46.000Z</updated>
+    <content type="html"><![CDATA[<p>在安装hbase时要求与hadoop的版本相关联，那么如何找出合适的hbase版本呢，其实有一个简单但是有点费事的做法，就是可以下载hbase后解压查看lib目录中的hadoop-core-x.x.x.jar文件的版本号，就可以找到合适的hadoop版本号了。</p>
+<p>我下载了三个版本，终于找到了hadoop1.2.1是 跟Hbase-0.98.0版本匹配。同学们可以少走弯路了。</p>
+<p>我的机器配置</p>
+<pre><code><span class="tag">Hadoop</span><span class="pseudo">:1</span><span class="class">.2</span><span class="class">.1</span>
+<span class="tag">HBase</span><span class="pseudo">:0</span><span class="class">.98</span><span class="class">.1</span>
+三个节点：<span class="tag">hadoop01</span>，<span class="tag">hadoop02</span>,<span class="tag">hadoop03</span>
+</code></pre><h4 id="解压HBase">解压HBase</h4>
+<pre><code>[grid<span class="variable">@hadoop01</span> ~]<span class="variable">$ </span>tar -xzvf hbase-<span class="number">0</span>.<span class="number">98.1</span>-hadoop1-bin.tar.gz 
+[grid<span class="variable">@hadoop01</span> ~]<span class="variable">$ </span>mv hbase-<span class="number">0</span>.<span class="number">98.1</span>-hadoop1 hbase
+</code></pre><h4 id="修改hbase_conf_目录下的配置文件">修改hbase conf 目录下的配置文件</h4>
+<h5 id="hbase-env-sh：">hbase-env.sh：</h5>
+<pre><code>[grid<span class="variable">@hadoop01</span> conf]<span class="variable">$ </span>vi hbase-env.sh 
+
+<span class="comment"># The java implementation to use.  Java 1.6 required.</span>
+  export <span class="constant">JAVA_HOME</span>=<span class="regexp">/usr/jdk</span>1.<span class="number">7.0_51</span>
+
+<span class="comment"># Extra Java CLASSPATH elements.  Optional.</span>
+  export <span class="constant">HBASE_CLASSPATH</span>=<span class="regexp">/home/grid</span><span class="regexp">/hadoop-1.2.1/conf</span>
+
+<span class="comment"># Tell HBase whether it should manage it's own instance of Zookeeper or not.</span>
+  export <span class="constant">HBASE_MANAGES_ZK</span>=<span class="keyword">true</span>
+</code></pre><h5 id="hbase-site-xml：">hbase-site.xml：</h5>
+<pre><code><span class="tag">&lt;<span class="title">configuration</span>&gt;</span>
+        <span class="tag">&lt;<span class="title">property</span>&gt;</span>
+                <span class="tag">&lt;<span class="title">name</span>&gt;</span>hbase.rootdir<span class="tag">&lt;/<span class="title">name</span>&gt;</span>
+                <span class="tag">&lt;<span class="title">value</span>&gt;</span>hdfs://hadoop01.myhadoop.com:9000/hbase<span class="tag">&lt;/<span class="title">value</span>&gt;</span>
+        <span class="tag">&lt;/<span class="title">property</span>&gt;</span>
+        <span class="tag">&lt;<span class="title">property</span>&gt;</span>
+                <span class="tag">&lt;<span class="title">name</span>&gt;</span>hbase.cluster.distributed<span class="tag">&lt;/<span class="title">name</span>&gt;</span>
+                <span class="tag">&lt;<span class="title">value</span>&gt;</span>true<span class="tag">&lt;/<span class="title">value</span>&gt;</span>
+        <span class="tag">&lt;/<span class="title">property</span>&gt;</span>
+        <span class="tag">&lt;<span class="title">property</span>&gt;</span>
+                <span class="tag">&lt;<span class="title">name</span>&gt;</span>hbase.tmp.dir<span class="tag">&lt;/<span class="title">name</span>&gt;</span>
+                <span class="tag">&lt;<span class="title">value</span>&gt;</span>/home/grid/hbase/tmp<span class="tag">&lt;/<span class="title">value</span>&gt;</span>
+        <span class="tag">&lt;/<span class="title">property</span>&gt;</span>
+        <span class="tag">&lt;<span class="title">property</span>&gt;</span>
+                <span class="tag">&lt;<span class="title">name</span>&gt;</span>hbase.zookeeper.quorum<span class="tag">&lt;/<span class="title">name</span>&gt;</span>
+                <span class="tag">&lt;<span class="title">value</span>&gt;</span>hadoop01,hadoop02,hadoop03<span class="tag">&lt;/<span class="title">value</span>&gt;</span>
+        <span class="tag">&lt;/<span class="title">property</span>&gt;</span>
+        <span class="tag">&lt;<span class="title">property</span>&gt;</span>
+                <span class="tag">&lt;<span class="title">name</span>&gt;</span>hbase.zookeeper.property.dataDir<span class="tag">&lt;/<span class="title">name</span>&gt;</span>
+                <span class="tag">&lt;<span class="title">value</span>&gt;</span>/home/grid/hbase/tmp/zookeeper<span class="tag">&lt;/<span class="title">value</span>&gt;</span>
+        <span class="tag">&lt;/<span class="title">property</span>&gt;</span>
+<span class="tag">&lt;/<span class="title">configuration</span>&gt;</span>
+</code></pre><h4 id="更改regionservers">更改regionservers</h4>
+<pre><code>[grid<span class="variable">@hadoop01</span> conf]<span class="variable">$ </span>vi regionservers
+hadoop02
+hadoop03 
+</code></pre><h4 id="创建hbase专用文件夹：">创建hbase专用文件夹：</h4>
+<h5 id="创建文件系统目录">创建文件系统目录</h5>
+<pre><code>[<span class="keyword">grid</span><span class="variable">@hadoop01</span> conf]$ hadoop fs -mkdir hdfs:<span class="comment">//hadoop01.myhadoop.com:9000/hbase</span>
+Warning: <span class="variable">$HADOOP_HOME</span> is deprecated.
+
+[<span class="keyword">grid</span><span class="variable">@hadoop01</span> conf]$ hadoop fs -<span class="keyword">ls</span> hdfs:<span class="comment">//hadoop01.myhadoop.com:9000/</span>
+Warning: <span class="variable">$HADOOP_HOME</span> is deprecated.
+
+Found <span class="number">5</span> items
+drwxr-xr-x   - <span class="keyword">grid</span> supergroup          <span class="number">0</span> <span class="number">2014</span>-<span class="number">05</span>-<span class="number">09</span> <span class="number">15</span>:<span class="number">04</span> /hbase
+drwxr-xr-x   - <span class="keyword">grid</span> supergroup          <span class="number">0</span> <span class="number">2014</span>-<span class="number">05</span>-<span class="number">07</span> <span class="number">21</span>:<span class="number">09</span> /home
+drwxr-xr-x   - <span class="keyword">grid</span> supergroup          <span class="number">0</span> <span class="number">2014</span>-<span class="number">04</span>-<span class="number">22</span> <span class="number">19</span>:<span class="number">07</span> /out4
+drwxr-xr-x   - <span class="keyword">grid</span> supergroup          <span class="number">0</span> <span class="number">2014</span>-<span class="number">04</span>-<span class="number">23</span> <span class="number">17</span>:<span class="number">17</span> /tmp
+drwxr-xr-x   - <span class="keyword">grid</span> supergroup          <span class="number">0</span> <span class="number">2014</span>-<span class="number">05</span>-<span class="number">07</span> <span class="number">21</span>:<span class="number">22</span> /user
+[<span class="keyword">grid</span><span class="variable">@hadoop01</span> conf]$
+</code></pre><h4 id="复制Master上的hbase文件夹到另外2节点：">复制Master上的hbase文件夹到另外2节点：</h4>
+<pre><code> scp -r hbase grid<span class="variable">@hadoop02</span><span class="symbol">:~</span>
+ scp -r hbase grid<span class="variable">@hadoop03</span><span class="symbol">:~</span>
+</code></pre><h4 id="修改各节点_的/etc/profile：">修改各节点 的/etc/profile：</h4>
+<pre><code><span class="keyword">export</span> HBASE_HOME=/home/grid/hbase
+<span class="keyword">export</span> PATH=<span class="variable">$PATH</span>:<span class="variable">$HBASE_HOME</span>/bin
+使其生效：
+<span class="built_in">source</span> /etc/profile
+</code></pre><h4 id="启动hbase并进入shell，然后退出">启动hbase并进入shell，然后退出</h4>
+<pre><code>start-hbase.sh
+hbase shell
+create ‘test’,’id’
+disable ‘test’
+drop ‘test’
+<span class="keyword">exit</span>
+stop-hbase.sh
+
+
+
+[grid@hadoop01 ~]$ start-hbase.sh 
+hadoop03: starting zookeeper, logging <span class="keyword">to</span> /home/grid/hbase/bin/../logs/hbase-grid-zookeeper-hadoop03.myhadoop.com.<span class="keyword">out</span>
+hadoop02: starting zookeeper, logging <span class="keyword">to</span> /home/grid/hbase/bin/../logs/hbase-grid-zookeeper-hadoop02.myhadoop.com.<span class="keyword">out</span>
+The authenticity <span class="keyword">of</span> host <span class="attribute">'hadoop01</span> (<span class="number">192.168</span><span class="number">.255</span><span class="number">.151</span>)' can<span class="attribute">'t</span> be established.
+RSA key fingerprint <span class="keyword">is</span> <span class="number">99</span>:<span class="number">8</span>c:<span class="number">8</span>f:<span class="number">64</span>:<span class="number">6</span>a:<span class="number">9</span>e:<span class="number">17</span>:<span class="number">4</span>b:cf:cc:b1:<span class="number">4</span>b:<span class="number">8</span>d:<span class="number">13</span>:eb:e9.
+Are you sure you want <span class="keyword">to</span> continue connecting (yes/no)? yes
+hadoop01: Warning: Permanently added <span class="attribute">'hadoop01</span>' (RSA) <span class="keyword">to</span> the list <span class="keyword">of</span> known hosts.
+hadoop01: starting zookeeper, logging <span class="keyword">to</span> /home/grid/hbase/bin/../logs/hbase-grid-zookeeper-hadoop01.myhadoop.com.<span class="keyword">out</span>
+starting master, logging <span class="keyword">to</span> /home/grid/hbase/logs/hbase-grid-master-hadoop01.myhadoop.com.<span class="keyword">out</span>
+hadoop03: starting regionserver, logging <span class="keyword">to</span> /home/grid/hbase/bin/../logs/hbase-grid-regionserver-hadoop03.myhadoop.com.<span class="keyword">out</span>
+hadoop02: starting regionserver, logging <span class="keyword">to</span> /home/grid/hbase/bin/../logs/hbase-grid-regionserver-hadoop02.myhadoop.com.<span class="keyword">out</span>
+[grid@hadoop01 ~]$ jps
+<span class="number">4675</span> HQuorumPeer
+<span class="number">3796</span> SecondaryNameNode
+<span class="number">4726</span> HMaster
+<span class="number">3862</span> JobTracker
+<span class="number">3653</span> NameNode
+<span class="number">4873</span> Jps
+[grid@hadoop01 ~]$ 
+[grid@hadoop01 ~]$ hbase shell
+HBase Shell; enter <span class="attribute">'help</span>&lt;<span class="keyword">RETURN</span>&gt;' <span class="keyword">for</span> list <span class="keyword">of</span> supported commands.
+<span class="keyword">Type</span> <span class="string">"exit&lt;RETURN&gt;"</span> <span class="keyword">to</span> leave the HBase Shell
+Version <span class="number">0.98</span><span class="number">.1</span>-hadoop1, r1583035, Sat Mar <span class="number">29</span> <span class="number">16</span>:<span class="number">51</span>:<span class="number">51</span> PDT <span class="number">2014</span>
+
+hbase(main):<span class="number">001</span>:<span class="number">0</span>&gt; create <span class="attribute">'test</span>',<span class="attribute">'id</span>'
+SLF4J: Class path contains multiple SLF4J bindings.
+SLF4J: Found binding <span class="keyword">in</span> [jar:<span class="keyword">file</span>:/home/grid/hbase/lib/slf4j-log4j12-<span class="number">1.6</span><span class="number">.4</span>.jar!/org/slf4j/impl/StaticLoggerBinder.class]
+SLF4J: Found binding <span class="keyword">in</span> [jar:<span class="keyword">file</span>:/home/grid/hadoop-<span class="number">1.2</span><span class="number">.1</span>/lib/slf4j-log4j12-<span class="number">1.4</span><span class="number">.3</span>.jar!/org/slf4j/impl/StaticLoggerBinder.class]
+SLF4J: See http://www.slf4j.org/codes.html#multiple_bindings <span class="keyword">for</span> an explanation.
+<span class="number">0</span> row(s) <span class="keyword">in</span> <span class="number">7.1400</span> seconds
+
+=&gt; Hbase::Table - test
+
+hbase(main):<span class="number">003</span>:<span class="number">0</span>&gt; disable <span class="attribute">'test</span>'
+<span class="number">0</span> row(s) <span class="keyword">in</span> <span class="number">1.5220</span> seconds
+
+hbase(main):<span class="number">004</span>:<span class="number">0</span>&gt; drop <span class="attribute">'test</span>'
+<span class="number">0</span> row(s) <span class="keyword">in</span> <span class="number">0.3550</span> seconds
+
+hbase(main):<span class="number">005</span>:<span class="number">0</span>&gt; <span class="keyword">exit</span>
+[grid@hadoop01 bin]$ stop-hbase.sh 
+stopping hbase....................
+hadoop02: stopping zookeeper.
+hadoop03: stopping zookeeper.
+hadoop01: stopping zookeeper.
+</code></pre>]]></content>
+    
+    
+      <category term="Hadoop" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/Hadoop/"/>
+    
+      <category term="HBase" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/HBase/"/>
+    
+      <category term="Hadoop" scheme="https://github.com/DaMinger/DaMinger.github.io.git/categories/Hadoop/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[炼数成金论坛上关于HBase三个小问题的讨论]]></title>
+    <link href="https://github.com/DaMinger/DaMinger.github.io.git/2014/05/11/Hadoop/hbase_problem/"/>
+    <id>https://github.com/DaMinger/DaMinger.github.io.git/2014/05/11/Hadoop/hbase_problem/</id>
+    <published>2014-05-11T02:23:49.000Z</published>
+    <updated>2014-05-11T02:25:28.000Z</updated>
+    <content type="html"><![CDATA[<p><div align=left><a href="http://blog.csdn.net/michael_zhu_2004/article/details/8330777" target="_blank">参考1</a>和<a href="http://www.dataguru.cn/blog-303-529.html" target="_blank">参考2</a></div></p>
+<h5 id="我们常说HBase是“数据即日志”的数据库，它是怎样修改和删除数据的？和Oracle这类传统的RDBMS有什么区别？">我们常说HBase是“数据即日志”的数据库，它是怎样修改和删除数据的？和Oracle这类传统的RDBMS有什么区别？</h5>
+<p>数据即日志，主要是指HBase中数据如日志般存储和更新，即几乎没有插入，修改，删除的操作，只是不停增加数据。这一特性主要是由于HBase数据文件存储在HDFS系统中，而该系统由于统一数据分布在不同的节点中，对其中数据的删除和修改都是非常困难的。故HBase在修改数据时就对该数据增加一个更新的数据版本（以时间戳），HBase的修改操作也同样增加一条命令删除数据的记录，等到对storefile进行合并时，去掉这些数据。</p>
+<p>Oracle没有数据的版本概念，在修改和删除数据时不会增加新的数据记录，直接对老数据进行修改或删除。一旦完成修改或删除，则原始数据发生变化。</p>
+<h5 id="HBase合并storefile的原因是什么？在合并的过程中会做什么操作？如果在合并过程中恰好有涉及到有关storefile的查询发生，会发生什么情况（这个问题需要自行研究）？">HBase合并storefile的原因是什么？在合并的过程中会做什么操作？如果在合并过程中恰好有涉及到有关storefile的查询发生，会发生什么情况（这个问题需要自行研究）？</h5>
+<p>HBbase的新数据首先是放在MemoryStore中的，数据量超过阈值后才会被写入物理文件StoreFile。因此，这些物理文件StoreFile初次的容量都不大（内存的映射）。HBase会定时合并这些较小的StoreFile，形成较大的StoreFile更有利于HDFS物理文件的读操作。而且，合并时会删除其中过期的旧版本数据和被删除的数据。</p>
+<p>如果在合并过程中恰好有涉及到有关storefile的查询发生的话，HBase先是把小storefile加载到内存中，用户可以在内存中检索相关数据，其实内存中做存在一个独立镜像备份专门提供查询，当合并完成后内存空间中的镜像备份才会被撤销。</p>
+<h5 id="HBase具有怎样的一致性水平？">HBase具有怎样的一致性水平？</h5>
+<p>CAP理论是由EricBrewer教授提出的，在设计和部署分布式应用的时候，存在三个核心的系统需求，这个三个需求之间存在一定的特殊关系。三个需求如下：</p>
+<pre><code><span class="keyword">C</span>: Consistency 一致性
+A: Availability 可用性
+P:<span class="keyword">Partition</span> <span class="keyword">Tolerance</span>分区容错性
+</code></pre><p>CAP理论的核心是：一个分布式系统不可能同时很好的满足一致性，可用性和分区容错性这三个需求，最多只能同时较好的满足两个。 </p>
+<p>C: Consistency 一致性</p>
+<p>一致性又称为原子性或者事务性。表示一个事务的操作是不可分割的，要不然这个事务完成，要不然这个事务不完成，不会出现这个事务完成了一半这样的情况。这种事务的原子性使得数据具有一致性。我们通常情况下在数据库中存在的脏数据就属于数据没有具有一致性的表现。而在分布式系统中，经常出现的一个数据不具有一致性的情况是读写数据时缺乏一致性。比如两个节点数据冗余，第一个节点有一个写操作，数据更新以后没有有效的使得第二个节点更新数据，在读取第二个节点的时候就会出现不一致的问题出现。传统的ACID数据库是很少存在一致性问题的，因为数据的单点原因，数据的存取又具有良好的事务性，不会出现读写的不一致。</p>
+<p>HBase架构在HDFS系统之上，是分布式的NoSQL列式数据库，它是一个CP型数据库。每一行数据仅在一个Region中，没有多余副本可读，保证了数据的一致性</p>
+<h4 id="这个答案也不错，故一并记录下：">这个答案也不错，故一并记录下：</h4>
+<h5 id="我们常说HBase是“数据即日志”的数据库，它是怎样修改和删除数据的？和Oracle这类传统的RDBMS有什么区别？-1">我们常说HBase是“数据即日志”的数据库，它是怎样修改和删除数据的？和Oracle这类传统的RDBMS有什么区别？</h5>
+<p>答：首先Hbase中的一个“元素”是由行键、列族名、限定符、时间戳唯一标识的并且行键作为数据行在表里的唯一标识，我们只有通过行键来访问列族别无他法。</p>
+<p>修改数据：我们先找到要修改的行键把新的数据记录追加到对应的列族中并打上一个新时间戳代表最新版本。</p>
+<p>删除数据：插入带有删除标记的行进入，相当于把整个行键所在的行删了。</p>
+<p>小结：hbase中所有修改和删除都是用insert方式来完成的，这是由底层HDFS文件系统特性决定的，HDFS中的文件只能一次性写入不能修改可以删除在写回。因此hbase是天生面向时间查询的数据库。例如 查询最近一段时间一个人发布的博客、发布签名、发布照片so on。</p>
+<p>hbase特点</p>
+<pre><code>(<span class="number">1</span>)适合大量插入同时key-value查询，例如可以输入一个key查询一个value，还可以输入一组key查询一组value。
+(<span class="number">2</span>)瓶颈是硬盘的传输速度，因为有大量的插入操作和读出操作，使用SSD  SCSI  IDE不同的硬盘效率是不同的。
+(<span class="number">3</span>)适合数据分析。
+(<span class="number">4</span>)列式数据库会把相同列的数据都放在一块即列为单位存储。当我们查询某一列的时候只需要调出相应的块即可，这样还可以减少很多<span class="keyword">I</span>/<span class="keyword">O</span>。
+(<span class="number">5</span>)如果数据元素间的相似性很高的话可以进行大幅度的压缩，相似度越高压缩比越大，甚至可以压缩到原来十几分之一、上百分之一。即节约了空间又减少了<span class="keyword">I</span>/<span class="keyword">O</span>，从而提高性能。
+(<span class="number">6</span>)hbase只有主键索引，它使用的是LSM（<span class="keyword">Log</span> Structure Merge）索引，因为hbase所有的修改都是使用追加方式完成的，从数据流上看按照顺序方式写入与日志写入的方式相同，我们又可以认为数据和日志一体化，这又节约了很多空间。
+</code></pre><p>oracle特点</p>
+<pre><code>(<span class="number">1</span>)适合小事务短时间片密集型OLTP系统，例如在线交易系统。
+(<span class="number">2</span>)瓶颈是硬盘的寻道时间（磁头移动时间），因为oracle随机写随机修改块，首先要找到块这个过程就是寻道时间，而寻道时间又由硬盘转速决定的，<span class="number">5400</span> <span class="number">7200</span> <span class="number">15000</span>转/秒 不同的转速效率也是不同的。
+(<span class="number">3</span>)适合做SQL统计。
+(<span class="number">4</span>)行式数据库会按照数据行顺序集中存放即行为单位存储。当我们查询某一列的时候必须把表里所有的行读完才能抽取我们所要的行，这样很不划算，还要付出很大的<span class="keyword">I</span>/<span class="keyword">O</span>资源。
+(<span class="number">5</span>)那么从结构上讲oracle的压缩性能就要略逊一筹。
+(<span class="number">6</span>)oracle常用的是B+树索引，比较大小来查找记录，小的走左边大的走右边，如果列中的相似度较高的话性能较差。
+</code></pre><h5 id="HBase合并storefile的原因是什么？在合并的过程中会做什么操作？如果在合并过程中恰好有涉及到有关storefile的查询发生，会发生什么情况！">HBase合并storefile的原因是什么？在合并的过程中会做什么操作？如果在合并过程中恰好有涉及到有关storefile的查询发生，会发生什么情况！</h5>
+<p>答：首先我们介绍一下Hbase数据存储的物理结构</p>
+<pre><code>一个物理节点只能跑一个HRegionserver
+一个HRegionServer可以包括很多个Region实例，可以是不同表Region
+一个Region包含一个hlog和多个store（一个store就是一个列族，因为同列族元素在物理上存放在同一个地方，不同列族在物理上是分离的）
+一个store包含一个memstore和多个storefile
+</code></pre><p>当我们在处理数据的时候，首先把数据加载到memstore，数据越来越多直到memstore占满，再写入硬盘storefile中，每次写入形成一个单独storefile，当storefile达到一定的数量后，就会开始把小storefile合并成大storefile，因为hadoop不擅长处理小文件，文件越大性能越好。</p>
+<p>在合并的过程中会抛弃删除标识的行和版本过旧的行（hbase版本抛弃方式（1）我们可以预先定义版本的个数，超过这个值就抛弃（2）还可以预先定义版本的时间长短，超过这个时间就抛弃），合并完后形成更大的storefile，当达到数量再次合并，直到storefile容量超过一定阀值后会把当前的Region进行分裂为2个并由Hmaster（hbase数据库主控节点）分配到不同的HRegionServer服务器处理实现负载均衡。</p>
+<p>如果在合并过程中恰好有涉及到有关storefile的查询发生的话，我们先是把小storefile加载到内存中进行合并此时如有用户访问可以在内存中检索相关数据返回给用户，我们可以想象在内存中做一个独立镜像备份专门提供被查询需求，另一个主体在另一块内存空间里进行合并，当合并完成后释放备份的内存空间，返回到原来的状态。</p>
+<h5 id="Hbase具有怎么样的一致性水平">Hbase具有怎么样的一致性水平</h5>
+<p>答：hbase是最终一致性的系统，因为hbase是架构在hadoop之上的数据库，“错误是常态”是hadoop座右铭，在cap理论中hbase为了满足可用性和分区容错性牺牲了一部分的数据一致性。</p>
+<p>举例：我们要进行电信的指标汇总，并且把汇总结果冗余三份分布在3个datanode中，我们可以设置阀值只要有2份结果保存了我们就可以继续做下面的操作，在一定时间范围内允许第3份结果稍后一致性同步，这就是最终一致性。所以说hbase是适用于AP理论的系统，最终一致性也满足分布式集群的特点。</p>
+]]></content>
+    
+    
+      <category term="Hadoop" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/Hadoop/"/>
+    
+      <category term="HBase" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/HBase/"/>
+    
+      <category term="Hadoop" scheme="https://github.com/DaMinger/DaMinger.github.io.git/categories/Hadoop/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[HBase体系结构及原理]]></title>
+    <link href="https://github.com/DaMinger/DaMinger.github.io.git/2014/05/11/Hadoop/hbase/"/>
+    <id>https://github.com/DaMinger/DaMinger.github.io.git/2014/05/11/Hadoop/hbase/</id>
+    <published>2014-05-11T02:20:31.000Z</published>
+    <updated>2014-05-11T03:12:52.000Z</updated>
+    <content type="html"><![CDATA[<h4 id="HBase简介">HBase简介</h4>
+<p>HBase是Apache Hadoop的数据库，能够对大型数据提供随机、实时的读写访问。HBase的目标是存储并处理大型的数据。HBase是一个开源的，分布式的，多版本的，面向列的存储模型。它存储的是松散型数据。</p>
+<p>HBase特性：高可靠性、高效性、面向列、可伸缩、可在廉价PC Server搭建大规模结构化存储集群</p>
+<p>HBase是Google BigTable的开源实现，其相互对应如下：</p>
+<table>    <tr><td></td><td>Google</td><td>HBase</td></tr><tr><td>文件存储系统</td><td>GFS</td><td>HDFS</td></tr><tr><td>海量数据处理</td><td>MapReduce</td><td>MapReduce</td></tr><tr><td>协同服务管理</td><td>Chubby</td><td>Zookeeper</td></tr><br></table>
+
+<h4 id="HBase关系图：">HBase关系图：</h4>
+<p><img src="/img/Hadoop/HBase/1.jpg" alt="HBase关系图"><br>HBase位于结构化存储层，围绕HBase，各部件对HBase的支持情况：</p>
+<pre><code>Hadoop部件　　　　　　　　　　　　作用
+HDFS　　　　　　　　　　　　　　高可靠的底层存储支持
+MapReduce        　　　　　　　 高性能的计算能力
+Zookeeper        　　　　　　　 稳定服务和failover机制
+Pig&amp;Hive　　　　　　　　　　　　高层语言支持，便于数据统计
+Sqoop　　　　　　　　　　　　　 提供RDBMS数据导入，便于传统数据库向HBase迁移
+</code></pre><p>访问HBase的接口</p>
+<pre><code>方式　　　　　　　　　　　　特点　　　　　　　　　　　　　　         场合
+Native Java API　　　　　　最常规和高效        　　　　　　　　　　Hadoop MapReduce Job并行处理HBase表数据
+HBase Shell　　　　　　　  最简单接口        　　　　　　　　　　　HBase管理使用
+Thrift Gateway　　　　　　 利用Thrift序列化支持多种语言        　　异构系统在线访问HBase表数据
+<span class="keyword">Rest</span> Gateway　　　　　　   解除语言限制        　　　　　　　　　　<span class="keyword">Rest</span>风格Http API访问
+Pig　　　　　　　　　　　　Pig Latin六十编程语言处理数据        　 数据统计
+Hive　　　　　　　　　　　 简单，SqlLike
+</code></pre><h4 id="HBase_数据模型">HBase 数据模型</h4>
+<p><img src="/img/Hadoop/HBase/2.jpg" alt="HBase数据模型"><br>组成部件说明：<br>Row Key：　　 　　Table主键 行键 Table中记录按照Row Key排序<br>Timestamp：   　　每次对数据操作对应的时间戳，也即数据的version number<br>Column Family： 　列簇，一个table在水平方向有一个或者多个列簇，列簇可由任意多个Column组成，列簇支持动态扩展，无须预定义数量及类型，二进制存储，用户需自行进行类型转换</p>
+<h4 id="Table&amp;Region">Table&amp;Region</h4>
+<p><img src="/img/Hadoop/HBase/3.jpg" alt="图三"><br>Table随着记录增多不断变大，会自动分裂成多份Splits，成为Regions<br>一个region由[startkey，endkey)表示<br>不同region会被Master分配给相应的RegionServer进行管理</p>
+<h4 id="两张特殊表：-ROOT-_&amp;_-META-">两张特殊表：-ROOT- &amp; .META.</h4>
+<p><img src="/img/Hadoop/HBase/4.jpg" alt="图四"><br>.META.        记录用户表的Region信息，同时，.META.也可以有多个region<br>-ROOT-         记录.META.表的Region信息，但是，-ROOT-只有一个region<br>Zookeeper中记录了-ROOT-表的location<br>客户端访问数据的流程：<br>Client -&gt; Zookeeper -&gt; -ROOT- -&gt; .META. -&gt; 用户数据表<br>多次网络操作，不过client端有cache缓存</p>
+<h4 id="HBase_系统架构图">HBase 系统架构图</h4>
+<p><img src="/img/Hadoop/HBase/5.jpg" alt="HBase系统架构图"><br>组成部件说明</p>
+<h6 id="Client：">Client：</h6>
+<p>使用HBase RPC机制与HMaster和HRegionServer进行通信</p>
+<p>Client与HMaster进行通信进行管理类操作</p>
+<p>Client与HRegionServer进行数据读写类操作</p>
+<h6 id="Zookeeper：">Zookeeper：</h6>
+<p>Zookeeper Quorum存储-ROOT-表地址、HMaster地址</p>
+<p>HRegionServer把自己以Ephedral方式注册到Zookeeper中，HMaster随时感知各个HRegionServer的健康状况</p>
+<p>Zookeeper避免HMaster单点问题</p>
+<h6 id="HMaster：">HMaster：</h6>
+<p>HMaster没有单点问题，HBase中可以启动多个HMaster，通过Zookeeper的Master Election机制保证总有一个Master在运行</p>
+<p>主要负责Table和Region的管理工作：</p>
+<p>管理用户对表的增删改查操作</p>
+<p>管理HRegionServer的负载均衡，调整Region分布</p>
+<p>Region Split后，负责新Region的分布</p>
+<p>在HRegionServer停机后，负责失效HRegionServer上Region迁移</p>
+<h6 id="HRegionServer：">HRegionServer：</h6>
+<p>HBase中最核心的模块，主要负责响应用户I/O请求，向HDFS文件系统中读写数据<br><img src="/img/Hadoop/HBase/6.jpg" alt="图6"><br>HRegionServer管理一些列HRegion对象；</p>
+<p>每个HRegion对应Table中一个Region，HRegion由多个HStore组成；</p>
+<p>每个HStore对应Table中一个Column Family的存储；</p>
+<p>Column Family就是一个集中的存储单元，故将具有相同IO特性的Column放在一个Column Family会更高效</p>
+<h6 id="HStore：">HStore：</h6>
+<p>HBase存储的核心。由MemStore和StoreFile组成。</p>
+<p>MemStore是Sorted Memory Buffer。用户写入数据的流程：<br><img src="/img/Hadoop/HBase/7.jpg" alt="图7"></p>
+<p>Client写入 -&gt; 存入MemStore，一直到MemStore满 -&gt; Flush成一个StoreFile，直至增长到一定阈值 -&gt; 出发Compact合并操作 -&gt; 多个StoreFile合并成一个StoreFile，同时进行版本合并和数据删除 -&gt; 当StoreFiles Compact后，逐步形成越来越大的StoreFile -&gt; 单个StoreFile大小超过一定阈值后，触发Split操作，把当前Region Split成2个Region，Region会下线，新Split出的2个孩子Region会被HMaster分配到相应的HRegionServer上，使得原先1个Region的压力得以分流到2个Region上</p>
+<p>由此过程可知，HBase只是增加数据，有所得更新和删除操作，都是在Compact阶段做的，所以，用户写操作只需要进入到内存即可立即返回，从而保证I/O高性能。</p>
+<h6 id="HLog">HLog</h6>
+<p>引入HLog原因：</p>
+<p>在分布式系统环境中，无法避免系统出错或者宕机，一旦HRegionServer以外退出，MemStore中的内存数据就会丢失，引入HLog就是防止这种情况</p>
+<p>工作机制：</p>
+<p>每个HRegionServer中都会有一个HLog对象，HLog是一个实现Write Ahead Log的类，每次用户操作写入Memstore的同时，也会写一份数据到HLog文件，HLog文件定期会滚动出新，并删除旧的文件(已持久化到StoreFile中的数据)。当HRegionServer意外终止后，HMaster会通过Zookeeper感知，HMaster首先处理遗留的HLog文件，将不同region的log数据拆分，分别放到相应region目录下，然后再将失效的region重新分配，领取到这些region的HRegionServer在Load Region的过程中，会发现有历史HLog需要处理，因此会Replay HLog中的数据到MemStore中，然后flush到StoreFiles，完成数据恢复。</p>
+<h6 id="HBase存储格式">HBase存储格式</h6>
+<p>HBase中的所有数据文件都存储在Hadoop HDFS文件系统上，格式主要有两种：</p>
+<p>HFile HBase中KeyValue数据的存储格式，HFile是Hadoop的二进制格式文件，实际上StoreFile就是对HFile做了轻量级包装，即StoreFile底层就是HFile</p>
+<p>HLog File，HBase中WAL（Write Ahead Log） 的存储格式，物理上是Hadoop的Sequence File</p>
+<h6 id="HFile">HFile</h6>
+<p><img src="/img/Hadoop/HBase/8.jpg" alt="图8"><br>图片解释：<br>HFile文件不定长，长度固定的块只有两个：Trailer和FileInfo</p>
+<p>Trailer中指针指向其他数据块的起始点</p>
+<p>File Info中记录了文件的一些Meta信息，例如：AVG_KEY_LEN, AVG_VALUE_LEN, LAST_KEY, COMPARATOR, MAX_SEQ_ID_KEY等</p>
+<p>Data Index和Meta Index块记录了每个Data块和Meta块的起始点</p>
+<p>Data Block是HBase I/O的基本单元，为了提高效率，HRegionServer中有基于LRU的Block Cache机制</p>
+<p>每个Data块的大小可以在创建一个Table的时候通过参数指定，大号的Block有利于顺序Scan，小号Block利于随机查询；每个Data块除了开头的Magic以外就是一个个KeyValue对拼接而成, Magic内容就是一些随机数字，目的是防止数据损坏</p>
+<p>HFile里面的每个KeyValue对就是一个简单的byte数组。这个byte数组里面包含了很多项，并且有固定的结构。<br><img src="/img/Hadoop/HBase/9.jpg" alt="图9"></p>
+<p>KeyLength和ValueLength：两个固定的长度，分别代表Key和Value的长度</p>
+<p>Key部分：Row Length是固定长度的数值，表示RowKey的长度，Row 就是RowKey</p>
+<p>Column Family Length是固定长度的数值，表示Family的长度</p>
+<p>接着就是Column Family，再接着是Qualifier，然后是两个固定长度的数值，表示Time Stamp和Key Type（Put/Delete）</p>
+<p>Value部分没有这么复杂的结构，就是纯粹的二进制数据</p>
+<h5 id="HLog_File">HLog File</h5>
+<p><img src="/img/Hadoop/HBase/10.jpg" alt="图10"></p>
+<p>HLog文件就是一个普通的Hadoop Sequence File，Sequence File 的Key是HLogKey对象，HLogKey中记录了写入数据的归属信息，除了table和region名字外，同时还包括 sequence number和timestamp，timestamp是“写入时间”，sequence number的起始值为0，或者是最近一次存入文件系统中sequence number。</p>
+<p>HLog Sequece File的Value是HBase的KeyValue对象，即对应HFile中的KeyValue</p>
+]]></content>
+    
+    
+      <category term="Hadoop" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/Hadoop/"/>
+    
+      <category term="HBase" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/HBase/"/>
+    
+      <category term="Hadoop" scheme="https://github.com/DaMinger/DaMinger.github.io.git/categories/Hadoop/"/>
+    
+  </entry>
   
   <entry>
     <title><![CDATA[Mahout利用朴素贝叶斯分类处理20个新闻组案例]]></title>
@@ -1946,675 +2617,6 @@ world   <span class="number">1</span>
       <category term="Hadoop" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/Hadoop/"/>
     
       <category term="Hadoop" scheme="https://github.com/DaMinger/DaMinger.github.io.git/categories/Hadoop/"/>
-    
-  </entry>
-  
-  <entry>
-    <title><![CDATA[启动eth0 网卡时报错Error: Connection activation failed: Device not managed by NetworkManager]]></title>
-    <link href="https://github.com/DaMinger/DaMinger.github.io.git/2014/04/13/Linux/linux_error_1/"/>
-    <id>https://github.com/DaMinger/DaMinger.github.io.git/2014/04/13/Linux/linux_error_1/</id>
-    <published>2014-04-13T02:44:29.000Z</published>
-    <updated>2014-04-13T12:07:14.000Z</updated>
-    <content type="html"><![CDATA[<p>Centos6.x下解决办法，在虚拟机中，启动eth0 网卡时报错：Error: Connection activation failed: Device not managed by NetworkManager。<br>解决办法：<br>    chkconfig NetworkManager off<br>    chkconfig network on<br>    service NetworkManager stop<br>    service network start<br>这是因为图形界面NetworkManager管理器与network服务有冲突，关上NetworkManager管理器既可<br>附：排查网络问题<br>基本的排错步骤（从上往下）<br>ping 127.0.0.1ping的通说明tcp协议栈没有问题<br>ping 主机地址 ping的通说明网卡没有问题<br>ping 路由器默认网关 ping的通说明包可以到达路由器<br>最后 ping DNS服务器地址<br>卡在哪一步，就查哪里</p>
-]]></content>
-    
-    
-      <category term="Linux" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/Linux/"/>
-    
-      <category term="网卡错误" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/%E7%BD%91%E5%8D%A1%E9%94%99%E8%AF%AF/"/>
-    
-      <category term="Linux" scheme="https://github.com/DaMinger/DaMinger.github.io.git/categories/Linux/"/>
-    
-  </entry>
-  
-  <entry>
-    <title><![CDATA[利用NFS+DNS+Shell脚本搭建Hadoop1.2.1]]></title>
-    <link href="https://github.com/DaMinger/DaMinger.github.io.git/2014/04/13/Hadoop/hadoop_install/"/>
-    <id>https://github.com/DaMinger/DaMinger.github.io.git/2014/04/13/Hadoop/hadoop_install/</id>
-    <published>2014-04-13T01:24:45.000Z</published>
-    <updated>2014-04-13T12:48:42.000Z</updated>
-    <content type="html"><![CDATA[<p>今天按照几个帖子把hadoop1.2.1搭建了,生产环境使用hadoop区别与测试环境的主要是：<br>1.用DNS而不是hosts文件解析主机名<br>2.使用NFS共享密钥文件，而不是逐个手工拷贝添加密钥<br>3.复制Hadoop时使用批量拷贝脚本而不是逐台复制</p>
-<h1 id="地址规划与安装环境">地址规划与安装环境</h1>
-<h2 id="Ip地址规划">Ip地址规划</h2>
-<pre><code>Ip地址             主机名                     hadoop角色                 其他用途
-<span class="number">192.168</span><span class="number">.18</span><span class="number">.60</span>     hadoop01<span class="preprocessor">.myhadoop</span><span class="preprocessor">.com</span>     namenode和jobtracker     DNS服务，NFS服务
-<span class="number">192.168</span><span class="number">.18</span><span class="number">.61</span>     hadoop02<span class="preprocessor">.myhadoop</span><span class="preprocessor">.com</span>     datanode和tasktracker
-<span class="number">192.168</span><span class="number">.18</span><span class="number">.62</span>     hadoop03<span class="preprocessor">.myhadoop</span><span class="preprocessor">.com</span>     datanode和tasktracker
-</code></pre><h2 id="安装环境">安装环境</h2>
-<pre><code>虚拟机软件 VMWare 
-安装的操作系统 CentOS <span class="number">6.3</span> x64
-java jdk <span class="number">1.7</span>_40 x64
-hadoop <span class="number">1.2</span>.<span class="number">1</span>
-<span class="built_in">bind</span> <span class="number">9.8</span>.<span class="number">2</span>
-</code></pre><h1 id="安装系统">安装系统</h1>
-<h2 id="安装CentOS_6-3">安装CentOS 6.3</h2>
-<pre><code>安装后注意关闭防火墙：
-service iptables <span class="keyword">stop</span>
-chkconfig iptables <span class="keyword">off</span>
-关闭selinux
-vi /etc/selinux/config
-将SELINUX=enforcing 改成SELINUX=disabled
-</code></pre><h2 id="创建用户">创建用户</h2>
-<pre><code>建立hadoop运行账号
-在所有的节点创建hadoop运行账号
-[root<span class="property">@hadoop01</span> ~]<span class="comment"># groupadd hadoop</span>
-[root<span class="property">@hadoop01</span> ~]<span class="comment"># useradd -g hadoop grid --注意此处一定要指定分组，不然可能会不能建立互信</span>
-[root<span class="property">@hadoop01</span> ~]<span class="comment"># id grid</span>
-uid=<span class="number">501</span>(grid)gid=<span class="number">54326</span>(hadoop) groups=<span class="number">54326</span>(hadoop)
-[root<span class="property">@hadoop01</span> ~]<span class="comment"># passwd grid</span>
-Changingpassword <span class="keyword">for</span> user grid.
-New <span class="attribute">UNIXpassword</span>:
-BAD <span class="attribute">PASSWORD</span>: itis too short
-Retype <span class="keyword">new</span> <span class="attribute">UNIXpassword</span>:
-<span class="attribute">passwd</span>: allauthentication tokens updated successfully.
-说明：在大的hadoop集群安装环境中，这步可以在批量安装linux系统之前完成，然后再进行系统的复制。（没
-有试过，据说可以ghost工具软件应该可以实现）    
-</code></pre><h2 id="安装JDK">安装JDK</h2>
-<pre><code>[root<span class="variable">@hadoop01</span> grid]<span class="comment"># tar -zxvf jdk-7u40-linux-x64.tar.gz</span>
-[root<span class="variable">@hadoop01</span> grid]<span class="comment"># mv jdk1.7.0_40/ /usr/</span>
-</code></pre><h2 id="环境变量">环境变量</h2>
-<pre><code>[root@hadoop01 etc]<span class="comment"># vi /etc/profile</span>
-<span class="keyword">export</span> JAVA_HOME=/usr/jdk1.<span class="number">7.0</span>_40
-<span class="keyword">export</span> HADOOP_FREFIX=/home/grid/hadoop-<span class="number">1.2</span>.<span class="number">1</span>
-<span class="keyword">export</span> HADOOP_COMMON_HOME=<span class="variable">${HADOOP_FREFIX}</span>
-<span class="keyword">export</span> HADOOP_CONF_DIR=<span class="variable">${HADOOP_FREFIX}</span>/conf
-<span class="keyword">export</span> CLASSPATH=.:<span class="variable">$JAVA_HOME</span>/lib:<span class="variable">$JAVA_HOME</span>/lib/tools.jar
-<span class="keyword">export</span> PATH=<span class="variable">$JAVA_HOME</span>/bin:<span class="variable">${HADOOP_FREFIX}</span>/bin:<span class="variable">${HADOOP_FREFIX}</span>/sbin:<span class="variable">$PATH</span>
-[root@hadoop01 etc]<span class="comment"># source /etc/profile</span>
-</code></pre><h2 id="安装本地yum源">安装本地yum源</h2>
-<p><a href="http://daminger.github.io/2014/04/09/Linux/linux_yum/" target="_blank">参考我的另外一篇博客</a></p>
-<h1 id="安装DNS">安装DNS</h1>
-<h2 id="从本地源安装">从本地源安装</h2>
-<pre><code>[root<span class="variable">@hadoop01</span> ~]<span class="comment"># yum install bind_libs bind bind-utils</span>
-Loaded plugins: fastestmirror, refresh-packagekit, security
-Loading mirror speeds from cached hostfile
-Setting up Install Process
-No <span class="keyword">package</span> bind_libs available.
-Package <span class="number">32</span>:<span class="keyword">bind</span>-utils-<span class="number">9.8</span>.<span class="number">2</span>-<span class="number">0</span>.<span class="number">10</span>.rc1.el6.x86_64 already installed <span class="keyword">and</span> latest version
-Resolving Dependencies
---&gt; Running transaction check
----&gt; Package <span class="keyword">bind</span>.x86_64 <span class="number">32</span>:<span class="number">9.8</span>.<span class="number">2</span>-<span class="number">0</span>.<span class="number">10</span>.rc1.el6 will be installed
---&gt; Finished Dependency Resolution
-Dependencies Resolved
-=========================================================================
-=======
-Package Arch Version Repository Size
-=========================================================================
-=======
-Installing:
-<span class="keyword">bind</span> x86_64 <span class="number">32</span>:<span class="number">9.8</span>.<span class="number">2</span>-<span class="number">0</span>.<span class="number">10</span>.rc1.el6 Media <span class="number">4.0</span> M
-Transaction Summary
-=========================================================================
-=======
-Install <span class="number">1</span> Package(<span class="keyword">s</span>)
-Total download size: <span class="number">4.0</span> M
-Installed size: <span class="number">7.2</span> M
-Is this ok [<span class="regexp">y/N]: y
-Downloading Packages:
-Running rpm_check_debug
-Running Transaction Test
-Transaction Test Succeeded
-Running Transaction
-Warning: RPMDB altered outside of yum.
-Installing : 32:bind-9.8.2-0.10.rc1.el6.x86_64 1/1
-/sbin</span><span class="regexp">/ldconfig: /usr</span><span class="regexp">/lib64/libhdfs</span>.so.<span class="number">0</span> is <span class="keyword">not</span> a symbolic <span class="keyword">link</span>
-/sbin/ldconfig: <span class="regexp">/usr/lib</span>64/libhadoop.so.<span class="number">1</span> is <span class="keyword">not</span> a symbolic <span class="keyword">link</span>
-Verifying : <span class="number">32</span>:<span class="keyword">bind</span>-<span class="number">9.8</span>.<span class="number">2</span>-<span class="number">0</span>.<span class="number">10</span>.rc1.el6.x86_64 <span class="number">1</span>/<span class="number">1</span>
-Installed:
-<span class="keyword">bind</span>.x86_64 <span class="number">32</span>:<span class="number">9.8</span>.<span class="number">2</span>-<span class="number">0</span>.<span class="number">10</span>.rc1.el6
-Complete!
-[root<span class="variable">@hadoop01</span> ~]<span class="comment"># yum install bind_libs bind bind-utils bind-chroot</span>
-Loaded plugins: fastestmirror, refresh-packagekit, security
-Loading mirror speeds from cached hostfile
-Setting up Install Process
-No <span class="keyword">package</span> bind_libs available.
-Package <span class="number">32</span>:<span class="keyword">bind</span>-<span class="number">9.8</span>.<span class="number">2</span>-<span class="number">0</span>.<span class="number">10</span>.rc1.el6.x86_64 already installed <span class="keyword">and</span> latest version
-Package <span class="number">32</span>:<span class="keyword">bind</span>-utils-<span class="number">9.8</span>.<span class="number">2</span>-<span class="number">0</span>.<span class="number">10</span>.rc1.el6.x86_64 already installed <span class="keyword">and</span> latest version
-Resolving Dependencies
---&gt; Running transaction check
----&gt; Package <span class="keyword">bind</span>-<span class="keyword">chroot</span>.x86_64 <span class="number">32</span>:<span class="number">9.8</span>.<span class="number">2</span>-<span class="number">0</span>.<span class="number">10</span>.rc1.el6 will be installed
---&gt; Finished Dependency Resolution
-Dependencies Resolved
-=========================================================================
-=======
-Package Arch Version Repository Size
-=========================================================================
-=======
-Installing:
-<span class="keyword">bind</span>-<span class="keyword">chroot</span> x86_64 <span class="number">32</span>:<span class="number">9.8</span>.<span class="number">2</span>-<span class="number">0</span>.<span class="number">10</span>.rc1.el6 Media <span class="number">70</span> k
-Transaction Summary
-=========================================================================
-=======
-Install <span class="number">1</span> Package(<span class="keyword">s</span>)
-Total download size: <span class="number">70</span> k
-Installed size: <span class="number">0</span>
-Is this ok [<span class="regexp">y/N]: y
-Downloading Packages:
-Running rpm_check_debug
-Running Transaction Test
-Transaction Test Succeeded
-Running Transaction
-Installing : 32:bind-chroot-9.8.2-0.10.rc1.el6.x86_64 1/1
-Verifying : 32:bind-chroot-9.8.2-0.10.rc1.el6.x86_64 1/</span><span class="number">1</span>
-Installed:
-<span class="keyword">bind</span>-<span class="keyword">chroot</span>.x86_64 <span class="number">32</span>:<span class="number">9.8</span>.<span class="number">2</span>-<span class="number">0</span>.<span class="number">10</span>.rc1.el6
-Complete!
-安装<span class="keyword">bind</span>-<span class="keyword">chroot</span>，将<span class="keyword">bind</span>的根目录限定在某一个目录之中，增加系统安全性。
-[root<span class="variable">@hadoop01</span> ~]<span class="comment"># yum install bind_libs bind bind-utils</span>
-检查安装情况：
-[root<span class="variable">@hadoop01</span> named]<span class="comment"># rpm -qa bind</span>
-<span class="keyword">bind</span>-<span class="number">9.8</span>.<span class="number">2</span>-<span class="number">0</span>.<span class="number">10</span>.rc1.el6.x86_64
-root<span class="variable">@hadoop01</span> named]<span class="comment"># rpm -qa bind-chroot</span>
-<span class="keyword">bind</span>-<span class="keyword">chroot</span>-<span class="number">9.8</span>.<span class="number">2</span>-<span class="number">0</span>.<span class="number">10</span>.rc1.el6.x86_64
-[root<span class="variable">@hadoop01</span> named]<span class="comment"># rpm -qa bind-utils</span>
-<span class="keyword">bind</span>-utils-<span class="number">9.8</span>.<span class="number">2</span>-<span class="number">0</span>.<span class="number">10</span>.rc1.el6.x86_64
-将<span class="string">"<span class="variable">$AddUnixListenSocket</span> /var/named/chroot/dev/log"</span>加入/etc/rsyslog.conf文件中，不然rsyslog守护程序将无法记载
-<span class="keyword">bind</span>日志。
-[root<span class="variable">@hadoop01</span> etc]<span class="comment"># vi rsyslog.conf</span>
-<span class="variable">$AddUnixListenSocket</span> /var/named/<span class="keyword">chroot</span>/dev/<span class="keyword">log</span>
-</code></pre><h2 id="配置/etc/named-conf">配置/etc/named.conf</h2>
-<pre><code>[root<span class="variable">@hadoop01</span> etc]<span class="comment"># vi named.conf</span>
-options {
-listen-on port <span class="number">53</span> { any; }; 把localhost改为any
-listen-on-v6 port <span class="number">53</span> { <span class="symbol">:</span><span class="symbol">:</span><span class="number">1</span>; };
-directory <span class="string">"/var/named"</span>;
-dump-file <span class="string">"/var/named/data/cache_dump.db"</span>;
-statistics-file <span class="string">"/var/named/data/named_stats.txt"</span>;
-memstatistics-file <span class="string">"/var/named/data/named_mem_stats.txt"</span>;
-allow-query { any; }; 把localhost改为any
-recursion yes;
-dnssec-enable yes;
-dnssec-validation yes;
-dnssec-lookaside auto;
-<span class="regexp">/* Path to ISC DLV key */</span>
-bindkeys-file <span class="string">"/etc/named.iscdlv.key"</span>;
-managed-keys-directory <span class="string">"/var/named/dynamic"</span>;
-};
-logging {
-channel default_debug {
-file <span class="string">"data/named.run"</span>;
-severity dynamic;
-};
-};
-<span class="regexp">//zone</span> <span class="string">"."</span> <span class="constant">IN</span> {
-<span class="regexp">//</span> type hint;
-<span class="regexp">//</span> file <span class="string">"named.ca"</span>;
-<span class="regexp">//</span> };
-<span class="keyword">include</span> <span class="string">"/etc/named.rfc1912.zones"</span>;
-<span class="regexp">//include</span> <span class="string">"/etc/named.root.key"</span>; 注释掉
-</code></pre><h2 id="配置named-rfc1912-zones">配置named.rfc1912.zones</h2>
-<pre><code>[root@hadoop01 etc]# vi named.rfc1912.zones
-修改为以下内容：
-zone <span class="string">"myhadoop.com"</span> IN {
-<span class="class"><span class="keyword">type</span> <span class="title">master</span>;</span>
-file <span class="string">"myhadoop.com.zone"</span>;
-allow-update { none; };
-};
-
-zone <span class="string">"18.168.192.in-addr.arpa"</span> IN {
-<span class="class"><span class="keyword">type</span> <span class="title">master</span>;</span>
-file <span class="string">"18.168.192.zone"</span>;
-allow-update { none; };
-};
-</code></pre><h2 id="创建区域文件">创建区域文件</h2>
-<pre><code>需要创建正向记录文件myhadoop<span class="preprocessor">.com</span><span class="preprocessor">.zone</span>和反向记录文件<span class="number">18.168</span><span class="number">.192</span><span class="preprocessor">.in</span>-addr<span class="preprocessor">.zon</span>，文件应
-在/var/named/chroot/var/named目录下
-[root@hadoop01 named]<span class="preprocessor"># vi myhadoop.com.zone</span>
-$TTL <span class="number">1</span>D
-@ <span class="keyword">IN</span> SOA hadoop01<span class="preprocessor">.myhadoop</span><span class="preprocessor">.com</span>. root<span class="preprocessor">.myhadoop</span><span class="preprocessor">.com</span>. (
-<span class="number">20140221</span> <span class="comment">; serial</span>
-<span class="number">1</span>D <span class="comment">; refresh</span>
-<span class="number">1</span>H <span class="comment">; retry</span>
-<span class="number">1</span>W <span class="comment">; expire</span>
-<span class="number">3</span>H ) <span class="comment">; minimum</span>
-@ <span class="keyword">IN</span> NS hadoop01<span class="preprocessor">.myhadoop</span><span class="preprocessor">.com</span>.
-hadoop01<span class="preprocessor">.myhadoop</span><span class="preprocessor">.com</span>. <span class="keyword">IN</span> A <span class="number">192.168</span><span class="number">.18</span><span class="number">.60</span>
-hadoop02<span class="preprocessor">.myhadoop</span><span class="preprocessor">.com</span>. <span class="keyword">IN</span> A <span class="number">192.168</span><span class="number">.18</span><span class="number">.61</span>
-hadoop03<span class="preprocessor">.myhadoop</span><span class="preprocessor">.com</span>. <span class="keyword">IN</span> A <span class="number">192.168</span><span class="number">.18</span><span class="number">.62</span>
-[root@hadoop01 named]<span class="preprocessor"># vi 18.168.192.zone</span>
-$TTL <span class="number">86400</span>
-@ <span class="keyword">IN</span> SOA hadoop01<span class="preprocessor">.myhadoop</span><span class="preprocessor">.com</span>. root<span class="preprocessor">.myhadoop</span><span class="preprocessor">.com</span>. (
-<span class="number">1997022700</span> <span class="comment">; Serial</span>
-<span class="number">28800</span> <span class="comment">; Refresh</span>
-<span class="number">14400</span> <span class="comment">; Retry</span>
-<span class="number">3600000</span> <span class="comment">; Expire</span>
-<span class="number">86400</span> ) <span class="comment">; Minimum</span>
-@ <span class="keyword">IN</span> NS hadoop01<span class="preprocessor">.myhadoop</span><span class="preprocessor">.com</span>.
-<span class="number">60</span> <span class="keyword">IN</span> PTR hadoop01<span class="preprocessor">.myhadoop</span><span class="preprocessor">.com</span>
-<span class="number">61</span> <span class="keyword">IN</span> PTR hadoop02<span class="preprocessor">.myhadoop</span><span class="preprocessor">.com</span>
-<span class="number">62</span> <span class="keyword">IN</span> PTR hadoop03<span class="preprocessor">.myhadoop</span><span class="preprocessor">.com</span>
-[root@hadoop01 named]<span class="preprocessor"># chgrp named *</span>
-[root@hadoop01 named]<span class="preprocessor"># ls -l</span>
-total <span class="number">8</span>
--rwxr-xr-<span class="built_in">x</span> <span class="number">1</span> root named <span class="number">532</span> Feb <span class="number">21</span> <span class="number">12</span>:<span class="number">23</span> <span class="number">18.168</span><span class="number">.192</span><span class="preprocessor">.zone</span>
--rwxr-xr-<span class="built_in">x</span> <span class="number">1</span> root named <span class="number">336</span> Feb <span class="number">21</span> <span class="number">11</span>:<span class="number">38</span> myhadoop<span class="preprocessor">.com</span><span class="preprocessor">.zone</span>
-</code></pre><h2 id="修改各节点/etc/resolv-conf文件">修改各节点/etc/resolv.conf文件</h2>
-<pre><code>[root<span class="variable">@hadoop01</span> named]<span class="comment"># vi /etc/resolv.conf</span>
-nameserver <span class="number">192.168</span>.<span class="number">18.60</span>
-</code></pre><h2 id="检查">检查</h2>
-<pre><code>[root@hadoop01 named]<span class="preprocessor"># named-checkzone node.myhadoop.com /var/named/chroot/var/named/myhadoop.com.zone</span>
-/var/named/chroot/var/named/myhadoop<span class="preprocessor">.com</span><span class="preprocessor">.zone</span>:<span class="number">9</span>: ignoring <span class="keyword">out</span>-of-zone data (hadoop01<span class="preprocessor">.myhadoop</span><span class="preprocessor">.com</span>)
-/var/named/chroot/var/named/myhadoop<span class="preprocessor">.com</span><span class="preprocessor">.zone</span>:<span class="number">10</span>: ignoring <span class="keyword">out</span>-of-zone data (hadoop02<span class="preprocessor">.myhadoop</span><span class="preprocessor">.com</span>)
-/var/named/chroot/var/named/myhadoop<span class="preprocessor">.com</span><span class="preprocessor">.zone</span>:<span class="number">11</span>: ignoring <span class="keyword">out</span>-of-zone data (hadoop03<span class="preprocessor">.myhadoop</span><span class="preprocessor">.com</span>)
-/var/named/chroot/var/named/myhadoop<span class="preprocessor">.com</span><span class="preprocessor">.zone</span>:<span class="number">12</span>: ignoring <span class="keyword">out</span>-of-zone data (node3<span class="preprocessor">.myhadoop</span><span class="preprocessor">.com</span>)
-zone node<span class="preprocessor">.myhadoop</span><span class="preprocessor">.com</span>/<span class="keyword">IN</span>: loaded serial <span class="number">20140221</span>
-OK
-[root@hadoop01 named]<span class="preprocessor"># named-checkzone 192.168.18.60 /var/named/chroot/var/named/18.168.192.zone</span>
-zone <span class="number">192.168</span><span class="number">.18</span><span class="number">.60</span>/<span class="keyword">IN</span>: loaded serial <span class="number">1997022700</span>
-OK
-</code></pre><h2 id="启动服务">启动服务</h2>
-<pre><code>[root<span class="variable">@hadoop01</span> named]<span class="comment"># service named restart</span>
-检查：
-[root<span class="variable">@hadoop01</span> named]<span class="comment"># nslookup hadoop01.myhadoop.com</span>
-</code></pre><h2 id="配置开机自启动">配置开机自启动</h2>
-<pre><code>[root<span class="variable">@hadoop01</span> named]<span class="comment"># chkconfig named on</span>
-</code></pre><h1 id="配置/安装NFS">配置/安装NFS</h1>
-<h2 id="检查-1">检查</h2>
-<pre><code>[root@hadoop01 named]<span class="preprocessor"># rpm -qa |grep nfs</span>
-nfs-utils-<span class="number">1.2</span><span class="number">.3</span>-<span class="number">26.</span>el6<span class="preprocessor">.x</span>86_64
-nfs4-acl-tools-<span class="number">0.3</span><span class="number">.3</span>-<span class="number">6.</span>el6<span class="preprocessor">.x</span>86_64
-nfs-utils-lib-<span class="number">1.1</span><span class="number">.5</span>-<span class="number">4.</span>el6<span class="preprocessor">.x</span>86_64
-说明nfs已安装，如果没有安装可通过命令：
-yum install nfs-utils
-</code></pre><h2 id="启动服务-1">启动服务</h2>
-<pre><code>[root<span class="variable">@hadoop01</span> named]<span class="comment"># service rpcbind restart</span>
-[root<span class="variable">@hadoop01</span> named]<span class="comment"># service nfs restart</span>
-[root<span class="variable">@hadoop01</span> named]<span class="comment"># service nfslock restart</span>
-</code></pre><h2 id="配置开机自启动-1">配置开机自启动</h2>
-<pre><code>[root<span class="variable">@hadoop01</span> named]<span class="comment"># chkconfig rpcbind on</span>
-[root<span class="variable">@hadoop01</span> named]<span class="comment"># chkconfig nfs on</span>
-[root<span class="variable">@hadoop01</span> named]<span class="comment"># chkconfig nfslock on</span>
-</code></pre><h2 id="设置共享目录">设置共享目录</h2>
-<pre><code>[root<span class="variable">@hadoop01</span> ~]<span class="comment"># vi /etc/exports</span>
-增加行：
-/home/grid /share *(insecure,rw,async,no_root_squash)
-说明：
-/home/grid/share 是<span class="constant">NFS</span>要共享的目录
-* 代表所有ip地址
-rw为读写，ro为只读
-<span class="constant">Sync</span>为立刻写入硬盘，rsync为优先写入缓存
-<span class="constant">No_root_squas</span> root用户具有根目录的完全管理访问权限（这个如果不配置会造成远程root用户只读）
-重启nfs服务：
-[root<span class="variable">@hadoop01</span> ~]<span class="comment"># service nfs restart</span>
-<span class="constant">Shutting</span> down <span class="constant">NFS</span> <span class="symbol">daemon:</span> [ <span class="constant">OK</span> ]
-<span class="constant">Shutting</span> down <span class="constant">NFS</span> <span class="symbol">mountd:</span> [ <span class="constant">OK</span> ]
-<span class="constant">Shutting</span> down <span class="constant">NFS</span> <span class="symbol">quotas:</span> [ <span class="constant">OK</span> ]
-<span class="constant">Shutting</span> down <span class="constant">NFS</span> <span class="symbol">services:</span> [ <span class="constant">OK</span> ]
-<span class="constant">Starting</span> <span class="constant">NFS</span> <span class="symbol">services:</span> [ <span class="constant">OK</span> ]
-<span class="constant">Starting</span> <span class="constant">NFS</span> <span class="symbol">quotas:</span> [ <span class="constant">OK</span> ]
-<span class="constant">Starting</span> <span class="constant">NFS</span> <span class="symbol">mountd:</span> [ <span class="constant">OK</span> ]
-<span class="constant">Stopping</span> <span class="constant">RPC</span> <span class="symbol">idmapd:</span> [ <span class="constant">OK</span> ]
-<span class="constant">Starting</span> <span class="constant">RPC</span> <span class="symbol">idmapd:</span> [ <span class="constant">OK</span> ]
-<span class="constant">Starting</span> <span class="constant">NFS</span> <span class="symbol">daemon:</span> [ <span class="constant">OK</span> ]
-</code></pre><h2 id="配置挂载目录">配置挂载目录</h2>
-<pre><code>显示本地挂载点，即hadoop01的共享目录：
-[root<span class="property">@hadoop01</span> etc]<span class="comment"># showmount -e localhost</span>
-Export list <span class="keyword">for</span> <span class="attribute">localhost</span>:
-/home/grid /share *
-[root<span class="property">@hadoop01</span> etc]<span class="comment"># mkdir /nfs_share</span>
-[root<span class="property">@hadoop01</span> etc]<span class="comment"># mount -t nfs 192.168.18.60:/home/grid/share /nfs_share/</span>
-[root<span class="property">@hadoop01</span> etc]<span class="comment"># cd /nfs_share/</span>
--<span class="attribute">bash</span>: <span class="attribute">cd</span>: <span class="regexp">/nfs_share/</span>: Permission denied
-[root<span class="property">@hadoop01</span> etc]<span class="comment"># su - grid</span>
-[grid<span class="property">@hadoop01</span> ~]$ cd <span class="regexp">/nfs_share/</span>
-用同样的方法在其它客户端（hadoop02，hadoop03）上操作
-hadoop02：
-[root<span class="property">@hadoop02</span> ~]<span class="comment"># mkdir /nfs_share</span>
-[root<span class="property">@hadoop02</span> ~]<span class="comment"># mount -t nfs 192.168.18.60:/home/grid/share /nfs_share/</span>
-hadoop03
-[root<span class="property">@hadoop03</span> ~]<span class="comment"># mkdir /nfs_share</span>
-[root<span class="property">@hadoop03</span> ~]<span class="comment"># mount -t nfs 192.168.18.60:/home/grid/share /nfs_share/</span>
-</code></pre><h2 id="设置开机后自动挂载nfs共享目录">设置开机后自动挂载nfs共享目录</h2>
-<pre><code>[root<span class="variable">@hadoop01</span> ~]<span class="comment"># vi /etc/fstab</span>
-增加行：
-<span class="number">192.168</span>.<span class="number">18.60</span><span class="symbol">:/home/grid/share</span> /nfs_share nfs defaults <span class="number">1</span> <span class="number">1</span>
-相同方法设置hadoop02，hadoop03
-</code></pre><h1 id="使用NFS做免密码登录">使用NFS做免密码登录</h1>
-<p>　　我们把每个节点生成的RSA密钥对中的公钥整合到共享目录的authorized_keys文件中，这样做的好处是当我们有新的节点<br>接入时，不再需要分别向其它节点各自添加自己公钥信息，只需要把公钥信息追加到共享的authorized_keys公钥当中，其它节<br>点可直接访问最新的公钥文件。</p>
-<h2 id="生成密钥对">生成密钥对</h2>
-<pre><code>[grid<span class="variable">@hadoop01</span> ~]<span class="variable">$ </span>ssh-keygen -t rsa
-在其他节点上生成密钥对
-</code></pre><h2 id="整合authorized_keys">整合authorized_keys</h2>
-<pre><code>[grid@hadoop01 <span class="preprocessor">.ssh</span>]$ <span class="keyword">cp</span> ~/<span class="preprocessor">.ssh</span>/id_rsa<span class="preprocessor">.pub</span> authorized_keys
-[grid@hadoop01 <span class="preprocessor">.ssh</span>]$ ssh hadoop02<span class="preprocessor">.myhadoop</span><span class="preprocessor">.com</span> cat ~/<span class="preprocessor">.ssh</span>/id_rsa<span class="preprocessor">.pub</span> &gt;&gt; ~/<span class="preprocessor">.ssh</span>/authorized_keys
-[grid@hadoop01 <span class="preprocessor">.ssh</span>]$ ssh hadoop03<span class="preprocessor">.myhadoop</span><span class="preprocessor">.com</span> cat ~/<span class="preprocessor">.ssh</span>/id_rsa<span class="preprocessor">.pub</span> &gt;&gt; ~/<span class="preprocessor">.ssh</span>/authorized_keys
-</code></pre><h2 id="创建共享目录文件authorized_keys的软连接">创建共享目录文件authorized_keys的软连接</h2>
-<pre><code>在hadoop02：
-[grid<span class="variable">@hadoop02</span> .ssh]<span class="variable">$ </span>ln -s /nfs_share/.ssh/authorized_keys ~<span class="regexp">/.ssh/authorized</span>_keys
-在hadoop03：
-[grid<span class="variable">@hadoop03</span> .ssh]<span class="variable">$ </span>ln -s /nfs_share/.ssh/authorized_keys ~<span class="regexp">/.ssh/authorized</span>_keys
-</code></pre><h2 id="验证">验证</h2>
-<pre><code><span class="attr_selector">[grid@hadoop01 .ssh]</span>$ <span class="tag">ssh</span> <span class="tag">hadoop02</span><span class="class">.myhadoop</span><span class="class">.com</span>
-<span class="tag">Last</span> <span class="tag">login</span>: <span class="tag">Fri</span> <span class="tag">Feb</span> 21 15<span class="pseudo">:40</span><span class="pseudo">:14</span> 2014 <span class="tag">from</span> 192<span class="class">.168</span><span class="class">.18</span><span class="class">.60</span>
-<span class="attr_selector">[grid@hadoop02 ~]</span>$
-</code></pre><h1 id="安装hadoop系统">安装hadoop系统</h1>
-<p>请先在各节点安装jdk</p>
-<h2 id="解压hadoop">解压hadoop</h2>
-<pre><code>[grid<span class="variable">@hadoop01</span> ~]<span class="variable">$ </span>tar -zxvf hadoop-<span class="number">1.2</span>.<span class="number">1</span>.tar.gz
-</code></pre><h2 id="修改配置文件">修改配置文件</h2>
-<pre><code>在/home/grid/hadoop-1.2.1/conf下：
-[grid@hadoop01 conf]$ vi hadoop-env.sh
-修改jdk路径
-export JAVA_HOME=/usr/jdk1.7.0_40
-[grid@hadoop01 conf]$ vi core-site.xml
-<span class="tag">&lt;<span class="title">configuration</span>&gt;</span>
-<span class="tag">&lt;<span class="title">property</span>&gt;</span>
-<span class="tag">&lt;<span class="title">name</span>&gt;</span>fs.default.name<span class="tag">&lt;/<span class="title">name</span>&gt;</span>
-<span class="tag">&lt;<span class="title">value</span>&gt;</span>hdfs://hadoop01.myhadoop.com:9000<span class="tag">&lt;/<span class="title">value</span>&gt;</span>
-<span class="tag">&lt;/<span class="title">property</span>&gt;</span>
-<span class="tag">&lt;<span class="title">property</span>&gt;</span>
-<span class="tag">&lt;<span class="title">name</span>&gt;</span>hadoop.tmp.dir<span class="tag">&lt;/<span class="title">name</span>&gt;</span>
-<span class="tag">&lt;<span class="title">value</span>&gt;</span>/home/grid/hadoop-1.2.1/tmp<span class="tag">&lt;/<span class="title">value</span>&gt;</span>
-<span class="tag">&lt;/<span class="title">property</span>&gt;</span>
-[grid@hadoop01 conf]$ vi hdfs-site.xml
-<span class="tag">&lt;<span class="title">configuration</span>&gt;</span>
-<span class="tag">&lt;<span class="title">property</span>&gt;</span>
-<span class="tag">&lt;<span class="title">name</span>&gt;</span>dfs.replication<span class="tag">&lt;/<span class="title">name</span>&gt;</span>
-<span class="tag">&lt;<span class="title">value</span>&gt;</span>2<span class="tag">&lt;/<span class="title">value</span>&gt;</span>
-<span class="tag">&lt;/<span class="title">property</span>&gt;</span>
-<span class="tag">&lt;/<span class="title">configuration</span>&gt;</span>
-[grid@hadoop01 conf]$ vi mapred-site.xml
-<span class="tag">&lt;<span class="title">configuration</span>&gt;</span>
-<span class="tag">&lt;<span class="title">property</span>&gt;</span>
-<span class="tag">&lt;<span class="title">name</span>&gt;</span>mapred.job.tracker<span class="tag">&lt;/<span class="title">name</span>&gt;</span>
-<span class="tag">&lt;<span class="title">value</span>&gt;</span>hadoop01.myhadoop.com:9001<span class="tag">&lt;/<span class="title">value</span>&gt;</span>
-<span class="tag">&lt;/<span class="title">property</span>&gt;</span>
-<span class="tag">&lt;/<span class="title">configuration</span>&gt;</span>
-[grid@hadoop01 conf]$ vi masters
-hadoop01.myhadoop.com
-[grid@hadoop01 conf]$ vi slaves
-hadoop02.myhadoop.com
-hadoop03.myhadoop.com
-</code></pre><h2 id="使用awk生成分发脚本">使用awk生成分发脚本</h2>
-<pre><code>[grid<span class="variable">@hadoop01</span> conf]<span class="variable">$ </span>cat slaves| awk <span class="string">'{print "scp -rp hadoop-1.2.1
-grid@"$1":/home/grid"}'</span> &gt; cphadoop.sh
-[grid<span class="variable">@hadoop01</span> conf]<span class="variable">$ </span>cat cphadoop.sh
-scp -rp hadoop-<span class="number">1.2</span>.<span class="number">1</span> grid<span class="variable">@hadoop02</span>.myhadoop.<span class="symbol">com:</span>/home/grid
-scp -rp hadoop-<span class="number">1.2</span>.<span class="number">1</span> grid<span class="variable">@hadoop03</span>.myhadoop.<span class="symbol">com:</span>/home/grid
-[grid<span class="variable">@hadoop01</span> conf]<span class="variable">$ </span>chmod <span class="number">755</span> cphadoop.sh
-</code></pre><h2 id="分发">分发</h2>
-<pre><code>[grid<span class="variable">@hadoop01</span> ~]<span class="variable">$ </span>cd
-[grid<span class="variable">@hadoop01</span> ~]<span class="variable">$ </span>hadoop-<span class="number">1.2</span>.<span class="number">1</span>/conf/cphadoop.sh
-</code></pre><h2 id="格式化namenode">格式化namenode</h2>
-<pre><code>[<span class="keyword">grid</span><span class="variable">@hadoop01</span> hadoop-<span class="number">1.2</span><span class="number">.1</span>]$ bin/hadoop namenode -<span class="keyword">format</span>
-</code></pre><h2 id="启动hadoop集群">启动hadoop集群</h2>
-<pre><code>[grid@hadoop01 hadoop-1.2.1]$ bin/start-all.sh
-[grid@hadoop01 hadoop-1.2.1]$ hadoop dfsadmin -report
-Configured Capacity: 79413821440 (73.96 GB)
-Present Capacity: 60468486174 (56.32 GB)
-DFS Remaining: 60468428800 (56.32 GB)
-DFS Used: 57374 (56.03 KB)
-DFS Used%: 0%
-Under replicated blocks: 0
-Blocks with corrupt replicas: 0
-<span class="header">Missing blocks: 0
--------------------------------------------------</span>
-Datanodes available: 2 (2 total, 0 dead)
-Name: 192.168.18.61:50010
-Decommission Status : Normal
-Configured Capacity: 39706910720 (36.98 GB)
-DFS Used: 28687 (28.01 KB)
-Non DFS Used: 9218297841 (8.59 GB)
-DFS Remaining: 30488584192(28.39 GB)
-DFS Used%: 0%
-DFS Remaining%: 76.78%
-Last contact: Fri Feb 21 17:06:28 CST 2014
-Name: 192.168.18.62:50010
-Decommission Status : Normal
-Configured Capacity: 39706910720 (36.98 GB)
-DFS Used: 28687 (28.01 KB)
-Non DFS Used: 9727037425 (9.06 GB)
-DFS Remaining: 29979844608(27.92 GB)
-DFS Used%: 0%
-DFS Remaining%: 75.5%
-Last contact: Fri Feb 21 17:06:27 CST 2014
-</code></pre><h2 id="验证-1">验证</h2>
-<pre><code>[<span class="keyword">grid</span><span class="variable">@hadoop01</span> hadoop-<span class="number">1.2</span><span class="number">.1</span>]$ jps
-<span class="number">3560</span> SecondaryNameNode
-<span class="number">3634</span> JobTracker
-<span class="number">3788</span> Jps
-<span class="number">3392</span> NameNode
-[<span class="keyword">grid</span><span class="variable">@hadoop01</span> hadoop-<span class="number">1.2</span><span class="number">.1</span>]$ hadoop fs -mkdir test
-[<span class="keyword">grid</span><span class="variable">@hadoop01</span> hadoop-<span class="number">1.2</span><span class="number">.1</span>]$ hadoop fs -<span class="keyword">ls</span>
-Found <span class="number">1</span> items
-drwxr-xr-x - <span class="keyword">grid</span> supergroup <span class="number">0</span> <span class="number">2014</span>-<span class="number">02</span>-<span class="number">21</span> <span class="number">17</span>:<span class="number">08</span> /user/<span class="keyword">grid</span>/test
-</code></pre><h1 id="问题">问题</h1>
-<h2 id="挂载问题">挂载问题</h2>
-<pre><code>挂载共享目录出现无法挂载点问题
-[root<span class="variable">@hadoop01</span> nfs_share]<span class="comment"># mount -t nfs 192.168.18.60:/home/grid/share /nfs_share/</span>
-mount.<span class="symbol">nfs:</span> access denied by server <span class="keyword">while</span> mounting <span class="number">192.168</span>.<span class="number">18.60</span><span class="symbol">:/home/grid/share</span>
-解决方法：
-修改挂载属性
-[root<span class="variable">@hadoop01</span> nfs_share]<span class="comment"># vi /etc/exports</span>
-/home/grid/share *(insecure,rw,async,no_root_squash)
-~
-</code></pre><h2 id="访问问题">访问问题</h2>
-<pre><code>配置完免密码登录后，用ssh登录远程机器每次都要求输入密码，原来是目录访问权限问题
-/home/<span class="keyword">grid</span>/share目录与/home/<span class="keyword">grid</span>/share/.ssh目录的访问权限应为<span class="number">700</span>，
-authorized_keys文件的访问权限应为<span class="number">644</span>
-[root<span class="variable">@hadoop01</span> <span class="keyword">grid</span>]# chmod <span class="number">700</span> share
-[root<span class="variable">@hadoop01</span> <span class="keyword">grid</span>]# cd share
-[root<span class="variable">@hadoop01</span> share]# chmod <span class="number">700</span> .ssh
-这是另外一篇的参考 它的共享目录是/home/<span class="keyword">grid</span> 
-h1免密码登录h2：发现无法免密码登录，修改了/etc/ssh/sshd_config，将StrictModes改为no就可以了
-一定要注意文件权限
-/home/<span class="keyword">grid</span> <span class="number">700</span>
-/home/<span class="keyword">grid</span>/.ssh <span class="number">700</span>
-/home/<span class="keyword">grid</span>/.ssh/authorized_keys <span class="number">644</span>
-</code></pre><h2 id="格式化namenode问题">格式化namenode问题</h2>
-<pre><code>[grid@hadoop01 bin]$ ./hadoop namenode -format
-14/02/21 16:44:54 INFO namenode.NameNode: STARTUP_MSG:
-/<span class="strong">*****</span><span class="strong">*****</span><span class="strong">*****</span><span class="strong">*****</span><span class="strong">*****</span><span class="strong">*****</span><span class="strong">*****</span><span class="strong">*****</span><span class="strong">*****</span><span class="strong">*****</span><span class="strong">*****</span><span class="strong">*****</span>
-STARTUP_MSG: Starting NameNode
-STARTUP_MSG: host = java.net.UnknownHostException: hadoop01: hadoop01: Name or service not known
-STARTUP_MSG: args = [-format]
-STARTUP_MSG: version = 1.2.1
-STARTUP_MSG: build = https://svn.apache.org/repos/asf ... branches/branch-1.2 -r 1503152; compiled by 'mattf' on
-Mon Jul 22 15:23:09 PDT 2013
-STARTUP<span class="emphasis">_MSG: java = 1.7.0_</span>40
-解决方法：
-hostname为hadoop01，系统没有解析，应把hostname设为hadoop01.myhadoop.com
-在线修改
-hostname hadoop01.myhadoop.com
-永久保存：
-vi /etc/sysconfig/network
-HOSTNAME=hadoop01.myhadoop.com
-其他节点也要修改
-</code></pre><p>文章参考</p>
-<p><a href="http://blog.itpub.net/26686207/viewspace-742502/" target="_blank">帖子1</a></p>
-<p><a href="http://blog.itpub.net/26686207/viewspace-753510/" target="_blank">帖子2</a></p>
-<p><a href="http://blog.csdn.net/lichangzai/article/details/8647242" target="_blank">帖子3</a></p>
-<p><a href="http://f.dataguru.cn/thread-222047-1-1.html" target="_blank">帖子4</a></p>
-<p><a href="http://f.dataguru.cn/thread-244415-1-1.html" target="_blank">帖子5</a></p>
-]]></content>
-    
-    
-      <category term="Hadoop" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/Hadoop/"/>
-    
-      <category term="Hadoop" scheme="https://github.com/DaMinger/DaMinger.github.io.git/categories/Hadoop/"/>
-    
-  </entry>
-  
-  <entry>
-    <title><![CDATA[Centos 6.4克隆系统后网卡eth0变成eth1的解决办法]]></title>
-    <link href="https://github.com/DaMinger/DaMinger.github.io.git/2014/04/11/Linux/linux_ethX_problem/"/>
-    <id>https://github.com/DaMinger/DaMinger.github.io.git/2014/04/11/Linux/linux_ethX_problem/</id>
-    <published>2014-04-11T14:31:24.000Z</published>
-    <updated>2014-04-11T14:40:08.000Z</updated>
-    <content type="html"><![CDATA[<p>vbox 或者vmware克隆系统后里面的eth0变成了eht1，开始没有发现问题，当我/etc/init.d/network restart重启的时候，发现找不到eth0，ifconfig 后只有eth1，原来linux使用udev动态管理设备文件，并根据设备的信息对其进行持久化命名。克隆时就自动变成eth1了。还好找到了解决办法，于是备份并分享之。</p>
-<pre><code>vi /etc/udev/rules.d/70-persistent-net.rules
-dd删除关于eth0的记录或者是用<span class="comment">#注释掉eth0的记录(谨慎的可以注释掉，不过完全没有用)</span>
-记住其中eth1的mac地址 复制到文本中，备用
-将eth1改成eth0
-vi /etc/sysconfig/network-scripts/ifcfg-eth0
-将老文件eth0的mac地址换掉，(如果细心的话会发现ifconfig eth1会跟配置文件中的mac不一样)
-<span class="constant">DEVICE</span>=eth0
-<span class="constant">HWADDR</span>=08:00:27:b7:bb:f7            //将备用的mac地址替换
-<span class="constant">TYPE</span>=Ethernet
-<span class="constant">UUID</span>=010da721-97c3-49f6-b95d-fe485634956a
-<span class="constant">ONBOOT</span>=yes
-<span class="constant">NM_CONTROLLED</span>=yes
-<span class="constant">BOOTPROTO</span>=dhcp                       //自动IP拨号
-<span class="constant">BOOTPROTO</span>=static                    //静态IP设置
-<span class="constant">IPADDR</span>=192.168.1.111
-<span class="constant">NETMASK</span>=255.255.255.0
-<span class="constant">BROADCAST</span>=192.168.1.255
-<span class="constant">GATEWAY</span>=192.168.1.1
-/etc/init.d/network restart     //重启network--如果不行的话
-就shutdown -r now//重启系统了
-</code></pre>]]></content>
-    
-    
-      <category term="Linux" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/Linux/"/>
-    
-      <category term="Linux" scheme="https://github.com/DaMinger/DaMinger.github.io.git/categories/Linux/"/>
-    
-  </entry>
-  
-  <entry>
-    <title><![CDATA[三次握手，四次挥手]]></title>
-    <link href="https://github.com/DaMinger/DaMinger.github.io.git/2014/04/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/internet_1/"/>
-    <id>https://github.com/DaMinger/DaMinger.github.io.git/2014/04/10/计算机网络/internet_1/</id>
-    <published>2014-04-10T11:47:37.000Z</published>
-    <updated>2014-04-10T12:44:22.000Z</updated>
-    <content type="html"><![CDATA[<h1 id="一、TCP报文格式">一、TCP报文格式</h1>
-<p>下面是TCP报文格式图：<br><img src="/img/Internet/Internet_1.png" alt="图1 TCP报文格式"><br>上图中有几个字段需要重点介绍下：<br>（1）序号：Seq序号，占32位，用来标识从TCP源端向目的端发送的字节流，发起方发送数据时对此进行标记。<br>（2）确认序号：Ack序号，占32位，只有ACK标志位为1时，确认序号字段才有效，Ack=Seq+1。<br>（3）标志位：共6个，即URG、ACK、PSH、RST、SYN、FIN等，具体含义如下：<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;（A）URG：紧急指针（urgent pointer）有效。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;（B）ACK：确认序号有效。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;（C）PSH：接收方应该尽快将这个报文交给应用层。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;（D）RST：重置连接。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;（E）SYN：发起一个新连接。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;（F）FIN：释放一个连接。<br>需要注意的是：<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;（A）不要将确认序号Ack与标志位中的ACK搞混了。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;（B）确认方Ack=发起方Req+1，两端配对。 </p>
-<h1 id="二、三次握手">二、三次握手</h1>
-<p>所谓三次握手（Three-Way Handshake）即建立TCP连接，就是指建立一个TCP连接时，需要客户端和服务端总共发送3个包以确认连接的建立。在socket编程中，这一过程由客户端执行connect来触发，整个流程如下图所示：<br><img src="/img/Internet/Internet_2.png" alt="图2 TCP三次握手"><br>（1）第一次握手：Client将标志位SYN置为1，随机产生一个值seq=J，并将该数据包发送给Server，Client进入SYN_SENT状态，等待Server确认。<br>（2）第二次握手：Server收到数据包后由标志位SYN=1知道Client请求建立连接，Server将标志位SYN和ACK都置为1，ack=J+1，随机产生一个值seq=K，并将该数据包发送给Client以确认连接请求，Server进入SYN_RCVD状态。<br>（3）第三次握手：Client收到确认后，检查ack是否为J+1，ACK是否为1，如果正确则将标志位ACK置为1，ack=K+1，并将该数据包发送给Server，Server检查ack是否为K+1，ACK是否为1，如果正确则连接建立成功，Client和Server进入ESTABLISHED状态，完成三次握手，随后Client与Server之间可以开始传输数据了。</p>
-<p>SYN攻击：<br>在三次握手过程中，Server发送SYN-ACK之后，收到Client的ACK之前的TCP连接称为半连接（half-open connect），此时Server处于SYN_RCVD状态，当收到ACK后，Server转入ESTABLISHED状态。SYN攻击就是Client在短时间内伪造大量不存在的IP地址，并向Server不断地发送SYN包，Server回复确认包，并等待Client的确认，由于源地址是不存在的，因此，Server需要不断重发直至超时，这些伪造的SYN包将产时间占用未连接队列，导致正常的SYN请求因为队列满而被丢弃，从而引起网络堵塞甚至系统瘫痪。SYN攻击时一种典型的DDOS攻击，检测SYN攻击的方式非常简单，即当Server上有大量半连接状态且源IP地址是随机的，则可以断定遭到SYN攻击了，使用如下命令可以让之现行：</p>
-<pre><code><span class="preprocessor">#netstat -nap | grep SYN_RECV</span>
-</code></pre><h1 id="三、四次挥手">三、四次挥手</h1>
-<p>三次握手耳熟能详，四次挥手估计就不太熟了，所谓四次挥手（Four-Way Wavehand）即终止TCP连接，就是指断开一个TCP连接时，需要客户端和服务端总共发送4个包以确认连接的断开。在socket编程中，这一过程由客户端或服务端任一方执行close来触发，整个流程如下图所示<br><img src="/img/Internet/Internet_3.png" alt="图3 TCP四次挥手"></p>
-<p>由于TCP连接时全双工的，因此，每个方向都必须要单独进行关闭，这一原则是当一方完成数据发送任务后，发送一个FIN来终止这一方向的连接，收到一个FIN只是意味着这一方向上没有数据流动了，即不会再收到数据了，但是在这个TCP连接上仍然能够发送数据，直到这一方向也发送了FIN。首先进行关闭的一方将执行主动关闭，而另一方则执行被动关闭，上图描述的即是如此。<br>（1）第一次挥手：Client发送一个FIN，用来关闭Client到Server的数据传送，Client进入FIN_WAIT_1状态。<br>（2）第二次挥手：Server收到FIN后，发送一个ACK给Client，确认序号为收到序号+1（与SYN相同，一个FIN占用一个序号），Server进入CLOSE_WAIT状态。<br>（3）第三次挥手：Server发送一个FIN，用来关闭Server到Client的数据传送，Server进入LAST_ACK状态。<br>（4）第四次挥手：Client收到FIN后，Client进入TIME_WAIT状态，接着发送一个ACK给Server，确认序号为收到序号+1，Server进入CLOSED状态，完成四次挥手。</p>
-<p> 上面是一方主动关闭，另一方被动关闭的情况，实际中还会出现同时发起主动关闭的情况，具体流程如下图<br><img src="/img/Internet/Internet_4.png" alt="图4 同时挥手"></p>
-<h1 id="四、附注">四、附注</h1>
-<p>关于三次握手与四次挥手通常都会有典型的面试题，在此提出供有需求的同学们参考：<br>（1）三次握手是什么或者流程？四次握手呢？答案前面分析就是。<br>（2）为什么建立连接是三次握手，而关闭连接却是四次挥手呢？</p>
-<p> 这是因为服务端在LISTEN状态下，收到建立连接请求的SYN报文后，把ACK和SYN放在一个报文里发送给客户端。而关闭连接时，当收到对方的FIN报文时，仅仅表示对方不再发送数据了但是还能接收数据，己方也未必全部数据都发送给对方了，所以己方可以立即close，也可以发送一些数据给对方后，再发送FIN报文给对方来表示同意现在关闭连接，因此，己方ACK和FIN一般都会分开发送。        </p>
-<p> <a href="http://blog.chinaunix.net/uid-7411781-id-3812206.html" target="_blank">   原文链接，请点击这里    </a></p>
-]]></content>
-    
-    
-      <category term="网络" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/%E7%BD%91%E7%BB%9C/"/>
-    
-      <category term="计算机网络" scheme="https://github.com/DaMinger/DaMinger.github.io.git/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/"/>
-    
-  </entry>
-  
-  <entry>
-    <title><![CDATA[在Linux CentOS6.3下编译安装MySQL5.6.10]]></title>
-    <link href="https://github.com/DaMinger/DaMinger.github.io.git/2014/04/09/Linux/linux_mysql_install/"/>
-    <id>https://github.com/DaMinger/DaMinger.github.io.git/2014/04/09/Linux/linux_mysql_install/</id>
-    <published>2014-04-09T12:15:51.000Z</published>
-    <updated>2014-04-13T12:02:26.000Z</updated>
-    <content type="html"><![CDATA[<h2 id="编译安装MySQL前的准备工作">编译安装MySQL前的准备工作</h2>
-<pre><code>安装编译源码所需的工具和库
-yum install gcc gcc-c++ ncurses-devel perl
-安装cmake，从http://www<span class="preprocessor">.cmake</span><span class="preprocessor">.org</span>下载源码并编译安装
-wget http://www<span class="preprocessor">.cmake</span><span class="preprocessor">.org</span>/files/v2<span class="number">.8</span>/cmake-<span class="number">2.8</span><span class="number">.10</span><span class="number">.2</span><span class="preprocessor">.tar</span><span class="preprocessor">.gz</span>
-tar -xzvf cmake-<span class="number">2.8</span><span class="number">.10</span><span class="number">.2</span><span class="preprocessor">.tar</span><span class="preprocessor">.gz</span>
-cd cmake-<span class="number">2.8</span><span class="number">.10</span><span class="number">.2</span>
-./bootstrap <span class="comment">; make ; make install</span>
-cd ~
-</code></pre><h2 id="设置MySQL用户和组">设置MySQL用户和组</h2>
-<pre><code>新增mysql用户组
-groupadd mysql
-新增mysql用户
-useradd <span class="attribute">-r</span> <span class="attribute">-g</span> mysql mysql
-</code></pre><h2 id="新建MySQL所需要的目录">新建MySQL所需要的目录</h2>
-<pre><code>新建mysql安装目录
-mkdir <span class="attribute">-p</span> /usr/<span class="built_in">local</span>/mysql
-新建mysql数据库数据文件目录
-mkdir <span class="attribute">-p</span> /<span class="built_in">data</span>/mysqldb
-</code></pre><h2 id="下载MySQL源码包并解压">下载MySQL源码包并解压</h2>
-<pre><code>从http://dev<span class="preprocessor">.mysql</span><span class="preprocessor">.com</span>/downloads/mysql/直接下载源码
-解压mysql-<span class="number">5.6</span><span class="number">.10</span><span class="preprocessor">.tar</span><span class="preprocessor">.gz</span>
-tar -zxv -f mysql-<span class="number">5.6</span><span class="number">.10</span><span class="preprocessor">.tar</span><span class="preprocessor">.gz</span>
-cd mysql-<span class="number">5.6</span><span class="number">.10</span>
-</code></pre><h2 id="编译安装MySQL">编译安装MySQL</h2>
-<pre><code>从mysql5.5起，mysql源码安装开始使用cmake了，设置源码编译配置脚本。
--<span class="ruby"><span class="constant">DCMAKE_INSTALL_PREFIX</span>=dir_name    设置mysql安装目录
-</span>-<span class="ruby"><span class="constant">DMYSQL_UNIX_ADDR</span>=file_name    设置监听套接字路径，这必须是一个绝对路径名。默认为/tmp/mysql.sock的中。
-</span>-<span class="ruby"><span class="constant">DDEFAULT_CHARSET</span>=charset_name    设置服务器的字符集。缺省情况下，<span class="constant">MySQL</span>使用latin1的（<span class="constant">CP1252</span>西欧）字符集。
-</span>cmake/character_sets.cmake文件包含允许的字符集名称列表。
--<span class="ruby"><span class="constant">DDEFAULT_COLLATION</span>=collation_name    设置服务器的排序规则。
-</span>-<span class="ruby"><span class="constant">DWITH_INNOBASE_STORAGE_ENGINE</span>=<span class="number">1</span>
-</span>-<span class="ruby"><span class="constant">DWITH_ARCHIVE_STORAGE_ENGINE</span>=<span class="number">1</span>
-</span>-<span class="ruby"><span class="constant">DWITH_BLACKHOLE_STORAGE_ENGINE</span>=<span class="number">1</span>
-</span>-<span class="ruby"><span class="constant">DWITH_PERFSCHEMA_STORAGE_ENGINE</span>=<span class="number">1</span>    存储引擎选项：
-</span>MyISAM，MERGE，MEMORY，和CSV引擎是默认编译到服务器中，并不需要明确地安装。
-静态编译一个存储引擎到服务器，使用-DWITH_engine_STORAGE_ENGINE= 1。
-可用的存储引擎值有：ARCHIVE, BLACKHOLE, EXAMPLE, FEDERATED, INNOBASE (InnoDB),   PARTITION (partitioning support), 和 PERFSCHEMA (Performance Schema).
--<span class="ruby"><span class="constant">DMYSQL_DATADIR</span>=dir_name    设置mysql数据库文件目录
-</span>-<span class="ruby"><span class="constant">DMYSQL_TCP_PORT</span>=port_num    设置mysql服务器监听端口，默认为<span class="number">3306</span>
-</span>-<span class="ruby"><span class="constant">DENABLE_DOWNLOADS</span>=bool    是否要下载可选的文件。例如，启用此选项（设置为<span class="number">1</span>），cmake将下载谷歌所使用的测试套件运行单元测试。
-</span>设置编译参数
-cmake \
--<span class="ruby"><span class="constant">DCMAKE_INSTALL_PREFIX</span>=<span class="regexp">/usr/local</span><span class="regexp">/mysql \
-</span></span>-<span class="ruby"><span class="constant">DMYSQL_UNIX_ADDR</span>=<span class="regexp">/usr/local</span><span class="regexp">/mysql/mysql</span>.sock \
-</span>-<span class="ruby"><span class="constant">DDEFAULT_CHARSET</span>=utf8 \
-</span>-<span class="ruby"><span class="constant">DDEFAULT_COLLATION</span>=utf8_general_ci \
-</span>-<span class="ruby"><span class="constant">DWITH_INNOBASE_STORAGE_ENGINE</span>=<span class="number">1</span> \
-</span>-<span class="ruby"><span class="constant">DWITH_ARCHIVE_STORAGE_ENGINE</span>=<span class="number">1</span> \
-</span>-<span class="ruby"><span class="constant">DWITH_BLACKHOLE_STORAGE_ENGINE</span>=<span class="number">1</span> \
-</span>-<span class="ruby"><span class="constant">DMYSQL_DATADIR</span>=<span class="regexp">/data/mysqldb</span> \
-</span>-<span class="ruby"><span class="constant">DMYSQL_TCP_PORT</span>=<span class="number">3306</span> \
-</span>-<span class="ruby"><span class="constant">DENABLE_DOWNLOADS</span>=<span class="number">1</span>
-</span>注：重新运行配置，需要删除CMakeCache.txt文件
-rm CMakeCache.txt
-编译源码
-make
-安装
-make install
-</code></pre><h2 id="修改mysql目录所有者和组">修改mysql目录所有者和组</h2>
-<pre><code>修改mysql安装目录
-cd /usr/<span class="built_in">local</span>/mysql
-chown <span class="attribute">-R</span> mysql:mysql <span class="built_in">.</span>
-修改mysql数据库文件目录
-cd /<span class="built_in">data</span>/mysqldb
-chown <span class="attribute">-R</span> mysql:mysql <span class="built_in">.</span>
-</code></pre><h2 id="初始化mysql数据库">初始化mysql数据库</h2>
-<pre><code><span class="comment">cd</span> <span class="comment">/usr/local/mysql</span>
-<span class="comment">scripts/mysql_install_db</span> <span class="literal">-</span><span class="literal">-</span><span class="comment">user=mysql</span> <span class="literal">-</span><span class="literal">-</span><span class="comment">datadir=/data/mysqldb</span>
-</code></pre><h2 id="复制mysql服务启动配置文件">复制mysql服务启动配置文件</h2>
-<pre><code>cp /usr/<span class="keyword">local</span>/mysql/support-files/<span class="keyword">my</span>-default.cnf /etc/<span class="keyword">my</span>.cnf
-注：如果/etc/<span class="keyword">my</span>.cnf文件存在，则覆盖。
-</code></pre><h2 id="复制mysql服务启动脚本及加入PATH路径">复制mysql服务启动脚本及加入PATH路径</h2>
-<pre><code>cp support-files/mysql.server /etc/init.d/mysqld
-vim /etc/profile
-<span class="constant">PATH</span>=<span class="regexp">/usr/local</span><span class="regexp">/mysql/bin</span><span class="symbol">:/usr/local/mysql/lib</span><span class="symbol">:</span><span class="variable">$PATH</span>
-export <span class="constant">PATH</span>
-source /etc/profile
-</code></pre><h2 id="启动mysql服务并加入开机自启动">启动mysql服务并加入开机自启动</h2>
-<pre><code>service mysqld <span class="operator"><span class="keyword">start</span>
-chkconfig --<span class="keyword">level</span> <span class="number">35</span> mysqld <span class="keyword">on</span></span>
-</code></pre><h2 id="检查mysql服务是否启动">检查mysql服务是否启动</h2>
-<pre><code>netstat <span class="attribute">-tulnp</span> <span class="subst">|</span> grep <span class="number">3306</span>
-mysql <span class="attribute">-u</span> root <span class="attribute">-p</span>
-密码为空，如果能登陆上，则安装成功。
-</code></pre><h2 id="修改MySQL用户root的密码">修改MySQL用户root的密码</h2>
-<pre><code>mysqladmin <span class="attribute">-u</span> root password <span class="string">'123456'</span>
-注：也可运行安全设置脚本，修改MySQL用户root的密码，同时可禁止root远程连接，移除test数据库和匿名用户。
-/usr/<span class="built_in">local</span>/mysql/bin/mysql_secure_installation
-</code></pre><h2 id="可能会出现的错误">可能会出现的错误</h2>
-<pre><code>问题：
-Starting MySQL..The server quit <span class="keyword">without</span> updating PID <span class="type">file</span> ([FAILED]/mysql/Server03.mylinux.com.pid).
-解决：
-修改/etc/<span class="keyword">my</span>.cnf 中datadir,指向正确的mysql数据库文件目录
-
-问题：
-ERROR <span class="number">2002</span> (HY000): Can't connect <span class="keyword">to</span> <span class="keyword">local</span> MySQL server <span class="keyword">through</span> socket '/tmp/mysql.sock' (<span class="number">2</span>)
-解决：
-新建一个链接或在mysql中加入-S参数，直接指出mysql.sock位置。
-ln -s /usr/<span class="keyword">local</span>/mysql/data/mysql.sock /tmp/mysql.sock
-/usr/<span class="keyword">local</span>/mysql/bin/mysql -u root -S /usr/<span class="keyword">local</span>/mysql/data/mysql.sock
-</code></pre>]]></content>
-    
-    
-      <category term="Linux" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/Linux/"/>
-    
-      <category term="Mysql" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/Mysql/"/>
-    
-      <category term="Linux" scheme="https://github.com/DaMinger/DaMinger.github.io.git/categories/Linux/"/>
     
   </entry>
   

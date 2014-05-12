@@ -1,0 +1,569 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>HBse的安装 | DaMinger&#39;s blog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="DaMinger">
+    
+    <meta name="description" content="在安装hbase时要求与hadoop的版本相关联，那么如何找出合适的hbase版本呢，其实有一个简单但是有点费事的做法，就是可以下载hbase后解压查看lib目录中的hadoop-core-x.x.x.jar文件的版本号，就可以找到合适的hadoop版本号了。
+我下载了三个版本，终于找到了hadoo">
+    
+    
+    
+    
+    <link rel="alternative" href="/atom.xml" title="DaMinger&#39;s blog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/pacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/pacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+    <link href="/css/hover.css" rel="stylesheet">
+    <link href="/css/bottom.css" rel="stylesheet">
+</head>
+
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a rel="pulse" class="pulse" href="/"><img src="/img/pacman.png" alt="DaMinger&#39;s blog" title="DaMinger&#39;s blog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a rel="hover" class="hover" href="/" title="DaMinger&#39;s blog">DaMinger&#39;s blog</a></h1>
+				<h2 class="blog-motto"><a rel="wobble-to-bottom-right" class="wobble-to-bottom-right" href="#" title="#">信春哥，系统稳，闭眼上线不回滚</a></h2>
+			</div>
+			<div class="navbar"><a rel="buzz" class="buzz" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a rel="wobble-top" class="wobble-top" href="/">Home</a></li>
+					
+						<li><a rel="wobble-top" class="wobble-top" href="/archives">Menu</a></li>
+					
+						<li><a rel="wobble-top" class="wobble-top" href="/about">About</a></li>
+					
+				</ul>
+				
+			</nav>			
+</div>
+<div style="text-align:right;">
+<form  class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+ <input type="search" name="q" id="search" autocomplete="off" autocorrect="off" autocapitalize="off" maxlength="20" placeholder="Search" />
+ <input type="hidden" name="q" value="site:github.com/DaMinger/DaMinger.github.io.git">
+</form>
+</div>
+
+
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2014/05/12/Hadoop/hbase_install/" title="HBse的安装" itemprop="url">HBse的安装</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="https://github.com/DaMinger/DaMinger.github.io.git" title="DaMinger">DaMinger</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2014-05-12T07:16:29.000Z" itemprop="datePublished">5月 12 2014</time>
+    更新日期:<time datetime="2014-05-12T07:17:46.000Z" itemprop="dateModified">5月 12 2014</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		<ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#解压HBase"><span class="toc-number">1.</span> <span class="toc-text">解压HBase</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#修改hbase_conf_目录下的配置文件"><span class="toc-number">2.</span> <span class="toc-text">修改hbase conf 目录下的配置文件</span></a></li><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#hbase-env-sh："><span class="toc-number">2.1.</span> <span class="toc-text">hbase-env.sh：</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#hbase-site-xml："><span class="toc-number">2.2.</span> <span class="toc-text">hbase-site.xml：</span></a></li></ol><li class="toc-item toc-level-4"><a class="toc-link" href="#更改regionservers"><span class="toc-number">3.</span> <span class="toc-text">更改regionservers</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#创建hbase专用文件夹："><span class="toc-number">4.</span> <span class="toc-text">创建hbase专用文件夹：</span></a></li><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#创建文件系统目录"><span class="toc-number">4.1.</span> <span class="toc-text">创建文件系统目录</span></a></li></ol><li class="toc-item toc-level-4"><a class="toc-link" href="#复制Master上的hbase文件夹到另外2节点："><span class="toc-number">5.</span> <span class="toc-text">复制Master上的hbase文件夹到另外2节点：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#修改各节点_的/etc/profile："><span class="toc-number">6.</span> <span class="toc-text">修改各节点 的/etc/profile：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#启动hbase并进入shell，然后退出"><span class="toc-number">7.</span> <span class="toc-text">启动hbase并进入shell，然后退出</span></a></li></ol>
+		</div>
+		
+		<p>在安装hbase时要求与hadoop的版本相关联，那么如何找出合适的hbase版本呢，其实有一个简单但是有点费事的做法，就是可以下载hbase后解压查看lib目录中的hadoop-core-x.x.x.jar文件的版本号，就可以找到合适的hadoop版本号了。</p>
+<p>我下载了三个版本，终于找到了hadoop1.2.1是 跟Hbase-0.98.0版本匹配。同学们可以少走弯路了。</p>
+<p>我的机器配置</p>
+<pre><code><span class="tag">Hadoop</span><span class="pseudo">:1</span><span class="class">.2</span><span class="class">.1</span>
+<span class="tag">HBase</span><span class="pseudo">:0</span><span class="class">.98</span><span class="class">.1</span>
+三个节点：<span class="tag">hadoop01</span>，<span class="tag">hadoop02</span>,<span class="tag">hadoop03</span>
+</code></pre><h4 id="解压HBase">解压HBase</h4>
+<pre><code>[grid<span class="variable">@hadoop01</span> ~]<span class="variable">$ </span>tar -xzvf hbase-<span class="number">0</span>.<span class="number">98.1</span>-hadoop1-bin.tar.gz 
+[grid<span class="variable">@hadoop01</span> ~]<span class="variable">$ </span>mv hbase-<span class="number">0</span>.<span class="number">98.1</span>-hadoop1 hbase
+</code></pre><h4 id="修改hbase_conf_目录下的配置文件">修改hbase conf 目录下的配置文件</h4>
+<h5 id="hbase-env-sh：">hbase-env.sh：</h5>
+<pre><code>[grid<span class="variable">@hadoop01</span> conf]<span class="variable">$ </span>vi hbase-env.sh 
+
+<span class="comment"># The java implementation to use.  Java 1.6 required.</span>
+  export <span class="constant">JAVA_HOME</span>=<span class="regexp">/usr/jdk</span>1.<span class="number">7.0_51</span>
+
+<span class="comment"># Extra Java CLASSPATH elements.  Optional.</span>
+  export <span class="constant">HBASE_CLASSPATH</span>=<span class="regexp">/home/grid</span><span class="regexp">/hadoop-1.2.1/conf</span>
+
+<span class="comment"># Tell HBase whether it should manage it's own instance of Zookeeper or not.</span>
+  export <span class="constant">HBASE_MANAGES_ZK</span>=<span class="keyword">true</span>
+</code></pre><h5 id="hbase-site-xml：">hbase-site.xml：</h5>
+<pre><code><span class="tag">&lt;<span class="title">configuration</span>&gt;</span>
+        <span class="tag">&lt;<span class="title">property</span>&gt;</span>
+                <span class="tag">&lt;<span class="title">name</span>&gt;</span>hbase.rootdir<span class="tag">&lt;/<span class="title">name</span>&gt;</span>
+                <span class="tag">&lt;<span class="title">value</span>&gt;</span>hdfs://hadoop01.myhadoop.com:9000/hbase<span class="tag">&lt;/<span class="title">value</span>&gt;</span>
+        <span class="tag">&lt;/<span class="title">property</span>&gt;</span>
+        <span class="tag">&lt;<span class="title">property</span>&gt;</span>
+                <span class="tag">&lt;<span class="title">name</span>&gt;</span>hbase.cluster.distributed<span class="tag">&lt;/<span class="title">name</span>&gt;</span>
+                <span class="tag">&lt;<span class="title">value</span>&gt;</span>true<span class="tag">&lt;/<span class="title">value</span>&gt;</span>
+        <span class="tag">&lt;/<span class="title">property</span>&gt;</span>
+        <span class="tag">&lt;<span class="title">property</span>&gt;</span>
+                <span class="tag">&lt;<span class="title">name</span>&gt;</span>hbase.tmp.dir<span class="tag">&lt;/<span class="title">name</span>&gt;</span>
+                <span class="tag">&lt;<span class="title">value</span>&gt;</span>/home/grid/hbase/tmp<span class="tag">&lt;/<span class="title">value</span>&gt;</span>
+        <span class="tag">&lt;/<span class="title">property</span>&gt;</span>
+        <span class="tag">&lt;<span class="title">property</span>&gt;</span>
+                <span class="tag">&lt;<span class="title">name</span>&gt;</span>hbase.zookeeper.quorum<span class="tag">&lt;/<span class="title">name</span>&gt;</span>
+                <span class="tag">&lt;<span class="title">value</span>&gt;</span>hadoop01,hadoop02,hadoop03<span class="tag">&lt;/<span class="title">value</span>&gt;</span>
+        <span class="tag">&lt;/<span class="title">property</span>&gt;</span>
+        <span class="tag">&lt;<span class="title">property</span>&gt;</span>
+                <span class="tag">&lt;<span class="title">name</span>&gt;</span>hbase.zookeeper.property.dataDir<span class="tag">&lt;/<span class="title">name</span>&gt;</span>
+                <span class="tag">&lt;<span class="title">value</span>&gt;</span>/home/grid/hbase/tmp/zookeeper<span class="tag">&lt;/<span class="title">value</span>&gt;</span>
+        <span class="tag">&lt;/<span class="title">property</span>&gt;</span>
+<span class="tag">&lt;/<span class="title">configuration</span>&gt;</span>
+</code></pre><h4 id="更改regionservers">更改regionservers</h4>
+<pre><code>[grid<span class="variable">@hadoop01</span> conf]<span class="variable">$ </span>vi regionservers
+hadoop02
+hadoop03 
+</code></pre><h4 id="创建hbase专用文件夹：">创建hbase专用文件夹：</h4>
+<h5 id="创建文件系统目录">创建文件系统目录</h5>
+<pre><code>[<span class="keyword">grid</span><span class="variable">@hadoop01</span> conf]$ hadoop fs -mkdir hdfs:<span class="comment">//hadoop01.myhadoop.com:9000/hbase</span>
+Warning: <span class="variable">$HADOOP_HOME</span> is deprecated.
+
+[<span class="keyword">grid</span><span class="variable">@hadoop01</span> conf]$ hadoop fs -<span class="keyword">ls</span> hdfs:<span class="comment">//hadoop01.myhadoop.com:9000/</span>
+Warning: <span class="variable">$HADOOP_HOME</span> is deprecated.
+
+Found <span class="number">5</span> items
+drwxr-xr-x   - <span class="keyword">grid</span> supergroup          <span class="number">0</span> <span class="number">2014</span>-<span class="number">05</span>-<span class="number">09</span> <span class="number">15</span>:<span class="number">04</span> /hbase
+drwxr-xr-x   - <span class="keyword">grid</span> supergroup          <span class="number">0</span> <span class="number">2014</span>-<span class="number">05</span>-<span class="number">07</span> <span class="number">21</span>:<span class="number">09</span> /home
+drwxr-xr-x   - <span class="keyword">grid</span> supergroup          <span class="number">0</span> <span class="number">2014</span>-<span class="number">04</span>-<span class="number">22</span> <span class="number">19</span>:<span class="number">07</span> /out4
+drwxr-xr-x   - <span class="keyword">grid</span> supergroup          <span class="number">0</span> <span class="number">2014</span>-<span class="number">04</span>-<span class="number">23</span> <span class="number">17</span>:<span class="number">17</span> /tmp
+drwxr-xr-x   - <span class="keyword">grid</span> supergroup          <span class="number">0</span> <span class="number">2014</span>-<span class="number">05</span>-<span class="number">07</span> <span class="number">21</span>:<span class="number">22</span> /user
+[<span class="keyword">grid</span><span class="variable">@hadoop01</span> conf]$
+</code></pre><h4 id="复制Master上的hbase文件夹到另外2节点：">复制Master上的hbase文件夹到另外2节点：</h4>
+<pre><code> scp -r hbase grid<span class="variable">@hadoop02</span><span class="symbol">:~</span>
+ scp -r hbase grid<span class="variable">@hadoop03</span><span class="symbol">:~</span>
+</code></pre><h4 id="修改各节点_的/etc/profile：">修改各节点 的/etc/profile：</h4>
+<pre><code><span class="keyword">export</span> HBASE_HOME=/home/grid/hbase
+<span class="keyword">export</span> PATH=<span class="variable">$PATH</span>:<span class="variable">$HBASE_HOME</span>/bin
+使其生效：
+<span class="built_in">source</span> /etc/profile
+</code></pre><h4 id="启动hbase并进入shell，然后退出">启动hbase并进入shell，然后退出</h4>
+<pre><code>start-hbase.sh
+hbase shell
+create ‘test’,’id’
+disable ‘test’
+drop ‘test’
+<span class="keyword">exit</span>
+stop-hbase.sh
+
+
+
+[grid@hadoop01 ~]$ start-hbase.sh 
+hadoop03: starting zookeeper, logging <span class="keyword">to</span> /home/grid/hbase/bin/../logs/hbase-grid-zookeeper-hadoop03.myhadoop.com.<span class="keyword">out</span>
+hadoop02: starting zookeeper, logging <span class="keyword">to</span> /home/grid/hbase/bin/../logs/hbase-grid-zookeeper-hadoop02.myhadoop.com.<span class="keyword">out</span>
+The authenticity <span class="keyword">of</span> host <span class="attribute">'hadoop01</span> (<span class="number">192.168</span><span class="number">.255</span><span class="number">.151</span>)' can<span class="attribute">'t</span> be established.
+RSA key fingerprint <span class="keyword">is</span> <span class="number">99</span>:<span class="number">8</span>c:<span class="number">8</span>f:<span class="number">64</span>:<span class="number">6</span>a:<span class="number">9</span>e:<span class="number">17</span>:<span class="number">4</span>b:cf:cc:b1:<span class="number">4</span>b:<span class="number">8</span>d:<span class="number">13</span>:eb:e9.
+Are you sure you want <span class="keyword">to</span> continue connecting (yes/no)? yes
+hadoop01: Warning: Permanently added <span class="attribute">'hadoop01</span>' (RSA) <span class="keyword">to</span> the list <span class="keyword">of</span> known hosts.
+hadoop01: starting zookeeper, logging <span class="keyword">to</span> /home/grid/hbase/bin/../logs/hbase-grid-zookeeper-hadoop01.myhadoop.com.<span class="keyword">out</span>
+starting master, logging <span class="keyword">to</span> /home/grid/hbase/logs/hbase-grid-master-hadoop01.myhadoop.com.<span class="keyword">out</span>
+hadoop03: starting regionserver, logging <span class="keyword">to</span> /home/grid/hbase/bin/../logs/hbase-grid-regionserver-hadoop03.myhadoop.com.<span class="keyword">out</span>
+hadoop02: starting regionserver, logging <span class="keyword">to</span> /home/grid/hbase/bin/../logs/hbase-grid-regionserver-hadoop02.myhadoop.com.<span class="keyword">out</span>
+[grid@hadoop01 ~]$ jps
+<span class="number">4675</span> HQuorumPeer
+<span class="number">3796</span> SecondaryNameNode
+<span class="number">4726</span> HMaster
+<span class="number">3862</span> JobTracker
+<span class="number">3653</span> NameNode
+<span class="number">4873</span> Jps
+[grid@hadoop01 ~]$ 
+[grid@hadoop01 ~]$ hbase shell
+HBase Shell; enter <span class="attribute">'help</span>&lt;<span class="keyword">RETURN</span>&gt;' <span class="keyword">for</span> list <span class="keyword">of</span> supported commands.
+<span class="keyword">Type</span> <span class="string">"exit&lt;RETURN&gt;"</span> <span class="keyword">to</span> leave the HBase Shell
+Version <span class="number">0.98</span><span class="number">.1</span>-hadoop1, r1583035, Sat Mar <span class="number">29</span> <span class="number">16</span>:<span class="number">51</span>:<span class="number">51</span> PDT <span class="number">2014</span>
+
+hbase(main):<span class="number">001</span>:<span class="number">0</span>&gt; create <span class="attribute">'test</span>',<span class="attribute">'id</span>'
+SLF4J: Class path contains multiple SLF4J bindings.
+SLF4J: Found binding <span class="keyword">in</span> [jar:<span class="keyword">file</span>:/home/grid/hbase/lib/slf4j-log4j12-<span class="number">1.6</span><span class="number">.4</span>.jar!/org/slf4j/impl/StaticLoggerBinder.class]
+SLF4J: Found binding <span class="keyword">in</span> [jar:<span class="keyword">file</span>:/home/grid/hadoop-<span class="number">1.2</span><span class="number">.1</span>/lib/slf4j-log4j12-<span class="number">1.4</span><span class="number">.3</span>.jar!/org/slf4j/impl/StaticLoggerBinder.class]
+SLF4J: See http://www.slf4j.org/codes.html#multiple_bindings <span class="keyword">for</span> an explanation.
+<span class="number">0</span> row(s) <span class="keyword">in</span> <span class="number">7.1400</span> seconds
+
+=&gt; Hbase::Table - test
+
+hbase(main):<span class="number">003</span>:<span class="number">0</span>&gt; disable <span class="attribute">'test</span>'
+<span class="number">0</span> row(s) <span class="keyword">in</span> <span class="number">1.5220</span> seconds
+
+hbase(main):<span class="number">004</span>:<span class="number">0</span>&gt; drop <span class="attribute">'test</span>'
+<span class="number">0</span> row(s) <span class="keyword">in</span> <span class="number">0.3550</span> seconds
+
+hbase(main):<span class="number">005</span>:<span class="number">0</span>&gt; <span class="keyword">exit</span>
+[grid@hadoop01 bin]$ stop-hbase.sh 
+stopping hbase....................
+hadoop02: stopping zookeeper.
+hadoop03: stopping zookeeper.
+hadoop01: stopping zookeeper.
+</code></pre>  
+	</div>
+		<footer class="article-footer clearfix">
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Hadoop/">Hadoop</a><a href="/tags/HBase/">HBase</a>
+  </div>
+
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Hadoop/">Hadoop</a>
+</div>
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="https://github.com/DaMinger/DaMinger.github.io.git/2014/05/12/Hadoop/hbase_install/" data-title="HBse的安装 | DaMinger&#39;s blog" data-tsina="null" class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2014/05/12/Hadoop/hbase_shell/" title="HBase shell的使用">
+  <strong>PREVIOUS:</strong><br/>
+  <span>
+  HBase shell的使用</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2014/05/11/Hadoop/hbase_problem/"  title="炼数成金论坛上关于HBase三个小问题的讨论">
+ <strong>NEXT:</strong><br/> 
+ <span>炼数成金论坛上关于HBase三个小问题的讨论
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section class="comment">
+	<div class="ds-thread"></div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+  <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#解压HBase"><span class="toc-number">1.</span> <span class="toc-text">解压HBase</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#修改hbase_conf_目录下的配置文件"><span class="toc-number">2.</span> <span class="toc-text">修改hbase conf 目录下的配置文件</span></a></li><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#hbase-env-sh："><span class="toc-number">2.1.</span> <span class="toc-text">hbase-env.sh：</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#hbase-site-xml："><span class="toc-number">2.2.</span> <span class="toc-text">hbase-site.xml：</span></a></li></ol><li class="toc-item toc-level-4"><a class="toc-link" href="#更改regionservers"><span class="toc-number">3.</span> <span class="toc-text">更改regionservers</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#创建hbase专用文件夹："><span class="toc-number">4.</span> <span class="toc-text">创建hbase专用文件夹：</span></a></li><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#创建文件系统目录"><span class="toc-number">4.1.</span> <span class="toc-text">创建文件系统目录</span></a></li></ol><li class="toc-item toc-level-4"><a class="toc-link" href="#复制Master上的hbase文件夹到另外2节点："><span class="toc-number">5.</span> <span class="toc-text">复制Master上的hbase文件夹到另外2节点：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#修改各节点_的/etc/profile："><span class="toc-number">6.</span> <span class="toc-text">修改各节点 的/etc/profile：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#启动hbase并进入shell，然后退出"><span class="toc-number">7.</span> <span class="toc-text">启动hbase并进入shell，然后退出</span></a></li></ol>
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p rel="asidetitle grow" class="asidetitle grow">分类</p>
+		<ul>
+		
+			<li><a rel="grow" class="grow" href="/categories/Hadoop/" title="Hadoop">Hadoop<sup>20</sup></a></li>
+		
+			<li><a rel="grow" class="grow" href="/categories/Linux/" title="Linux">Linux<sup>4</sup></a></li>
+		
+			<li><a rel="grow" class="grow" href="/categories/操作系统/" title="操作系统">操作系统<sup>1</sup></a></li>
+		
+			<li><a rel="grow" class="grow" href="/categories/杂谈/" title="杂谈">杂谈<sup>1</sup></a></li>
+		
+			<li><a rel="grow" class="grow" href="/categories/计算机网络/" title="计算机网络">计算机网络<sup>1</sup></a></li>
+		
+		</ul>
+</div>
+
+
+
+  <div class="linkslist">
+<h3 rel="grow" class="grow asidetitle">友情链接</h3>
+<ul class="entry">
+<li><a rel="grow" class="grow" href="http://tahiti.oracle.com/" title="Oracle文档">Oracle文档</a></li>
+<li><a rel="grow" class="grow" href="http://asktom.oracle.com/" title="AskTom">AskTom</a></li>
+<li><a rel="grow" class="grow" href="http://blog.csdn.net/tianlesoftware/" title="Dave">Dave</a></li>
+<li><a rel="grow" class="grow" href="http://www.eygle.com/" title="eygle">eygle</a></li>
+<li><a rel="grow" class="grow" href="http://www.dbsnake.com/" title="dbsnake">dbsnake</a></li>
+</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/Eclipse/" title="Eclipse">Eclipse<sup>1</sup></a></li>
+		
+			<li><a href="/tags/HBase/" title="HBase">HBase<sup>4</sup></a></li>
+		
+			<li><a href="/tags/HDFS/" title="HDFS">HDFS<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Hadoop/" title="Hadoop">Hadoop<sup>20</sup></a></li>
+		
+			<li><a href="/tags/Hadoop_Stream/" title="Hadoop_Stream">Hadoop_Stream<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Hive/" title="Hive">Hive<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Linux/" title="Linux">Linux<sup>4</sup></a></li>
+		
+			<li><a href="/tags/Mahout/" title="Mahout">Mahout<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Map-Reduce/" title="Map-Reduce">Map-Reduce<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Mysql/" title="Mysql">Mysql<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Pig/" title="Pig">Pig<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Sqoop/" title="Sqoop">Sqoop<sup>1</sup></a></li>
+		
+			<li><a href="/tags/yum/" title="yum">yum<sup>1</sup></a></li>
+		
+			<li><a href="/tags/杂谈/" title="杂谈">杂谈<sup>1</sup></a></li>
+		
+			<li><a href="/tags/网卡错误/" title="网卡错误">网卡错误<sup>1</sup></a></li>
+		
+			<li><a href="/tags/网络/" title="网络">网络<sup>1</sup></a></li>
+		
+			<li><a href="/tags/进程与线程/" title="进程与线程">进程与线程<sup>1</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle"><a href="/archives">归档</a></p>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/05">五月 2014</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/04">四月 2014</a><span class="archive-list-count">19</span></li></ul>
+  </div>
+
+
+  
+  <div class="tagcloudlist">
+    <p class="asidetitle">标签云</p>
+    <div class="tagcloudlist clearfix">
+       <a href="/tags/Eclipse/" style="font-size: 10.00px;">Eclipse</a><a href="/tags/HBase/" style="font-size: 16.67px;">HBase</a><a href="/tags/HDFS/" style="font-size: 13.33px;">HDFS</a><a href="/tags/Hadoop/" style="font-size: 20.00px;">Hadoop</a><a href="/tags/Hadoop_Stream/" style="font-size: 10.00px;">Hadoop_Stream</a><a href="/tags/Hive/" style="font-size: 13.33px;">Hive</a><a href="/tags/Linux/" style="font-size: 16.67px;">Linux</a><a href="/tags/Mahout/" style="font-size: 13.33px;">Mahout</a><a href="/tags/Map-Reduce/" style="font-size: 13.33px;">Map-Reduce</a><a href="/tags/Mysql/" style="font-size: 10.00px;">Mysql</a><a href="/tags/Pig/" style="font-size: 10.00px;">Pig</a><a href="/tags/Sqoop/" style="font-size: 10.00px;">Sqoop</a><a href="/tags/yum/" style="font-size: 10.00px;">yum</a><a href="/tags/杂谈/" style="font-size: 10.00px;">杂谈</a><a href="/tags/网卡错误/" style="font-size: 10.00px;">网卡错误</a><a href="/tags/网络/" style="font-size: 10.00px;">网络</a><a href="/tags/进程与线程/" style="font-size: 10.00px;">进程与线程</a>
+    </div>
+  </div>
+
+
+  <iframe width="100%" height="550" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=2&ptype=1&speed=0&skin=1&isTitle=1&noborder=1&isWeibo=1&isFans=1&uid=3819451430&verifier=f953543e&dpc=1"></iframe>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<span class="buzz" rel="buzz"> Hello,I&#39;m liuqinming.For now I&#39;m a student at collage. <br/>
+			I will share my learning experience with you at this blog.</span>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		<a rel="push" class="push" href="https://github.com/https://github.com/DaMinger" target="_blank" title="github"></a>
+		
+		
+	</div>
+		<p class="copyright">Powered by <a rel="float-shadow" class="float-shadow" href="http://zespia.tw/hexo/" target="_blank" title="hexo">Hexo</a> and Theme by <a class="box-shadow-inset"href="https://github.com/uruir/pacmanhover" target="_blank" title="Pacman">PacmanHover</a> © 2014 
+		
+		
+		<a class="wobble-horizontal" rel="wobble-horizontal" href="https://github.com/DaMinger/DaMinger.github.io.git" target="_blank" title="DaMinger">DaMinger</a>
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+    c.click(function(){
+      ta.css('display', 'block').addClass('fadeIn');
+    });
+    o.click(function(){
+      ta.css('display', 'none');
+    });
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,320-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"null"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+<div id="totop" style="position:fixed;bottom:150px;right:50px;cursor: pointer;">
+<a title="���ض���"><img src="/img/scrollup.png"/></a>
+</div>
+<script src="/js/totop.js"></script>
+
+
+
+  </body>
+</html>
