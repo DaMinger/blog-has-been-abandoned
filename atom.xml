@@ -4,7 +4,7 @@
   <subtitle><![CDATA[信春哥，系统稳，闭眼上线不回滚]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="https://github.com/DaMinger/DaMinger.github.io.git/"/>
-  <updated>2014-05-18T12:59:08.135Z</updated>
+  <updated>2014-05-18T13:05:47.740Z</updated>
   <id>https://github.com/DaMinger/DaMinger.github.io.git/</id>
   
   <author>
@@ -19,13 +19,15 @@
     <link href="https://github.com/DaMinger/DaMinger.github.io.git/2014/05/14/%E6%9D%82%E8%B0%88/plan/"/>
     <id>https://github.com/DaMinger/DaMinger.github.io.git/2014/05/14/杂谈/plan/</id>
     <published>2014-05-14T11:55:11.000Z</published>
-    <updated>2014-05-18T12:58:45.000Z</updated>
+    <updated>2014-05-18T13:04:34.000Z</updated>
     <content type="html"><![CDATA[<p>离大三结束还剩50天吧，最近思来想后，这几周干什么！？最终还是决定把基础知识抓一抓，准备写几个专题，也是对自己的查缺补漏，使自己的基本功更扎实。</p>
-<p>————-设计模式  阅读《大话设计模式》一书，对某些设计模式进行java和python的改写</p>
-<p>————-Shell基础与实战  参考《Shell脚本学习指南》</p>
-<p>————-Python学习总结  写写案例，总结常用模块</p>
-<p>————-基本的数据结构与算法     用C或者JAVA实现 </p>
-<p>————-Oracle     理论与实验并行，原先在OneNote上的笔记 整理整理</p>
+<ul>
+<li>设计模式  阅读《大话设计模式》 对某些设计模式进行java和python的改写</li>
+<li>Shell基础与实战  参考《Shell脚本学习指南》</li>
+<li>Python学习总结  写写案例，总结常用模块</li>
+<li>基本的数据结构与算法     用C或者JAVA实现 </li>
+<li>Oracle     理论与实验并行，原先在OneNote上的笔记 整理整理</li>
+</ul>
 <p>学习任务很多，给自己一个鼓励，努力坚持！</p>
 ]]></content>
     
