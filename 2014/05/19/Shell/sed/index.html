@@ -1,0 +1,615 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>grep与sed的使用 | DaMinger&#39;s blog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="DaMinger">
+    
+    <meta name="description" content="实验脚本来自《鸟哥的私房菜》
+贴一张正则表达式特殊符号的图
+实验脚本regular_express.txt：
+&quot;Open Source&quot; is a good mechanism to develop programs.
+apple is my favorite food.
+Football game">
+    
+    
+    
+    
+    <link rel="alternative" href="/atom.xml" title="DaMinger&#39;s blog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/pacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/pacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+    <link href="/css/hover.css" rel="stylesheet">
+    <link href="/css/bottom.css" rel="stylesheet">
+</head>
+
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a rel="pulse" class="pulse" href="/"><img src="/img/pacman.png" alt="DaMinger&#39;s blog" title="DaMinger&#39;s blog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a rel="hover" class="hover" href="/" title="DaMinger&#39;s blog">DaMinger&#39;s blog</a></h1>
+				<h2 class="blog-motto"><a rel="wobble-to-bottom-right" class="wobble-to-bottom-right" href="#" title="#">信春哥，系统稳，闭眼上线不回滚</a></h2>
+			</div>
+			<div class="navbar"><a rel="buzz" class="buzz" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a rel="wobble-top" class="wobble-top" href="/">Home</a></li>
+					
+						<li><a rel="wobble-top" class="wobble-top" href="/archives">Menu</a></li>
+					
+						<li><a rel="wobble-top" class="wobble-top" href="/about">About</a></li>
+					
+				</ul>
+				
+			</nav>			
+</div>
+<div style="text-align:right;">
+<form  class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+ <input type="search" name="q" id="search" autocomplete="off" autocorrect="off" autocapitalize="off" maxlength="20" placeholder="Search" />
+ <input type="hidden" name="q" value="site:github.com/DaMinger/DaMinger.github.io.git">
+</form>
+</div>
+
+
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2014/05/19/Shell/sed/" title="grep与sed的使用" itemprop="url">grep与sed的使用</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="https://github.com/DaMinger/DaMinger.github.io.git" title="DaMinger">DaMinger</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2014-05-19T11:12:57.000Z" itemprop="datePublished">5月 19 2014</time>
+    更新日期:<time datetime="2014-05-19T12:07:48.000Z" itemprop="dateModified">5月 19 2014</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		<ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#grep的使用"><span class="toc-number">1.</span> <span class="toc-text">grep的使用</span></a></li><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#搜寻特定字符串："><span class="toc-number">1.0.1.</span> <span class="toc-text">搜寻特定字符串：</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#反向选择，可以使用_‘v’_选项："><span class="toc-number">1.0.2.</span> <span class="toc-text">反向选择，可以使用 ‘v’ 选项：</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#如果不需要区分大小写，可以使用_‘i’_选项："><span class="toc-number">1.0.3.</span> <span class="toc-text">如果不需要区分大小写，可以使用 ‘i’ 选项：</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#利用中括号_[_]_来搜寻集合字节"><span class="toc-number">1.0.4.</span> <span class="toc-text">利用中括号 [ ] 来搜寻集合字节</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#如果需要匹配某一部分，但是不想匹配以某些开头的情况：（匹配oo，但不匹配以g开头的情况）"><span class="toc-number">1.0.5.</span> <span class="toc-text">如果需要匹配某一部分，但是不想匹配以某些开头的情况：（匹配oo，但不匹配以g开头的情况）</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#行首与行尾字节_^_$"><span class="toc-number">1.0.6.</span> <span class="toc-text">行首与行尾字节 ^ $</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#匹配以小写字母开头的行："><span class="toc-number">1.0.7.</span> <span class="toc-text">匹配以小写字母开头的行：</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#匹配非大小写字母开头的行："><span class="toc-number">1.0.8.</span> <span class="toc-text">匹配非大小写字母开头的行：</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#匹配空行："><span class="toc-number">1.0.9.</span> <span class="toc-text">匹配空行：</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#任意一个字节_-_与重复字节_*"><span class="toc-number">1.0.10.</span> <span class="toc-text">任意一个字节 . 与重复字节 *</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#限定连续_RE_字符范围_{}"><span class="toc-number">1.0.11.</span> <span class="toc-text">限定连续 RE 字符范围 {}</span></a></li></ol></ol><li class="toc-item toc-level-4"><a class="toc-link" href="#基础的正规表示法特殊字符"><span class="toc-number">2.</span> <span class="toc-text">基础的正规表示法特殊字符</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#sed的使用"><span class="toc-number">3.</span> <span class="toc-text">sed的使用</span></a></li><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#例一：将_/etc/passwd_的内容列出并且列印行号，同时，请将第_2~5_行删除！"><span class="toc-number">3.0.1.</span> <span class="toc-text">例一：将 /etc/passwd 的内容列出并且列印行号，同时，请将第 2~5 行删除！</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#例二：承上题，在第二行后(亦即是加在第三行)加上『drink_tea?』字样！"><span class="toc-number">3.0.2.</span> <span class="toc-text">例二：承上题，在第二行后(亦即是加在第三行)加上『drink tea?』字样！</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#例三：我想将第2-5行的内容取代成为“No_2-5_number”呢？"><span class="toc-number">3.0.3.</span> <span class="toc-text">例三：我想将第2-5行的内容取代成为“No 2-5 number”呢？</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#例四：仅列出_/etc/passwd_文件内的第_5-7_行"><span class="toc-number">3.0.4.</span> <span class="toc-text">例四：仅列出 /etc/passwd 文件内的第 5-7 行</span></a></li></ol><li class="toc-item toc-level-5"><a class="toc-link" href="#部分数据的搜寻并取代的功能"><span class="toc-number">3.1.</span> <span class="toc-text">部分数据的搜寻并取代的功能</span></a></li><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#步骤一：先观察原始信息，利用_/sbin/ifconfig_查询_IP_为何？"><span class="toc-number">3.1.1.</span> <span class="toc-text">步骤一：先观察原始信息，利用 /sbin/ifconfig 查询 IP 为何？</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#步骤二：利用关键字配合_grep_撷取出关键的一行数据"><span class="toc-number">3.1.2.</span> <span class="toc-text">步骤二：利用关键字配合 grep 撷取出关键的一行数据</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#步骤三：将_IP_前面的部分予以删除"><span class="toc-number">3.1.3.</span> <span class="toc-text">步骤三：将 IP 前面的部分予以删除</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#步骤四：将_IP_后面的部分予以删除"><span class="toc-number">3.1.4.</span> <span class="toc-text">步骤四：将 IP 后面的部分予以删除</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#例六：利用_sed_将_regular_express-txt_内每一行结尾若为_-_则换成_!"><span class="toc-number">3.1.5.</span> <span class="toc-text">例六：利用 sed 将 regular_express.txt 内每一行结尾若为 . 则换成 !</span></a></li></ol>
+		</div>
+		
+		<p>实验脚本来自《鸟哥的私房菜》</p>
+<p>贴一张正则表达式特殊符号的图<br><img src="/img/Shell/sed/sed_1.jpg" alt="正则表达式特殊符号 "></p>
+<p>实验脚本regular_express.txt：</p>
+<pre><code><span class="string">"Open Source"</span> <span class="keyword">is</span> a good mechanism <span class="keyword">to</span> develop programs.
+apple <span class="keyword">is</span> <span class="keyword">my</span> favorite food.
+Football game <span class="keyword">is</span> <span class="keyword">not</span> use feet only.
+this dress doesn't fit <span class="keyword">me</span>.
+However, this dress <span class="keyword">is</span> <span class="keyword">about</span> $ <span class="number">3183</span> dollars.^M
+GNU <span class="keyword">is</span> free air <span class="keyword">not</span> free beer.^M
+Her hair <span class="keyword">is</span> very beauty.^M
+I can't finish <span class="keyword">the</span> test.^M
+Oh! The soup taste good.^M
+motorcycle <span class="keyword">is</span> cheap than car.
+This window <span class="keyword">is</span> clear.
+<span class="keyword">the</span> symbol '*' <span class="keyword">is</span> represented <span class="keyword">as</span> start.
+Oh!     My god!
+The gd software <span class="keyword">is</span> a library <span class="keyword">for</span> drafting programs.^M
+You are <span class="keyword">the</span> best <span class="keyword">is</span> mean you are <span class="keyword">the</span> no. <span class="number">1.</span>
+The world &lt;Happy&gt; <span class="keyword">is</span> <span class="keyword">the</span> same <span class="keyword">with</span> <span class="string">"glad"</span>.
+I like dog.
+google <span class="keyword">is</span> <span class="keyword">the</span> best tools <span class="keyword">for</span> search keyword.
+goooooogle yes!
+go! go! Let's go.
+<span class="comment"># I am VBird</span>
+</code></pre><h4 id="grep的使用">grep的使用</h4>
+<h6 id="搜寻特定字符串：">搜寻特定字符串：</h6>
+<pre><code>[root@localhost ~]<span class="comment"># grep -n 'the' regular_express.txt</span>
+<span class="number">8</span>:I can't finish <span class="keyword">the</span> test.
+<span class="number">12</span>:<span class="keyword">the</span> symbol '*' <span class="keyword">is</span> represented <span class="keyword">as</span> start.
+<span class="number">15</span>:You are <span class="keyword">the</span> best <span class="keyword">is</span> mean you are <span class="keyword">the</span> no. <span class="number">1.</span>
+<span class="number">16</span>:The world &lt;Happy&gt; <span class="keyword">is</span> <span class="keyword">the</span> same <span class="keyword">with</span> <span class="string">"glad"</span>.
+<span class="number">18</span>:google <span class="keyword">is</span> <span class="keyword">the</span> best tools <span class="keyword">for</span> search keyword.
+</code></pre><h6 id="反向选择，可以使用_‘v’_选项：">反向选择，可以使用 ‘v’ 选项：</h6>
+<pre><code>[root<span class="variable">@localhost</span> ~]<span class="comment"># grep -vn 'the' regular_express.txt</span>
+则所有包含 ‘the’ 的行都不会显示
+</code></pre><h6 id="如果不需要区分大小写，可以使用_‘i’_选项：">如果不需要区分大小写，可以使用 ‘i’ 选项：</h6>
+<pre><code>[root@localhost ~]<span class="comment"># grep -in 'the' regular_express.txt</span>
+<span class="number">8</span>:I can't finish <span class="keyword">the</span> test.
+<span class="number">9</span>:Oh! The soup taste good.
+<span class="number">12</span>:<span class="keyword">the</span> symbol '*' <span class="keyword">is</span> represented <span class="keyword">as</span> start.
+<span class="number">14</span>:The gd software <span class="keyword">is</span> a library <span class="keyword">for</span> drafting programs.
+<span class="number">15</span>:You are <span class="keyword">the</span> best <span class="keyword">is</span> mean you are <span class="keyword">the</span> no. <span class="number">1.</span>
+<span class="number">16</span>:The world &lt;Happy&gt; <span class="keyword">is</span> <span class="keyword">the</span> same <span class="keyword">with</span> <span class="string">"glad"</span>.
+<span class="number">18</span>:google <span class="keyword">is</span> <span class="keyword">the</span> best tools <span class="keyword">for</span> search keyword.
+</code></pre><h6 id="利用中括号_[_]_来搜寻集合字节">利用中括号 [ ] 来搜寻集合字节</h6>
+<pre><code>[root<span class="variable">@localhost</span> ~]<span class="comment"># grep -n 't[ae]st' regular_express.txt</span>
+<span class="number">8</span><span class="symbol">:I</span> can<span class="string">'t finish the test.
+9:Oh! The soup taste good.</span>
+</code></pre><h6 id="如果需要匹配某一部分，但是不想匹配以某些开头的情况：（匹配oo，但不匹配以g开头的情况）">如果需要匹配某一部分，但是不想匹配以某些开头的情况：（匹配oo，但不匹配以g开头的情况）</h6>
+<pre><code>[root<span class="variable">@localhost</span> ~]<span class="comment"># grep -n '[^g]oo' regular_express.txt</span>
+<span class="number">2</span><span class="symbol">:apple</span> is my favorite food.
+<span class="number">3</span><span class="symbol">:Football</span> game is <span class="keyword">not</span> use feet only.
+<span class="number">18</span><span class="symbol">:google</span> is the best tools <span class="keyword">for</span> search keyword.
+<span class="number">19</span><span class="symbol">:goooooogle</span> yes!
+[root<span class="variable">@localhost</span> ~]<span class="comment"># grep -n '[^a-z]oo' regular_express.txt</span>
+<span class="number">3</span><span class="symbol">:Football</span> game is <span class="keyword">not</span> use feet only.
+</code></pre><h6 id="行首与行尾字节_^_$">行首与行尾字节 ^ $</h6>
+<pre><code>[root@localhost ~]<span class="preprocessor"># grep -n '^the' regular_express.txt</span>
+<span class="number">12</span>:the symbol <span class="string">'*'</span> <span class="keyword">is</span> represented <span class="keyword">as</span> start.
+</code></pre><h6 id="匹配以小写字母开头的行：">匹配以小写字母开头的行：</h6>
+<pre><code>[root@localhost ~]<span class="comment"># grep -n '^[a-z]' regular_express.txt</span>
+<span class="number">2</span>:apple <span class="keyword">is</span> <span class="keyword">my</span> favorite food.
+<span class="number">4</span>:this dress doesn't fit <span class="keyword">me</span>.
+<span class="number">10</span>:motorcycle <span class="keyword">is</span> cheap than car.
+<span class="number">12</span>:<span class="keyword">the</span> symbol '*' <span class="keyword">is</span> represented <span class="keyword">as</span> start.
+<span class="number">18</span>:google <span class="keyword">is</span> <span class="keyword">the</span> best tools <span class="keyword">for</span> search keyword.
+<span class="number">19</span>:goooooogle yes!
+<span class="number">20</span>:go! go! Let's go.
+</code></pre><h6 id="匹配非大小写字母开头的行：">匹配非大小写字母开头的行：</h6>
+<pre><code>[root@localhost ~]<span class="preprocessor"># grep -n '^[^a-zA-Z]' regular_express.txt</span>
+<span class="number">1</span>:<span class="string">"Open Source"</span> <span class="keyword">is</span> a good mechanism <span class="keyword">to</span> develop programs.
+<span class="number">21</span>:<span class="preprocessor"># I am VBird</span>
+</code></pre><p>注意：那个 ^ 符号，在字节集合符号(括号[ ])之内与之外是不同的！ 在 [ ] 内代表“反向选择”，在 [ ] 之外则代表定位在行首的意义！</p>
+<h6 id="匹配空行：">匹配空行：</h6>
+<pre><code>[root<span class="variable">@localhost</span> ~]<span class="comment"># grep -n '^$' regular_express.txt</span>
+<span class="number">22</span><span class="symbol">:</span>
+</code></pre><h6 id="任意一个字节_-_与重复字节_*">任意一个字节 . 与重复字节 *</h6>
+<pre><code>[root<span class="variable">@localhost</span> ~]<span class="comment"># grep -n 'goo*g' regular_express.txt</span>
+<span class="number">18</span><span class="symbol">:google</span> is the best tools <span class="keyword">for</span> search keyword.
+<span class="number">19</span><span class="symbol">:goooooogle</span> yes!
+</code></pre><p>在正则表达式中‘.’ 0个或1个任意字符，‘*’代表任意多个任意字符</p>
+<h6 id="限定连续_RE_字符范围_{}">限定连续 RE 字符范围 {}</h6>
+<pre><code>[root<span class="variable">@localhost</span> ~]<span class="comment"># grep -n 'go\{2,5\}g' regular_express.txt</span>
+<span class="number">18</span><span class="symbol">:google</span> is the best tools <span class="keyword">for</span> search keyword.
+</code></pre><p>上面的式子匹配了2个‘o’，表达式的意思是匹配2-5个‘o’<br>若第二个参数为空，则匹配 第一个参数到无穷多个的情况：</p>
+<pre><code>[root<span class="variable">@localhost</span> ~]<span class="comment"># grep -n 'go\{2,\}g' regular_express.txt</span>
+<span class="number">18</span><span class="symbol">:google</span> is the best tools <span class="keyword">for</span> search keyword.
+<span class="number">19</span><span class="symbol">:goooooogle</span> yes!
+</code></pre><h4 id="基础的正规表示法特殊字符">基础的正规表示法特殊字符</h4>
+<p><img src="/img/Shell/sed/sed_2.jpg" alt="正则表达式特殊字符 "><br><img src="/img/Shell/sed/sed_3.jpg" alt="正则表达式特殊字符 "></p>
+<h4 id="sed的使用">sed的使用</h4>
+<p>[root@localhost ~]# sed [-nefr] [动作]选项与参数：</p>
+<pre><code>-<span class="ruby">n ：使用安静(silent)模式。在一般 sed 的用法中，所有来自 <span class="constant">STDIN</span> 
+</span>     的数据一般都会被列出到萤幕上。但如果加上 -n 参数后，则只有经过
+     sed 特殊处理的那一行(或者动作)才会被列出来。
+-<span class="ruby">e ：直接在命令列模式上进行 sed 的动作编辑；
+</span>-<span class="ruby">f ：直接将 sed 的动作写在一个文件内， -f filename 则可以运行 filename 内的 
+</span>     sed 动作；
+-<span class="ruby">r ：sed 的动作支持的是延伸型正规表示法的语法。(默认是基础正规表示法语法)
+</span>-<span class="ruby">i ：直接修改读取的文件内容，而不是由萤幕输出。</span>
+</code></pre><p>动作说明： [n1[,n2]]function</p>
+<pre><code>n1, n2 ：不见得会存在，一般代表『选择进行动作的行数』，举例来说，如果我的动作
+         是需要在 <span class="number">10</span> 到 <span class="number">20</span> 行之间进行的，则『 <span class="number">10</span>,<span class="number">20</span>[动作行为] 』
+<span class="function"><span class="keyword">function</span> ：</span>
+<span class="operator">a</span> ：新增， <span class="operator">a</span> 的后面可以接字串，而这些字串会在新的一行出现(目前的下一行)～
+c ：取代， c 的后面可以接字串，这些字串可以取代 n1,n2 之间的行！
+d ：删除，因为是删除啊，所以 d 后面通常不接任何东西；
+i ：插入， i 的后面可以接字串，而这些字串会在新的一行出现(目前的上一行)；
+p ：列印，亦即将某个选择的数据印出。通常 p 会与参数 sed -n 一起运行～
+s ：取代，可以直接进行取代的工作哩！通常这个 s 的动作可以搭配
+</code></pre><h6 id="例一：将_/etc/passwd_的内容列出并且列印行号，同时，请将第_2~5_行删除！">例一：将 /etc/passwd 的内容列出并且列印行号，同时，请将第 2~5 行删除！</h6>
+<pre><code>[root<span class="variable">@localhost</span> ~]<span class="comment"># nl /etc/passwd | sed '2,5d'</span>
+<span class="number">1</span> <span class="symbol">root:</span><span class="symbol">x:</span><span class="number">0</span><span class="symbol">:</span><span class="number">0</span><span class="symbol">:root</span><span class="symbol">:/root</span><span class="symbol">:/bin/bash</span>
+<span class="number">6</span> <span class="symbol">sync:</span><span class="symbol">x:</span><span class="number">5</span><span class="symbol">:</span><span class="number">0</span><span class="symbol">:sync</span><span class="symbol">:/sbin</span><span class="symbol">:/bin/sync</span>
+<span class="number">7</span> <span class="symbol">shutdown:</span><span class="symbol">x:</span><span class="number">6</span><span class="symbol">:</span><span class="number">0</span><span class="symbol">:shutdown</span><span class="symbol">:/sbin</span><span class="symbol">:/sbin/shutdown</span>
+.....(后面省略).....
+</code></pre><h6 id="例二：承上题，在第二行后(亦即是加在第三行)加上『drink_tea?』字样！">例二：承上题，在第二行后(亦即是加在第三行)加上『drink tea?』字样！</h6>
+<pre><code>[root<span class="variable">@localhost</span> ~]<span class="comment"># nl /etc/passwd | sed '2a drink tea'</span>
+<span class="number">1</span> <span class="symbol">root:</span><span class="symbol">x:</span><span class="number">0</span><span class="symbol">:</span><span class="number">0</span><span class="symbol">:root</span><span class="symbol">:/root</span><span class="symbol">:/bin/bash</span>
+<span class="number">2</span> <span class="symbol">bin:</span><span class="symbol">x:</span><span class="number">1</span><span class="symbol">:</span><span class="number">1</span><span class="symbol">:bin</span><span class="symbol">:/bin</span><span class="symbol">:/sbin/nologin</span>
+drink tea
+<span class="number">3</span> <span class="symbol">daemon:</span><span class="symbol">x:</span><span class="number">2</span><span class="symbol">:</span><span class="number">2</span><span class="symbol">:daemon</span><span class="symbol">:/sbin</span><span class="symbol">:/sbin/nologin</span>
+.....(后面省略).....
+</code></pre><h6 id="例三：我想将第2-5行的内容取代成为“No_2-5_number”呢？">例三：我想将第2-5行的内容取代成为“No 2-5 number”呢？</h6>
+<pre><code>[root<span class="variable">@localhost</span> ~]<span class="comment"># nl /etc/passwd | sed '2,5c No 2-5 number'</span>
+<span class="number">1</span> <span class="symbol">root:</span><span class="symbol">x:</span><span class="number">0</span><span class="symbol">:</span><span class="number">0</span><span class="symbol">:root</span><span class="symbol">:/root</span><span class="symbol">:/bin/bash</span>
+<span class="constant">No</span> <span class="number">2</span>-<span class="number">5</span> number
+<span class="number">6</span> <span class="symbol">sync:</span><span class="symbol">x:</span><span class="number">5</span><span class="symbol">:</span><span class="number">0</span><span class="symbol">:sync</span><span class="symbol">:/sbin</span><span class="symbol">:/bin/sync</span>
+.....(后面省略).....
+</code></pre><h6 id="例四：仅列出_/etc/passwd_文件内的第_5-7_行">例四：仅列出 /etc/passwd 文件内的第 5-7 行</h6>
+<pre><code>[root<span class="variable">@localhost</span> ~]<span class="comment"># nl /etc/passwd | sed -n '5,7p'</span>
+<span class="number">5</span> <span class="symbol">lp:</span><span class="symbol">x:</span><span class="number">4</span><span class="symbol">:</span><span class="number">7</span><span class="symbol">:lp</span><span class="symbol">:/var/spool/lpd</span><span class="symbol">:/sbin/nologin</span>
+<span class="number">6</span> <span class="symbol">sync:</span><span class="symbol">x:</span><span class="number">5</span><span class="symbol">:</span><span class="number">0</span><span class="symbol">:sync</span><span class="symbol">:/sbin</span><span class="symbol">:/bin/sync</span>
+<span class="number">7</span> <span class="symbol">shutdown:</span><span class="symbol">x:</span><span class="number">6</span><span class="symbol">:</span><span class="number">0</span><span class="symbol">:shutdown</span><span class="symbol">:/sbin</span><span class="symbol">:/sbin/shutdown</span>
+</code></pre><h5 id="部分数据的搜寻并取代的功能">部分数据的搜寻并取代的功能</h5>
+<p>基本使用方式：sed ‘s/要被取代的字串/新的字串/g’</p>
+<h6 id="步骤一：先观察原始信息，利用_/sbin/ifconfig_查询_IP_为何？">步骤一：先观察原始信息，利用 /sbin/ifconfig 查询 IP 为何？</h6>
+<pre><code>[root<span class="variable">@localhost</span> ~]<span class="comment"># /sbin/ifconfig eth0</span>
+eth<span class="number">0</span> <span class="constant">Link</span> <span class="symbol">encap:</span><span class="constant">Ethernet</span> <span class="constant">HWaddr</span> <span class="number">00</span><span class="symbol">:</span><span class="number">90</span><span class="symbol">:CC</span><span class="symbol">:A6</span><span class="symbol">:</span><span class="number">34</span><span class="symbol">:</span><span class="number">84</span>
+inet <span class="symbol">addr:</span><span class="number">192.168</span>.<span class="number">1.100</span> <span class="constant">Bcast</span><span class="symbol">:</span><span class="number">192.168</span>.<span class="number">1.255</span> <span class="constant">Mask</span><span class="symbol">:</span><span class="number">255.255</span>.<span class="number">255.0</span>
+inet6 <span class="symbol">addr:</span> <span class="symbol">fe80:</span><span class="symbol">:</span><span class="number">290</span><span class="symbol">:ccff</span><span class="symbol">:fea6</span><span class="symbol">:</span><span class="number">3484</span>/<span class="number">64</span> <span class="constant">Scope</span><span class="symbol">:Link</span>
+<span class="constant">UP</span> <span class="constant">BROADCAST</span> <span class="constant">RUNNING</span> <span class="constant">MULTICAST</span> <span class="constant">MTU</span><span class="symbol">:</span><span class="number">1500</span> <span class="constant">Metric</span><span class="symbol">:</span><span class="number">1</span>
+.....(以下省略).....
+</code></pre><p>我们的重点在第二行，也就是 192.168.1.100 那一行而已！先利用关键字捉出那一行！</p>
+<h6 id="步骤二：利用关键字配合_grep_撷取出关键的一行数据">步骤二：利用关键字配合 grep 撷取出关键的一行数据</h6>
+<pre><code>[root<span class="variable">@localhost</span> ~]<span class="comment"># /sbin/ifconfig eth0 | grep 'inet addr'</span>
+inet <span class="symbol">addr:</span><span class="number">192.168</span>.<span class="number">1.100</span> <span class="constant">Bcast</span><span class="symbol">:</span><span class="number">192.168</span>.<span class="number">1.255</span> <span class="constant">Mask</span><span class="symbol">:</span><span class="number">255.255</span>.<span class="number">255.0</span>
+</code></pre><p>当场仅剩下一行！接下来，我们要将开始到 addr: 通通删除，删除关键在於『 ^.*inet addr: 』啦！正规表示法出现！<br>，</p>
+<h6 id="步骤三：将_IP_前面的部分予以删除">步骤三：将 IP 前面的部分予以删除</h6>
+<pre><code>[root<span class="variable">@localhost</span> ~]<span class="comment"># /sbin/ifconfig eth0 | grep 'inet addr' | \</span>
+&gt; sed <span class="string">'s/^.*addr://g'</span>
+<span class="number">192.168</span>.<span class="number">1.100</span> <span class="constant">Bcast</span><span class="symbol">:</span><span class="number">192.168</span>.<span class="number">1.255</span> <span class="constant">Mask</span><span class="symbol">:</span><span class="number">255.255</span>.<span class="number">255.0</span>
+</code></pre><p> 仔细与上个步骤比较一下，前面的部分不见了！接下来则是删除后续的部分，此时所需的正规表示法为：『 Bcast.*$ 』就是啦！</p>
+<h6 id="步骤四：将_IP_后面的部分予以删除">步骤四：将 IP 后面的部分予以删除</h6>
+<pre><code>[root<span class="variable">@localhost</span> ~]<span class="comment"># /sbin/ifconfig eth0 | grep 'inet addr' | \</span>
+&gt; sed <span class="string">'s/^.*addr://g'</span> | sed <span class="string">'s/Bcast.*$//g'</span>
+<span class="number">192.168</span>.<span class="number">1.100</span>
+</code></pre><h6 id="例六：利用_sed_将_regular_express-txt_内每一行结尾若为_-_则换成_!">例六：利用 sed 将 regular_express.txt 内每一行结尾若为 . 则换成 !</h6>
+<pre><code>[root<span class="variable">@localhost</span> ~]<span class="comment"># sed -i 's/\.$/\!/g' regular_express.txt  </span>
+</code></pre><p>上头的 -i 选项可以让你的 sed 直接去修改后面接的文件内容而不是由屏幕输出！注意使用的时候需要对 ‘.’ 进行转义，而且需要指明是对结尾为‘.’ 的进行替换，使用 $ 符号<br>这里就顺便来实践一下，我有一个dos环境下创建的文件，当复制到 unix 环境下之后，结尾就会出现难看的“^M” 符号，如果要把这个符号去掉使用sed工具可以轻松搞定：</p>
+<pre><code>[root<span class="variable">@localhost</span> ~]<span class="comment"># sed -i 's/\^M$//g' regular_express.txt</span>
+</code></pre>  
+	</div>
+		<footer class="article-footer clearfix">
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Shell/">Shell</a><a href="/tags/sed/">sed</a>
+  </div>
+
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Shell/">Shell</a>
+</div>
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="https://github.com/DaMinger/DaMinger.github.io.git/2014/05/19/Shell/sed/" data-title="grep与sed的使用 | DaMinger&#39;s blog" data-tsina="null" class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2014/05/19/Shell/awk/" title="awk的入门">
+  <strong>PREVIOUS:</strong><br/>
+  <span>
+  awk的入门</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2014/05/19/Shell/vi/"  title="Vi编译器的使用">
+ <strong>NEXT:</strong><br/> 
+ <span>Vi编译器的使用
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section class="comment">
+	<div class="ds-thread"></div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+  <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#grep的使用"><span class="toc-number">1.</span> <span class="toc-text">grep的使用</span></a></li><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#搜寻特定字符串："><span class="toc-number">1.0.1.</span> <span class="toc-text">搜寻特定字符串：</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#反向选择，可以使用_‘v’_选项："><span class="toc-number">1.0.2.</span> <span class="toc-text">反向选择，可以使用 ‘v’ 选项：</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#如果不需要区分大小写，可以使用_‘i’_选项："><span class="toc-number">1.0.3.</span> <span class="toc-text">如果不需要区分大小写，可以使用 ‘i’ 选项：</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#利用中括号_[_]_来搜寻集合字节"><span class="toc-number">1.0.4.</span> <span class="toc-text">利用中括号 [ ] 来搜寻集合字节</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#如果需要匹配某一部分，但是不想匹配以某些开头的情况：（匹配oo，但不匹配以g开头的情况）"><span class="toc-number">1.0.5.</span> <span class="toc-text">如果需要匹配某一部分，但是不想匹配以某些开头的情况：（匹配oo，但不匹配以g开头的情况）</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#行首与行尾字节_^_$"><span class="toc-number">1.0.6.</span> <span class="toc-text">行首与行尾字节 ^ $</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#匹配以小写字母开头的行："><span class="toc-number">1.0.7.</span> <span class="toc-text">匹配以小写字母开头的行：</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#匹配非大小写字母开头的行："><span class="toc-number">1.0.8.</span> <span class="toc-text">匹配非大小写字母开头的行：</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#匹配空行："><span class="toc-number">1.0.9.</span> <span class="toc-text">匹配空行：</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#任意一个字节_-_与重复字节_*"><span class="toc-number">1.0.10.</span> <span class="toc-text">任意一个字节 . 与重复字节 *</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#限定连续_RE_字符范围_{}"><span class="toc-number">1.0.11.</span> <span class="toc-text">限定连续 RE 字符范围 {}</span></a></li></ol></ol><li class="toc-item toc-level-4"><a class="toc-link" href="#基础的正规表示法特殊字符"><span class="toc-number">2.</span> <span class="toc-text">基础的正规表示法特殊字符</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#sed的使用"><span class="toc-number">3.</span> <span class="toc-text">sed的使用</span></a></li><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#例一：将_/etc/passwd_的内容列出并且列印行号，同时，请将第_2~5_行删除！"><span class="toc-number">3.0.1.</span> <span class="toc-text">例一：将 /etc/passwd 的内容列出并且列印行号，同时，请将第 2~5 行删除！</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#例二：承上题，在第二行后(亦即是加在第三行)加上『drink_tea?』字样！"><span class="toc-number">3.0.2.</span> <span class="toc-text">例二：承上题，在第二行后(亦即是加在第三行)加上『drink tea?』字样！</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#例三：我想将第2-5行的内容取代成为“No_2-5_number”呢？"><span class="toc-number">3.0.3.</span> <span class="toc-text">例三：我想将第2-5行的内容取代成为“No 2-5 number”呢？</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#例四：仅列出_/etc/passwd_文件内的第_5-7_行"><span class="toc-number">3.0.4.</span> <span class="toc-text">例四：仅列出 /etc/passwd 文件内的第 5-7 行</span></a></li></ol><li class="toc-item toc-level-5"><a class="toc-link" href="#部分数据的搜寻并取代的功能"><span class="toc-number">3.1.</span> <span class="toc-text">部分数据的搜寻并取代的功能</span></a></li><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#步骤一：先观察原始信息，利用_/sbin/ifconfig_查询_IP_为何？"><span class="toc-number">3.1.1.</span> <span class="toc-text">步骤一：先观察原始信息，利用 /sbin/ifconfig 查询 IP 为何？</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#步骤二：利用关键字配合_grep_撷取出关键的一行数据"><span class="toc-number">3.1.2.</span> <span class="toc-text">步骤二：利用关键字配合 grep 撷取出关键的一行数据</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#步骤三：将_IP_前面的部分予以删除"><span class="toc-number">3.1.3.</span> <span class="toc-text">步骤三：将 IP 前面的部分予以删除</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#步骤四：将_IP_后面的部分予以删除"><span class="toc-number">3.1.4.</span> <span class="toc-text">步骤四：将 IP 后面的部分予以删除</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#例六：利用_sed_将_regular_express-txt_内每一行结尾若为_-_则换成_!"><span class="toc-number">3.1.5.</span> <span class="toc-text">例六：利用 sed 将 regular_express.txt 内每一行结尾若为 . 则换成 !</span></a></li></ol>
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p rel="asidetitle grow" class="asidetitle grow">分类</p>
+		<ul>
+		
+			<li><a rel="grow" class="grow" href="/categories/Hadoop/" title="Hadoop">Hadoop<sup>20</sup></a></li>
+		
+			<li><a rel="grow" class="grow" href="/categories/Linux/" title="Linux">Linux<sup>4</sup></a></li>
+		
+			<li><a rel="grow" class="grow" href="/categories/Shell/" title="Shell">Shell<sup>4</sup></a></li>
+		
+			<li><a rel="grow" class="grow" href="/categories/操作系统/" title="操作系统">操作系统<sup>1</sup></a></li>
+		
+			<li><a rel="grow" class="grow" href="/categories/杂谈/" title="杂谈">杂谈<sup>2</sup></a></li>
+		
+			<li><a rel="grow" class="grow" href="/categories/计算机网络/" title="计算机网络">计算机网络<sup>1</sup></a></li>
+		
+		</ul>
+</div>
+
+
+
+  <div class="linkslist">
+<h3 rel="grow" class="grow asidetitle">友情链接</h3>
+<ul class="entry">
+<li><a rel="grow" class="grow" href="http://tahiti.oracle.com/" title="Oracle文档">Oracle文档</a></li>
+<li><a rel="grow" class="grow" href="http://asktom.oracle.com/" title="AskTom">AskTom</a></li>
+<li><a rel="grow" class="grow" href="http://blog.csdn.net/tianlesoftware/" title="Dave">Dave</a></li>
+<li><a rel="grow" class="grow" href="http://www.eygle.com/" title="eygle">eygle</a></li>
+<li><a rel="grow" class="grow" href="http://www.dbsnake.com/" title="dbsnake">dbsnake</a></li>
+</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/Eclipse/" title="Eclipse">Eclipse<sup>1</sup></a></li>
+		
+			<li><a href="/tags/HBase/" title="HBase">HBase<sup>4</sup></a></li>
+		
+			<li><a href="/tags/HDFS/" title="HDFS">HDFS<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Hadoop/" title="Hadoop">Hadoop<sup>20</sup></a></li>
+		
+			<li><a href="/tags/Hadoop_Stream/" title="Hadoop_Stream">Hadoop_Stream<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Hive/" title="Hive">Hive<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Linux/" title="Linux">Linux<sup>4</sup></a></li>
+		
+			<li><a href="/tags/Mahout/" title="Mahout">Mahout<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Map-Reduce/" title="Map-Reduce">Map-Reduce<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Mysql/" title="Mysql">Mysql<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Pig/" title="Pig">Pig<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Shell/" title="Shell">Shell<sup>4</sup></a></li>
+		
+			<li><a href="/tags/Sqoop/" title="Sqoop">Sqoop<sup>1</sup></a></li>
+		
+			<li><a href="/tags/awk/" title="awk">awk<sup>2</sup></a></li>
+		
+			<li><a href="/tags/sed/" title="sed">sed<sup>1</sup></a></li>
+		
+			<li><a href="/tags/yum/" title="yum">yum<sup>1</sup></a></li>
+		
+			<li><a href="/tags/学习计划/" title="学习计划">学习计划<sup>1</sup></a></li>
+		
+			<li><a href="/tags/杂谈/" title="杂谈">杂谈<sup>1</sup></a></li>
+		
+			<li><a href="/tags/网卡错误/" title="网卡错误">网卡错误<sup>1</sup></a></li>
+		
+			<li><a href="/tags/网络/" title="网络">网络<sup>1</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle"><a href="/archives">归档</a></p>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/05">五月 2014</a><span class="archive-list-count">13</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/04">四月 2014</a><span class="archive-list-count">19</span></li></ul>
+  </div>
+
+
+  
+  <div class="tagcloudlist">
+    <p class="asidetitle">标签云</p>
+    <div class="tagcloudlist clearfix">
+       <a href="/tags/Eclipse/" style="font-size: 10.00px;">Eclipse</a><a href="/tags/HBase/" style="font-size: 16.67px;">HBase</a><a href="/tags/HDFS/" style="font-size: 13.33px;">HDFS</a><a href="/tags/Hadoop/" style="font-size: 20.00px;">Hadoop</a><a href="/tags/Hadoop_Stream/" style="font-size: 10.00px;">Hadoop_Stream</a><a href="/tags/Hive/" style="font-size: 13.33px;">Hive</a><a href="/tags/Linux/" style="font-size: 16.67px;">Linux</a><a href="/tags/Mahout/" style="font-size: 13.33px;">Mahout</a><a href="/tags/Map-Reduce/" style="font-size: 13.33px;">Map-Reduce</a><a href="/tags/Mysql/" style="font-size: 10.00px;">Mysql</a><a href="/tags/Pig/" style="font-size: 10.00px;">Pig</a><a href="/tags/Shell/" style="font-size: 16.67px;">Shell</a><a href="/tags/Sqoop/" style="font-size: 10.00px;">Sqoop</a><a href="/tags/awk/" style="font-size: 13.33px;">awk</a><a href="/tags/sed/" style="font-size: 10.00px;">sed</a><a href="/tags/yum/" style="font-size: 10.00px;">yum</a><a href="/tags/学习计划/" style="font-size: 10.00px;">学习计划</a><a href="/tags/杂谈/" style="font-size: 10.00px;">杂谈</a><a href="/tags/网卡错误/" style="font-size: 10.00px;">网卡错误</a><a href="/tags/网络/" style="font-size: 10.00px;">网络</a><a href="/tags/进程与线程/" style="font-size: 10.00px;">进程与线程</a>
+    </div>
+  </div>
+
+
+  <iframe width="100%" height="550" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=2&ptype=1&speed=0&skin=1&isTitle=1&noborder=1&isWeibo=1&isFans=1&uid=3819451430&verifier=f953543e&dpc=1"></iframe>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<span class="buzz" rel="buzz"> Hello,I&#39;m liuqinming.For now I&#39;m a student at collage. <br/>
+			I will share my learning experience with you at this blog.</span>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		<a rel="push" class="push" href="https://github.com/https://github.com/DaMinger" target="_blank" title="github"></a>
+		
+		
+	</div>
+		<p class="copyright">Powered by <a rel="float-shadow" class="float-shadow" href="http://zespia.tw/hexo/" target="_blank" title="hexo">Hexo</a> and Theme by <a class="box-shadow-inset"href="https://github.com/uruir/pacmanhover" target="_blank" title="Pacman">PacmanHover</a> © 2014 
+		
+		
+		<a class="wobble-horizontal" rel="wobble-horizontal" href="https://github.com/DaMinger/DaMinger.github.io.git" target="_blank" title="DaMinger">DaMinger</a>
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+    c.click(function(){
+      ta.css('display', 'block').addClass('fadeIn');
+    });
+    o.click(function(){
+      ta.css('display', 'none');
+    });
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,320-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"null"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+<div id="totop" style="position:fixed;bottom:150px;right:50px;cursor: pointer;">
+<a title="���ض���"><img src="/img/scrollup.png"/></a>
+</div>
+<script src="/js/totop.js"></script>
+
+
+
+  </body>
+</html>

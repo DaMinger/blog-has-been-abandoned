@@ -1,0 +1,634 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>awk_exercise | DaMinger&#39;s blog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="DaMinger">
+    
+    <meta name="description" content="实验脚本来自《鸟哥的私房菜》
+假设我们有这样一个待处理的文件”grade.txt”
+M.Tansley     05/99     48311     Green     8     40     44
+J.Lulu        06/99     48317     green     9   ">
+    
+    
+    
+    
+    <link rel="alternative" href="/atom.xml" title="DaMinger&#39;s blog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/pacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/pacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+    <link href="/css/hover.css" rel="stylesheet">
+    <link href="/css/bottom.css" rel="stylesheet">
+</head>
+
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a rel="pulse" class="pulse" href="/"><img src="/img/pacman.png" alt="DaMinger&#39;s blog" title="DaMinger&#39;s blog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a rel="hover" class="hover" href="/" title="DaMinger&#39;s blog">DaMinger&#39;s blog</a></h1>
+				<h2 class="blog-motto"><a rel="wobble-to-bottom-right" class="wobble-to-bottom-right" href="#" title="#">信春哥，系统稳，闭眼上线不回滚</a></h2>
+			</div>
+			<div class="navbar"><a rel="buzz" class="buzz" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a rel="wobble-top" class="wobble-top" href="/">Home</a></li>
+					
+						<li><a rel="wobble-top" class="wobble-top" href="/archives">Menu</a></li>
+					
+						<li><a rel="wobble-top" class="wobble-top" href="/about">About</a></li>
+					
+				</ul>
+				
+			</nav>			
+</div>
+<div style="text-align:right;">
+<form  class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+ <input type="search" name="q" id="search" autocomplete="off" autocorrect="off" autocapitalize="off" maxlength="20" placeholder="Search" />
+ <input type="hidden" name="q" value="site:github.com/DaMinger/DaMinger.github.io.git">
+</form>
+</div>
+
+
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2014/05/19/Shell/awk_exercise/" title="awk_exercise" itemprop="url">awk_exercise</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="https://github.com/DaMinger/DaMinger.github.io.git" title="DaMinger">DaMinger</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2014-05-19T12:56:28.000Z" itemprop="datePublished">5月 19 2014</time>
+    更新日期:<time datetime="2014-05-19T13:22:28.000Z" itemprop="dateModified">5月 19 2014</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		<ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#假设我们有这样一个待处理的文件”grade-txt”"><span class="toc-number">1.</span> <span class="toc-text">假设我们有这样一个待处理的文件”grade.txt”</span></a></li><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#打印整个文件"><span class="toc-number">1.1.</span> <span class="toc-text">打印整个文件</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#打印第一和第四个域"><span class="toc-number">1.2.</span> <span class="toc-text">打印第一和第四个域</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#打印表头"><span class="toc-number">1.3.</span> <span class="toc-text">打印表头</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#下面代码打印$4_包含_Brown_的行"><span class="toc-number">1.4.</span> <span class="toc-text">下面代码打印$4 包含 Brown 的行</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#非精确匹配"><span class="toc-number">1.5.</span> <span class="toc-text">非精确匹配</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#精确匹配"><span class="toc-number">1.6.</span> <span class="toc-text">精确匹配</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#不匹配_使用_‘!~’"><span class="toc-number">1.7.</span> <span class="toc-text">不匹配 使用 ‘!~’</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#小于"><span class="toc-number">1.8.</span> <span class="toc-text">小于</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#设置大小写"><span class="toc-number">1.9.</span> <span class="toc-text">设置大小写</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#匹配第一个域的第三个字符是‘a’"><span class="toc-number">1.10.</span> <span class="toc-text">匹配第一个域的第三个字符是‘a’</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#‘或’匹配，使用_‘|’_，需使用括号括起来"><span class="toc-number">1.11.</span> <span class="toc-text">‘或’匹配，使用 ‘|’ ，需使用括号括起来</span></a></li></ol><li class="toc-item toc-level-4"><a class="toc-link" href="#先来总结一下awk内置变量："><span class="toc-number">2.</span> <span class="toc-text">先来总结一下awk内置变量：</span></a></li><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#使用_-F_参数指定分隔符"><span class="toc-number">2.1.</span> <span class="toc-text">使用 -F 参数指定分隔符</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#设置变量名，将27_赋值给变量BASELINE"><span class="toc-number">2.2.</span> <span class="toc-text">设置变量名，将27 赋值给变量BASELINE</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#修改数值域取值，注意‘{}’"><span class="toc-number">2.3.</span> <span class="toc-text">修改数值域取值，注意‘{}’</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#修改文本域取值"><span class="toc-number">2.4.</span> <span class="toc-text">修改文本域取值</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#创建新的输出域，这里新的输出域为_diff"><span class="toc-number">2.5.</span> <span class="toc-text">创建新的输出域，这里新的输出域为 diff</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#统计某一个域的和，使用‘+=’_下面的例子统计第六个域的和"><span class="toc-number">2.6.</span> <span class="toc-text">统计某一个域的和，使用‘+=’ 下面的例子统计第六个域的和</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#注意区别，加‘{}’则不打印文件"><span class="toc-number">2.7.</span> <span class="toc-text">注意区别，加‘{}’则不打印文件</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#替换，目标串使用正则表达式格式‘//’"><span class="toc-number">2.8.</span> <span class="toc-text">替换，目标串使用正则表达式格式‘//’</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#查询字符串第一次出现的位置，注意使用BEGIN，否则每一行都会打印，字符串使用引号括起来"><span class="toc-number">2.9.</span> <span class="toc-text">查询字符串第一次出现的位置，注意使用BEGIN，否则每一行都会打印，字符串使用引号括起来</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#长度"><span class="toc-number">2.10.</span> <span class="toc-text">长度</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#match_使用：_找不到返回0，找到返模式串在匹配串中的位置，"><span class="toc-number">2.11.</span> <span class="toc-text">match 使用： 找不到返回0，找到返模式串在匹配串中的位置，</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#以下两种模式都正确"><span class="toc-number">2.12.</span> <span class="toc-text">以下两种模式都正确</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#split_返回字符串数组元素个数"><span class="toc-number">2.13.</span> <span class="toc-text">split 返回字符串数组元素个数</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#sub，发现并替换模式的第一个位置"><span class="toc-number">2.14.</span> <span class="toc-text">sub，发现并替换模式的第一个位置</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#substr，返回字符串指定范围内的子串"><span class="toc-number">2.15.</span> <span class="toc-text">substr，返回字符串指定范围内的子串</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#使用substr返回指定位置开始的后缀部分，范围只给了一个参数，注意和上一个例子相对比"><span class="toc-number">2.16.</span> <span class="toc-text">使用substr返回指定位置开始的后缀部分，范围只给了一个参数，注意和上一个例子相对比</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#从shell中向awk传递字符串，通过_echo_加管道的方式"><span class="toc-number">2.17.</span> <span class="toc-text">从shell中向awk传递字符串，通过 echo 加管道的方式</span></a></li></ol>
+		</div>
+		
+		<p>实验脚本来自《鸟哥的私房菜》</p>
+<h4 id="假设我们有这样一个待处理的文件”grade-txt”">假设我们有这样一个待处理的文件”grade.txt”</h4>
+<pre><code>M<span class="preprocessor">.Tansley</span>     <span class="number">05</span>/<span class="number">99</span>     <span class="number">48311</span>     Green     <span class="number">8</span>     <span class="number">40</span>     <span class="number">44</span>
+J<span class="preprocessor">.Lulu</span>        <span class="number">06</span>/<span class="number">99</span>     <span class="number">48317</span>     green     <span class="number">9</span>     <span class="number">24</span>     <span class="number">26</span>
+P<span class="preprocessor">.Bunny</span>       <span class="number">02</span>/<span class="number">99</span>     <span class="number">48</span>        Yellow     <span class="number">12</span>     <span class="number">35</span>     <span class="number">28</span>
+J<span class="preprocessor">.Troll</span>       <span class="number">07</span>/<span class="number">99</span>     <span class="number">4842</span>     Brown-<span class="number">3</span>     <span class="number">12</span>     <span class="number">26</span>     <span class="number">26</span>
+L<span class="preprocessor">.Tansley</span>     <span class="number">05</span>/<span class="number">99</span>     <span class="number">4712</span>     Brown-<span class="number">2</span>     <span class="number">12</span>     <span class="number">30</span>     <span class="number">28</span>
+</code></pre><h5 id="打印整个文件">打印整个文件</h5>
+<pre><code>$ awk <span class="string">'{print $0}'</span> grade.txt
+M.Tansley       <span class="number">05</span>/<span class="number">99</span>   <span class="number">48311</span>   <span class="keyword">Green</span>   <span class="number">8</span>       <span class="number">40</span>      <span class="number">44</span>
+J.Lulu          <span class="number">06</span>/<span class="number">99</span>   <span class="number">48317</span>   green   <span class="number">9</span>       <span class="number">24</span>      <span class="number">26</span>
+P.Bunny         <span class="number">02</span>/<span class="number">99</span>   <span class="number">48</span>      <span class="keyword">Yellow</span>  <span class="number">12</span>      <span class="number">35</span>      <span class="number">28</span>
+J.Troll         <span class="number">07</span>/<span class="number">99</span>   <span class="number">4842</span>    <span class="keyword">Brown</span>-<span class="number">3</span> <span class="number">12</span>      <span class="number">26</span>      <span class="number">26</span>
+L.Tansley       <span class="number">05</span>/<span class="number">99</span>   <span class="number">4712</span>    <span class="keyword">Brown</span>-<span class="number">2</span> <span class="number">12</span>      <span class="number">30</span>      <span class="number">28</span>
+</code></pre><h5 id="打印第一和第四个域">打印第一和第四个域</h5>
+<pre><code>$ awk <span class="string">'{print $1,$4}'</span> grade.txt
+M.Tansley <span class="keyword">Green</span>
+J.Lulu green
+P.Bunny <span class="keyword">Yellow</span>
+J.Troll <span class="keyword">Brown</span>-<span class="number">3</span>
+L.Tansley <span class="keyword">Brown</span>-<span class="number">2</span>
+</code></pre><h5 id="打印表头">打印表头</h5>
+<pre><code>$ awk <span class="emphasis">'BEGIN {print "Name            Belt\n---------------------------"}
+&gt; {print $1"\t"$4}'</span> grade.txt
+<span class="header">Name            Belt
+---------------------------</span>
+M.Tansley       Green
+J.Lulu          green
+P.Bunny         Yellow
+J.Troll         Brown-3
+L.Tansley       Brown-2
+</code></pre><p>正则表达式相关：为使一域号匹配正则表达式，使用符号‘～’后紧跟正则表达式，也可以用 i f语句。awk中if后面的条件用（）括起来。</p>
+<h5 id="下面代码打印$4_包含_Brown_的行">下面代码打印$4 包含 Brown 的行</h5>
+<pre><code>$ awk <span class="string">'$4~/Brown/ {print $0}'</span> grade.txt
+J.Troll         <span class="number">07</span>/<span class="number">99</span>   <span class="number">4842</span>    <span class="keyword">Brown</span>-<span class="number">3</span> <span class="number">12</span>      <span class="number">26</span>      <span class="number">26</span>
+L.Tansley       <span class="number">05</span>/<span class="number">99</span>   <span class="number">4712</span>    <span class="keyword">Brown</span>-<span class="number">2</span> <span class="number">12</span>      <span class="number">30</span>      <span class="number">28</span>
+</code></pre><h5 id="非精确匹配">非精确匹配</h5>
+<pre><code>$ awk <span class="string">'$3 ~/48/ {print $0}'</span> grade.txt
+M.Tansley       <span class="number">05</span>/<span class="number">99</span>   <span class="number">48311</span>   <span class="keyword">Green</span>   <span class="number">8</span>       <span class="number">40</span>      <span class="number">44</span>
+J.Lulu          <span class="number">06</span>/<span class="number">99</span>   <span class="number">48317</span>   green   <span class="number">9</span>       <span class="number">24</span>      <span class="number">26</span>
+P.Bunny         <span class="number">02</span>/<span class="number">99</span>   <span class="number">48</span>      <span class="keyword">Yellow</span>  <span class="number">12</span>      <span class="number">35</span>      <span class="number">28</span>
+J.Troll         <span class="number">07</span>/<span class="number">99</span>   <span class="number">4842</span>    <span class="keyword">Brown</span>-<span class="number">3</span> <span class="number">12</span>      <span class="number">26</span>      <span class="number">26</span>
+</code></pre><h5 id="精确匹配">精确匹配</h5>
+<pre><code><span class="variable">$ </span>awk <span class="string">'$3=="48" {print $0}'</span> grade.txt
+<span class="constant">P</span>.<span class="constant">Bunny</span>         <span class="number">02</span>/<span class="number">99</span>   <span class="number">48</span>      <span class="constant">Yellow</span>  <span class="number">12</span>      <span class="number">35</span>      <span class="number">28</span>
+</code></pre><h5 id="不匹配_使用_‘!~’">不匹配 使用 ‘!~’</h5>
+<pre><code>$ awk <span class="string">'$0 !~ /Brown/'</span> grade.txt
+M.Tansley       <span class="number">05</span>/<span class="number">99</span>   <span class="number">48311</span>   <span class="keyword">Green</span>   <span class="number">8</span>       <span class="number">40</span>      <span class="number">44</span>
+J.Lulu          <span class="number">06</span>/<span class="number">99</span>   <span class="number">48317</span>   green   <span class="number">9</span>       <span class="number">24</span>      <span class="number">26</span>
+P.Bunny         <span class="number">02</span>/<span class="number">99</span>   <span class="number">48</span>      <span class="keyword">Yellow</span>  <span class="number">12</span>      <span class="number">35</span>      <span class="number">28</span>
+
+$ awk <span class="string">'$4 != "Brown-2" {print $0}'</span> grade.txt
+M.Tansley       <span class="number">05</span>/<span class="number">99</span>   <span class="number">48311</span>   <span class="keyword">Green</span>   <span class="number">8</span>       <span class="number">40</span>      <span class="number">44</span>
+J.Lulu          <span class="number">06</span>/<span class="number">99</span>   <span class="number">48317</span>   green   <span class="number">9</span>       <span class="number">24</span>      <span class="number">26</span>
+P.Bunny         <span class="number">02</span>/<span class="number">99</span>   <span class="number">48</span>      <span class="keyword">Yellow</span>  <span class="number">12</span>      <span class="number">35</span>      <span class="number">28</span>
+J.Troll         <span class="number">07</span>/<span class="number">99</span>   <span class="number">4842</span>    <span class="keyword">Brown</span>-<span class="number">3</span> <span class="number">12</span>      <span class="number">26</span>      <span class="number">26</span>
+</code></pre><h5 id="小于">小于</h5>
+<pre><code><span class="variable">$ </span>awk <span class="string">'$6 &lt; $7 {print $0 "$1 Try better at the next comp"}'</span> grade.txt
+<span class="constant">M</span>.<span class="constant">Tansley</span>       <span class="number">05</span>/<span class="number">99</span>   <span class="number">48311</span>   <span class="constant">Green</span>   <span class="number">8</span>       <span class="number">40</span>      <span class="number">44</span><span class="variable">$1</span> <span class="constant">Try</span> better at the <span class="keyword">next</span> comp
+<span class="constant">J</span>.<span class="constant">Lulu</span>          <span class="number">06</span>/<span class="number">99</span>   <span class="number">48317</span>   green   <span class="number">9</span>       <span class="number">24</span>      <span class="number">26</span><span class="variable">$1</span> <span class="constant">Try</span> better at the <span class="keyword">next</span> comp
+</code></pre><h5 id="设置大小写">设置大小写</h5>
+<pre><code><span class="variable">$ </span>awk <span class="string">'/[Gg]reen/'</span> grade.txt
+<span class="constant">M</span>.<span class="constant">Tansley</span>       <span class="number">05</span>/<span class="number">99</span>   <span class="number">48311</span>   <span class="constant">Green</span>   <span class="number">8</span>       <span class="number">40</span>      <span class="number">44</span>
+<span class="constant">J</span>.<span class="constant">Lulu</span>          <span class="number">06</span>/<span class="number">99</span>   <span class="number">48317</span>   green   <span class="number">9</span>       <span class="number">24</span>      <span class="number">26</span>
+</code></pre><h5 id="匹配第一个域的第三个字符是‘a’">匹配第一个域的第三个字符是‘a’</h5>
+<pre><code>$ awk <span class="string">'$1 ~/^...a/'</span> grade.txt
+M.Tansley       <span class="number">05</span>/<span class="number">99</span>   <span class="number">48311</span>   <span class="keyword">Green</span>   <span class="number">8</span>       <span class="number">40</span>      <span class="number">44</span>
+L.Tansley       <span class="number">05</span>/<span class="number">99</span>   <span class="number">4712</span>    <span class="keyword">Brown</span>-<span class="number">2</span> <span class="number">12</span>      <span class="number">30</span>      <span class="number">28</span>
+</code></pre><h5 id="‘或’匹配，使用_‘|’_，需使用括号括起来">‘或’匹配，使用 ‘|’ ，需使用括号括起来</h5>
+<pre><code>$ awk <span class="string">'$0 ~/(Yellow|Brown)/'</span> grade.txt
+P.Bunny         <span class="number">02</span>/<span class="number">99</span>   <span class="number">48</span>      <span class="keyword">Yellow</span>  <span class="number">12</span>      <span class="number">35</span>      <span class="number">28</span>
+J.Troll         <span class="number">07</span>/<span class="number">99</span>   <span class="number">4842</span>    <span class="keyword">Brown</span>-<span class="number">3</span> <span class="number">12</span>      <span class="number">26</span>      <span class="number">26</span>
+L.Tansley       <span class="number">05</span>/<span class="number">99</span>   <span class="number">4712</span>    <span class="keyword">Brown</span>-<span class="number">2</span> <span class="number">12</span>      <span class="number">30</span>      <span class="number">28</span>
+</code></pre><h4 id="先来总结一下awk内置变量：">先来总结一下awk内置变量：</h4>
+<pre><code>ARGC          命令行参数个数
+ARGV          命令行参数排列
+ENVIRON       支持队列中系统环境变量的使用
+FILENAME      awk浏览文件名
+FNR           浏览文件的记录数
+FS            设置输入域分隔符，等价于命令行-F选项
+NF            浏览记录的域个数
+NR            已读的记录数
+OFS           输出域分隔符
+ORS           输出例句分隔符
+RS            控制记录分隔符
+
+$ awk <span class="string">'{print NF,NR,$0} END {print FILENAME}'</span> grade.txt
+<span class="number">7</span> <span class="number">1</span> M.Tansley   <span class="number">05</span>/<span class="number">99</span>   <span class="number">48311</span>   <span class="keyword">Green</span>   <span class="number">8</span>       <span class="number">40</span>      <span class="number">44</span>
+<span class="number">7</span> <span class="number">2</span> J.Lulu      <span class="number">06</span>/<span class="number">99</span>   <span class="number">48317</span>   green   <span class="number">9</span>       <span class="number">24</span>      <span class="number">26</span>
+<span class="number">7</span> <span class="number">3</span> P.Bunny     <span class="number">02</span>/<span class="number">99</span>   <span class="number">48</span>      <span class="keyword">Yellow</span>  <span class="number">12</span>      <span class="number">35</span>      <span class="number">28</span>
+<span class="number">7</span> <span class="number">4</span> J.Troll     <span class="number">07</span>/<span class="number">99</span>   <span class="number">4842</span>    <span class="keyword">Brown</span>-<span class="number">3</span> <span class="number">12</span>      <span class="number">26</span>      <span class="number">26</span>
+<span class="number">7</span> <span class="number">5</span> L.Tansley   <span class="number">05</span>/<span class="number">99</span>   <span class="number">4712</span>    <span class="keyword">Brown</span>-<span class="number">2</span> <span class="number">12</span>      <span class="number">30</span>      <span class="number">28</span>
+grade.txt
+</code></pre><h5 id="使用_-F_参数指定分隔符">使用 -F 参数指定分隔符</h5>
+<pre><code>$ <span class="built_in">echo</span> <span class="variable">$PWD</span>
+/home/root
+$ <span class="built_in">echo</span> <span class="variable">$PWD</span> | awk -F/ <span class="string">'{print $NF"\t"NF}'</span>
+root       <span class="number">3</span>
+</code></pre><h5 id="设置变量名，将27_赋值给变量BASELINE">设置变量名，将27 赋值给变量BASELINE</h5>
+<pre><code><span class="variable">$ </span>awk <span class="string">'BEGIN {BASELINE="27"} $6&lt;BASELINE {print $0}'</span> grade.txt
+<span class="constant">J</span>.<span class="constant">Lulu</span>  <span class="number">06</span>/<span class="number">99</span>   <span class="number">48317</span>   green   <span class="number">9</span>       <span class="number">24</span>      <span class="number">26</span>
+<span class="constant">J</span>.<span class="constant">Troll</span> <span class="number">07</span>/<span class="number">99</span>   <span class="number">4842</span>    <span class="constant">Brown</span>-<span class="number">3</span> <span class="number">12</span>      <span class="number">26</span>      <span class="number">26</span>
+</code></pre><h5 id="修改数值域取值，注意‘{}’">修改数值域取值，注意‘{}’</h5>
+<pre><code><span class="xml">$ awk '{if(</span><span class="variable">$1</span><span class="xml">=="M.Tansley") </span><span class="variable">$6</span><span class="xml">=</span><span class="variable">$6-1</span><span class="xml">; print </span><span class="variable">$1</span><span class="xml">,</span><span class="variable">$6</span><span class="xml">,</span><span class="variable">$7}</span><span class="xml">' grade.txt
+M.Tansley </span><span class="number">39</span><span class="xml"> </span><span class="number">44</span><span class="xml">
+J.Lulu </span><span class="number">24</span><span class="xml"> </span><span class="number">26</span><span class="xml">
+P.Bunny </span><span class="number">35</span><span class="xml"> </span><span class="number">28</span><span class="xml">
+J.Troll </span><span class="number">26</span><span class="xml"> </span><span class="number">26</span><span class="xml">
+L.Tansley </span><span class="number">30</span><span class="xml"> </span><span class="number">28</span><span class="xml"></span>
+</code></pre><h5 id="修改文本域取值">修改文本域取值</h5>
+<pre><code>$ awk '{<span class="keyword">if</span>($<span class="number">1</span>==<span class="string">"J.Troll"</span>) $<span class="number">1</span>=<span class="string">"J.L.Troll"</span>; print $<span class="number">1</span>}' grade.txt
+M.Tansley
+J.Lulu
+P.Bunny
+J.L.Troll
+L.Tansley
+</code></pre><h5 id="创建新的输出域，这里新的输出域为_diff">创建新的输出域，这里新的输出域为 diff</h5>
+<pre><code><span class="xml">$ awk 'BEGIN {print "Name \t Difference"} {if(</span><span class="variable">$6</span><span class="xml"><span class="tag">&lt;</span></span><span class="variable">$7</span><span class="xml">) {diff=</span><span class="variable">$7-</span><span class="xml"></span><span class="variable">$6</span><span class="xml">; print </span><span class="variable">$1</span><span class="xml">,diff}}' grade.txt
+Name     Difference
+M.Tansley </span><span class="number">4</span><span class="xml">
+J.Lulu </span><span class="number">2</span><span class="xml"></span>
+</code></pre><h5 id="统计某一个域的和，使用‘+=’_下面的例子统计第六个域的和">统计某一个域的和，使用‘+=’ 下面的例子统计第六个域的和</h5>
+<pre><code>$ awk <span class="string">'(tot+=$6); END{print "Club student total points: " tot}'</span> grade.txt
+M.Tansley       <span class="number">05</span>/<span class="number">99</span>   <span class="number">48311</span>   <span class="keyword">Green</span>   <span class="number">8</span>       <span class="number">40</span>      <span class="number">44</span>
+J.Lulu  <span class="number">06</span>/<span class="number">99</span>   <span class="number">48317</span>   green   <span class="number">9</span>       <span class="number">24</span>      <span class="number">26</span>
+P.Bunny <span class="number">02</span>/<span class="number">99</span>   <span class="number">48</span>      <span class="keyword">Yellow</span>  <span class="number">12</span>      <span class="number">35</span>      <span class="number">28</span>
+J.Troll <span class="number">07</span>/<span class="number">99</span>   <span class="number">4842</span>    <span class="keyword">Brown</span>-<span class="number">3</span> <span class="number">12</span>      <span class="number">26</span>      <span class="number">26</span>
+L.Tansley       <span class="number">05</span>/<span class="number">99</span>   <span class="number">4712</span>    <span class="keyword">Brown</span>-<span class="number">2</span> <span class="number">12</span>      <span class="number">30</span>      <span class="number">28</span>
+Club student total points: <span class="number">155</span>
+</code></pre><h5 id="注意区别，加‘{}’则不打印文件">注意区别，加‘{}’则不打印文件</h5>
+<pre><code>$ awk '<span class="tuple">{(tot+=$<span class="number">6</span>)}</span>; <span class="variable">END</span><span class="tuple">{print <span class="string">"Club student total points: "</span> tot}</span>' grade.txt
+<span class="variable">Club</span> student total points: <span class="number">155</span>
+
+awk 内置字符串函数
+
+<span class="function"><span class="title">gsub</span><span class="params">(r,s)</span>          在整个$0中用<span class="title">s</span>替代<span class="title">r</span>
+<span class="title">gsub</span><span class="params">(r,s,t)</span>        在整个<span class="title">t</span>中使用<span class="title">s</span>替代<span class="title">r</span>
+<span class="title">index</span><span class="params">(s,t)</span>         在返回<span class="title">s</span>中字符串<span class="title">t</span>的第一个位置
+<span class="title">length</span><span class="params">(s)</span>          放回<span class="title">s</span>长度
+<span class="title">match</span><span class="params">(s,r)</span>         测试<span class="title">s</span>是否包含匹配<span class="title">r</span>的字符串
+<span class="title">split</span><span class="params">(s,a,fs)</span>      在<span class="title">fs</span>上将<span class="title">s</span>分成序列<span class="title">a</span>
+<span class="title">sprint</span><span class="params">(fmt,exp)</span>    返回经<span class="title">fmt</span>格式化后的<span class="title">exp</span>
+<span class="title">sub</span><span class="params">(r,s)</span>           用$0中最左边最长的子串代替<span class="title">s</span>
+<span class="title">substr</span><span class="params">(s,p)</span>        返回字符串<span class="title">s</span>中从<span class="title">p</span>开始的后缀部分
+<span class="title">substr</span><span class="params">(s,p,n)</span>      返回字符串<span class="title">s</span>中从<span class="title">p</span>开始长度为<span class="title">n</span>的后缀部分</span>
+</code></pre><h5 id="替换，目标串使用正则表达式格式‘//’">替换，目标串使用正则表达式格式‘//’</h5>
+<pre><code><span class="variable">$ </span>awk <span class="string">'gsub(/4842/,4899) {print $0}'</span> grade.txt
+<span class="constant">J</span>.<span class="constant">Troll</span> <span class="number">07</span>/<span class="number">99</span>   <span class="number">4899</span>    <span class="constant">Brown</span>-<span class="number">3</span> <span class="number">12</span>      <span class="number">26</span>      <span class="number">26</span>
+</code></pre><h5 id="查询字符串第一次出现的位置，注意使用BEGIN，否则每一行都会打印，字符串使用引号括起来">查询字符串第一次出现的位置，注意使用BEGIN，否则每一行都会打印，字符串使用引号括起来</h5>
+<pre><code>$ awk '<span class="operator"><span class="keyword">BEGIN</span>{print index(<span class="string">"Bunny"</span>,<span class="string">"ny"</span>)}<span class="string">' grade.txt
+4</span></span>
+</code></pre><h5 id="长度">长度</h5>
+<pre><code>$ awk '$<span class="number">1</span>==<span class="string">"J.Troll"</span> {print <span class="property">length</span>($<span class="number">1</span>)<span class="string">" "</span>$<span class="number">1</span>}' grade.txt
+<span class="number">7</span> J.Troll
+</code></pre><h5 id="match_使用：_找不到返回0，找到返模式串在匹配串中的位置，">match 使用： 找不到返回0，找到返模式串在匹配串中的位置，</h5>
+<pre><code>注：单独使用 加<span class="constant">BEGIN</span>
+<span class="variable">$ </span>awk <span class="string">'BEGIN {print match("ANCD",/d/)}'</span>
+<span class="number">0</span>
+</code></pre><h5 id="以下两种模式都正确">以下两种模式都正确</h5>
+<pre><code>$ awk '$<span class="number">1</span>==<span class="string">"J.Lulu"</span> {print <span class="keyword">match</span>($<span class="number">1</span>,<span class="string">"u"</span>)}' grade.txt
+<span class="number">4</span>
+$ awk '$<span class="number">1</span>==<span class="string">"J.Lulu"</span> {print <span class="keyword">match</span>($<span class="number">1</span>,/u/)}' grade.txt
+<span class="number">4</span>
+</code></pre><h5 id="split_返回字符串数组元素个数">split 返回字符串数组元素个数</h5>
+<pre><code>$ awk '<span class="operator"><span class="keyword">BEGIN</span> {print split(<span class="string">"123#456#789"</span>,myarray,<span class="string">"#"</span>);</span>print myarray[1],myarray[2],myarray[3]}'
+3
+123 456 789
+</code></pre><h5 id="sub，发现并替换模式的第一个位置">sub，发现并替换模式的第一个位置</h5>
+<pre><code>$ awk <span class="string">'$1=="J.Troll" {sub(26,29,$0)} {print $0}'</span> grade.txt
+M.Tansley       <span class="number">05</span>/<span class="number">99</span>   <span class="number">48311</span>   <span class="keyword">Green</span>   <span class="number">8</span>       <span class="number">40</span>      <span class="number">44</span>
+J.Lulu  <span class="number">06</span>/<span class="number">99</span>   <span class="number">48317</span>   green   <span class="number">9</span>       <span class="number">24</span>      <span class="number">26</span>
+P.Bunny <span class="number">02</span>/<span class="number">99</span>   <span class="number">48</span>      <span class="keyword">Yellow</span>  <span class="number">12</span>      <span class="number">35</span>      <span class="number">28</span>
+J.Troll <span class="number">07</span>/<span class="number">99</span>   <span class="number">4842</span>    <span class="keyword">Brown</span>-<span class="number">3</span> <span class="number">12</span>      <span class="number">29</span>      <span class="number">26</span>
+L.Tansley       <span class="number">05</span>/<span class="number">99</span>   <span class="number">4712</span>    <span class="keyword">Brown</span>-<span class="number">2</span> <span class="number">12</span>      <span class="number">30</span>      <span class="number">28</span>
+</code></pre><h5 id="substr，返回字符串指定范围内的子串">substr，返回字符串指定范围内的子串</h5>
+<pre><code><span class="variable">$ </span>awk <span class="string">'$1=="L.Tansley" {print substr($1,1,5)}'</span> grade.txt
+<span class="constant">L</span>.<span class="constant">Tan</span>
+</code></pre><h5 id="使用substr返回指定位置开始的后缀部分，范围只给了一个参数，注意和上一个例子相对比">使用substr返回指定位置开始的后缀部分，范围只给了一个参数，注意和上一个例子相对比</h5>
+<pre><code><span class="variable">$ </span>awk <span class="string">'{print substr($1,3)}'</span> grade.txt
+<span class="constant">Tansley</span>
+<span class="constant">Lulu</span>
+<span class="constant">Bunny</span>
+<span class="constant">Troll</span>
+<span class="constant">Tansley</span>
+</code></pre><h5 id="从shell中向awk传递字符串，通过_echo_加管道的方式">从shell中向awk传递字符串，通过 echo 加管道的方式</h5>
+<pre><code><span class="variable">$ </span>echo <span class="string">"Test"</span> | awk <span class="string">'{print length($0)}'</span>
+<span class="number">4</span>
+<span class="variable">$ </span><span class="constant">STR</span>=<span class="string">"mydoc.txt"</span>
+<span class="variable">$ </span>echo <span class="variable">$STR</span> | awk <span class="string">'{print substr($STR,7)}'</span>
+txt
+</code></pre>  
+	</div>
+		<footer class="article-footer clearfix">
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Shell/">Shell</a><a href="/tags/awk/">awk</a>
+  </div>
+
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Shell/">Shell</a>
+</div>
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="https://github.com/DaMinger/DaMinger.github.io.git/2014/05/19/Shell/awk_exercise/" data-title="awk_exercise | DaMinger&#39;s blog" data-tsina="null" class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+
+<div class="next">
+<a href="/2014/05/19/Shell/awk/"  title="awk的入门">
+ <strong>NEXT:</strong><br/> 
+ <span>awk的入门
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section class="comment">
+	<div class="ds-thread"></div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+  <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#假设我们有这样一个待处理的文件”grade-txt”"><span class="toc-number">1.</span> <span class="toc-text">假设我们有这样一个待处理的文件”grade.txt”</span></a></li><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#打印整个文件"><span class="toc-number">1.1.</span> <span class="toc-text">打印整个文件</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#打印第一和第四个域"><span class="toc-number">1.2.</span> <span class="toc-text">打印第一和第四个域</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#打印表头"><span class="toc-number">1.3.</span> <span class="toc-text">打印表头</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#下面代码打印$4_包含_Brown_的行"><span class="toc-number">1.4.</span> <span class="toc-text">下面代码打印$4 包含 Brown 的行</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#非精确匹配"><span class="toc-number">1.5.</span> <span class="toc-text">非精确匹配</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#精确匹配"><span class="toc-number">1.6.</span> <span class="toc-text">精确匹配</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#不匹配_使用_‘!~’"><span class="toc-number">1.7.</span> <span class="toc-text">不匹配 使用 ‘!~’</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#小于"><span class="toc-number">1.8.</span> <span class="toc-text">小于</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#设置大小写"><span class="toc-number">1.9.</span> <span class="toc-text">设置大小写</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#匹配第一个域的第三个字符是‘a’"><span class="toc-number">1.10.</span> <span class="toc-text">匹配第一个域的第三个字符是‘a’</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#‘或’匹配，使用_‘|’_，需使用括号括起来"><span class="toc-number">1.11.</span> <span class="toc-text">‘或’匹配，使用 ‘|’ ，需使用括号括起来</span></a></li></ol><li class="toc-item toc-level-4"><a class="toc-link" href="#先来总结一下awk内置变量："><span class="toc-number">2.</span> <span class="toc-text">先来总结一下awk内置变量：</span></a></li><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#使用_-F_参数指定分隔符"><span class="toc-number">2.1.</span> <span class="toc-text">使用 -F 参数指定分隔符</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#设置变量名，将27_赋值给变量BASELINE"><span class="toc-number">2.2.</span> <span class="toc-text">设置变量名，将27 赋值给变量BASELINE</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#修改数值域取值，注意‘{}’"><span class="toc-number">2.3.</span> <span class="toc-text">修改数值域取值，注意‘{}’</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#修改文本域取值"><span class="toc-number">2.4.</span> <span class="toc-text">修改文本域取值</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#创建新的输出域，这里新的输出域为_diff"><span class="toc-number">2.5.</span> <span class="toc-text">创建新的输出域，这里新的输出域为 diff</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#统计某一个域的和，使用‘+=’_下面的例子统计第六个域的和"><span class="toc-number">2.6.</span> <span class="toc-text">统计某一个域的和，使用‘+=’ 下面的例子统计第六个域的和</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#注意区别，加‘{}’则不打印文件"><span class="toc-number">2.7.</span> <span class="toc-text">注意区别，加‘{}’则不打印文件</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#替换，目标串使用正则表达式格式‘//’"><span class="toc-number">2.8.</span> <span class="toc-text">替换，目标串使用正则表达式格式‘//’</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#查询字符串第一次出现的位置，注意使用BEGIN，否则每一行都会打印，字符串使用引号括起来"><span class="toc-number">2.9.</span> <span class="toc-text">查询字符串第一次出现的位置，注意使用BEGIN，否则每一行都会打印，字符串使用引号括起来</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#长度"><span class="toc-number">2.10.</span> <span class="toc-text">长度</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#match_使用：_找不到返回0，找到返模式串在匹配串中的位置，"><span class="toc-number">2.11.</span> <span class="toc-text">match 使用： 找不到返回0，找到返模式串在匹配串中的位置，</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#以下两种模式都正确"><span class="toc-number">2.12.</span> <span class="toc-text">以下两种模式都正确</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#split_返回字符串数组元素个数"><span class="toc-number">2.13.</span> <span class="toc-text">split 返回字符串数组元素个数</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#sub，发现并替换模式的第一个位置"><span class="toc-number">2.14.</span> <span class="toc-text">sub，发现并替换模式的第一个位置</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#substr，返回字符串指定范围内的子串"><span class="toc-number">2.15.</span> <span class="toc-text">substr，返回字符串指定范围内的子串</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#使用substr返回指定位置开始的后缀部分，范围只给了一个参数，注意和上一个例子相对比"><span class="toc-number">2.16.</span> <span class="toc-text">使用substr返回指定位置开始的后缀部分，范围只给了一个参数，注意和上一个例子相对比</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#从shell中向awk传递字符串，通过_echo_加管道的方式"><span class="toc-number">2.17.</span> <span class="toc-text">从shell中向awk传递字符串，通过 echo 加管道的方式</span></a></li></ol>
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p rel="asidetitle grow" class="asidetitle grow">分类</p>
+		<ul>
+		
+			<li><a rel="grow" class="grow" href="/categories/Hadoop/" title="Hadoop">Hadoop<sup>20</sup></a></li>
+		
+			<li><a rel="grow" class="grow" href="/categories/Linux/" title="Linux">Linux<sup>4</sup></a></li>
+		
+			<li><a rel="grow" class="grow" href="/categories/Shell/" title="Shell">Shell<sup>4</sup></a></li>
+		
+			<li><a rel="grow" class="grow" href="/categories/操作系统/" title="操作系统">操作系统<sup>1</sup></a></li>
+		
+			<li><a rel="grow" class="grow" href="/categories/杂谈/" title="杂谈">杂谈<sup>2</sup></a></li>
+		
+			<li><a rel="grow" class="grow" href="/categories/计算机网络/" title="计算机网络">计算机网络<sup>1</sup></a></li>
+		
+		</ul>
+</div>
+
+
+
+  <div class="linkslist">
+<h3 rel="grow" class="grow asidetitle">友情链接</h3>
+<ul class="entry">
+<li><a rel="grow" class="grow" href="http://tahiti.oracle.com/" title="Oracle文档">Oracle文档</a></li>
+<li><a rel="grow" class="grow" href="http://asktom.oracle.com/" title="AskTom">AskTom</a></li>
+<li><a rel="grow" class="grow" href="http://blog.csdn.net/tianlesoftware/" title="Dave">Dave</a></li>
+<li><a rel="grow" class="grow" href="http://www.eygle.com/" title="eygle">eygle</a></li>
+<li><a rel="grow" class="grow" href="http://www.dbsnake.com/" title="dbsnake">dbsnake</a></li>
+</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/Eclipse/" title="Eclipse">Eclipse<sup>1</sup></a></li>
+		
+			<li><a href="/tags/HBase/" title="HBase">HBase<sup>4</sup></a></li>
+		
+			<li><a href="/tags/HDFS/" title="HDFS">HDFS<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Hadoop/" title="Hadoop">Hadoop<sup>20</sup></a></li>
+		
+			<li><a href="/tags/Hadoop_Stream/" title="Hadoop_Stream">Hadoop_Stream<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Hive/" title="Hive">Hive<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Linux/" title="Linux">Linux<sup>4</sup></a></li>
+		
+			<li><a href="/tags/Mahout/" title="Mahout">Mahout<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Map-Reduce/" title="Map-Reduce">Map-Reduce<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Mysql/" title="Mysql">Mysql<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Pig/" title="Pig">Pig<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Shell/" title="Shell">Shell<sup>4</sup></a></li>
+		
+			<li><a href="/tags/Sqoop/" title="Sqoop">Sqoop<sup>1</sup></a></li>
+		
+			<li><a href="/tags/awk/" title="awk">awk<sup>2</sup></a></li>
+		
+			<li><a href="/tags/sed/" title="sed">sed<sup>1</sup></a></li>
+		
+			<li><a href="/tags/yum/" title="yum">yum<sup>1</sup></a></li>
+		
+			<li><a href="/tags/学习计划/" title="学习计划">学习计划<sup>1</sup></a></li>
+		
+			<li><a href="/tags/杂谈/" title="杂谈">杂谈<sup>1</sup></a></li>
+		
+			<li><a href="/tags/网卡错误/" title="网卡错误">网卡错误<sup>1</sup></a></li>
+		
+			<li><a href="/tags/网络/" title="网络">网络<sup>1</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle"><a href="/archives">归档</a></p>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/05">五月 2014</a><span class="archive-list-count">13</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/04">四月 2014</a><span class="archive-list-count">19</span></li></ul>
+  </div>
+
+
+  
+  <div class="tagcloudlist">
+    <p class="asidetitle">标签云</p>
+    <div class="tagcloudlist clearfix">
+       <a href="/tags/Eclipse/" style="font-size: 10.00px;">Eclipse</a><a href="/tags/HBase/" style="font-size: 16.67px;">HBase</a><a href="/tags/HDFS/" style="font-size: 13.33px;">HDFS</a><a href="/tags/Hadoop/" style="font-size: 20.00px;">Hadoop</a><a href="/tags/Hadoop_Stream/" style="font-size: 10.00px;">Hadoop_Stream</a><a href="/tags/Hive/" style="font-size: 13.33px;">Hive</a><a href="/tags/Linux/" style="font-size: 16.67px;">Linux</a><a href="/tags/Mahout/" style="font-size: 13.33px;">Mahout</a><a href="/tags/Map-Reduce/" style="font-size: 13.33px;">Map-Reduce</a><a href="/tags/Mysql/" style="font-size: 10.00px;">Mysql</a><a href="/tags/Pig/" style="font-size: 10.00px;">Pig</a><a href="/tags/Shell/" style="font-size: 16.67px;">Shell</a><a href="/tags/Sqoop/" style="font-size: 10.00px;">Sqoop</a><a href="/tags/awk/" style="font-size: 13.33px;">awk</a><a href="/tags/sed/" style="font-size: 10.00px;">sed</a><a href="/tags/yum/" style="font-size: 10.00px;">yum</a><a href="/tags/学习计划/" style="font-size: 10.00px;">学习计划</a><a href="/tags/杂谈/" style="font-size: 10.00px;">杂谈</a><a href="/tags/网卡错误/" style="font-size: 10.00px;">网卡错误</a><a href="/tags/网络/" style="font-size: 10.00px;">网络</a><a href="/tags/进程与线程/" style="font-size: 10.00px;">进程与线程</a>
+    </div>
+  </div>
+
+
+  <iframe width="100%" height="550" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=2&ptype=1&speed=0&skin=1&isTitle=1&noborder=1&isWeibo=1&isFans=1&uid=3819451430&verifier=f953543e&dpc=1"></iframe>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<span class="buzz" rel="buzz"> Hello,I&#39;m liuqinming.For now I&#39;m a student at collage. <br/>
+			I will share my learning experience with you at this blog.</span>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		<a rel="push" class="push" href="https://github.com/https://github.com/DaMinger" target="_blank" title="github"></a>
+		
+		
+	</div>
+		<p class="copyright">Powered by <a rel="float-shadow" class="float-shadow" href="http://zespia.tw/hexo/" target="_blank" title="hexo">Hexo</a> and Theme by <a class="box-shadow-inset"href="https://github.com/uruir/pacmanhover" target="_blank" title="Pacman">PacmanHover</a> © 2014 
+		
+		
+		<a class="wobble-horizontal" rel="wobble-horizontal" href="https://github.com/DaMinger/DaMinger.github.io.git" target="_blank" title="DaMinger">DaMinger</a>
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+    c.click(function(){
+      ta.css('display', 'block').addClass('fadeIn');
+    });
+    o.click(function(){
+      ta.css('display', 'none');
+    });
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,320-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"null"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+<div id="totop" style="position:fixed;bottom:150px;right:50px;cursor: pointer;">
+<a title="���ض���"><img src="/img/scrollup.png"/></a>
+</div>
+<script src="/js/totop.js"></script>
+
+
+
+  </body>
+</html>

@@ -1,0 +1,529 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>awk的入门 | DaMinger&#39;s blog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="DaMinger">
+    
+    <meta name="description" content="实验全部来自《鸟哥的私房菜》
+sed 常常用于一整个行的处理， awk 则比较倾向于一行当中分成数个『栏位』（或者称为一个域，也就是一列）来处理。
+awk 通常运行的模式是这样的：
+[root@localhost ~]# awk &#39;条件类型1{动作1} 条件类型2{动作2} ...&#39; filenam">
+    
+    
+    
+    
+    <link rel="alternative" href="/atom.xml" title="DaMinger&#39;s blog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/pacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/pacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+    <link href="/css/hover.css" rel="stylesheet">
+    <link href="/css/bottom.css" rel="stylesheet">
+</head>
+
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a rel="pulse" class="pulse" href="/"><img src="/img/pacman.png" alt="DaMinger&#39;s blog" title="DaMinger&#39;s blog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a rel="hover" class="hover" href="/" title="DaMinger&#39;s blog">DaMinger&#39;s blog</a></h1>
+				<h2 class="blog-motto"><a rel="wobble-to-bottom-right" class="wobble-to-bottom-right" href="#" title="#">信春哥，系统稳，闭眼上线不回滚</a></h2>
+			</div>
+			<div class="navbar"><a rel="buzz" class="buzz" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a rel="wobble-top" class="wobble-top" href="/">Home</a></li>
+					
+						<li><a rel="wobble-top" class="wobble-top" href="/archives">Menu</a></li>
+					
+						<li><a rel="wobble-top" class="wobble-top" href="/about">About</a></li>
+					
+				</ul>
+				
+			</nav>			
+</div>
+<div style="text-align:right;">
+<form  class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+ <input type="search" name="q" id="search" autocomplete="off" autocorrect="off" autocapitalize="off" maxlength="20" placeholder="Search" />
+ <input type="hidden" name="q" value="site:github.com/DaMinger/DaMinger.github.io.git">
+</form>
+</div>
+
+
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2014/05/19/Shell/awk/" title="awk的入门" itemprop="url">awk的入门</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="https://github.com/DaMinger/DaMinger.github.io.git" title="DaMinger">DaMinger</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2014-05-19T12:08:42.000Z" itemprop="datePublished">5月 19 2014</time>
+    更新日期:<time datetime="2014-05-19T12:53:49.000Z" itemprop="dateModified">5月 19 2014</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+		</div>
+		
+		<p>实验全部来自《鸟哥的私房菜》</p>
+<p>sed 常常用于一整个行的处理， awk 则比较倾向于一行当中分成数个『栏位』（或者称为一个域，也就是一列）来处理。</p>
+<p>awk 通常运行的模式是这样的：</p>
+<pre><code>[root<span class="variable">@localhost</span> ~]<span class="comment"># awk '条件类型1{动作1} 条件类型2{动作2} ...' filename</span>
+</code></pre><p>awk 后面接两个单引号并加上大括号 {} 来配置想要对数据进行的处理动作。 awk 可以处理后续接的文件，也可以读取来自前个命令的 standard output 。 但如前面说的， awk 主要是处理『每一行的栏位内的数据』，而默认的『栏位的分隔符号为 “空白键” 或 “[tab]键” 』！举例来说，我们用 last 可以将登陆者的数据取出来，结果如下所示：</p>
+<pre><code>[root<span class="variable">@localhost</span> ~]<span class="comment"># last -n 5 &lt;==仅取出前五行</span>
+root     pts/<span class="number">1</span>   <span class="number">192.168</span>.<span class="number">1.100</span>  <span class="constant">Tue</span> <span class="constant">Feb</span> <span class="number">10</span> <span class="number">11</span><span class="symbol">:</span><span class="number">21</span>   still logged <span class="keyword">in</span>
+root     pts/<span class="number">1</span>   <span class="number">192.168</span>.<span class="number">1.100</span>  <span class="constant">Tue</span> <span class="constant">Feb</span> <span class="number">10</span> <span class="number">00</span><span class="symbol">:</span><span class="number">46</span> - <span class="number">02</span><span class="symbol">:</span><span class="number">28</span>  (<span class="number">01</span><span class="symbol">:</span><span class="number">41</span>)
+root     pts/<span class="number">1</span>   <span class="number">192.168</span>.<span class="number">1.100</span>  <span class="constant">Mon</span> <span class="constant">Feb</span>  <span class="number">9</span> <span class="number">11</span><span class="symbol">:</span><span class="number">41</span> - <span class="number">18</span><span class="symbol">:</span><span class="number">30</span>  (<span class="number">06</span><span class="symbol">:</span><span class="number">48</span>)
+dmtsai   pts/<span class="number">1</span>   <span class="number">192.168</span>.<span class="number">1.100</span>  <span class="constant">Mon</span> <span class="constant">Feb</span>  <span class="number">9</span> <span class="number">11</span><span class="symbol">:</span><span class="number">41</span> - <span class="number">11</span><span class="symbol">:</span><span class="number">41</span>  (<span class="number">00</span><span class="symbol">:</span><span class="number">00</span>)
+root     tty1                   <span class="constant">Fri</span> <span class="constant">Sep</span>  <span class="number">5</span> <span class="number">14</span><span class="symbol">:</span>09 - <span class="number">14</span><span class="symbol">:</span><span class="number">10</span>  (<span class="number">00</span><span class="symbol">:</span><span class="number">01</span>)
+</code></pre><p>若我想要取出帐号与登陆者的 IP ，且帐号与 IP 之间以 [tab] 隔开，则会变成这样：</p>
+<pre><code>[root<span class="variable">@localhost</span> ~]<span class="comment"># last -n 5 | awk '{print $1 "\t" $3}'</span>
+root    <span class="number">192.168</span>.<span class="number">1.100</span>
+root    <span class="number">192.168</span>.<span class="number">1.100</span>
+root    <span class="number">192.168</span>.<span class="number">1.100</span>
+dmtsai  <span class="number">192.168</span>.<span class="number">1.100</span>
+root    <span class="constant">Fri</span>
+</code></pre><p>上表是 awk 最常使用的动作！透过 print 的功能将栏位数据列出来！栏位的分隔则以空白键或 [tab] 按键来隔开。 因为不论哪一行我都要处理，因此，就不需要有 “条件类型” 的限制！我所想要的是第一栏以及第三栏， 但是，第五行的内容怪怪的～这是因为数据格式的问题啊！所以使用 awk 的时候，请先确认一下你的数据当中，如果是连续性的数据，请不要有空格或 [tab] 在内，否则，就会像这个例子这样，会发生误判喔！</p>
+<p>另外，由上面这个例子你也会知道，在每一行的每个栏位都是有变量名称的，那就是 $1, $2… 等变量名称。以上面的例子来说， root 是 $1 ，因为他是第一栏嘛！至於 192.168.1.100 是第三栏， 所以他就是 $3 啦！后面以此类推～呵呵！还有个变量喔！那就是 $0 ，$0 代表『一整列数据』的意思～以上面的例子来说，第一行的 $0 代表的就是『root …. 』那一行啊！ 由此可知，刚刚上面五行当中，整个 awk 的处理流程是：</p>
+<ul>
+<li>读入第一行，并将第一行的数据填入 $0, $1, $2…. 等变量当中；</li>
+<li>依据 “条件类型” 的限制，判断是否需要进行后面的 “动作”；</li>
+<li>做完所有的动作与条件类型；</li>
+<li>若还有后续的『行』的数据，则重复上面 1~3 的步骤，直到所有的数据都读完为止。</li>
+<li>经过这样的步骤，你会晓得， awk 是『以行为一次处理的单位』， 而『以栏位为最小的处理单位』。好了，那么 awk 怎么知道我到底这个数据有几行？有几栏呢？这就需要 awk 的内建变量的帮忙啦～</li>
+</ul>
+<p><img src="/img/Shell/awk/awk_1.jpg" alt="awk 的内建变量"></p>
+<p>我们继续以上面 last -n 5 的例子来做说明，如果我想要：列出每一行的帐号(就是 $1)；列出目前处理的行数(就是 awk 内的 NR 变量);并且说明，该行有多少栏位(就是 awk 内的 NF 变量)</p>
+<pre><code>[root@localhost ~]# last -n <span class="number">5</span>| awk '<span class="tuple">{print $<span class="number">1</span> <span class="string">"\t lines: "</span> <span class="variable">NR</span> <span class="string">"\t columns: "</span> <span class="variable">NF</span>}</span>'
+root     lines: <span class="number">1</span>        columns: <span class="number">10</span>
+root     lines: <span class="number">2</span>        columns: <span class="number">10</span>
+root     lines: <span class="number">3</span>        columns: <span class="number">10</span>
+dmtsai   lines: <span class="number">4</span>        columns: <span class="number">10</span>
+root     lines: <span class="number">5</span>        columns: <span class="number">9</span>
+</code></pre><p>注意，awk 后续的所有动作是以单引号『 ‘ 』括住的，由於单引号与双引号都必须是成对的， 所以， awk 的格式内容如果想要以 print 列印时，记得非变量的文字部分，都需要使用双引号来定义出来喔！因为单引号已经是 awk 的命令固定用法了！</p>
+<p>注意，在 awk 内的 NR, NF 等变量要用大写，且不需要有钱字号 $ 啦！这样可以了解 NR 与 NF 的差别了吧？注：$0 表示整行，$1 代表第一项</p>
+<p>好了，我们实际来运用一下逻辑判断吧！举例来说，在 /etc/passwd 当中是以冒号 “:” 来作为栏位的分隔， 该文件中第一栏位为帐号，第三栏位则是 UID。那假设我要查阅，第三栏小於 10 以下的数据，并且仅列出帐号与第三栏， 那么可以这样做：</p>
+<pre><code>[root<span class="variable">@localhost</span> ~]<span class="comment"># cat /etc/passwd | \</span>
+&gt; awk <span class="string">'{FS=":"} $3 &lt; 10 {print $1 "\t " $3}'</span>
+<span class="symbol">root:</span><span class="symbol">x:</span><span class="number">0</span><span class="symbol">:</span><span class="number">0</span><span class="symbol">:root</span><span class="symbol">:/root</span><span class="symbol">:/bin/bash</span>
+bin      <span class="number">1</span>
+daemon   <span class="number">2</span>
+....(以下省略)....
+</code></pre><p>有趣吧！不过，怎么第一行没有正确的显示出来呢？这是因为我们读入第一行的时候，那些变量 $1, $2… 默认还是以空白键为分隔的，所以虽然我们定义了 FS=”:” 了， 但是却仅能在第二行后才开始生效。那么怎么办呢？我们可以预先配置 awk 的变量啊！ 利用 BEGIN 这个关键字喔！这样做：</p>
+<pre><code>[root<span class="variable">@localhost</span> ~]<span class="comment"># cat /etc/passwd | \</span>
+&gt; awk <span class="string">'BEGIN {FS=":"} $3 &lt; 10 {print $1 "\t " $3}'</span>
+root     <span class="number">0</span>
+bin      <span class="number">1</span>
+daemon   <span class="number">2</span>
+......(以下省略)......
+</code></pre><p>很有趣吧！而除了 BEGIN 之外，我们还有 END 呢！另外，如果要用 awk 来进行『计算功能』呢？以底下的例子来看， 假设我有一个薪资数据表档名为 pay.txt ，内容是这样的：</p>
+<pre><code>Name    <span class="number">1</span><span class="keyword">st</span>     <span class="number">2</span>nd     <span class="number">3</span>th
+VBird   <span class="number">23000</span>   <span class="number">24000</span>   <span class="number">25000</span>
+DMTsai  <span class="number">21000</span>   <span class="number">20000</span>   <span class="number">23000</span>
+Bird2   <span class="number">43000</span>   <span class="number">42000</span>   <span class="number">41000</span>
+</code></pre><p>如何帮我计算每个人的总额呢？而且我还想要格式化输出喔！我们可以这样考虑：</p>
+<p>第一行只是说明，所以第一行不要进行加总 (NR==1 时处理)；第二行以后就会有加总的情况出现 (NR&gt;=2 以后处理)</p>
+<pre><code><span class="xml">[root@localhost ~]# cat pay.txt | \
+&gt; awk 'NR==</span><span class="number">1</span><span class="xml">{printf "%</span><span class="number">10</span><span class="xml">s %</span><span class="number">10</span><span class="xml">s %</span><span class="number">10</span><span class="xml">s %</span><span class="number">10</span><span class="xml">s %</span><span class="number">10</span><span class="xml">s\n",</span><span class="variable">$1</span><span class="xml">,</span><span class="variable">$2</span><span class="xml">,</span><span class="variable">$3</span><span class="xml">,</span><span class="variable">$4</span><span class="xml">,"Total" }
+NR&gt;=</span><span class="number">2</span><span class="xml">{total = </span><span class="variable">$2</span><span class="xml"> + </span><span class="variable">$3</span><span class="xml"> + </span><span class="variable">$4</span><span class="xml">
+printf "%</span><span class="number">10</span><span class="xml">s %</span><span class="number">10</span><span class="xml">d %</span><span class="number">10</span><span class="xml">d %</span><span class="number">10</span><span class="xml">d %</span><span class="number">10.2</span><span class="xml">f\n", </span><span class="variable">$1</span><span class="xml">, </span><span class="variable">$2</span><span class="xml">, </span><span class="variable">$3</span><span class="xml">, </span><span class="variable">$4</span><span class="xml">, total}'
+      Name        </span><span class="number">1</span><span class="xml">st        </span><span class="number">2</span><span class="xml">nd        </span><span class="number">3</span><span class="xml">th      Total
+     VBird      </span><span class="number">23000</span><span class="xml">      </span><span class="number">24000</span><span class="xml">      </span><span class="number">25000</span><span class="xml">   </span><span class="number">72000.00</span><span class="xml">
+    DMTsai      </span><span class="number">21000</span><span class="xml">      </span><span class="number">20000</span><span class="xml">      </span><span class="number">23000</span><span class="xml">   </span><span class="number">64000.00</span><span class="xml">
+     Bird2      </span><span class="number">43000</span><span class="xml">      </span><span class="number">42000</span><span class="xml">      </span><span class="number">41000</span><span class="xml">  </span><span class="number">126000.00</span><span class="xml"></span>
+</code></pre><p>上面的例子有几个重要事项应该要先说明的：</p>
+<p>awk 的命令间隔：所有 awk 的动作，亦即在 {} 内的动作，如果有需要多个命令辅助时，可利用分号『;』间隔， 或者直接以 [Enter] 按键来隔开每个命令，例如上面的范例中，鸟哥共按了三次 [enter] 喔！</p>
+<pre><code>逻辑运算当中，如果是『等於』的情况，则务必使用两个等号『==』！
+格式化输出时，在 <span class="built_in">printf</span> 的格式配置当中，务必加上 \n ，才能进行分行！
+与 bash shell 的变量不同，在 awk 当中，变量可以直接使用，不需加上 $ 符号。
+</code></pre><p>利用 awk 这个玩意儿，就可以帮我们处理很多日常工作了呢！真是好用的很～ 此外， awk 的输出格式当中，常常会以 printf 来辅助，所以， 最好你对 printf 也稍微熟悉一下比较好啦！另外， awk 的动作内 {} 也是支持 if (条件) 的喔！ 举例来说，上面的命令可以修订成为这样：</p>
+<pre><code><span class="xml">[root@localhost ~]# cat pay.txt | \
+&gt; awk '{if(NR==</span><span class="number">1</span><span class="xml">) printf "%</span><span class="number">10</span><span class="xml">s %</span><span class="number">10</span><span class="xml">s %</span><span class="number">10</span><span class="xml">s %</span><span class="number">10</span><span class="xml">s %</span><span class="number">10</span><span class="xml">s\n",</span><span class="variable">$1</span><span class="xml">,</span><span class="variable">$2</span><span class="xml">,</span><span class="variable">$3</span><span class="xml">,</span><span class="variable">$4</span><span class="xml">,"Total"}
+NR&gt;=</span><span class="number">2</span><span class="xml">{total = </span><span class="variable">$2</span><span class="xml"> + </span><span class="variable">$3</span><span class="xml"> + </span><span class="variable">$4</span><span class="xml">
+printf "%</span><span class="number">10</span><span class="xml">s %</span><span class="number">10</span><span class="xml">d %</span><span class="number">10</span><span class="xml">d %</span><span class="number">10</span><span class="xml">d %</span><span class="number">10.2</span><span class="xml">f\n", </span><span class="variable">$1</span><span class="xml">, </span><span class="variable">$2</span><span class="xml">, </span><span class="variable">$3</span><span class="xml">, </span><span class="variable">$4</span><span class="xml">, total}'</span>
+</code></pre><p>你可以仔细的比对一下上面两个输入有啥不同～从中去了解两种语法吧！我个人是比较倾向於使用第一种语法， 因为会比较有统一性啊</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Shell/">Shell</a><a href="/tags/awk/">awk</a>
+  </div>
+
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Shell/">Shell</a>
+</div>
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="https://github.com/DaMinger/DaMinger.github.io.git/2014/05/19/Shell/awk/" data-title="awk的入门 | DaMinger&#39;s blog" data-tsina="null" class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2014/05/19/Shell/awk_exercise/" title="awk_exercise">
+  <strong>PREVIOUS:</strong><br/>
+  <span>
+  awk_exercise</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2014/05/19/Shell/sed/"  title="grep与sed的使用">
+ <strong>NEXT:</strong><br/> 
+ <span>grep与sed的使用
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section class="comment">
+	<div class="ds-thread"></div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+  
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p rel="asidetitle grow" class="asidetitle grow">分类</p>
+		<ul>
+		
+			<li><a rel="grow" class="grow" href="/categories/Hadoop/" title="Hadoop">Hadoop<sup>20</sup></a></li>
+		
+			<li><a rel="grow" class="grow" href="/categories/Linux/" title="Linux">Linux<sup>4</sup></a></li>
+		
+			<li><a rel="grow" class="grow" href="/categories/Shell/" title="Shell">Shell<sup>4</sup></a></li>
+		
+			<li><a rel="grow" class="grow" href="/categories/操作系统/" title="操作系统">操作系统<sup>1</sup></a></li>
+		
+			<li><a rel="grow" class="grow" href="/categories/杂谈/" title="杂谈">杂谈<sup>2</sup></a></li>
+		
+			<li><a rel="grow" class="grow" href="/categories/计算机网络/" title="计算机网络">计算机网络<sup>1</sup></a></li>
+		
+		</ul>
+</div>
+
+
+
+  <div class="linkslist">
+<h3 rel="grow" class="grow asidetitle">友情链接</h3>
+<ul class="entry">
+<li><a rel="grow" class="grow" href="http://tahiti.oracle.com/" title="Oracle文档">Oracle文档</a></li>
+<li><a rel="grow" class="grow" href="http://asktom.oracle.com/" title="AskTom">AskTom</a></li>
+<li><a rel="grow" class="grow" href="http://blog.csdn.net/tianlesoftware/" title="Dave">Dave</a></li>
+<li><a rel="grow" class="grow" href="http://www.eygle.com/" title="eygle">eygle</a></li>
+<li><a rel="grow" class="grow" href="http://www.dbsnake.com/" title="dbsnake">dbsnake</a></li>
+</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/Eclipse/" title="Eclipse">Eclipse<sup>1</sup></a></li>
+		
+			<li><a href="/tags/HBase/" title="HBase">HBase<sup>4</sup></a></li>
+		
+			<li><a href="/tags/HDFS/" title="HDFS">HDFS<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Hadoop/" title="Hadoop">Hadoop<sup>20</sup></a></li>
+		
+			<li><a href="/tags/Hadoop_Stream/" title="Hadoop_Stream">Hadoop_Stream<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Hive/" title="Hive">Hive<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Linux/" title="Linux">Linux<sup>4</sup></a></li>
+		
+			<li><a href="/tags/Mahout/" title="Mahout">Mahout<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Map-Reduce/" title="Map-Reduce">Map-Reduce<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Mysql/" title="Mysql">Mysql<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Pig/" title="Pig">Pig<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Shell/" title="Shell">Shell<sup>4</sup></a></li>
+		
+			<li><a href="/tags/Sqoop/" title="Sqoop">Sqoop<sup>1</sup></a></li>
+		
+			<li><a href="/tags/awk/" title="awk">awk<sup>2</sup></a></li>
+		
+			<li><a href="/tags/sed/" title="sed">sed<sup>1</sup></a></li>
+		
+			<li><a href="/tags/yum/" title="yum">yum<sup>1</sup></a></li>
+		
+			<li><a href="/tags/学习计划/" title="学习计划">学习计划<sup>1</sup></a></li>
+		
+			<li><a href="/tags/杂谈/" title="杂谈">杂谈<sup>1</sup></a></li>
+		
+			<li><a href="/tags/网卡错误/" title="网卡错误">网卡错误<sup>1</sup></a></li>
+		
+			<li><a href="/tags/网络/" title="网络">网络<sup>1</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle"><a href="/archives">归档</a></p>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/05">五月 2014</a><span class="archive-list-count">13</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/04">四月 2014</a><span class="archive-list-count">19</span></li></ul>
+  </div>
+
+
+  
+  <div class="tagcloudlist">
+    <p class="asidetitle">标签云</p>
+    <div class="tagcloudlist clearfix">
+       <a href="/tags/Eclipse/" style="font-size: 10.00px;">Eclipse</a><a href="/tags/HBase/" style="font-size: 16.67px;">HBase</a><a href="/tags/HDFS/" style="font-size: 13.33px;">HDFS</a><a href="/tags/Hadoop/" style="font-size: 20.00px;">Hadoop</a><a href="/tags/Hadoop_Stream/" style="font-size: 10.00px;">Hadoop_Stream</a><a href="/tags/Hive/" style="font-size: 13.33px;">Hive</a><a href="/tags/Linux/" style="font-size: 16.67px;">Linux</a><a href="/tags/Mahout/" style="font-size: 13.33px;">Mahout</a><a href="/tags/Map-Reduce/" style="font-size: 13.33px;">Map-Reduce</a><a href="/tags/Mysql/" style="font-size: 10.00px;">Mysql</a><a href="/tags/Pig/" style="font-size: 10.00px;">Pig</a><a href="/tags/Shell/" style="font-size: 16.67px;">Shell</a><a href="/tags/Sqoop/" style="font-size: 10.00px;">Sqoop</a><a href="/tags/awk/" style="font-size: 13.33px;">awk</a><a href="/tags/sed/" style="font-size: 10.00px;">sed</a><a href="/tags/yum/" style="font-size: 10.00px;">yum</a><a href="/tags/学习计划/" style="font-size: 10.00px;">学习计划</a><a href="/tags/杂谈/" style="font-size: 10.00px;">杂谈</a><a href="/tags/网卡错误/" style="font-size: 10.00px;">网卡错误</a><a href="/tags/网络/" style="font-size: 10.00px;">网络</a><a href="/tags/进程与线程/" style="font-size: 10.00px;">进程与线程</a>
+    </div>
+  </div>
+
+
+  <iframe width="100%" height="550" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=2&ptype=1&speed=0&skin=1&isTitle=1&noborder=1&isWeibo=1&isFans=1&uid=3819451430&verifier=f953543e&dpc=1"></iframe>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<span class="buzz" rel="buzz"> Hello,I&#39;m liuqinming.For now I&#39;m a student at collage. <br/>
+			I will share my learning experience with you at this blog.</span>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		<a rel="push" class="push" href="https://github.com/https://github.com/DaMinger" target="_blank" title="github"></a>
+		
+		
+	</div>
+		<p class="copyright">Powered by <a rel="float-shadow" class="float-shadow" href="http://zespia.tw/hexo/" target="_blank" title="hexo">Hexo</a> and Theme by <a class="box-shadow-inset"href="https://github.com/uruir/pacmanhover" target="_blank" title="Pacman">PacmanHover</a> © 2014 
+		
+		
+		<a class="wobble-horizontal" rel="wobble-horizontal" href="https://github.com/DaMinger/DaMinger.github.io.git" target="_blank" title="DaMinger">DaMinger</a>
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+    c.click(function(){
+      ta.css('display', 'block').addClass('fadeIn');
+    });
+    o.click(function(){
+      ta.css('display', 'none');
+    });
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,320-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"null"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+<div id="totop" style="position:fixed;bottom:150px;right:50px;cursor: pointer;">
+<a title="���ض���"><img src="/img/scrollup.png"/></a>
+</div>
+<script src="/js/totop.js"></script>
+
+
+
+  </body>
+</html>
