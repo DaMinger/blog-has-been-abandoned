@@ -1,0 +1,688 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>Java多线程总结 | DaMinger&#39;s blog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="DaMinger">
+    
+    <meta name="description" content="一个线程的生命期
+线程经过其生命周期的各个阶段。下图显示了一个线程完整的生命周期。
+
+
+新状态: 一个新产生的线程从新状态开始了它的生命周期。它保持这个状态知道程序start这个线程。
+运行状态:当一个新状态的线程被start以后，线程就变成可运行状态，一个线程在此状态下被认为是开始执行其任务
+就绪">
+    
+    
+    
+    
+    <link rel="alternative" href="/atom.xml" title="DaMinger&#39;s blog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/pacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/pacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+    <link href="/css/hover.css" rel="stylesheet">
+    <link href="/css/bottom.css" rel="stylesheet">
+</head>
+
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a rel="pulse" class="pulse" href="/"><img src="/img/pacman.png" alt="DaMinger&#39;s blog" title="DaMinger&#39;s blog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a rel="hover" class="hover" href="/" title="DaMinger&#39;s blog">DaMinger&#39;s blog</a></h1>
+				<h2 class="blog-motto"><a rel="wobble-to-bottom-right" class="wobble-to-bottom-right" href="#" title="#">信春哥，系统稳，闭眼上线不回滚</a></h2>
+			</div>
+			<div class="navbar"><a rel="buzz" class="buzz" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a rel="wobble-top" class="wobble-top" href="/">Home</a></li>
+					
+						<li><a rel="wobble-top" class="wobble-top" href="/archives">Menu</a></li>
+					
+						<li><a rel="wobble-top" class="wobble-top" href="/about">About</a></li>
+					
+				</ul>
+				
+			</nav>			
+</div>
+<div style="text-align:right;">
+<form  class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+ <input type="search" name="q" id="search" autocomplete="off" autocorrect="off" autocapitalize="off" maxlength="20" placeholder="Search" />
+ <input type="hidden" name="q" value="site:github.com/DaMinger/DaMinger.github.io.git">
+</form>
+</div>
+
+
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2014/05/21/Java/java_thread/" title="Java多线程总结" itemprop="url">Java多线程总结</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="https://github.com/DaMinger/DaMinger.github.io.git" title="DaMinger">DaMinger</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2014-05-21T03:48:20.000Z" itemprop="datePublished">5月 21 2014</time>
+    更新日期:<time datetime="2014-05-21T05:13:53.000Z" itemprop="dateModified">5月 21 2014</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		<ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#一个线程的生命期"><span class="toc-number">1.</span> <span class="toc-text">一个线程的生命期</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#线程的优先级"><span class="toc-number">2.</span> <span class="toc-text">线程的优先级</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#创建一个线程"><span class="toc-number">3.</span> <span class="toc-text">创建一个线程</span></a></li><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#直接继承Thread的类"><span class="toc-number">3.1.</span> <span class="toc-text">直接继承Thread的类</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#通过实现Runable接口"><span class="toc-number">3.2.</span> <span class="toc-text">通过实现Runable接口</span></a></li></ol><li class="toc-item toc-level-4"><a class="toc-link" href="#实现Runnable接口比继承Thread类所具有的优势"><span class="toc-number">4.</span> <span class="toc-text">实现Runnable接口比继承Thread类所具有的优势</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#线程同步"><span class="toc-number">5.</span> <span class="toc-text">线程同步</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#经典问题_生产者与消费者"><span class="toc-number">6.</span> <span class="toc-text">经典问题 生产者与消费者</span></a></li></ol>
+		</div>
+		
+		<h4 id="一个线程的生命期">一个线程的生命期</h4>
+<p>线程经过其生命周期的各个阶段。下图显示了一个线程完整的生命周期。</p>
+<p><img src="/img/Java/java_thread.jpg" alt="线程的生命期"></p>
+<ul>
+<li>新状态: 一个新产生的线程从新状态开始了它的生命周期。它保持这个状态知道程序start这个线程。</li>
+<li>运行状态:当一个新状态的线程被start以后，线程就变成可运行状态，一个线程在此状态下被认为是开始执行其任务</li>
+<li>就绪状态:当一个线程等待另外一个线程执行一个任务的时候，该线程就进入就绪状态。当另一个线程给就绪状态的线程发送信号时，该线程才重新切换到运行状态。</li>
+<li>休眠状态: 由于一个线程的时间片用完了，该线程从运行状态进入休眠状态。当时间间隔到期或者等待的时间发生了，该状态的线程切换到运行状态。</li>
+<li>终止状态: 一个运行状态的线程完成任务或者其他终止条件发生，该线程就切换到终止状态。</li>
+</ul>
+<h4 id="线程的优先级">线程的优先级</h4>
+<p>每一个Java线程都有一个优先级，这样有助于操作系统确定线程的调度顺序。Java优先级在MIN_PRIORITY（1）和MAX_PRIORITY（10）之间的范围内。默认情况下，每一个线程都会分配一个优先级NORM_PRIORITY（5）。具有较高优先级的线程对程序更重要，并且应该在低优先级的线程之前分配处理器时间。然而，线程优先级不能保证线程执行的顺序，而且非常依赖于平台.</p>
+<h4 id="创建一个线程">创建一个线程</h4>
+<p>Java提供了两种创建线程方法：</p>
+<ul>
+<li>通过实现Runable接口</li>
+<li>通过继承Thread类本身</li>
+</ul>
+<h5 id="直接继承Thread的类">直接继承Thread的类</h5>
+<pre><code><span class="keyword">package</span> com.liu.test;
+
+<span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyThread</span>  <span class="keyword">extends</span> <span class="title">Thread</span>{</span>
+    <span class="keyword">private</span> String name;
+    <span class="keyword">public</span> <span class="title">MyThread</span>(){
+    }
+    <span class="keyword">public</span> <span class="title">MyThread</span>(String name){
+        <span class="keyword">this</span>.name=name;
+    }
+    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span>(){
+        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;<span class="number">5</span>;i++){
+            System.out.println(name+<span class="string">"运行  "</span>+i);
+        }
+    }
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span>(String[] args){
+        MyThread h1=<span class="keyword">new</span> MyThread(<span class="string">"A"</span>);
+        MyThread h2=<span class="keyword">new</span> MyThread(<span class="string">"B"</span>);
+        h1.start();
+        h2.start();
+    }
+}
+</code></pre><h5 id="通过实现Runable接口">通过实现Runable接口</h5>
+<pre><code>package com.liu.test;
+ <span class="class"><span class="keyword">class</span> <span class="title">MyThread02</span> <span class="inheritance"><span class="keyword">implements</span></span> <span class="title">Runnable</span> {</span>
+     <span class="keyword">private</span> String name;
+
+     <span class="keyword">public</span> MyThread02(){
+
+     }
+
+     <span class="keyword">public</span> MyThread02(String name){
+         <span class="keyword">this</span>.name=name;
+     }
+
+    @Override
+    <span class="keyword">public</span> <span class="keyword">void</span> run() {
+        <span class="comment">// TODO Auto-generated method stub</span>
+        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;<span class="number">5</span>;i++){
+            System.out.println(name+<span class="string">"运行"</span>+i);
+        }
+    }
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> main(String[] args){
+        MyThread02 h1 =<span class="keyword">new</span> MyThread02(<span class="string">"A"</span>);
+        MyThread02 h2 =<span class="keyword">new</span> MyThread02(<span class="string">"B"</span>);
+        Thread s1=<span class="keyword">new</span> Thread(h1);
+        Thread s2=<span class="keyword">new</span> Thread(h2);
+        s1.start();
+        s2.start();
+    }
+
+}
+</code></pre><h4 id="实现Runnable接口比继承Thread类所具有的优势">实现Runnable接口比继承Thread类所具有的优势</h4>
+<ul>
+<li>适合多个相同的程序代码的线程去处理同一个资源</li>
+<li>可以避免java中的单继承的限制</li>
+<li>增加程序的健壮性，代码可以被多个线程共享，代码和数据独立。    </li>
+</ul>
+<h4 id="线程同步">线程同步</h4>
+<p>所谓同步就是在统一时间段中只有有一个线程运行，其他的线程必须等到这个线程结束之后才能继续执行。采用同步的话，可以使用同步代码块和同步方法两种来完成。</p>
+<pre><code><span class="keyword">package</span> com.liu.synchronize;
+<span class="comment">//采用同步的话，可以使用同步代码块和同步方法两种来完成。</span>
+<span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">test</span> <span class="keyword">implements</span> <span class="title">Runnable</span>{</span>
+    <span class="keyword">private</span> <span class="keyword">int</span> count=<span class="number">5</span>;
+    <span class="comment">//同步代码块</span>
+<span class="comment">/*    public void run() {
+        for (int i=0;i&lt;10;i++){
+            synchronized (this){
+                if(count&gt;0){
+                    try{
+                        Thread.sleep(1000);
+                    }catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    System.out.println(count--);
+                }
+            }
+        }
+    }
+    */</span>
+    <span class="comment">//同步方法</span>
+    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span>() {
+        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">10</span>; ++i) {
+            sale();
+        }
+    }
+    <span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">sale</span>() {
+        <span class="keyword">if</span> (count &gt; <span class="number">0</span>) {
+            <span class="keyword">try</span> {
+                Thread.sleep(<span class="number">1000</span>);
+            } <span class="keyword">catch</span> (InterruptedException e) {
+                e.printStackTrace();
+            }
+            System.out.println(count--);
+        }
+    }
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span>(String[] args){
+        test t1 =<span class="keyword">new</span> test();
+        Thread h1 =<span class="keyword">new</span> Thread(t1);
+        Thread h2 =<span class="keyword">new</span> Thread(t1);
+        Thread h3 =<span class="keyword">new</span> Thread(t1);
+        h1.start();
+        h2.start();
+        h3.start();
+    }
+
+
+}
+</code></pre><h4 id="经典问题_生产者与消费者">经典问题 生产者与消费者</h4>
+<pre><code><span class="comment">/**
+ * 生产者生产商品放到容器中，容器有一定的容量（只能顺序放，先放后拿），
+ * 消费者消费商品，当容器满了后，生产者等待，当容器为空时，消费者等待。
+ * 当生产者将商品放入容器后，通知消费者；当消费者拿走商品后，通知生产者。
+ */</span>
+
+package com.liu.consumerproducer;
+
+<span class="class"><span class="keyword">class</span> <span class="title">Goods</span>{</span>
+    <span class="keyword">int</span> id;
+    <span class="keyword">public</span> Goods(<span class="keyword">int</span> id){
+        <span class="keyword">this</span>.id=id;
+    }
+    <span class="keyword">public</span> String toString(){
+        <span class="keyword">return</span> <span class="string">"商品"</span>+<span class="keyword">this</span>.id;
+    }
+}
+
+<span class="class"><span class="keyword">class</span> <span class="title">Container</span>{</span>
+    <span class="keyword">private</span> <span class="keyword">int</span> <span class="keyword">index</span>=<span class="number">0</span>;
+    Goods[] goods =<span class="keyword">new</span> Goods[<span class="number">6</span>];
+    <span class="keyword">public</span> synchronized <span class="keyword">void</span> push(Goods good){
+        <span class="keyword">while</span> (<span class="keyword">index</span>==goods.length){
+            <span class="comment">//容器满了，生产者等待</span>
+            <span class="keyword">try</span> {
+                wait();
+            } <span class="keyword">catch</span> (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        goods[<span class="keyword">index</span>]=good;
+        <span class="keyword">index</span>++;
+        notifyAll();<span class="comment">//当生产者放入商品后通知消费者</span>
+    }
+     <span class="keyword">public</span> synchronized Goods pop(){
+            <span class="keyword">while</span>(<span class="keyword">index</span>==<span class="number">0</span>){<span class="comment">//当容器内没有商品消费者等待</span>
+                <span class="keyword">try</span> {
+                    wait();
+                } <span class="keyword">catch</span> (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            <span class="keyword">index</span>--;
+            notifyAll();<span class="comment">//当消费者消费了商品后通知生产者</span>
+            <span class="keyword">return</span> goods[<span class="keyword">index</span>];
+        }
+}
+
+<span class="class"><span class="keyword">class</span> <span class="title">Producer</span> <span class="inheritance"><span class="keyword">implements</span></span> <span class="title">Runnable</span>{</span>
+
+    Container con =<span class="keyword">new</span> Container();
+    <span class="keyword">public</span> Producer(Container con) {
+        <span class="keyword">this</span>.con=con;
+    }
+    <span class="keyword">public</span> <span class="keyword">void</span> run() {
+        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;<span class="number">20</span>;i++){
+            Goods good=<span class="keyword">new</span> Goods(i);
+            con.push(good);
+            System.out.println(<span class="string">"生产了："</span>+good);
+        }
+        <span class="keyword">try</span> {
+            Thread.sleep(<span class="number">1000</span>);
+        } <span class="keyword">catch</span> (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+<span class="class"><span class="keyword">class</span> <span class="title">Consumer</span> <span class="inheritance"><span class="keyword">implements</span></span> <span class="title">Runnable</span>{</span>
+
+    Container con = <span class="keyword">new</span> Container();
+    <span class="keyword">public</span> Consumer(Container con){
+        <span class="keyword">this</span>.con=con;
+    }
+
+    <span class="keyword">public</span> <span class="keyword">void</span> run(){
+        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;<span class="number">20</span>; i++){
+            Goods good=con.pop();
+            System.out.println(<span class="string">"消费了："</span>+good);
+            <span class="keyword">try</span> {
+                Thread.sleep(<span class="number">1000</span>);
+            } <span class="keyword">catch</span> (InterruptedException e) {
+                <span class="comment">// TODO Auto-generated catch block</span>
+                e.printStackTrace();
+            }
+        }
+    }
+}
+
+<span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">test</span> {</span>
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> main(String[] args) {
+        Container con =<span class="keyword">new</span> Container();
+        Producer p =<span class="keyword">new</span> Producer(con);
+        Consumer c = <span class="keyword">new</span> Consumer(con);
+        <span class="keyword">new</span> Thread(p).start();
+        <span class="keyword">new</span> Thread(c).start();
+    }
+
+}
+</code></pre>  
+	</div>
+		<footer class="article-footer clearfix">
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Java/">Java</a>
+  </div>
+
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Java/">Java</a>
+</div>
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="https://github.com/DaMinger/DaMinger.github.io.git/2014/05/21/Java/java_thread/" data-title="Java多线程总结 | DaMinger&#39;s blog" data-tsina="null" class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2014/05/21/Java/java_io/" title="Java的IO总结">
+  <strong>PREVIOUS:</strong><br/>
+  <span>
+  Java的IO总结</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2014/05/21/Linux/linux_性能监控/"  title="vmstat iostat top sar总结">
+ <strong>NEXT:</strong><br/> 
+ <span>vmstat iostat top sar总结
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section class="comment">
+	<div class="ds-thread"></div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+  <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#一个线程的生命期"><span class="toc-number">1.</span> <span class="toc-text">一个线程的生命期</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#线程的优先级"><span class="toc-number">2.</span> <span class="toc-text">线程的优先级</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#创建一个线程"><span class="toc-number">3.</span> <span class="toc-text">创建一个线程</span></a></li><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#直接继承Thread的类"><span class="toc-number">3.1.</span> <span class="toc-text">直接继承Thread的类</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#通过实现Runable接口"><span class="toc-number">3.2.</span> <span class="toc-text">通过实现Runable接口</span></a></li></ol><li class="toc-item toc-level-4"><a class="toc-link" href="#实现Runnable接口比继承Thread类所具有的优势"><span class="toc-number">4.</span> <span class="toc-text">实现Runnable接口比继承Thread类所具有的优势</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#线程同步"><span class="toc-number">5.</span> <span class="toc-text">线程同步</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#经典问题_生产者与消费者"><span class="toc-number">6.</span> <span class="toc-text">经典问题 生产者与消费者</span></a></li></ol>
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p rel="asidetitle grow" class="asidetitle grow">分类</p>
+		<ul>
+		
+			<li><a rel="grow" class="grow" href="/categories/Hadoop/" title="Hadoop">Hadoop<sup>20</sup></a></li>
+		
+			<li><a rel="grow" class="grow" href="/categories/Java/" title="Java">Java<sup>2</sup></a></li>
+		
+			<li><a rel="grow" class="grow" href="/categories/Linux/" title="Linux">Linux<sup>5</sup></a></li>
+		
+			<li><a rel="grow" class="grow" href="/categories/Shell/" title="Shell">Shell<sup>4</sup></a></li>
+		
+			<li><a rel="grow" class="grow" href="/categories/操作系统/" title="操作系统">操作系统<sup>1</sup></a></li>
+		
+			<li><a rel="grow" class="grow" href="/categories/杂谈/" title="杂谈">杂谈<sup>2</sup></a></li>
+		
+			<li><a rel="grow" class="grow" href="/categories/计算机网络/" title="计算机网络">计算机网络<sup>1</sup></a></li>
+		
+			<li><a rel="grow" class="grow" href="/categories/设计模式/" title="设计模式">设计模式<sup>8</sup></a></li>
+		
+		</ul>
+</div>
+
+
+
+  <div class="linkslist">
+<h3 rel="grow" class="grow asidetitle">友情链接</h3>
+<ul class="entry">
+<li><a rel="grow" class="grow" href="http://tahiti.oracle.com/" title="Oracle文档">Oracle文档</a></li>
+<li><a rel="grow" class="grow" href="http://dev.mysql.com/doc/" title="Mysql文档">Mysql文档</a></li>
+<li><a rel="grow" class="grow" href="http://pythontip.sinaapp.com/" title="Python在线挑战">Python在线挑战</a></li>
+<li><a rel="grow" class="grow" href="http://www.programcreek.com/" title="Java">Java</a></li>
+<li><a rel="grow" class="grow" href="http://asktom.oracle.com/" title="AskTom">AskTom</a></li>
+<li><a rel="grow" class="grow" href="http://blog.csdn.net/tianlesoftware/" title="Dave">Dave</a></li>
+<li><a rel="grow" class="grow" href="http://www.eygle.com/" title="eygle">eygle</a></li>
+<li><a rel="grow" class="grow" href="http://www.dbsnake.com/" title="dbsnake">dbsnake</a></li>
+</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/Eclipse/" title="Eclipse">Eclipse<sup>1</sup></a></li>
+		
+			<li><a href="/tags/HBase/" title="HBase">HBase<sup>4</sup></a></li>
+		
+			<li><a href="/tags/HDFS/" title="HDFS">HDFS<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Hadoop/" title="Hadoop">Hadoop<sup>20</sup></a></li>
+		
+			<li><a href="/tags/Hadoop_Stream/" title="Hadoop_Stream">Hadoop_Stream<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Hive/" title="Hive">Hive<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Java/" title="Java">Java<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Linux/" title="Linux">Linux<sup>5</sup></a></li>
+		
+			<li><a href="/tags/Mahout/" title="Mahout">Mahout<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Map-Reduce/" title="Map-Reduce">Map-Reduce<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Mysql/" title="Mysql">Mysql<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Pig/" title="Pig">Pig<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Shell/" title="Shell">Shell<sup>4</sup></a></li>
+		
+			<li><a href="/tags/Sqoop/" title="Sqoop">Sqoop<sup>1</sup></a></li>
+		
+			<li><a href="/tags/awk/" title="awk">awk<sup>2</sup></a></li>
+		
+			<li><a href="/tags/sed/" title="sed">sed<sup>1</sup></a></li>
+		
+			<li><a href="/tags/yum/" title="yum">yum<sup>1</sup></a></li>
+		
+			<li><a href="/tags/学习计划/" title="学习计划">学习计划<sup>1</sup></a></li>
+		
+			<li><a href="/tags/杂谈/" title="杂谈">杂谈<sup>1</sup></a></li>
+		
+			<li><a href="/tags/网卡错误/" title="网卡错误">网卡错误<sup>1</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle"><a href="/archives">归档</a></p>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/05">五月 2014</a><span class="archive-list-count">24</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/04">四月 2014</a><span class="archive-list-count">19</span></li></ul>
+  </div>
+
+
+  
+  <div class="tagcloudlist">
+    <p class="asidetitle">标签云</p>
+    <div class="tagcloudlist clearfix">
+       <a href="/tags/Eclipse/" style="font-size: 10.00px;">Eclipse</a><a href="/tags/HBase/" style="font-size: 14.00px;">HBase</a><a href="/tags/HDFS/" style="font-size: 12.00px;">HDFS</a><a href="/tags/Hadoop/" style="font-size: 20.00px;">Hadoop</a><a href="/tags/Hadoop_Stream/" style="font-size: 10.00px;">Hadoop_Stream</a><a href="/tags/Hive/" style="font-size: 12.00px;">Hive</a><a href="/tags/Java/" style="font-size: 12.00px;">Java</a><a href="/tags/Linux/" style="font-size: 16.00px;">Linux</a><a href="/tags/Mahout/" style="font-size: 12.00px;">Mahout</a><a href="/tags/Map-Reduce/" style="font-size: 12.00px;">Map-Reduce</a><a href="/tags/Mysql/" style="font-size: 10.00px;">Mysql</a><a href="/tags/Pig/" style="font-size: 10.00px;">Pig</a><a href="/tags/Shell/" style="font-size: 14.00px;">Shell</a><a href="/tags/Sqoop/" style="font-size: 10.00px;">Sqoop</a><a href="/tags/awk/" style="font-size: 12.00px;">awk</a><a href="/tags/sed/" style="font-size: 10.00px;">sed</a><a href="/tags/yum/" style="font-size: 10.00px;">yum</a><a href="/tags/学习计划/" style="font-size: 10.00px;">学习计划</a><a href="/tags/杂谈/" style="font-size: 10.00px;">杂谈</a><a href="/tags/网卡错误/" style="font-size: 10.00px;">网卡错误</a><a href="/tags/网络/" style="font-size: 10.00px;">网络</a><a href="/tags/设计模式/" style="font-size: 18.00px;">设计模式</a><a href="/tags/进程与线程/" style="font-size: 10.00px;">进程与线程</a>
+    </div>
+  </div>
+
+
+  <iframe width="100%" height="550" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=2&ptype=1&speed=0&skin=1&isTitle=1&noborder=1&isWeibo=1&isFans=1&uid=3819451430&verifier=f953543e&dpc=1"></iframe>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<span class="buzz" rel="buzz"> Hello,I&#39;m liuqinming.For now I&#39;m a student at collage. <br/>
+			I will share my learning experience with you at this blog.</span>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		<a rel="push" class="push" href="https://github.com/https://github.com/DaMinger" target="_blank" title="github"></a>
+		
+		
+	</div>
+		<p class="copyright">Powered by <a rel="float-shadow" class="float-shadow" href="http://zespia.tw/hexo/" target="_blank" title="hexo">Hexo</a> and Theme by <a class="box-shadow-inset"href="https://github.com/uruir/pacmanhover" target="_blank" title="Pacman">PacmanHover</a> © 2014 
+		
+		
+		<a class="wobble-horizontal" rel="wobble-horizontal" href="https://github.com/DaMinger/DaMinger.github.io.git" target="_blank" title="DaMinger">DaMinger</a>
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+    c.click(function(){
+      ta.css('display', 'block').addClass('fadeIn');
+    });
+    o.click(function(){
+      ta.css('display', 'none');
+    });
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,320-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"null"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+<div id="totop" style="position:fixed;bottom:150px;right:50px;cursor: pointer;">
+<a title="���ض���"><img src="/img/scrollup.png"/></a>
+</div>
+<script src="/js/totop.js"></script>
+
+
+
+  </body>
+</html>

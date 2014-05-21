@@ -4,7 +4,7 @@
   <subtitle><![CDATA[信春哥，系统稳，闭眼上线不回滚]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="https://github.com/DaMinger/DaMinger.github.io.git/"/>
-  <updated>2014-05-20T13:40:45.333Z</updated>
+  <updated>2014-05-21T06:52:18.381Z</updated>
   <id>https://github.com/DaMinger/DaMinger.github.io.git/</id>
   
   <author>
@@ -13,6 +13,1013 @@
   </author>
   
   <generator uri="http://zespia.tw/hexo/">Hexo</generator>
+  
+  <entry>
+    <title><![CDATA[Java的IO总结]]></title>
+    <link href="https://github.com/DaMinger/DaMinger.github.io.git/2014/05/21/Java/java_io/"/>
+    <id>https://github.com/DaMinger/DaMinger.github.io.git/2014/05/21/Java/java_io/</id>
+    <published>2014-05-21T05:20:59.000Z</published>
+    <updated>2014-05-21T06:12:36.000Z</updated>
+    <content type="html"><![CDATA[<h4 id="Java流有关的类或借口">Java流有关的类或借口</h4>
+<p><img src="/img/Java/io/1.png" alt=" "></p>
+<h4 id="Java流类图结构">Java流类图结构</h4>
+<p><img src="/img/Java/io/2.jpg" alt=" "></p>
+<h4 id="流的概念和作用">流的概念和作用</h4>
+<p>流是一组有顺序的，有起点和终点的字节集合，是对数据传输的总称或抽象。即数据在两设备间的传输称为流，流的本质是数据传输，根据数据传输特性将流抽象为各种类，方便更直观的进行数据操作。</p>
+<h5 id="IO流的分类">IO流的分类</h5>
+<ul>
+<li>根据处理数据类型的不同分为：字符流和字节流</li>
+<li>根据数据流向不同分为：输入流和输出流</li>
+</ul>
+<h6 id="字符流和字节流">字符流和字节流</h6>
+<p>字符流的由来： 因为数据编码的不同，而有了对字符进行高效操作的流对象。本质其实就是基于字节流读取时，去查了指定的码表。<br>字节流和字符流的区别：</p>
+<ul>
+<li>读写单位不同：字节流以字节（8bit）为单位，字符流以字符为单位，根据码表映射字符，一次可能读多个字节。</li>
+<li>处理对象不同：字节流能处理所有类型的数据（如图片、avi等），而字符流只能处理字符类型的数据。</li>
+<li>缓冲区的使用：字节流在操作的时候本身是不会用到缓冲区的，是文件本身的直接操作的，但是字符流在操作的时候下后是会用到缓冲区的，是通过缓冲区来操作文件的。</li>
+</ul>
+<p>使用字节流好还是字符流好呢？</p>
+<p>答案是字节流。首先因为硬盘上的所有文件都是以字节的形式进行传输或者保存的，包括图片等内容。但是字符只是在内存中才会形成的，所以在开发中，字节流使用广泛。</p>
+<h6 id="输入流和输出流">输入流和输出流</h6>
+<p>对输入流只能进行读操作，对输出流只能进行写操作，程序中需要根据待传输数据的不同特性而使用不同的流。 </p>
+<h4 id="案例（写了很少，慢慢补充）">案例（写了很少，慢慢补充）</h4>
+<h6 id="File类的两个常量">File类的两个常量</h6>
+<pre><code><span class="keyword">File</span>.separator 代表 \
+<span class="keyword">File</span>.pathSeparator 代表 ，
+多使用它们俩，方便跨平台写路径名
+</code></pre><h6 id="创建一个新文件">创建一个新文件</h6>
+<pre><code><span class="keyword">package</span> com.liu.io;
+
+<span class="keyword">import</span> java.io.File;
+<span class="comment">//创建一个新文件</span>
+<span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">test01</span> {</span>
+<span class="comment">/*    public static void main(String[] args){
+        File f =new File("D:\\hello.txt");
+        try{
+            f.createNewFile();
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+*/</span>
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span>(String[] args){
+        String fileName=<span class="string">"D:"</span>+File.separator+<span class="string">"hello.txt"</span>;
+        File f =<span class="keyword">new</span> File(fileName);
+        <span class="keyword">try</span>{
+            f.createNewFile();
+        }<span class="keyword">catch</span> (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
+</code></pre><h6 id="删除一个文件">删除一个文件</h6>
+<pre><code>package com.liu.io;
+
+import java.io.File;
+
+<span class="comment">//删除一个文件</span>
+<span class="keyword">public</span> <span class="keyword">class</span> test03 {
+
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span>(String[] args) {
+        String fileName=<span class="string">"D:"</span>+File.separator+<span class="string">"hello.txt"</span>;
+        File f=<span class="keyword">new</span> File(fileName);
+        <span class="keyword">if</span>(f.exists()){
+            f.delete();
+        }<span class="keyword">else</span>{
+            System.<span class="keyword">out</span>.println(<span class="string">"文件不存在"</span>);
+        }
+    }
+
+}
+</code></pre><h6 id="创建一个文件夹及遍历目录">创建一个文件夹及遍历目录</h6>
+<pre><code>package com.liu.io;
+
+import java.io.File;
+
+
+<span class="keyword">public</span> <span class="keyword">class</span> test04 {
+
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> main(String[] args) {
+    <span class="comment">//创建一个文件夹         </span>
+    /*        String fileName=<span class="string">"D:"</span>+File.separator+<span class="string">"hello"</span>;
+            File f=<span class="keyword">new</span> File(fileName);
+            f.mkdir();
+    */
+    <span class="comment">//列出指定目录的全部文件（包括隐藏文件）</span>
+    /*    String fileName=<span class="string">"D:"</span>+File.separator;
+        File f=<span class="keyword">new</span> File(fileName);
+        String[] str=f.list();
+        <span class="keyword">for</span> (int i = <span class="number">0</span>; i &lt; str.length; i++) {
+            System.out.println(str[i]);
+        }
+    */
+    <span class="comment">//列出指定目录的全部文件（包括隐藏文件） 完整路径    </span>
+    /*     String fileName=<span class="string">"D:"</span>+File.separator;
+            File f=<span class="keyword">new</span> File(fileName);
+            File[] str=f.listFiles();
+            <span class="keyword">for</span> (int i = <span class="number">0</span>; i &lt; str.length; i++) {
+                System.out.println(str[i]);
+            }
+    */    
+    <span class="comment">//    判断一个指定的路径是否为目录</span>
+    /*    String fileName=<span class="string">"D:"</span>+File.separator;
+        File f=<span class="keyword">new</span> File(fileName);
+        <span class="keyword">if</span>(f.isDirectory()){
+            System.out.println(<span class="string">"YES"</span>);
+        }<span class="keyword">else</span>{
+            System.out.println(<span class="string">"NO"</span>);
+        }
+    */
+    <span class="comment">//搜索指定目录的全部内容</span>
+        String fileName=<span class="string">"D:"</span>+File.separator;
+        File f=<span class="keyword">new</span> File(fileName);
+        print(f);
+    }
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> print(File f){
+        <span class="keyword">if</span>(f!=<span class="keyword">null</span>){
+            <span class="keyword">if</span>(f.isDirectory()){
+                File[] fileArray=f.listFiles();
+                <span class="keyword">if</span>(fileArray!=<span class="keyword">null</span>){
+                    <span class="keyword">for</span> (int i = <span class="number">0</span>; i &lt; fileArray.length; i++) {
+                        <span class="comment">//递归调用</span>
+                        print(fileArray[i]);
+                    }
+                }
+            }
+            <span class="keyword">else</span>{
+                System.out.println(f);
+            }
+        }
+    }
+}
+</code></pre><h6 id="使用RandomAccessFile写入文件">使用RandomAccessFile写入文件</h6>
+<pre><code><span class="keyword">package</span> com.liu.io;
+
+<span class="keyword">import</span> java.io.*;
+
+<span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">test05</span> {</span>
+
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span>(String[] args) <span class="keyword">throws</span> IOException {
+        <span class="comment">//使用RandomAccessFile写入文件</span>
+        String fileName=<span class="string">"D:"</span>+File.separator+<span class="string">"hello.txt"</span>;
+        File f=<span class="keyword">new</span> File(fileName);
+        RandomAccessFile demo = <span class="keyword">null</span>;
+        <span class="keyword">try</span> {
+            demo = <span class="keyword">new</span> RandomAccessFile(f,<span class="string">"rw"</span>);
+        } <span class="keyword">catch</span> (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        demo.writeBytes(<span class="string">"asdsad"</span>);
+        <span class="comment">//demo.writeInt(12);</span>
+        <span class="comment">//demo.writeBoolean(true);</span>
+        <span class="comment">//demo.writeChar('A');</span>
+        <span class="comment">//demo.writeFloat(1.21f);</span>
+        <span class="comment">//demo.writeDouble(12.123);</span>
+        <span class="comment">//demo.close();</span>
+
+    }
+
+}
+</code></pre><h6 id="字节流">字节流</h6>
+<pre><code>package com.liu.io;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+
+<span class="comment">//字节流</span>
+<span class="keyword">public</span> <span class="keyword">class</span> test06 {
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> main(String[] args)throws IOException {
+           String fileName=<span class="string">"D:"</span>+File.separator+<span class="string">"hello.txt"</span>;
+           File f=<span class="keyword">new</span> File(fileName);
+           <span class="comment">// 向文件中写入字符串</span>
+      /*    OutputStream out =<span class="keyword">new</span> FileOutputStream(f);
+           String str=<span class="string">"你好"</span>;
+           byte[] b=str.getBytes();
+           out.write(b);
+           out.close();
+       */    
+
+           <span class="comment">//向文件中追加新内容</span>
+       /*   OutputStream out =<span class="keyword">new</span> FileOutputStream(f,<span class="keyword">true</span>);
+           String str=<span class="string">"haha"</span>;
+           byte[]b =str.getBytes();
+           <span class="keyword">for</span>(int i=<span class="number">0</span>;i&lt;b.length;i++){
+               out.write(b[i]);
+           }
+           out.close();
+         */
+
+           <span class="comment">//读文件内容</span>
+     /*      InputStream <span class="keyword">in</span> =<span class="keyword">new</span> FileInputStream(f);
+           <span class="comment">//byte[] b=new byte[1024];</span>
+           byte[] b=<span class="keyword">new</span> byte[(int)f.length()];
+           <span class="comment">//如果直接用 in.read(b) 会读取大量空格</span>
+            int len=<span class="keyword">in</span>.read(b);
+            <span class="keyword">in</span>.close();
+            System.out.println(<span class="string">"读入长度为："</span>+len);
+            System.out.println(<span class="keyword">new</span> String(b,<span class="number">0</span>,len));
+       */
+
+           <span class="comment">//一个一个字节读</span>
+    /*       InputStream <span class="keyword">in</span>=<span class="keyword">new</span> FileInputStream(f);
+            byte[] b=<span class="keyword">new</span> byte[(int)f.length()];
+            <span class="keyword">for</span> (int i = <span class="number">0</span>; i &lt; b.length; i++) {
+                b[i]=(byte)<span class="keyword">in</span>.read();
+            }
+            <span class="keyword">in</span>.close();
+            System.out.println(<span class="keyword">new</span> String(b));
+    */
+
+           <span class="comment">//判断是否独到文件的末尾</span>
+           InputStream <span class="keyword">in</span>=<span class="keyword">new</span> FileInputStream(f);
+            byte[] b=<span class="keyword">new</span> byte[<span class="number">1024</span>];
+            int count =<span class="number">0</span>;
+            int temp=<span class="number">0</span>;
+            <span class="keyword">while</span>((temp=<span class="keyword">in</span>.read())!=(-<span class="number">1</span>)){
+                b[count++]=(byte)temp;
+            }
+            <span class="keyword">in</span>.close();
+            System.out.println(<span class="keyword">new</span> String(b));
+    }
+}
+</code></pre><h6 id="字符流">字符流</h6>
+<pre><code><span class="keyword">package</span> com.liu.io;
+<span class="comment">//字符流</span>
+<span class="keyword">import</span> java.io.File;
+<span class="keyword">import</span> java.io.FileReader;
+<span class="keyword">import</span> java.io.FileWriter;
+<span class="keyword">import</span> java.io.IOException;
+<span class="keyword">import</span> java.io.Reader;
+<span class="keyword">import</span> java.io.Writer;
+
+<span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">test07</span> {</span>
+
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span>(String[] args) <span class="keyword">throws</span> IOException {
+        String fileName=<span class="string">"D:"</span>+File.separator+<span class="string">"hello.txt"</span>;
+        File f=<span class="keyword">new</span> File(fileName);
+        <span class="comment">//写入数据</span>
+  <span class="comment">/*      //追加内容
+        Writer out =new FileWriter(f,true);
+       // Writer out =new FileWriter(f);
+        String str="hello";
+        out.write(str);
+        out.close();
+    */</span>
+        <span class="comment">//读内容</span>
+        <span class="keyword">char</span>[] ch =<span class="keyword">new</span> <span class="keyword">char</span>[<span class="number">100</span>];
+        Reader read=<span class="keyword">new</span> FileReader(f);
+        <span class="keyword">int</span> temp=<span class="number">0</span>;
+        <span class="keyword">int</span> count=<span class="number">0</span>;
+        <span class="keyword">while</span>((temp=read.read())!=(-<span class="number">1</span>)){
+            ch[count++]=(<span class="keyword">char</span>)temp;
+        }
+        read.close();
+        System.out.println(<span class="string">"内容为"</span>+<span class="keyword">new</span> String(ch,<span class="number">0</span>,count));
+    }
+}
+</code></pre><p>下面例子总结摘自网上</p>
+<h6 id="OutputStreramWriter_和InputStreamReader类">OutputStreramWriter 和InputStreamReader类</h6>
+<pre><code>OutputStreramWriter将输出的字符流转化为字节流
+InputStreamReader将输入的字节流转换为字符流
+但是不管如何操作，最后都是以字节的形式保存在文件中的。
+<span class="javadoc">/**
+ * 将字节输出流转化为字符输出流
+ * */</span>
+<span class="keyword">import</span> java.io.*;
+class hello{
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span>(String[] args) <span class="keyword">throws</span> IOException {
+        String fileName= <span class="string">"d:"</span>+File.separator+<span class="string">"hello.txt"</span>;
+        File file=<span class="keyword">new</span> File(fileName);
+        Writer out=<span class="keyword">new</span> OutputStreamWriter(<span class="keyword">new</span> FileOutputStream(file));
+        out.write(<span class="string">"hello"</span>);
+        out.close();
+    }
+}
+<span class="javadoc">/**
+ * 将字节输入流变为字符输入流
+ * */</span>
+<span class="keyword">import</span> java.io.*;
+class hello{
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span>(String[] args) <span class="keyword">throws</span> IOException {
+        String fileName= <span class="string">"d:"</span>+File.separator+<span class="string">"hello.txt"</span>;
+        File file=<span class="keyword">new</span> File(fileName);
+        Reader read=<span class="keyword">new</span> InputStreamReader(<span class="keyword">new</span> FileInputStream(file));
+        <span class="keyword">char</span>[] b=<span class="keyword">new</span> <span class="keyword">char</span>[<span class="number">100</span>];
+        <span class="keyword">int</span> len=read.read(b);
+        System.out.println(<span class="keyword">new</span> String(b,<span class="number">0</span>,len));
+        read.close();
+    }
+}
+</code></pre>]]></content>
+    
+    
+      <category term="Java" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/Java/"/>
+    
+      <category term="Java" scheme="https://github.com/DaMinger/DaMinger.github.io.git/categories/Java/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[Java多线程总结]]></title>
+    <link href="https://github.com/DaMinger/DaMinger.github.io.git/2014/05/21/Java/java_thread/"/>
+    <id>https://github.com/DaMinger/DaMinger.github.io.git/2014/05/21/Java/java_thread/</id>
+    <published>2014-05-21T03:48:20.000Z</published>
+    <updated>2014-05-21T05:13:53.000Z</updated>
+    <content type="html"><![CDATA[<h4 id="一个线程的生命期">一个线程的生命期</h4>
+<p>线程经过其生命周期的各个阶段。下图显示了一个线程完整的生命周期。</p>
+<p><img src="/img/Java/java_thread.jpg" alt="线程的生命期"></p>
+<ul>
+<li>新状态: 一个新产生的线程从新状态开始了它的生命周期。它保持这个状态知道程序start这个线程。</li>
+<li>运行状态:当一个新状态的线程被start以后，线程就变成可运行状态，一个线程在此状态下被认为是开始执行其任务</li>
+<li>就绪状态:当一个线程等待另外一个线程执行一个任务的时候，该线程就进入就绪状态。当另一个线程给就绪状态的线程发送信号时，该线程才重新切换到运行状态。</li>
+<li>休眠状态: 由于一个线程的时间片用完了，该线程从运行状态进入休眠状态。当时间间隔到期或者等待的时间发生了，该状态的线程切换到运行状态。</li>
+<li>终止状态: 一个运行状态的线程完成任务或者其他终止条件发生，该线程就切换到终止状态。</li>
+</ul>
+<h4 id="线程的优先级">线程的优先级</h4>
+<p>每一个Java线程都有一个优先级，这样有助于操作系统确定线程的调度顺序。Java优先级在MIN_PRIORITY（1）和MAX_PRIORITY（10）之间的范围内。默认情况下，每一个线程都会分配一个优先级NORM_PRIORITY（5）。具有较高优先级的线程对程序更重要，并且应该在低优先级的线程之前分配处理器时间。然而，线程优先级不能保证线程执行的顺序，而且非常依赖于平台.</p>
+<h4 id="创建一个线程">创建一个线程</h4>
+<p>Java提供了两种创建线程方法：</p>
+<ul>
+<li>通过实现Runable接口</li>
+<li>通过继承Thread类本身</li>
+</ul>
+<h5 id="直接继承Thread的类">直接继承Thread的类</h5>
+<pre><code><span class="keyword">package</span> com.liu.test;
+
+<span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyThread</span>  <span class="keyword">extends</span> <span class="title">Thread</span>{</span>
+    <span class="keyword">private</span> String name;
+    <span class="keyword">public</span> <span class="title">MyThread</span>(){
+    }
+    <span class="keyword">public</span> <span class="title">MyThread</span>(String name){
+        <span class="keyword">this</span>.name=name;
+    }
+    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span>(){
+        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;<span class="number">5</span>;i++){
+            System.out.println(name+<span class="string">"运行  "</span>+i);
+        }
+    }
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span>(String[] args){
+        MyThread h1=<span class="keyword">new</span> MyThread(<span class="string">"A"</span>);
+        MyThread h2=<span class="keyword">new</span> MyThread(<span class="string">"B"</span>);
+        h1.start();
+        h2.start();
+    }
+}
+</code></pre><h5 id="通过实现Runable接口">通过实现Runable接口</h5>
+<pre><code>package com.liu.test;
+ <span class="class"><span class="keyword">class</span> <span class="title">MyThread02</span> <span class="inheritance"><span class="keyword">implements</span></span> <span class="title">Runnable</span> {</span>
+     <span class="keyword">private</span> String name;
+
+     <span class="keyword">public</span> MyThread02(){
+
+     }
+
+     <span class="keyword">public</span> MyThread02(String name){
+         <span class="keyword">this</span>.name=name;
+     }
+
+    @Override
+    <span class="keyword">public</span> <span class="keyword">void</span> run() {
+        <span class="comment">// TODO Auto-generated method stub</span>
+        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;<span class="number">5</span>;i++){
+            System.out.println(name+<span class="string">"运行"</span>+i);
+        }
+    }
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> main(String[] args){
+        MyThread02 h1 =<span class="keyword">new</span> MyThread02(<span class="string">"A"</span>);
+        MyThread02 h2 =<span class="keyword">new</span> MyThread02(<span class="string">"B"</span>);
+        Thread s1=<span class="keyword">new</span> Thread(h1);
+        Thread s2=<span class="keyword">new</span> Thread(h2);
+        s1.start();
+        s2.start();
+    }
+
+}
+</code></pre><h4 id="实现Runnable接口比继承Thread类所具有的优势">实现Runnable接口比继承Thread类所具有的优势</h4>
+<ul>
+<li>适合多个相同的程序代码的线程去处理同一个资源</li>
+<li>可以避免java中的单继承的限制</li>
+<li>增加程序的健壮性，代码可以被多个线程共享，代码和数据独立。    </li>
+</ul>
+<h4 id="线程同步">线程同步</h4>
+<p>所谓同步就是在统一时间段中只有有一个线程运行，其他的线程必须等到这个线程结束之后才能继续执行。采用同步的话，可以使用同步代码块和同步方法两种来完成。</p>
+<pre><code><span class="keyword">package</span> com.liu.synchronize;
+<span class="comment">//采用同步的话，可以使用同步代码块和同步方法两种来完成。</span>
+<span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">test</span> <span class="keyword">implements</span> <span class="title">Runnable</span>{</span>
+    <span class="keyword">private</span> <span class="keyword">int</span> count=<span class="number">5</span>;
+    <span class="comment">//同步代码块</span>
+<span class="comment">/*    public void run() {
+        for (int i=0;i&lt;10;i++){
+            synchronized (this){
+                if(count&gt;0){
+                    try{
+                        Thread.sleep(1000);
+                    }catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    System.out.println(count--);
+                }
+            }
+        }
+    }
+    */</span>
+    <span class="comment">//同步方法</span>
+    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span>() {
+        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">10</span>; ++i) {
+            sale();
+        }
+    }
+    <span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">sale</span>() {
+        <span class="keyword">if</span> (count &gt; <span class="number">0</span>) {
+            <span class="keyword">try</span> {
+                Thread.sleep(<span class="number">1000</span>);
+            } <span class="keyword">catch</span> (InterruptedException e) {
+                e.printStackTrace();
+            }
+            System.out.println(count--);
+        }
+    }
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span>(String[] args){
+        test t1 =<span class="keyword">new</span> test();
+        Thread h1 =<span class="keyword">new</span> Thread(t1);
+        Thread h2 =<span class="keyword">new</span> Thread(t1);
+        Thread h3 =<span class="keyword">new</span> Thread(t1);
+        h1.start();
+        h2.start();
+        h3.start();
+    }
+
+
+}
+</code></pre><h4 id="经典问题_生产者与消费者">经典问题 生产者与消费者</h4>
+<pre><code><span class="comment">/**
+ * 生产者生产商品放到容器中，容器有一定的容量（只能顺序放，先放后拿），
+ * 消费者消费商品，当容器满了后，生产者等待，当容器为空时，消费者等待。
+ * 当生产者将商品放入容器后，通知消费者；当消费者拿走商品后，通知生产者。
+ */</span>
+
+package com.liu.consumerproducer;
+
+<span class="class"><span class="keyword">class</span> <span class="title">Goods</span>{</span>
+    <span class="keyword">int</span> id;
+    <span class="keyword">public</span> Goods(<span class="keyword">int</span> id){
+        <span class="keyword">this</span>.id=id;
+    }
+    <span class="keyword">public</span> String toString(){
+        <span class="keyword">return</span> <span class="string">"商品"</span>+<span class="keyword">this</span>.id;
+    }
+}
+
+<span class="class"><span class="keyword">class</span> <span class="title">Container</span>{</span>
+    <span class="keyword">private</span> <span class="keyword">int</span> <span class="keyword">index</span>=<span class="number">0</span>;
+    Goods[] goods =<span class="keyword">new</span> Goods[<span class="number">6</span>];
+    <span class="keyword">public</span> synchronized <span class="keyword">void</span> push(Goods good){
+        <span class="keyword">while</span> (<span class="keyword">index</span>==goods.length){
+            <span class="comment">//容器满了，生产者等待</span>
+            <span class="keyword">try</span> {
+                wait();
+            } <span class="keyword">catch</span> (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        goods[<span class="keyword">index</span>]=good;
+        <span class="keyword">index</span>++;
+        notifyAll();<span class="comment">//当生产者放入商品后通知消费者</span>
+    }
+     <span class="keyword">public</span> synchronized Goods pop(){
+            <span class="keyword">while</span>(<span class="keyword">index</span>==<span class="number">0</span>){<span class="comment">//当容器内没有商品消费者等待</span>
+                <span class="keyword">try</span> {
+                    wait();
+                } <span class="keyword">catch</span> (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            <span class="keyword">index</span>--;
+            notifyAll();<span class="comment">//当消费者消费了商品后通知生产者</span>
+            <span class="keyword">return</span> goods[<span class="keyword">index</span>];
+        }
+}
+
+<span class="class"><span class="keyword">class</span> <span class="title">Producer</span> <span class="inheritance"><span class="keyword">implements</span></span> <span class="title">Runnable</span>{</span>
+
+    Container con =<span class="keyword">new</span> Container();
+    <span class="keyword">public</span> Producer(Container con) {
+        <span class="keyword">this</span>.con=con;
+    }
+    <span class="keyword">public</span> <span class="keyword">void</span> run() {
+        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;<span class="number">20</span>;i++){
+            Goods good=<span class="keyword">new</span> Goods(i);
+            con.push(good);
+            System.out.println(<span class="string">"生产了："</span>+good);
+        }
+        <span class="keyword">try</span> {
+            Thread.sleep(<span class="number">1000</span>);
+        } <span class="keyword">catch</span> (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+<span class="class"><span class="keyword">class</span> <span class="title">Consumer</span> <span class="inheritance"><span class="keyword">implements</span></span> <span class="title">Runnable</span>{</span>
+
+    Container con = <span class="keyword">new</span> Container();
+    <span class="keyword">public</span> Consumer(Container con){
+        <span class="keyword">this</span>.con=con;
+    }
+
+    <span class="keyword">public</span> <span class="keyword">void</span> run(){
+        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;<span class="number">20</span>; i++){
+            Goods good=con.pop();
+            System.out.println(<span class="string">"消费了："</span>+good);
+            <span class="keyword">try</span> {
+                Thread.sleep(<span class="number">1000</span>);
+            } <span class="keyword">catch</span> (InterruptedException e) {
+                <span class="comment">// TODO Auto-generated catch block</span>
+                e.printStackTrace();
+            }
+        }
+    }
+}
+
+<span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">test</span> {</span>
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> main(String[] args) {
+        Container con =<span class="keyword">new</span> Container();
+        Producer p =<span class="keyword">new</span> Producer(con);
+        Consumer c = <span class="keyword">new</span> Consumer(con);
+        <span class="keyword">new</span> Thread(p).start();
+        <span class="keyword">new</span> Thread(c).start();
+    }
+
+}
+</code></pre>]]></content>
+    
+    
+      <category term="Java" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/Java/"/>
+    
+      <category term="Java" scheme="https://github.com/DaMinger/DaMinger.github.io.git/categories/Java/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[vmstat iostat top sar总结]]></title>
+    <link href="https://github.com/DaMinger/DaMinger.github.io.git/2014/05/21/Linux/linux_%E6%80%A7%E8%83%BD%E7%9B%91%E6%8E%A7/"/>
+    <id>https://github.com/DaMinger/DaMinger.github.io.git/2014/05/21/Linux/linux_性能监控/</id>
+    <published>2014-05-21T02:30:30.000Z</published>
+    <updated>2014-05-21T03:46:07.000Z</updated>
+    <content type="html"><![CDATA[<h3 id="vmstat">vmstat</h3>
+<p>一般vmstat工具的使用是通过两个数字参数来完成的，第一个参数是采样的时间间隔数，单位是秒，第二个参数是采样的次数</p>
+<pre><code><span class="comment">root@localhost:~#</span> <span class="comment">vmstat</span> <span class="comment">2</span> <span class="comment">100</span>
+<span class="comment">procs</span> <span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="comment">memory</span><span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="literal">-</span> <span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="comment">swap</span><span class="literal">-</span><span class="literal">-</span> <span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="comment">io</span><span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="literal">-</span> <span class="literal">-</span><span class="comment">system</span><span class="literal">-</span><span class="literal">-</span> <span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="comment">cpu</span><span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="literal">-</span>
+ <span class="comment">r</span>  <span class="comment">b</span>   <span class="comment">swpd</span>   <span class="comment">free</span>   <span class="comment">buff</span>  <span class="comment">cache</span>   <span class="comment">si</span>   <span class="comment">so</span>    <span class="comment">bi</span>    <span class="comment">bo</span>   <span class="comment">in</span>   <span class="comment">cs</span> <span class="comment">us</span> <span class="comment">sy</span> <span class="comment">id</span> <span class="comment">wa</span>
+ <span class="comment">1</span>  <span class="comment">0</span>      <span class="comment">0</span> <span class="comment">3498472</span> <span class="comment">315836</span> <span class="comment">3819540</span>    <span class="comment">0</span>    <span class="comment">0</span>     <span class="comment">0</span>     <span class="comment">1</span>    <span class="comment">2</span>    <span class="comment">0</span>  <span class="comment">0</span>  <span class="comment">0</span> <span class="comment">100</span>  <span class="comment">0</span>
+ <span class="comment">0</span>  <span class="comment">0</span>      <span class="comment">0</span> <span class="comment">3499584</span> <span class="comment">315836</span> <span class="comment">3819660</span>    <span class="comment">0</span>    <span class="comment">0</span>     <span class="comment">0</span>     <span class="comment">0</span>   <span class="comment">88</span>  <span class="comment">158</span>  <span class="comment">0</span>  <span class="comment">0</span> <span class="comment">100</span>  <span class="comment">0</span>
+ <span class="comment">0</span>  <span class="comment">0</span>      <span class="comment">0</span> <span class="comment">3499708</span> <span class="comment">315836</span> <span class="comment">3819660</span>    <span class="comment">0</span>    <span class="comment">0</span>     <span class="comment">0</span>     <span class="comment">2</span>   <span class="comment">86</span>  <span class="comment">162</span>  <span class="comment">0</span>  <span class="comment">0</span> <span class="comment">100</span>  <span class="comment">0</span>
+ <span class="comment">0</span>  <span class="comment">0</span>      <span class="comment">0</span> <span class="comment">3499708</span> <span class="comment">315836</span> <span class="comment">3819660</span>    <span class="comment">0</span>    <span class="comment">0</span>     <span class="comment">0</span>    <span class="comment">10</span>   <span class="comment">81</span>  <span class="comment">151</span>  <span class="comment">0</span>  <span class="comment">0</span> <span class="comment">100</span>  <span class="comment">0</span>
+ <span class="comment">1</span>  <span class="comment">0</span>      <span class="comment">0</span> <span class="comment">3499732</span> <span class="comment">315836</span> <span class="comment">3819660</span>    <span class="comment">0</span>    <span class="comment">0</span>     <span class="comment">0</span>     <span class="comment">2</span>   <span class="comment">83</span>  <span class="comment">154</span>  <span class="comment">0</span>  <span class="comment">0</span> <span class="comment">100</span>  <span class="comment">0</span>
+</code></pre><h6 id="进程procs：">进程procs：</h6>
+<p>r：在运行队列中等待的进程数(就是说多少个进程真的分配到CPU) 。当这个值超过了CPU数目，就会出现CPU瓶颈了</p>
+<p>b：在等待io的进程数 。</p>
+<h6 id="Linux_内存监控内存memoy：">Linux 内存监控内存memoy：</h6>
+<p>swpd：现时可用的交换内存（单位KB）。 如果大于0，表示你的机器物理内存不足了，如果不是程序内存泄露的原因，那么你该升级内存了或者把耗内存的任务迁移到其他机器</p>
+<p>free：空闲的内存（单位KB）。</p>
+<p>buff: 缓冲去中的内存数（单位：KB）。</p>
+<p>cache：被用来做为高速缓存的内存数（单位：KB）。</p>
+<h6 id="Linux_内存监控swap交换页面">Linux 内存监控swap交换页面</h6>
+<p>si: 从磁盘交换到内存的交换页数量，单位：KB/秒。 如果这个值大于0，表示物理内存不够用或者内存泄露了，要查找耗内存进程解决掉</p>
+<p>so: 从内存交换到磁盘的交换页数量，单位：KB/秒。 如上</p>
+<h6 id="Linux_内存监控_io块设备:">Linux 内存监控 io块设备:</h6>
+<p>bi: 发送到块设备的块数，单位：块/秒。</p>
+<p>bo: 从块设备接收到的块数，单位：块/秒。</p>
+<h6 id="Linux_内存监控system系统：">Linux 内存监控system系统：</h6>
+<p>in: 每秒的中断数，包括时钟中断。</p>
+<p>cs: 每秒的环境（上下文）转换次数。例如我们调用系统函数，就要进行上下文切换，线程的切换，也要进程上下文切换，这个值要越小越好，太大了，要考虑调低线程或者进程的数目,例如在apache和nginx这种web服务器中，我们一般做性能测试时会进行几千并发甚至几万并发的测试，选择web服务器的进程可以由进程或者线程的峰值一直下调，压测，直到cs到一个比较小的值，这个进程和线程数就是比较合适的值了。系统调用也是，每次调用系统函数，我们的代码就会进入内核空间，导致上下文切换，这个是很耗资源，也要尽量避免频繁调用系统函数。上下文切换次数过多表示你的CPU大部分浪费在上下文切换，导致CPU干正经事的时间少了，CPU没有充分利用，是不可取的。</p>
+<h6 id="Linux_内存监控cpu中央处理器：">Linux 内存监控cpu中央处理器：</h6>
+<p>us：用户进程使用的时间 。以百分比表示。</p>
+<p>sy：系统进程使用的时间。 以百分比表示。如果太高，表示系统调用时间长，例如是IO操作频繁</p>
+<p>id：中央处理器的空闲时间 。以百分比表示。一般来说，id + us + sy = 100,一般认为id是空闲CPU使用率，us是用户CPU使用率，sy是系统CPU使用率</p>
+<p>wa 等待IO CPU时间</p>
+<p>假如 r经常大于 4 ，且id经常小于40，表示中央处理器的负荷很重。 假如bi，bo 长期不等于0，表示物理内存容量太小。</p>
+<h3 id="iostat">iostat</h3>
+<p>个人常用iostat -x 1每一秒输出IO信息，-x能让你看到更多信息</p>
+<pre><code><span class="variable">$iostat</span> -<span class="keyword">x</span> <span class="number">1</span>
+Linux <span class="number">2.6</span>.<span class="number">33</span>-fukai (fukai-laptop)          _i686<span class="number">_</span>    (<span class="number">2</span> CPU)
+avg-cpu:  <span class="variable">%user</span>   <span class="variable">%nice</span> <span class="variable">%system</span> <span class="variable">%iowait</span>  <span class="variable">%steal</span>   <span class="variable">%idle</span>
+           <span class="number">5.47</span>    <span class="number">0</span>.<span class="number">50</span>    <span class="number">8.96</span>   <span class="number">48.26</span>    <span class="number">0</span>.<span class="number">00</span>   <span class="number">36.82</span>
+
+Device:         rrqm/<span class="keyword">s</span>   wrqm/<span class="keyword">s</span>     r/<span class="keyword">s</span>     w/<span class="keyword">s</span>   rsec/<span class="keyword">s</span>   wsec/<span class="keyword">s</span> avgrq-sz avgqu-sz   await  svctm  <span class="variable">%util</span>
+sda               <span class="number">6.00</span>   <span class="number">273.00</span>   <span class="number">99.00</span>    <span class="number">7.00</span>  <span class="number">2240.00</span>  <span class="number">2240.00</span>    <span class="number">42.26</span>     <span class="number">1.12</span>   <span class="number">10.57</span>   <span class="number">7.96</span>  <span class="number">84.40</span>
+sdb               <span class="number">0</span>.<span class="number">00</span>     <span class="number">4.00</span>    <span class="number">0</span>.<span class="number">00</span>  <span class="number">350.00</span>     <span class="number">0</span>.<span class="number">00</span>  <span class="number">2068.00</span>     <span class="number">5.91</span>     <span class="number">0</span>.<span class="number">55</span>    <span class="number">1.58</span>   <span class="number">0</span>.<span class="number">54</span>  <span class="number">18.80</span>
+
+rrqm/<span class="keyword">s</span>:  每秒进行 merge 的读操作数目.即 delta(rmerge)/<span class="keyword">s</span>
+（当系统调用需要读取数据的时候，VFS（虚拟文件系统）将请求发到各个FS，如果FS发现不同的读取请求读取的是相同Block的数据，FS会将这个请求合并Merge）
+wrqm/<span class="keyword">s</span>:  每秒进行 merge 的写操作数目.即 delta(wmerge)/<span class="keyword">s</span>
+r/<span class="keyword">s</span>:     每秒完成的读 I/O 设备次数.即 delta(rio)/<span class="keyword">s</span>
+w/<span class="keyword">s</span>:     每秒完成的写 I/O 设备次数.即 delta(wio)/<span class="keyword">s</span>
+rsec/<span class="keyword">s</span>:  每秒读扇区数.即 delta(rsect)/<span class="keyword">s</span>
+wsec/<span class="keyword">s</span>:  每秒写扇区数.即 delta(wsect)/<span class="keyword">s</span>
+rkB/<span class="keyword">s</span>:   每秒读K字节数.是 rsect/<span class="keyword">s</span> 的一半,因为每扇区大小为<span class="number">512</span>字节.(需要计算)
+wkB/<span class="keyword">s</span>:   每秒写K字节数.是 wsect/<span class="keyword">s</span> 的一半.(需要计算)
+avgrq-sz: 平均每次设备I/O操作的数据大小 (扇区).delta(rsect+wsect)/delta(rio+wio)
+avgqu-sz: 平均I/O队列长度.即 delta(aveq)/<span class="regexp">s/1000 (因为aveq的单位为毫秒).
+await:  平均每次设备I/O操作的等待时间 (毫秒).即 delta(ruse+wuse)/delta</span>(rio+wio)
+svctm:  平均每次设备I/O操作的服务时间 (毫秒).即 delta(<span class="keyword">use</span>)/delta(rio+wio)
+<span class="variable">%util</span>:  一秒中有百分之多少的时间用于 I/O 操作,或者说一秒中有多少时间 I/O 队列是非空的.即 delta(<span class="keyword">use</span>)/<span class="keyword">s</span>/<span class="number">1000</span> (因为<span class="keyword">use</span>的单位为毫秒)
+</code></pre><p>如果 %util 接近 100%,说明产生的I/O请求太多,I/O系统已经满负荷,该磁盘可能存在瓶颈.idle小于70% IO压力就较大了,一般读取速度有较多的wait.同时可以结合vmstat 查看查看b参数(等待资源的进程数)和wa参数(IO等待所占用的CPU时间的百分比,高过30%时IO压力高)</p>
+<p>另外 await 的参数也要多和 svctm 来参考.差的过高就一定有 IO 的问题.avgqu-sz 也是个做 IO 调优时需要注意的地方,这个就是直接每次操作的数据的大小,如果次数多,但数据拿的小的话,其实 IO 也会很小.如果数据拿的大,才IO 的数据会高.也可以通过 avgqu-sz × ( r/s or w/s ) = rsec/s or wsec/s.也就是讲,读定速度是这个来决定的.</p>
+<h3 id="top">top</h3>
+<p>top命令是Linux下常用的性能分析工具，能够实时显示系统中各个进程的资源占用状况</p>
+<pre><code>[root<span class="variable">@localhost</span> <span class="keyword">log</span>]<span class="comment"># top</span>
+top - <span class="number">14</span>:<span class="number">06</span>:<span class="number">23</span> up <span class="number">70</span> days, <span class="number">16</span>:<span class="number">44</span>,  <span class="number">2</span> users,  load average: <span class="number">1.25</span>, <span class="number">1.32</span>, <span class="number">1.35</span>
+Tasks: <span class="number">206</span> total,   <span class="number">1</span> running, <span class="number">205</span> sleeping,   <span class="number">0</span> stopped,   <span class="number">0</span> zombie
+Cpu(<span class="keyword">s</span>):  <span class="number">5.9</span><span class="variable">%us</span>,  <span class="number">3.4</span><span class="variable">%sy</span>,  <span class="number">0</span>.<span class="number">0</span><span class="variable">%ni</span>, <span class="number">90.4</span><span class="variable">%id</span>,  <span class="number">0</span>.<span class="number">0</span><span class="variable">%wa</span>,  <span class="number">0</span>.<span class="number">0</span><span class="variable">%hi</span>,  <span class="number">0</span>.<span class="number">2</span><span class="variable">%si</span>,  <span class="number">0</span>.<span class="number">0</span><span class="variable">%st</span>
+Mem:  <span class="number">32949016</span>k total, <span class="number">14411180</span>k used, <span class="number">18537836</span>k free,   <span class="number">169884</span>k buffers
+Swap: <span class="number">32764556</span>k total,        0k used, <span class="number">32764556</span>k free,  <span class="number">3612636</span>k cached
+  PID USER      PR  NI  VIRT  RES  SHR S <span class="variable">%CPU</span> <span class="variable">%MEM</span>    TIME+  COMMAND                                                                
+<span class="number">28894</span> root      <span class="number">22</span>   <span class="number">0</span> <span class="number">1501</span><span class="keyword">m</span> <span class="number">405</span><span class="keyword">m</span>  <span class="number">10</span><span class="keyword">m</span> S <span class="number">52.2</span>  <span class="number">1.3</span>   <span class="number">2534</span>:<span class="number">16</span> java                                                                   
+<span class="number">18249</span> root      <span class="number">18</span>   <span class="number">0</span> <span class="number">3201</span><span class="keyword">m</span> <span class="number">1.9</span>g  <span class="number">11</span><span class="keyword">m</span> S <span class="number">35.9</span>  <span class="number">6.0</span> <span class="number">569</span>:<span class="number">39.41</span> java                                                                   
+ <span class="number">2808</span> root      <span class="number">25</span>   <span class="number">0</span> <span class="number">3333</span><span class="keyword">m</span> <span class="number">1.0</span>g  <span class="number">11</span><span class="keyword">m</span> S <span class="number">24.3</span>  <span class="number">3.1</span> <span class="number">526</span>:<span class="number">51.85</span> java                                                                   
+<span class="number">25668</span> root      <span class="number">23</span>   <span class="number">0</span> <span class="number">3180</span><span class="keyword">m</span> <span class="number">704</span><span class="keyword">m</span>  <span class="number">11</span><span class="keyword">m</span> S <span class="number">14.0</span>  <span class="number">2.2</span> <span class="number">360</span>:<span class="number">44.53</span> java                                                                   
+  <span class="number">574</span> root      <span class="number">25</span>   <span class="number">0</span> <span class="number">3168</span><span class="keyword">m</span> <span class="number">611</span><span class="keyword">m</span>  <span class="number">10</span><span class="keyword">m</span> S <span class="number">12.6</span>  <span class="number">1.9</span> <span class="number">556</span>:<span class="number">59.63</span> java                                                                   
+ <span class="number">1599</span> root      <span class="number">20</span>   <span class="number">0</span> <span class="number">3237</span><span class="keyword">m</span> <span class="number">1.9</span>g  <span class="number">11</span><span class="keyword">m</span> S <span class="number">12.3</span>  <span class="number">6.2</span> <span class="number">262</span>:<span class="number">01</span>.<span class="number">14</span> java                                                                   
+ <span class="number">1008</span> root      <span class="number">21</span>   <span class="number">0</span> <span class="number">3147</span><span class="keyword">m</span> <span class="number">842</span><span class="keyword">m</span>  <span class="number">10</span><span class="keyword">m</span> S  <span class="number">0</span>.<span class="number">3</span>  <span class="number">2.6</span>   <span class="number">4</span>:<span class="number">31.08</span> java                                                                   
+<span class="number">13823</span> root      <span class="number">23</span>   <span class="number">0</span> <span class="number">3031</span><span class="keyword">m</span> <span class="number">2.1</span>g  <span class="number">10</span><span class="keyword">m</span> S  <span class="number">0</span>.<span class="number">3</span>  <span class="number">6.8</span> <span class="number">176</span>:<span class="number">57.34</span> java                                                                   
+<span class="number">28218</span> root      <span class="number">15</span>   <span class="number">0</span> <span class="number">12760</span> <span class="number">1168</span>  <span class="number">808</span> R  <span class="number">0</span>.<span class="number">3</span>  <span class="number">0</span>.<span class="number">0</span>   <span class="number">0</span>:<span class="number">01</span>.<span class="number">43</span> top                                                                    
+<span class="number">29062</span> root      <span class="number">20</span>   <span class="number">0</span> <span class="number">1241</span><span class="keyword">m</span> <span class="number">227</span><span class="keyword">m</span>  <span class="number">10</span><span class="keyword">m</span> S  <span class="number">0</span>.<span class="number">3</span>  <span class="number">0</span>.<span class="number">7</span>   <span class="number">2</span>:<span class="number">07</span>.<span class="number">32</span> java                                                                   
+    <span class="number">1</span> root      <span class="number">15</span>   <span class="number">0</span> <span class="number">10368</span>  <span class="number">684</span>  <span class="number">572</span> S  <span class="number">0</span>.<span class="number">0</span>  <span class="number">0</span>.<span class="number">0</span>   <span class="number">1</span>:<span class="number">30.85</span> init                                                                   
+    <span class="number">2</span> root      RT  -<span class="number">5</span>     <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span> S  <span class="number">0</span>.<span class="number">0</span>  <span class="number">0</span>.<span class="number">0</span>   <span class="number">0</span>:<span class="number">01</span>.<span class="number">01</span> migration/<span class="number">0</span>                                                            
+    <span class="number">3</span> root      <span class="number">34</span>  <span class="number">19</span>     <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span> S  <span class="number">0</span>.<span class="number">0</span>  <span class="number">0</span>.<span class="number">0</span>   <span class="number">0</span>:<span class="number">00</span>.<span class="number">00</span> ksoftirqd/<span class="number">0</span>                                                            
+    <span class="number">4</span> root      RT  -<span class="number">5</span>     <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span> S  <span class="number">0</span>.<span class="number">0</span>  <span class="number">0</span>.<span class="number">0</span>   <span class="number">0</span>:<span class="number">00</span>.<span class="number">00</span> watchdog/<span class="number">0</span>                                                             
+    <span class="number">5</span> root      RT  -<span class="number">5</span>     <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span> S  <span class="number">0</span>.<span class="number">0</span>  <span class="number">0</span>.<span class="number">0</span>   <span class="number">0</span>:<span class="number">00</span>.<span class="number">80</span> migration/<span class="number">1</span>                                                            
+    <span class="number">6</span> root      <span class="number">34</span>  <span class="number">19</span>     <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span> S  <span class="number">0</span>.<span class="number">0</span>  <span class="number">0</span>.<span class="number">0</span>   <span class="number">0</span>:<span class="number">00</span>.<span class="number">00</span> ksoftirqd/<span class="number">1</span>                                                            
+    <span class="number">7</span> root      RT  -<span class="number">5</span>     <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span> S  <span class="number">0</span>.<span class="number">0</span>  <span class="number">0</span>.<span class="number">0</span>   <span class="number">0</span>:<span class="number">00</span>.<span class="number">00</span> watchdog/<span class="number">1</span>                                                             
+    <span class="number">8</span> root      RT  -<span class="number">5</span>     <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span> S  <span class="number">0</span>.<span class="number">0</span>  <span class="number">0</span>.<span class="number">0</span>   <span class="number">0</span>:<span class="number">20.59</span> migration/<span class="number">2</span>                                                            
+    <span class="number">9</span> root      <span class="number">34</span>  <span class="number">19</span>     <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span> S  <span class="number">0</span>.<span class="number">0</span>  <span class="number">0</span>.<span class="number">0</span>   <span class="number">0</span>:<span class="number">00</span>.09 ksoftirqd/<span class="number">2</span>                                                            
+   <span class="number">10</span> root      RT  -<span class="number">5</span>     <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span> S  <span class="number">0</span>.<span class="number">0</span>  <span class="number">0</span>.<span class="number">0</span>   <span class="number">0</span>:<span class="number">00</span>.<span class="number">00</span> watchdog/<span class="number">2</span>                                                             
+   <span class="number">11</span> root      RT  -<span class="number">5</span>     <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span> S  <span class="number">0</span>.<span class="number">0</span>  <span class="number">0</span>.<span class="number">0</span>   <span class="number">0</span>:<span class="number">23.66</span> migration/<span class="number">3</span>                                                            
+   <span class="number">12</span> root      <span class="number">34</span>  <span class="number">19</span>     <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span> S  <span class="number">0</span>.<span class="number">0</span>  <span class="number">0</span>.<span class="number">0</span>   <span class="number">0</span>:<span class="number">00</span>.<span class="number">03</span> ksoftirqd/<span class="number">3</span>                                                            
+   <span class="number">13</span> root      RT  -<span class="number">5</span>     <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span> S  <span class="number">0</span>.<span class="number">0</span>  <span class="number">0</span>.<span class="number">0</span>   <span class="number">0</span>:<span class="number">00</span>.<span class="number">00</span> watchdog/<span class="number">3</span>                                                             
+   <span class="number">14</span> root      RT  -<span class="number">5</span>     <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span> S  <span class="number">0</span>.<span class="number">0</span>  <span class="number">0</span>.<span class="number">0</span>   <span class="number">0</span>:<span class="number">20.29</span> migration/<span class="number">4</span>                                                            
+   <span class="number">15</span> root      <span class="number">34</span>  <span class="number">19</span>     <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span> S  <span class="number">0</span>.<span class="number">0</span>  <span class="number">0</span>.<span class="number">0</span>   <span class="number">0</span>:<span class="number">00</span>.<span class="number">07</span> ksoftirqd/<span class="number">4</span>                                                            
+   <span class="number">16</span> root      RT  -<span class="number">5</span>     <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span> S  <span class="number">0</span>.<span class="number">0</span>  <span class="number">0</span>.<span class="number">0</span>   <span class="number">0</span>:<span class="number">00</span>.<span class="number">00</span> watchdog/<span class="number">4</span>                                                             
+   <span class="number">17</span> root      RT  -<span class="number">5</span>     <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span> S  <span class="number">0</span>.<span class="number">0</span>  <span class="number">0</span>.<span class="number">0</span>   <span class="number">0</span>:<span class="number">23.07</span> migration/<span class="number">5</span>                                                            
+   <span class="number">18</span> root      <span class="number">34</span>  <span class="number">19</span>     <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span> S  <span class="number">0</span>.<span class="number">0</span>  <span class="number">0</span>.<span class="number">0</span>   <span class="number">0</span>:<span class="number">00</span>.<span class="number">07</span> ksoftirqd/<span class="number">5</span>                                                            
+   <span class="number">19</span> root      RT  -<span class="number">5</span>     <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span> S  <span class="number">0</span>.<span class="number">0</span>  <span class="number">0</span>.<span class="number">0</span>   <span class="number">0</span>:<span class="number">00</span>.<span class="number">00</span> watchdog/<span class="number">5</span>                                                             
+   <span class="number">20</span> root      RT  -<span class="number">5</span>     <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span> S  <span class="number">0</span>.<span class="number">0</span>  <span class="number">0</span>.<span class="number">0</span>   <span class="number">0</span>:<span class="number">17.16</span> migration/<span class="number">6</span>                                                            
+   <span class="number">21</span> root      <span class="number">34</span>  <span class="number">19</span>     <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span> S  <span class="number">0</span>.<span class="number">0</span>  <span class="number">0</span>.<span class="number">0</span>   <span class="number">0</span>:<span class="number">00</span>.<span class="number">05</span> ksoftirqd/<span class="number">6</span>                                                            
+   <span class="number">22</span> root      RT  -<span class="number">5</span>     <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span> S  <span class="number">0</span>.<span class="number">0</span>  <span class="number">0</span>.<span class="number">0</span>   <span class="number">0</span>:<span class="number">00</span>.<span class="number">00</span> watchdog/<span class="number">6</span>                                                             
+   <span class="number">23</span> root      RT  -<span class="number">5</span>     <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span> S  <span class="number">0</span>.<span class="number">0</span>  <span class="number">0</span>.<span class="number">0</span>   <span class="number">0</span>:<span class="number">58.28</span> migration/<span class="number">7</span>
+</code></pre><h6 id="统计信息区：">统计信息区：</h6>
+<p>前五行是当前系统情况整体的统计信息区。下面我们看每一行信息的具体意义。</p>
+<p>第一行，任务队列信息，同 uptime 命令的执行结果，具体参数说明情况如下：</p>
+<pre><code><span class="number">14</span>:<span class="number">06</span>:<span class="number">23</span> — 当前系统时间
+up <span class="number">70</span> days, <span class="number">16</span>:<span class="number">44</span> — 系统已经运行了<span class="number">70</span>天<span class="number">16</span>小时<span class="number">44</span>分钟（在这期间系统没有重启过的吆！）
+<span class="number">2</span> users — 当前有<span class="number">2</span>个用户登录系统
+<span class="built_in">load</span> <span class="built_in">average</span>: <span class="number">1.15</span>, <span class="number">1.42</span>, <span class="number">1.44</span> — <span class="built_in">load</span> <span class="built_in">average</span>后面的三个数分别是<span class="number">1</span>分钟、<span class="number">5</span>分钟、<span class="number">15</span>分钟的负载情况。
+<span class="built_in">load</span> <span class="built_in">average</span>数据是每隔<span class="number">5</span>秒钟检查一次活跃的进程数，然后按特定算法计算出的数值。
+如果这个数除以逻辑CPU的数量，结果高于<span class="number">5</span>的时候就表明系统在超负荷运转了。
+</code></pre><p>第二行，Tasks — 任务（进程），具体信息说明如下：</p>
+<p>系统现在共有206个进程，其中处于运行中的有1个，205个在休眠（sleep），stoped状态的有0个，zombie状态（僵尸）的有0个。</p>
+<p>第三行，cpu状态信息，具体属性说明如下：</p>
+<pre><code><span class="number">5.9</span><span class="comment">%us — 用户空间占用CPU的百分比。</span>
+<span class="number">3.4</span><span class="comment">% sy — 内核空间占用CPU的百分比。</span>
+<span class="number">0.0</span><span class="comment">% ni — 改变过优先级的进程占用CPU的百分比</span>
+<span class="number">90.4</span><span class="comment">% id — 空闲CPU百分比</span>
+<span class="number">0.0</span><span class="comment">% wa — IO等待占用CPU的百分比</span>
+<span class="number">0.0</span><span class="comment">% hi — 硬中断（Hardware IRQ）占用CPU的百分比</span>
+<span class="number">0.2</span><span class="comment">% si — 软中断（Software Interrupts）占用CPU的百分比</span>
+</code></pre><p>第四行,内存状态，具体信息如下：</p>
+<pre><code><span class="number">32949016</span>k total — 物理内存总量（<span class="number">32</span>GB）
+<span class="number">14411180</span>k used — 使用中的内存总量（<span class="number">14</span>GB）
+<span class="number">18537836</span>k <span class="built_in">free</span> — 空闲内存总量（<span class="number">18</span>GB）
+<span class="number">169884</span>k buffers — 缓存的内存量 （<span class="number">169</span>M）
+</code></pre><p>第五行，swap交换分区信息，具体信息说明如下：</p>
+<pre><code><span class="number">32764556</span>k total — 交换区总量（<span class="number">32</span>GB）
+<span class="number">0</span>k used — 使用的交换区总量（<span class="number">0</span><span class="keyword">K</span>）
+<span class="number">32764556</span>k free — 空闲交换区总量（<span class="number">32</span>GB）
+<span class="number">3612636</span>k cached — 缓冲的交换区总量（<span class="number">3.6</span>GB）
+</code></pre><p>备注：</p>
+<p>如果出于习惯去计算可用内存数，这里有个近似的计算公式：第四行的free + 第四行的buffers + 第五行的cached，按这个公式此台服务器的可用内存：18537836k +169884k +3612636k = 22GB左右。</p>
+<p>对于内存监控，在top里我们要时刻监控第五行swap交换分区的used，如果这个数值在不断的变化，说明内核在不断进行内存和swap的数据交换，这是真正的内存不够用了。</p>
+<p>第六行，空行。</p>
+<p>第七行以下：各进程（任务）的状态监控，项目列信息说明如下：</p>
+<pre><code><span class="xml"><span class="tag"><span class="attribute">PID</span> — 进程<span class="attribute">id</span>
+<span class="attribute">USER</span> — 进程所有者
+<span class="attribute">PR</span> — 进程优先级
+<span class="attribute">NI</span> — <span class="attribute">nice</span>值。负值表示高优先级，正值表示低优先级
+<span class="attribute">VIRT</span> — 进程使用的虚拟内存总量，单位<span class="attribute">kb</span>。<span class="attribute">VIRT</span>=<span class="value">SWAP+RES</span>
+<span class="attribute">RES</span> — 进程使用的、未被换出的物理内存大小，单位<span class="attribute">kb</span>。<span class="attribute">RES</span>=<span class="value">CODE+DATA</span>
+<span class="attribute">SHR</span> — 共享内存大小，单位<span class="attribute">kb</span>
+<span class="attribute">S</span> — 进程状态。<span class="attribute">D</span>=<span class="value">不可中断的睡眠状态</span> <span class="attribute">R</span>=<span class="value">运行</span> <span class="attribute">S</span>=<span class="value">睡眠</span> <span class="attribute">T</span>=<span class="value">跟踪</span>/停止 <span class="attribute">Z</span>=<span class="value">僵尸进程</span>
+%<span class="attribute">CPU</span> — 上次更新到现在的<span class="attribute">CPU</span>时间占用百分比
+%<span class="attribute">MEM</span> — 进程使用的物理内存百分比
+<span class="attribute">TIME</span>+ — 进程使用的<span class="attribute">CPU</span>时间总计，单位<span class="attribute">1</span>/<span class="attribute">100</span>秒
+<span class="attribute">COMMAND</span> — 进程名称（命令名/命令行）</span></span>
+</code></pre><h3 id="sar">sar</h3>
+<p>sar（System Activity Reporter）是系统活动情况报告的缩写。sar 工具将对系统当前的状态进行取样，然后通过计算数据和比例来表达系统的当前运行状态。它的特点是可以连续对系统取样，获得大量的取样数据；取样数据和分析的结果都可以存入文件，所需的负载很小。 sar 是目前 Linux 上最为全面的系统性能分析工具之一，可以从多方面对系统的活动进行报告，包括：文件的读写情况、系统调用的使用情况、磁盘I/O、CPU效率、内存使用状况、进程活动及IPC有关的活动等。为了提供不同的信息，sar 提供了丰富的选项、因此使用较为复杂。</p>
+<p>安装：</p>
+<pre><code><span class="preprocessor"># yum install sysstat</span>
+</code></pre><p>一般格式：</p>
+<pre><code>sar [ options... ] [ <span class="tag">&lt;<span class="title">interval</span>&gt;</span> [ <span class="tag">&lt;<span class="title">count</span>&gt;</span> ] ]
+</code></pre><p>常用选项：</p>
+<pre><code>-<span class="ruby"><span class="constant">A</span> ：包括绝大多数选项。
+</span>-<span class="ruby">b ：报告<span class="constant">I</span>/<span class="constant">O</span>和传输速率统计。
+</span>-<span class="ruby"><span class="constant">B</span> ：报告分页统计。
+</span>-<span class="ruby">c ：报告进程创建活动。
+</span>-<span class="ruby">d ：报告每个活动的块设备。(指磁盘)
+</span>-<span class="ruby">e [ <span class="symbol">hh:</span><span class="symbol">mm:</span>ss ] ：设置sar命令执行的结束时间，时间为<span class="number">24</span>小时制格式。
+</span>-<span class="ruby"><span class="constant">I</span> { irq | <span class="constant">SUM</span> | <span class="constant">ALL</span> | <span class="constant">XALL</span> } ：报告给定中断的统计。
+</span>-<span class="ruby">n { <span class="constant">DEV</span> | <span class="constant">EDEV</span> | <span class="constant">NFS</span> | <span class="constant">NFSD</span> | <span class="constant">SOCK</span> | <span class="constant">ALL</span> } ：报告网络统计。
+</span>-<span class="ruby"><span class="constant">P</span> { cpu | <span class="constant">ALL</span> } ：报告每个处理器的统计信息，可以统计指定或全部处理器。
+</span>-<span class="ruby">q ：报告队列长度和平均负载。
+</span>-<span class="ruby">r ：报告内存和交换空间的利用情况统计。
+</span>-<span class="ruby"><span class="constant">R</span> ：报告内存统计。
+</span>-<span class="ruby">u ：报告<span class="constant">CPU</span>利用率。
+</span>interval ：两次输出之间的间隔时间。
+count ：按照这个时间间隔统计的次数。
+</code></pre><p>举例：</p>
+<pre><code># sar 5 10
+查看CUP使用情况，每隔5秒统计一次，共打印10次。
+<span class="tag">%<span class="title">user</span></span> ：CPU在用户使用下的时间百分比。
+<span class="tag">%<span class="title">nice</span></span> ：CPU在优先级用户下的使用时间百分比。
+<span class="tag">%<span class="title">system</span></span> ：CPU在系统使用下的时间百分比。
+<span class="tag">%<span class="title">iowait</span></span> ：CPU等待磁盘I/O完成时间的百分比。
+<span class="tag">%<span class="title">steal</span></span> ：虚拟机占用的时间百分比。
+<span class="tag">%<span class="title">idle</span></span> ：CPU空闲时间百分比。
+# sar -b 2 5
+查看磁盘I/O和传输速率情况，每隔2秒统计一次，共打印5次。
+tps ：每秒传送到物理设备的总数。
+rtps ：每秒读取物理设备请求的总数。
+wtps ：每秒写入到物理设备请求的总数。
+bread/s ：每秒从块设备读取数据的速度。
+bwrtn/s ：每秒向块设备写入数据的速度。
+单位为块(block)，一块为512 bytes。
+# sar -c
+查看进程创建情况。
+proc/s ：每秒进程创建数。
+# sar -d 2 3
+查看设备使用情况。
+DEV ：磁盘设备。
+tps ：每秒传送到设备的总数。
+rd_sec/s ：每秒读取数。(一扇区为512 bytes)
+wr_sec/s ：每秒写入数。(一扇区为512 bytes)
+avgrq-sz ：设备扇区请求的平均大小。
+avgqu-sz ：设备队列请求的平均大小。
+await ：服务等待I/O请求的平均时间。(单位毫秒)
+svctm ：设备处理I/O请求的平均时间。(单位毫秒)
+<span class="tag">%<span class="title">util</span></span> ：向设备I/O请求期间的CPU时间的百分比。
+# sar -n DEV
+查看网络接口信息。
+IFACE ：LAN接口。
+rxpck/s ：每秒钟接收的数据包。
+txpck/s ：每秒钟发送的数据包。
+rxbyt/s ：每秒钟接收的字节数。
+txbyt/s ：每秒钟发送的字节数。
+rxcmp/s ：每秒钟接收的压缩数据包。
+txcmp/s ：每秒钟发送的压缩数据包。
+rxmcst/s ：每秒钟接收的多播数据包。
+# sar -u
+查看CPU使用情况，与不带-u选项一样。
+</code></pre>]]></content>
+    
+    
+      <category term="Linux" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/Linux/"/>
+    
+      <category term="Linux" scheme="https://github.com/DaMinger/DaMinger.github.io.git/categories/Linux/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[设计模式之观察者模式]]></title>
+    <link href="https://github.com/DaMinger/DaMinger.github.io.git/2014/05/21/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/observer/"/>
+    <id>https://github.com/DaMinger/DaMinger.github.io.git/2014/05/21/设计模式/observer/</id>
+    <published>2014-05-21T01:49:19.000Z</published>
+    <updated>2014-05-21T02:24:13.000Z</updated>
+    <content type="html"><![CDATA[<h4 id="定义">定义</h4>
+<p>定义了一种一对多的关系，让多个观察对象同时监听一个主题对象，当主题对象状态发生变化时会通知所有观察者。<br><img src="/img/Design patterns/observer.png" alt="类图"></p>
+<h4 id="优缺点">优缺点</h4>
+<ul>
+<li>观察者与被观察者之间是属于轻度的关联关系，并且是抽象耦合的，这样，对于两者来说都比较容易进行扩展。</li>
+<li>观察者模式是一种常用的触发机制，它形成一条触发链，依次对各个观察者的方法进行处理。但同时，这也算是观察者模式一个缺点，由于是链式触发，当观察者比较多的时候，性能问题是比较令人担忧的。并且，在链式结构中，比较容易出现循环引用的错误，造成系统假死。</li>
+</ul>
+<p>实验来自《大话设计模式》案例：公司里有两种上班时趁老板不在时偷懒的员工：看NBA的和看股票行情的，当老板出现时，老板秘书会提前通知他们继续做手头上的工作。</p>
+<p><img src="/img/Design patterns/observer_1.jpg" alt="类图"></p>
+<h4 id="Java版">Java版</h4>
+<p>抽象通知者接口  老板给通知，或者前台给通知</p>
+<pre><code><span class="keyword">public</span> <span class="keyword">interface</span> Subject {
+
+    <span class="keyword">public</span>  <span class="keyword">void</span> <span class="title">Attach</span>(Observer observer);
+    <span class="keyword">public</span>  <span class="keyword">void</span> <span class="title">Detach</span>(Observer observer);
+    <span class="keyword">public</span>  <span class="keyword">void</span> <span class="title">Notify</span>();
+    <span class="keyword">public</span>  String <span class="title">getAction</span>();
+    <span class="keyword">public</span>  <span class="keyword">void</span> <span class="title">setAction</span>(String action);
+}
+</code></pre><p>抽象观察者</p>
+<pre><code><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">class</span> Observer {
+
+    <span class="keyword">protected</span> String name;
+    <span class="keyword">protected</span> Subject sub;
+    <span class="keyword">public</span> <span class="title">Observer</span>(String name,Subject sub) {
+        <span class="keyword">this</span>.name =name;
+        <span class="keyword">this</span>.sub = sub;
+    }
+    <span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title">Update</span>();
+}
+</code></pre><p>具体通知者 Boss 前台，给所有观察者发通知</p>
+<pre><code><span class="keyword">import</span> java.util.ArrayList;
+<span class="keyword">import</span> java.util.List;
+<span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Boss</span> <span class="keyword">implements</span> <span class="title">Subject</span> {</span>
+    <span class="keyword">private</span> List&lt;Observer&gt; observers = <span class="keyword">new</span> ArrayList&lt;Observer&gt;();
+    <span class="keyword">private</span> String action;
+    <span class="keyword">public</span> String <span class="title">getAction</span>() {
+        <span class="keyword">return</span> action;
+    }
+    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setAction</span>(String action) {
+        <span class="keyword">this</span>.action = action;
+    }
+
+    <span class="annotation">@Override</span>
+    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Attach</span>(Observer observer) {
+        <span class="comment">// TODO Auto-generated method stub</span>
+        observers.add(observer);
+
+    }
+
+    <span class="annotation">@Override</span>
+    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Detach</span>(Observer observer) {
+        <span class="comment">// TODO Auto-generated method stub</span>
+        observers.remove(observer);
+
+    }
+
+    <span class="annotation">@Override</span>
+    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Notify</span>() {
+        <span class="comment">// TODO Auto-generated method stub</span>
+        <span class="keyword">for</span> (Observer o : observers) {
+            o.Update();
+        }
+
+    }
+}
+<span class="keyword">import</span> java.util.ArrayList;
+<span class="keyword">import</span> java.util.List;
+
+<span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Secretary</span> <span class="keyword">implements</span> <span class="title">Subject</span>{</span>
+    <span class="keyword">private</span> List&lt;Observer&gt; observers = <span class="keyword">new</span> ArrayList&lt;Observer&gt;();
+    <span class="keyword">private</span> String action;
+    <span class="keyword">public</span> String <span class="title">getAction</span>() {
+        <span class="keyword">return</span> action;
+    }
+    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setAction</span>(String action) {
+        <span class="keyword">this</span>.action = action;
+    }
+    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Attach</span>(Observer observer) {
+        observers.add(observer);
+    }
+    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Detach</span>(Observer observer) {
+        observers.remove(observer);
+    }
+    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Notify</span>() {
+        <span class="keyword">for</span> (Observer o : observers) {
+            o.Update();
+        }
+    }
+
+}
+</code></pre><p>具体观察者</p>
+<pre><code><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">NBAObserver</span> <span class="keyword">extends</span> <span class="title">Observer</span> {</span>
+    <span class="keyword">public</span> <span class="title">NBAObserver</span>(String name,Subject sub) {
+        <span class="keyword">super</span>(name, sub);
+    }
+    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Update</span>() {
+        System.out.printf(<span class="keyword">super</span>.sub.getAction() + <span class="string">","</span> + <span class="keyword">super</span>.name + <span class="string">" stop watching NBA!!! go on working!!!\n"</span>);
+
+    }
+
+}
+
+<span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">StockObserver</span> <span class="keyword">extends</span> <span class="title">Observer</span>{</span>
+    <span class="keyword">public</span> <span class="title">StockObserver</span>(String name,Subject sub) {
+        <span class="keyword">super</span>(name,sub);
+    }
+    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Update</span>(){
+        System.out.printf(<span class="keyword">super</span>.sub.getAction() + <span class="string">","</span> + <span class="keyword">super</span>.name + <span class="string">" stop stocking!!! go on working!!!\n"</span>);
+    }
+
+}
+</code></pre><p>客户端</p>
+<pre><code><span class="keyword">public</span> <span class="keyword">class</span> test {
+
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span>(String[] args) {
+        <span class="comment">// TODO Auto-generated method stub</span>
+        Secretary sec = <span class="keyword">new</span> Secretary();
+        Boss boss = <span class="keyword">new</span> Boss();
+        StockObserver so1 = <span class="keyword">new</span> StockObserver(<span class="string">"A"</span>,sec);
+        NBAObserver so2 = <span class="keyword">new</span> NBAObserver(<span class="string">"B"</span>,sec);
+        StockObserver so3 = <span class="keyword">new</span> StockObserver(<span class="string">"C"</span>,boss);
+        NBAObserver so4 = <span class="keyword">new</span> NBAObserver(<span class="string">"D"</span>,boss);
+        NBAObserver so5 = <span class="keyword">new</span> NBAObserver(<span class="string">"E"</span>,boss);
+        sec.Attach(so1);
+        sec.Attach(so2);
+        boss.Attach(so3);
+        boss.Attach(so4);
+        boss.Attach(so5);
+        boss.Detach(so4);
+        sec.setAction(<span class="string">"boss is comming!!!"</span>);
+        boss.setAction(<span class="string">"I'boss!!!"</span>);
+        sec.Notify();
+        boss.Notify();
+    }
+
+}
+</code></pre><h4 id="Python版">Python版</h4>
+<pre><code><span class="class"><span class="keyword">class</span> <span class="title">Observer</span>:</span>
+    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self,strname,strsub)</span>:</span>
+        self.name = strname
+        self.sub = strsub
+    <span class="function"><span class="keyword">def</span> <span class="title">Update</span><span class="params">(self)</span>:</span>
+        <span class="keyword">pass</span>
+
+<span class="class"><span class="keyword">class</span> <span class="title">StockObserver</span><span class="params">(Observer)</span>:</span>
+    <span class="comment">#no need to rewrite __init__()</span>
+    <span class="function"><span class="keyword">def</span> <span class="title">Update</span><span class="params">(self)</span>:</span>
+        <span class="keyword">print</span> <span class="string">"%s:%s,stop watching Stock and go on work!"</span> %(self.name,self.sub.action)
+
+<span class="class"><span class="keyword">class</span> <span class="title">NBAObserver</span><span class="params">(Observer)</span>:</span>
+    <span class="function"><span class="keyword">def</span> <span class="title">Update</span><span class="params">(self)</span>:</span>
+        <span class="keyword">print</span> <span class="string">"%s:%s,stop watching NBA and go on work!"</span> %(self.name,self.sub.action)
+
+<span class="class"><span class="keyword">class</span> <span class="title">SecretaryBase</span>:</span>
+    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self)</span>:</span>
+        self.observers = []
+    <span class="function"><span class="keyword">def</span> <span class="title">Attach</span><span class="params">(self,new_observer)</span>:</span>
+        <span class="keyword">pass</span> 
+    <span class="function"><span class="keyword">def</span> <span class="title">Notify</span><span class="params">(self)</span>:</span>
+        <span class="keyword">pass</span>
+
+<span class="class"><span class="keyword">class</span> <span class="title">Secretary</span><span class="params">(SecretaryBase)</span>:</span>
+    <span class="function"><span class="keyword">def</span> <span class="title">Attach</span><span class="params">(self,new_observer)</span>:</span>
+        self.observers.append(new_observer)
+    <span class="function"><span class="keyword">def</span> <span class="title">Notify</span><span class="params">(self)</span>:</span>
+        <span class="keyword">for</span> p <span class="keyword">in</span> self.observers:
+            p.Update()
+
+<span class="keyword">if</span> __name__ == <span class="string">"__main__"</span>:
+    p = Secretary()
+    s1 = StockObserver(<span class="string">"xh"</span>,p)
+    s2 = NBAObserver(<span class="string">"wyt"</span>,p)
+    p.Attach(s1);
+    p.Attach(s2);
+    p.action = <span class="string">"WARNING:BOSS "</span>;
+    p.Notify()
+</code></pre>]]></content>
+    
+    
+      <category term="设计模式" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/"/>
+    
+      <category term="设计模式" scheme="https://github.com/DaMinger/DaMinger.github.io.git/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[简单工厂、工厂方法、抽象工厂的区别]]></title>
+    <link href="https://github.com/DaMinger/DaMinger.github.io.git/2014/05/21/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/factorydiff/"/>
+    <id>https://github.com/DaMinger/DaMinger.github.io.git/2014/05/21/设计模式/factorydiff/</id>
+    <published>2014-05-21T01:06:07.000Z</published>
+    <updated>2014-05-21T01:45:40.000Z</updated>
+    <content type="html"><![CDATA[<p>本文参考<a href="http://blog.csdn.net/superbeck/article/details/4446177" target="_blank">http://blog.csdn.net/superbeck/article/details/4446177</a> 和 <a href="http://lavasoft.blog.51cto.com/62575/11674" target="_blank">http://lavasoft.blog.51cto.com/62575/11674</a></p>
+<h4 id="简单工厂">简单工厂</h4>
+<p>简单工厂模式的工厂类一般是使用静态方法，通过接收的参数的不同来返回不同的对象实例。不修改代码的话，是无法扩展的。<br><img src="/img/Design patterns/factory_diff/1.jpg" alt="类图"></p>
+<h4 id="工厂方法">工厂方法</h4>
+<p>工厂方法是针对每一种产品提供一个工厂类。通过不同的工厂实例来创建不同的产品实例。在同一等级结构中，支持增加任意产品。<br><img src="/img/Design patterns/factory_diff/2.jpg" alt="类图"></p>
+<h4 id="抽象工厂">抽象工厂</h4>
+<p>抽象工厂是应对产品族概念的。比如说，每个汽车公司可能要同时生产轿车，货车，客车，那么每一个工厂都要有创建轿车，货车和客车的方法。应对产品族概念而生，增加新的产品线很容易，但是无法增加新的产品。<br><img src="/img/Design patterns/factory_diff/3.jpg" alt="类图"></p>
+<h4 id="产品族和产品等级">产品族和产品等级</h4>
+<p>产品族：是指位于不同产品等级结构中，功能相关联的产品组成的家族。比如AMD的CPU和ADM芯片的主板，组成一个家族。Intel的CPU和Intel芯片的主板，又组成一个家族。而这两个家族都来自于两个产品等级：CPU，主板。一个等级结构是由相同的结构的产品组成，示意图如下：<br><img src="/img/Design patterns/factory_diff/4.png" alt=" "></p>
+<h4 id="区别">区别</h4>
+<p>简单工厂 ： 用来生产同一等级结构中的任意产品。（对于增加新的产品，无能为力）</p>
+<p>工厂方法 ：用来生产同一等级结构中的固定产品。（支持增加任意产品）   </p>
+<p>抽象工厂 ：用来生产不同产品族的全部产品。（对于增加新的产品，无能为力；支持增加产品族）</p>
+<h4 id="案例">案例</h4>
+<p>有一个农场，生产各种水果，有苹果（Apple）、草莓（Strawberry）、葡萄（Grape）；农场的园丁（FruitGardener）要根据客户的需求，提供相应的水果。</p>
+<h6 id="简单工厂模式">简单工厂模式</h6>
+<p><img src="/img/Design patterns/factory_diff/5.png" alt="类图"></p>
+<p>在简单工厂模式中，有个全能的园丁，控制所有作物的种植、生长和收获。现在农场规模变大了，管理更加专业化了。过去全能的园丁没有了，每一种作物都有专门的园丁管理，形成了规模化和专业化生产。</p>
+<h6 id="工厂模式">工厂模式</h6>
+<p><img src="/img/Design patterns/factory_diff/6.png" alt="类图"></p>
+<p>聪明的农场主总是让自己的庄园越来越有价值，“农场”在经历了简单工厂模式和工厂模式后，不断的扩大生产。如今，再次面临新的大发展，一项重要的工作就是引进塑料大棚技术，在大棚里种植热带（Tropical）和亚热带（Northern）的水果和蔬菜，用以满足市场需求，获取更大的利益。</p>
+<h6 id="抽象工厂模式">抽象工厂模式</h6>
+<p><img src="/img/Design patterns/factory_diff/8.png" alt="产品图"><br><img src="/img/Design patterns/factory_diff/7.png" alt="类图"></p>
+]]></content>
+    
+    
+      <category term="设计模式" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/"/>
+    
+      <category term="设计模式" scheme="https://github.com/DaMinger/DaMinger.github.io.git/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/"/>
+    
+  </entry>
   
   <entry>
     <title><![CDATA[设计模式之抽象工厂模式]]></title>
@@ -2064,622 +3071,6 @@ P:<span class="keyword">Partition</span> <span class="keyword">Tolerance</span>�
       <category term="Hadoop" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/Hadoop/"/>
     
       <category term="HBase" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/HBase/"/>
-    
-      <category term="Hadoop" scheme="https://github.com/DaMinger/DaMinger.github.io.git/categories/Hadoop/"/>
-    
-  </entry>
-  
-  <entry>
-    <title><![CDATA[HBase体系结构及原理]]></title>
-    <link href="https://github.com/DaMinger/DaMinger.github.io.git/2014/05/11/Hadoop/hbase/"/>
-    <id>https://github.com/DaMinger/DaMinger.github.io.git/2014/05/11/Hadoop/hbase/</id>
-    <published>2014-05-11T02:20:31.000Z</published>
-    <updated>2014-05-11T03:12:52.000Z</updated>
-    <content type="html"><![CDATA[<h4 id="HBase简介">HBase简介</h4>
-<p>HBase是Apache Hadoop的数据库，能够对大型数据提供随机、实时的读写访问。HBase的目标是存储并处理大型的数据。HBase是一个开源的，分布式的，多版本的，面向列的存储模型。它存储的是松散型数据。</p>
-<p>HBase特性：高可靠性、高效性、面向列、可伸缩、可在廉价PC Server搭建大规模结构化存储集群</p>
-<p>HBase是Google BigTable的开源实现，其相互对应如下：</p>
-<table>    <tr><td></td><td>Google</td><td>HBase</td></tr><tr><td>文件存储系统</td><td>GFS</td><td>HDFS</td></tr><tr><td>海量数据处理</td><td>MapReduce</td><td>MapReduce</td></tr><tr><td>协同服务管理</td><td>Chubby</td><td>Zookeeper</td></tr><br></table>
-
-<h4 id="HBase关系图：">HBase关系图：</h4>
-<p><img src="/img/Hadoop/HBase/1.jpg" alt="HBase关系图"><br>HBase位于结构化存储层，围绕HBase，各部件对HBase的支持情况：</p>
-<pre><code>Hadoop部件　　　　　　　　　　　　作用
-HDFS　　　　　　　　　　　　　　高可靠的底层存储支持
-MapReduce        　　　　　　　 高性能的计算能力
-Zookeeper        　　　　　　　 稳定服务和failover机制
-Pig&amp;Hive　　　　　　　　　　　　高层语言支持，便于数据统计
-Sqoop　　　　　　　　　　　　　 提供RDBMS数据导入，便于传统数据库向HBase迁移
-</code></pre><p>访问HBase的接口</p>
-<pre><code>方式　　　　　　　　　　　　特点　　　　　　　　　　　　　　         场合
-Native Java API　　　　　　最常规和高效        　　　　　　　　　　Hadoop MapReduce Job并行处理HBase表数据
-HBase Shell　　　　　　　  最简单接口        　　　　　　　　　　　HBase管理使用
-Thrift Gateway　　　　　　 利用Thrift序列化支持多种语言        　　异构系统在线访问HBase表数据
-<span class="keyword">Rest</span> Gateway　　　　　　   解除语言限制        　　　　　　　　　　<span class="keyword">Rest</span>风格Http API访问
-Pig　　　　　　　　　　　　Pig Latin六十编程语言处理数据        　 数据统计
-Hive　　　　　　　　　　　 简单，SqlLike
-</code></pre><h4 id="HBase_数据模型">HBase 数据模型</h4>
-<p><img src="/img/Hadoop/HBase/2.jpg" alt="HBase数据模型"><br>组成部件说明：<br>Row Key：　　 　　Table主键 行键 Table中记录按照Row Key排序<br>Timestamp：   　　每次对数据操作对应的时间戳，也即数据的version number<br>Column Family： 　列簇，一个table在水平方向有一个或者多个列簇，列簇可由任意多个Column组成，列簇支持动态扩展，无须预定义数量及类型，二进制存储，用户需自行进行类型转换</p>
-<h4 id="Table&amp;Region">Table&amp;Region</h4>
-<p><img src="/img/Hadoop/HBase/3.jpg" alt="图三"><br>Table随着记录增多不断变大，会自动分裂成多份Splits，成为Regions<br>一个region由[startkey，endkey)表示<br>不同region会被Master分配给相应的RegionServer进行管理</p>
-<h4 id="两张特殊表：-ROOT-_&amp;_-META-">两张特殊表：-ROOT- &amp; .META.</h4>
-<p><img src="/img/Hadoop/HBase/4.jpg" alt="图四"><br>.META.        记录用户表的Region信息，同时，.META.也可以有多个region<br>-ROOT-         记录.META.表的Region信息，但是，-ROOT-只有一个region<br>Zookeeper中记录了-ROOT-表的location<br>客户端访问数据的流程：<br>Client -&gt; Zookeeper -&gt; -ROOT- -&gt; .META. -&gt; 用户数据表<br>多次网络操作，不过client端有cache缓存</p>
-<h4 id="HBase_系统架构图">HBase 系统架构图</h4>
-<p><img src="/img/Hadoop/HBase/5.jpg" alt="HBase系统架构图"><br>组成部件说明</p>
-<h6 id="Client：">Client：</h6>
-<p>使用HBase RPC机制与HMaster和HRegionServer进行通信</p>
-<p>Client与HMaster进行通信进行管理类操作</p>
-<p>Client与HRegionServer进行数据读写类操作</p>
-<h6 id="Zookeeper：">Zookeeper：</h6>
-<p>Zookeeper Quorum存储-ROOT-表地址、HMaster地址</p>
-<p>HRegionServer把自己以Ephedral方式注册到Zookeeper中，HMaster随时感知各个HRegionServer的健康状况</p>
-<p>Zookeeper避免HMaster单点问题</p>
-<h6 id="HMaster：">HMaster：</h6>
-<p>HMaster没有单点问题，HBase中可以启动多个HMaster，通过Zookeeper的Master Election机制保证总有一个Master在运行</p>
-<p>主要负责Table和Region的管理工作：</p>
-<p>管理用户对表的增删改查操作</p>
-<p>管理HRegionServer的负载均衡，调整Region分布</p>
-<p>Region Split后，负责新Region的分布</p>
-<p>在HRegionServer停机后，负责失效HRegionServer上Region迁移</p>
-<h6 id="HRegionServer：">HRegionServer：</h6>
-<p>HBase中最核心的模块，主要负责响应用户I/O请求，向HDFS文件系统中读写数据<br><img src="/img/Hadoop/HBase/6.jpg" alt="图6"><br>HRegionServer管理一些列HRegion对象；</p>
-<p>每个HRegion对应Table中一个Region，HRegion由多个HStore组成；</p>
-<p>每个HStore对应Table中一个Column Family的存储；</p>
-<p>Column Family就是一个集中的存储单元，故将具有相同IO特性的Column放在一个Column Family会更高效</p>
-<h6 id="HStore：">HStore：</h6>
-<p>HBase存储的核心。由MemStore和StoreFile组成。</p>
-<p>MemStore是Sorted Memory Buffer。用户写入数据的流程：<br><img src="/img/Hadoop/HBase/7.jpg" alt="图7"></p>
-<p>Client写入 -&gt; 存入MemStore，一直到MemStore满 -&gt; Flush成一个StoreFile，直至增长到一定阈值 -&gt; 出发Compact合并操作 -&gt; 多个StoreFile合并成一个StoreFile，同时进行版本合并和数据删除 -&gt; 当StoreFiles Compact后，逐步形成越来越大的StoreFile -&gt; 单个StoreFile大小超过一定阈值后，触发Split操作，把当前Region Split成2个Region，Region会下线，新Split出的2个孩子Region会被HMaster分配到相应的HRegionServer上，使得原先1个Region的压力得以分流到2个Region上</p>
-<p>由此过程可知，HBase只是增加数据，有所得更新和删除操作，都是在Compact阶段做的，所以，用户写操作只需要进入到内存即可立即返回，从而保证I/O高性能。</p>
-<h6 id="HLog">HLog</h6>
-<p>引入HLog原因：</p>
-<p>在分布式系统环境中，无法避免系统出错或者宕机，一旦HRegionServer以外退出，MemStore中的内存数据就会丢失，引入HLog就是防止这种情况</p>
-<p>工作机制：</p>
-<p>每个HRegionServer中都会有一个HLog对象，HLog是一个实现Write Ahead Log的类，每次用户操作写入Memstore的同时，也会写一份数据到HLog文件，HLog文件定期会滚动出新，并删除旧的文件(已持久化到StoreFile中的数据)。当HRegionServer意外终止后，HMaster会通过Zookeeper感知，HMaster首先处理遗留的HLog文件，将不同region的log数据拆分，分别放到相应region目录下，然后再将失效的region重新分配，领取到这些region的HRegionServer在Load Region的过程中，会发现有历史HLog需要处理，因此会Replay HLog中的数据到MemStore中，然后flush到StoreFiles，完成数据恢复。</p>
-<h6 id="HBase存储格式">HBase存储格式</h6>
-<p>HBase中的所有数据文件都存储在Hadoop HDFS文件系统上，格式主要有两种：</p>
-<p>HFile HBase中KeyValue数据的存储格式，HFile是Hadoop的二进制格式文件，实际上StoreFile就是对HFile做了轻量级包装，即StoreFile底层就是HFile</p>
-<p>HLog File，HBase中WAL（Write Ahead Log） 的存储格式，物理上是Hadoop的Sequence File</p>
-<h6 id="HFile">HFile</h6>
-<p><img src="/img/Hadoop/HBase/8.jpg" alt="图8"><br>图片解释：<br>HFile文件不定长，长度固定的块只有两个：Trailer和FileInfo</p>
-<p>Trailer中指针指向其他数据块的起始点</p>
-<p>File Info中记录了文件的一些Meta信息，例如：AVG_KEY_LEN, AVG_VALUE_LEN, LAST_KEY, COMPARATOR, MAX_SEQ_ID_KEY等</p>
-<p>Data Index和Meta Index块记录了每个Data块和Meta块的起始点</p>
-<p>Data Block是HBase I/O的基本单元，为了提高效率，HRegionServer中有基于LRU的Block Cache机制</p>
-<p>每个Data块的大小可以在创建一个Table的时候通过参数指定，大号的Block有利于顺序Scan，小号Block利于随机查询；每个Data块除了开头的Magic以外就是一个个KeyValue对拼接而成, Magic内容就是一些随机数字，目的是防止数据损坏</p>
-<p>HFile里面的每个KeyValue对就是一个简单的byte数组。这个byte数组里面包含了很多项，并且有固定的结构。<br><img src="/img/Hadoop/HBase/9.jpg" alt="图9"></p>
-<p>KeyLength和ValueLength：两个固定的长度，分别代表Key和Value的长度</p>
-<p>Key部分：Row Length是固定长度的数值，表示RowKey的长度，Row 就是RowKey</p>
-<p>Column Family Length是固定长度的数值，表示Family的长度</p>
-<p>接着就是Column Family，再接着是Qualifier，然后是两个固定长度的数值，表示Time Stamp和Key Type（Put/Delete）</p>
-<p>Value部分没有这么复杂的结构，就是纯粹的二进制数据</p>
-<h5 id="HLog_File">HLog File</h5>
-<p><img src="/img/Hadoop/HBase/10.jpg" alt="图10"></p>
-<p>HLog文件就是一个普通的Hadoop Sequence File，Sequence File 的Key是HLogKey对象，HLogKey中记录了写入数据的归属信息，除了table和region名字外，同时还包括 sequence number和timestamp，timestamp是“写入时间”，sequence number的起始值为0，或者是最近一次存入文件系统中sequence number。</p>
-<p>HLog Sequece File的Value是HBase的KeyValue对象，即对应HFile中的KeyValue</p>
-]]></content>
-    
-    
-      <category term="Hadoop" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/Hadoop/"/>
-    
-      <category term="HBase" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/HBase/"/>
-    
-      <category term="Hadoop" scheme="https://github.com/DaMinger/DaMinger.github.io.git/categories/Hadoop/"/>
-    
-  </entry>
-  
-  <entry>
-    <title><![CDATA[Mahout利用朴素贝叶斯分类处理20个新闻组案例]]></title>
-    <link href="https://github.com/DaMinger/DaMinger.github.io.git/2014/05/08/Hadoop/mahout_2/"/>
-    <id>https://github.com/DaMinger/DaMinger.github.io.git/2014/05/08/Hadoop/mahout_2/</id>
-    <published>2014-05-08T00:40:51.000Z</published>
-    <updated>2014-05-08T01:09:10.000Z</updated>
-    <content type="html"><![CDATA[<h3 id="朴素贝叶斯分类算法">朴素贝叶斯分类算法</h3>
-<p><a href="http://www.cnblogs.com/leoo2sk/archive/2010/09/17/naive-bayesian-classifier.html" target="_blank">朴素贝叶斯分类算法</a></p>
-<h3 id="下载20个新闻组数据">下载20个新闻组数据</h3>
-<p><a href="http://people.csail.mit.edu/jrennie/20Newsgroups/20news-bydate.tar.gz" target="_blank">20个新闻组</a></p>
-<pre><code>[<span class="keyword">grid</span><span class="variable">@hadoop01</span> data]$ <span class="keyword">ls</span>
-<span class="number">20</span>news-bydate.tar.gz  <span class="number">20</span>news-bydate-test  <span class="number">20</span>news-bydate-train
-[<span class="keyword">grid</span><span class="variable">@hadoop01</span> data]$ <span class="keyword">pwd</span>
-/home/<span class="keyword">grid</span>/data
-</code></pre><h3 id="建立训练集">建立训练集</h3>
-<pre><code>bin/mahout org<span class="preprocessor">.apache</span><span class="preprocessor">.mahout</span><span class="preprocessor">.classifier</span><span class="preprocessor">.bayes</span><span class="preprocessor">.PrepareTwentyNewsgroups</span> \ 
--p /home/grid/data/<span class="number">20</span>news-bydate-train \   指定数据源
--o /home/grid/data/bayes-train-input \     指定生成目录
--a org<span class="preprocessor">.apache</span><span class="preprocessor">.mahout</span><span class="preprocessor">.vectorizer</span><span class="preprocessor">.DefaultAnalyzer</span> \ 
--c UTF-<span class="number">8</span>
-
-[grid@hadoop01 mahout-distribution-<span class="number">0.6</span>]$ bin/mahout org<span class="preprocessor">.apache</span><span class="preprocessor">.mahout</span><span class="preprocessor">.classifier</span><span class="preprocessor">.bayes</span><span class="preprocessor">.PrepareTwentyNewsgroups</span> -p /home/grid/data/<span class="number">20</span>news-bydate-train -o /home/grid/data/bayes-train-input -a org<span class="preprocessor">.apache</span><span class="preprocessor">.mahout</span><span class="preprocessor">.vectorizer</span><span class="preprocessor">.DefaultAnalyzer</span> -c UTF-<span class="number">8</span>
-MAHOUT_LOCAL is not <span class="keyword">set</span><span class="comment">; adding HADOOP_CONF_DIR to classpath.</span>
-Running on hadoop, using HADOOP_HOME=/home/grid/hadoop-<span class="number">1.2</span><span class="number">.1</span>
-HADOOP_CONF_DIR=/home/grid/hadoop-<span class="number">1.2</span><span class="number">.1</span>/conf
-MAHOUT-JOB: /home/grid/mahout-distribution-<span class="number">0.6</span>/mahout-examples-<span class="number">0.6</span>-job<span class="preprocessor">.jar</span>
-<span class="label">Warning:</span> $HADOOP_HOME is deprecated.
-
-<span class="number">14</span>/<span class="number">05</span>/<span class="number">07</span> <span class="number">17</span>:<span class="number">57</span>:<span class="number">30</span> WARN driver<span class="preprocessor">.MahoutDriver</span>: No org<span class="preprocessor">.apache</span><span class="preprocessor">.mahout</span><span class="preprocessor">.classifier</span><span class="preprocessor">.bayes</span><span class="preprocessor">.PrepareTwentyNewsgroups</span><span class="preprocessor">.props</span> found on classpath, will use command-line arguments only
-<span class="number">14</span>/<span class="number">05</span>/<span class="number">07</span> <span class="number">17</span>:<span class="number">57</span>:<span class="number">37</span> INFO driver<span class="preprocessor">.MahoutDriver</span>: Program took <span class="number">7635</span> ms (Minutes: <span class="number">0.12726666666666667</span>)
-[grid@hadoop01 data]$ ls
-<span class="number">20</span>news-bydate<span class="preprocessor">.tar</span><span class="preprocessor">.gz</span>  <span class="number">20</span>news-bydate-test  <span class="number">20</span>news-bydate-train  bayes-train-input
-[grid@hadoop01 data]$ cd bayes-train-input/
-[grid@hadoop01 bayes-train-input]$ ls
-alt<span class="preprocessor">.atheism</span><span class="preprocessor">.txt</span>               comp<span class="preprocessor">.windows</span><span class="preprocessor">.x</span><span class="preprocessor">.txt</span>      rec<span class="preprocessor">.sport</span><span class="preprocessor">.hockey</span><span class="preprocessor">.txt</span>  soc<span class="preprocessor">.religion</span><span class="preprocessor">.christian</span><span class="preprocessor">.txt</span>
-comp<span class="preprocessor">.graphics</span><span class="preprocessor">.txt</span>             misc<span class="preprocessor">.forsale</span><span class="preprocessor">.txt</span>        sci<span class="preprocessor">.crypt</span><span class="preprocessor">.txt</span>         talk<span class="preprocessor">.politics</span><span class="preprocessor">.guns</span><span class="preprocessor">.txt</span>
-comp<span class="preprocessor">.os</span><span class="preprocessor">.ms</span>-windows<span class="preprocessor">.misc</span><span class="preprocessor">.txt</span>   rec<span class="preprocessor">.autos</span><span class="preprocessor">.txt</span>           sci<span class="preprocessor">.electronics</span><span class="preprocessor">.txt</span>   talk<span class="preprocessor">.politics</span><span class="preprocessor">.mideast</span><span class="preprocessor">.txt</span>
-comp<span class="preprocessor">.sys</span><span class="preprocessor">.ibm</span><span class="preprocessor">.pc</span><span class="preprocessor">.hardware</span><span class="preprocessor">.txt</span>  rec<span class="preprocessor">.motorcycles</span><span class="preprocessor">.txt</span>     sci<span class="preprocessor">.med</span><span class="preprocessor">.txt</span>           talk<span class="preprocessor">.politics</span><span class="preprocessor">.misc</span><span class="preprocessor">.txt</span>
-comp<span class="preprocessor">.sys</span><span class="preprocessor">.mac</span><span class="preprocessor">.hardware</span><span class="preprocessor">.txt</span>     rec<span class="preprocessor">.sport</span><span class="preprocessor">.baseball</span><span class="preprocessor">.txt</span>  sci<span class="preprocessor">.space</span><span class="preprocessor">.txt</span>         talk<span class="preprocessor">.religion</span><span class="preprocessor">.misc</span><span class="preprocessor">.txt</span>
-</code></pre><h3 id="建立测试集">建立测试集</h3>
-<pre><code>bin/mahout org<span class="preprocessor">.apache</span><span class="preprocessor">.mahout</span><span class="preprocessor">.classifier</span><span class="preprocessor">.bayes</span><span class="preprocessor">.PrepareTwentyNewsgroups</span> \
--p /home/grid/data/<span class="number">20</span>news-bydate-test \     指定数据源
--o /home/grid/data/bayes-test-input \       指定生成目录
--a org<span class="preprocessor">.apache</span><span class="preprocessor">.mahout</span><span class="preprocessor">.vectorizer</span><span class="preprocessor">.DefaultAnalyzer</span> \
--c UTF-<span class="number">8</span> \
-
-[grid@hadoop01 mahout-distribution-<span class="number">0.6</span>]$ bin/mahout org<span class="preprocessor">.apache</span><span class="preprocessor">.mahout</span><span class="preprocessor">.classifier</span><span class="preprocessor">.bayes</span><span class="preprocessor">.PrepareTwentyNewsgroups</span> -p /home/grid/data/<span class="number">20</span>news-bydate-test -o /home/grid/data/bayes-test-input -a org<span class="preprocessor">.apache</span><span class="preprocessor">.mahout</span><span class="preprocessor">.vectorizer</span><span class="preprocessor">.DefaultAnalyzer</span> -c UTF-<span class="number">8</span>
-MAHOUT_LOCAL is not <span class="keyword">set</span><span class="comment">; adding HADOOP_CONF_DIR to classpath.</span>
-Running on hadoop, using HADOOP_HOME=/home/grid/hadoop-<span class="number">1.2</span><span class="number">.1</span>
-HADOOP_CONF_DIR=/home/grid/hadoop-<span class="number">1.2</span><span class="number">.1</span>/conf
-MAHOUT-JOB: /home/grid/mahout-distribution-<span class="number">0.6</span>/mahout-examples-<span class="number">0.6</span>-job<span class="preprocessor">.jar</span>
-<span class="label">Warning:</span> $HADOOP_HOME is deprecated.
-
-<span class="number">14</span>/<span class="number">05</span>/<span class="number">07</span> <span class="number">17</span>:<span class="number">59</span>:<span class="number">38</span> WARN driver<span class="preprocessor">.MahoutDriver</span>: No org<span class="preprocessor">.apache</span><span class="preprocessor">.mahout</span><span class="preprocessor">.classifier</span><span class="preprocessor">.bayes</span><span class="preprocessor">.PrepareTwentyNewsgroups</span><span class="preprocessor">.props</span> found on classpath, will use command-line arguments only
-<span class="number">14</span>/<span class="number">05</span>/<span class="number">07</span> <span class="number">18</span>:<span class="number">00</span>:<span class="number">00</span> INFO driver<span class="preprocessor">.MahoutDriver</span>: Program took <span class="number">21875</span> ms (Minutes: <span class="number">0.3645833333333333</span>)
-
-[grid@hadoop01 data]$ ls
-<span class="number">20</span>news-bydate<span class="preprocessor">.tar</span><span class="preprocessor">.gz</span>  <span class="number">20</span>news-bydate-test  <span class="number">20</span>news-bydate-train  bayes-test-input  bayes-train-input
-[grid@hadoop01 data]$ cd bayes-test-input/
-[grid@hadoop01 bayes-test-input]$ ls
-alt<span class="preprocessor">.atheism</span><span class="preprocessor">.txt</span>               comp<span class="preprocessor">.windows</span><span class="preprocessor">.x</span><span class="preprocessor">.txt</span>      rec<span class="preprocessor">.sport</span><span class="preprocessor">.hockey</span><span class="preprocessor">.txt</span>  soc<span class="preprocessor">.religion</span><span class="preprocessor">.christian</span><span class="preprocessor">.txt</span>
-comp<span class="preprocessor">.graphics</span><span class="preprocessor">.txt</span>             misc<span class="preprocessor">.forsale</span><span class="preprocessor">.txt</span>        sci<span class="preprocessor">.crypt</span><span class="preprocessor">.txt</span>         talk<span class="preprocessor">.politics</span><span class="preprocessor">.guns</span><span class="preprocessor">.txt</span>
-comp<span class="preprocessor">.os</span><span class="preprocessor">.ms</span>-windows<span class="preprocessor">.misc</span><span class="preprocessor">.txt</span>   rec<span class="preprocessor">.autos</span><span class="preprocessor">.txt</span>           sci<span class="preprocessor">.electronics</span><span class="preprocessor">.txt</span>   talk<span class="preprocessor">.politics</span><span class="preprocessor">.mideast</span><span class="preprocessor">.txt</span>
-comp<span class="preprocessor">.sys</span><span class="preprocessor">.ibm</span><span class="preprocessor">.pc</span><span class="preprocessor">.hardware</span><span class="preprocessor">.txt</span>  rec<span class="preprocessor">.motorcycles</span><span class="preprocessor">.txt</span>     sci<span class="preprocessor">.med</span><span class="preprocessor">.txt</span>           talk<span class="preprocessor">.politics</span><span class="preprocessor">.misc</span><span class="preprocessor">.txt</span>
-comp<span class="preprocessor">.sys</span><span class="preprocessor">.mac</span><span class="preprocessor">.hardware</span><span class="preprocessor">.txt</span>     rec<span class="preprocessor">.sport</span><span class="preprocessor">.baseball</span><span class="preprocessor">.txt</span>  sci<span class="preprocessor">.space</span><span class="preprocessor">.txt</span>         talk<span class="preprocessor">.religion</span><span class="preprocessor">.misc</span><span class="preprocessor">.txt</span>
-[grid@hadoop01 bayes-test-input]$ 
-</code></pre><h3 id="上传生成数据到HDFS">上传生成数据到HDFS</h3>
-<pre><code>[<span class="keyword">grid</span><span class="variable">@hadoop01</span> ~]$ hadoop fs -mkdir ./<span class="number">20</span>news
-Warning: <span class="variable">$HADOOP_HOME</span> is deprecated.
-
-[<span class="keyword">grid</span><span class="variable">@hadoop01</span> ~]$ hadoop fs -put ./data/bayes-train-input ./<span class="number">20</span>news
-Warning: <span class="variable">$HADOOP_HOME</span> is deprecated.
-
-[<span class="keyword">grid</span><span class="variable">@hadoop01</span> ~]$ hadoop fs -put ./data/bayes-test-input ./<span class="number">20</span>news    
-Warning: <span class="variable">$HADOOP_HOME</span> is deprecated.
-
-[<span class="keyword">grid</span><span class="variable">@hadoop01</span> ~]$ hadoop fs -<span class="keyword">ls</span> ./<span class="number">20</span>news
-Warning: <span class="variable">$HADOOP_HOME</span> is deprecated.
-
-Found <span class="number">2</span> items
-drwxr-xr-x   - <span class="keyword">grid</span> supergroup          <span class="number">0</span> <span class="number">2014</span>-<span class="number">05</span>-<span class="number">07</span> <span class="number">18</span>:<span class="number">05</span> /user/<span class="keyword">grid</span>/<span class="number">20</span>news/bayes-test-input
-drwxr-xr-x   - <span class="keyword">grid</span> supergroup          <span class="number">0</span> <span class="number">2014</span>-<span class="number">05</span>-<span class="number">07</span> <span class="number">18</span>:<span class="number">05</span> /user/<span class="keyword">grid</span>/<span class="number">20</span>news/bayes-train-input
-[<span class="keyword">grid</span><span class="variable">@hadoop01</span> ~]$ 
-</code></pre><h3 id="训练贝叶斯分类器">训练贝叶斯分类器</h3>
-<pre><code>[<span class="keyword">grid</span><span class="variable">@hadoop01</span> mahout-distribution-<span class="number">0.6</span>]<span class="variable">$bin</span>/mahout trainclassifier -i /user/<span class="keyword">grid</span>/<span class="number">20</span>news/bayes-train-input -o /user/<span class="keyword">grid</span>/<span class="number">20</span>news/newsmodel -type cbayes -ng <span class="number">3</span> -<span class="keyword">source</span> hdfs
-等着吧，跑个几十分钟
-最后的显示信息
-<span class="number">14</span>/<span class="number">05</span>/<span class="number">07</span> <span class="number">18</span>:<span class="number">53</span>:<span class="number">53</span> INFO mapred.JobClient:     Combine output records=<span class="number">4916</span>
-<span class="number">14</span>/<span class="number">05</span>/<span class="number">07</span> <span class="number">18</span>:<span class="number">53</span>:<span class="number">53</span> INFO mapred.JobClient:     Physical <span class="keyword">memory</span> (bytes) <span class="keyword">snapshot</span>=<span class="number">1415671808</span>
-<span class="number">14</span>/<span class="number">05</span>/<span class="number">07</span> <span class="number">18</span>:<span class="number">53</span>:<span class="number">53</span> INFO mapred.JobClient:     Reduce output records=<span class="number">20</span>
-<span class="number">14</span>/<span class="number">05</span>/<span class="number">07</span> <span class="number">18</span>:<span class="number">53</span>:<span class="number">53</span> INFO mapred.JobClient:     Virtual <span class="keyword">memory</span> (bytes) <span class="keyword">snapshot</span>=<span class="number">5063999488</span>
-<span class="number">14</span>/<span class="number">05</span>/<span class="number">07</span> <span class="number">18</span>:<span class="number">53</span>:<span class="number">53</span> INFO mapred.JobClient:     Map output records=<span class="number">66413901</span>
-<span class="number">14</span>/<span class="number">05</span>/<span class="number">07</span> <span class="number">18</span>:<span class="number">53</span>:<span class="number">53</span> INFO common.HadoopUtil: Deleting /user/<span class="keyword">grid</span>/<span class="number">20</span>news/newsmodel/trainer-docCount
-<span class="number">14</span>/<span class="number">05</span>/<span class="number">07</span> <span class="number">18</span>:<span class="number">53</span>:<span class="number">53</span> INFO common.HadoopUtil: Deleting /user/<span class="keyword">grid</span>/<span class="number">20</span>news/newsmodel/trainer-termDocCount
-<span class="number">14</span>/<span class="number">05</span>/<span class="number">07</span> <span class="number">18</span>:<span class="number">53</span>:<span class="number">53</span> INFO common.HadoopUtil: Deleting /user/<span class="keyword">grid</span>/<span class="number">20</span>news/newsmodel/trainer-featureCount
-<span class="number">14</span>/<span class="number">05</span>/<span class="number">07</span> <span class="number">18</span>:<span class="number">53</span>:<span class="number">53</span> INFO common.HadoopUtil: Deleting /user/<span class="keyword">grid</span>/<span class="number">20</span>news/newsmodel/trainer-wordFreq
-<span class="number">14</span>/<span class="number">05</span>/<span class="number">07</span> <span class="number">18</span>:<span class="number">53</span>:<span class="number">53</span> INFO common.HadoopUtil: Deleting /user/<span class="keyword">grid</span>/<span class="number">20</span>news/newsmodel/trainer-tfIdf/trainer-vocabCount
-<span class="number">14</span>/<span class="number">05</span>/<span class="number">07</span> <span class="number">18</span>:<span class="number">53</span>:<span class="number">53</span> INFO driver.MahoutDriver: Program took <span class="number">2584721</span> ms (Minutes: <span class="number">43.07868333333333</span>)
-[<span class="keyword">grid</span><span class="variable">@hadoop01</span> bayes-test-input]$ hadoop fs -<span class="keyword">ls</span> ./<span class="number">20</span>news
-Warning: <span class="variable">$HADOOP_HOME</span> is deprecated.
-
-Found <span class="number">4</span> items
-drwxr-xr-x   - <span class="keyword">grid</span> supergroup          <span class="number">0</span> <span class="number">2014</span>-<span class="number">05</span>-<span class="number">07</span> <span class="number">18</span>:<span class="number">05</span> /user/<span class="keyword">grid</span>/<span class="number">20</span>news/bayes-test-input
-drwxr-xr-x   - <span class="keyword">grid</span> supergroup          <span class="number">0</span> <span class="number">2014</span>-<span class="number">05</span>-<span class="number">07</span> <span class="number">18</span>:<span class="number">55</span> /user/<span class="keyword">grid</span>/<span class="number">20</span>news/bayes-test-input-output
-drwxr-xr-x   - <span class="keyword">grid</span> supergroup          <span class="number">0</span> <span class="number">2014</span>-<span class="number">05</span>-<span class="number">07</span> <span class="number">18</span>:<span class="number">05</span> /user/<span class="keyword">grid</span>/<span class="number">20</span>news/bayes-train-input
-drwxr-xr-x   - <span class="keyword">grid</span> supergroup          <span class="number">0</span> <span class="number">2014</span>-<span class="number">05</span>-<span class="number">07</span> <span class="number">18</span>:<span class="number">53</span> /user/<span class="keyword">grid</span>/<span class="number">20</span>news/newsmodel
-
-[<span class="keyword">grid</span><span class="variable">@hadoop01</span> bayes-test-input]$ hadoop fs -<span class="keyword">ls</span> ./<span class="number">20</span>news/newsmodel 
-Warning: <span class="variable">$HADOOP_HOME</span> is deprecated.
-
-Found <span class="number">5</span> items
--rw-r--r--   <span class="number">2</span> <span class="keyword">grid</span> supergroup          <span class="number">0</span> <span class="number">2014</span>-<span class="number">05</span>-<span class="number">07</span> <span class="number">18</span>:<span class="number">30</span> /user/<span class="keyword">grid</span>/<span class="number">20</span>news/newsmodel/_SUCCESS
-drwxr-xr-x   - <span class="keyword">grid</span> supergroup          <span class="number">0</span> <span class="number">2014</span>-<span class="number">05</span>-<span class="number">07</span> <span class="number">18</span>:<span class="number">10</span> /user/<span class="keyword">grid</span>/<span class="number">20</span>news/newsmodel/_logs
-drwxr-xr-x   - <span class="keyword">grid</span> supergroup          <span class="number">0</span> <span class="number">2014</span>-<span class="number">05</span>-<span class="number">07</span> <span class="number">18</span>:<span class="number">53</span> /user/<span class="keyword">grid</span>/<span class="number">20</span>news/newsmodel/trainer-tfIdf
-drwxr-xr-x   - <span class="keyword">grid</span> supergroup          <span class="number">0</span> <span class="number">2014</span>-<span class="number">05</span>-<span class="number">07</span> <span class="number">18</span>:<span class="number">53</span> /user/<span class="keyword">grid</span>/<span class="number">20</span>news/newsmodel/trainer-thetaNormalizer
-drwxr-xr-x   - <span class="keyword">grid</span> supergroup          <span class="number">0</span> <span class="number">2014</span>-<span class="number">05</span>-<span class="number">07</span> <span class="number">18</span>:<span class="number">43</span> /user/<span class="keyword">grid</span>/<span class="number">20</span>news/newsmodel/trainer-weights
-</code></pre><h3 id="测试贝叶斯分类器">测试贝叶斯分类器</h3>
-<pre><code>[grid@hadoop01 data]bin/mahout testclassifier -m /user/grid/<span class="number">20</span>news/newsmodel -d /user/grid/<span class="number">20</span>news/bayes-test-input -<span class="keyword">type</span> cbayes -ng <span class="number">3</span> -source hdfs -<span class="function"><span class="keyword">method</span> <span class="title">mapreduce</span></span>
-</code></pre><h4 id="这里报错了，查找原因是JVM分配内存不足">这里报错了，查找原因是JVM分配内存不足</h4>
-<pre><code>Caused by: java<span class="preprocessor">.lang</span><span class="preprocessor">.OutOfMemoryError</span>: Java heap space
-        at java<span class="preprocessor">.nio</span><span class="preprocessor">.HeapCharBuffer</span>.&lt;init&gt;(HeapCharBuffer<span class="preprocessor">.java</span>:<span class="number">57</span>)
-        at java<span class="preprocessor">.nio</span><span class="preprocessor">.CharBuffer</span><span class="preprocessor">.allocate</span>(CharBuffer<span class="preprocessor">.java</span>:<span class="number">331</span>)
-        at java<span class="preprocessor">.nio</span><span class="preprocessor">.charset</span><span class="preprocessor">.CharsetDecoder</span><span class="preprocessor">.decode</span>(CharsetDecoder<span class="preprocessor">.java</span>:<span class="number">777</span>)
-        at org<span class="preprocessor">.apache</span><span class="preprocessor">.hadoop</span><span class="preprocessor">.io</span><span class="preprocessor">.Text</span><span class="preprocessor">.decode</span>(Text<span class="preprocessor">.java</span>:<span class="number">350</span>)
-        at org<span class="preprocessor">.apache</span><span class="preprocessor">.hadoop</span><span class="preprocessor">.io</span><span class="preprocessor">.Text</span><span class="preprocessor">.decode</span>(Text<span class="preprocessor">.java</span>:<span class="number">327</span>)
-        at org<span class="preprocessor">.apache</span><span class="preprocessor">.hadoop</span><span class="preprocessor">.io</span><span class="preprocessor">.Text</span><span class="preprocessor">.toString</span>(Text<span class="preprocessor">.java</span>:<span class="number">254</span>)
-        at org<span class="preprocessor">.apache</span><span class="preprocessor">.mahout</span><span class="preprocessor">.common</span><span class="preprocessor">.StringTuple</span><span class="preprocessor">.readFields</span>(StringTuple<span class="preprocessor">.java</span>:<span class="number">143</span>)
-        at org<span class="preprocessor">.apache</span><span class="preprocessor">.hadoop</span><span class="preprocessor">.io</span><span class="preprocessor">.SequenceFile</span>$Reader<span class="preprocessor">.next</span>(SequenceFile<span class="preprocessor">.java</span>:<span class="number">1898</span>)
-        at org<span class="preprocessor">.apache</span><span class="preprocessor">.hadoop</span><span class="preprocessor">.io</span><span class="preprocessor">.SequenceFile</span>$Reader<span class="preprocessor">.next</span>(SequenceFile<span class="preprocessor">.java</span>:<span class="number">1938</span>)
-        at org<span class="preprocessor">.apache</span><span class="preprocessor">.mahout</span><span class="preprocessor">.common</span><span class="preprocessor">.iterator</span><span class="preprocessor">.sequencefile</span><span class="preprocessor">.SequenceFileIterator</span><span class="preprocessor">.computeNext</span>(SequenceFileIterator<span class="preprocessor">.java</span>:<span class="number">95</span>)
-        at org<span class="preprocessor">.apache</span><span class="preprocessor">.mahout</span><span class="preprocessor">.common</span><span class="preprocessor">.iterator</span><span class="preprocessor">.sequencefile</span><span class="preprocessor">.SequenceFileIterator</span><span class="preprocessor">.computeNext</span>(SequenceFileIterator<span class="preprocessor">.java</span>:<span class="number">38</span>)
-        at <span class="keyword">com</span><span class="preprocessor">.google</span><span class="preprocessor">.common</span><span class="preprocessor">.collect</span><span class="preprocessor">.AbstractIterator</span><span class="preprocessor">.tryToComputeNext</span>(AbstractIterator<span class="preprocessor">.java</span>:<span class="number">141</span>)
-        at <span class="keyword">com</span><span class="preprocessor">.google</span><span class="preprocessor">.common</span><span class="preprocessor">.collect</span><span class="preprocessor">.AbstractIterator</span><span class="preprocessor">.hasNext</span>(AbstractIterator<span class="preprocessor">.java</span>:<span class="number">136</span>)
-        at <span class="keyword">com</span><span class="preprocessor">.google</span><span class="preprocessor">.common</span><span class="preprocessor">.collect</span><span class="preprocessor">.Iterators</span>$5<span class="preprocessor">.hasNext</span>(Iterators<span class="preprocessor">.java</span>:<span class="number">525</span>)
-        at <span class="keyword">com</span><span class="preprocessor">.google</span><span class="preprocessor">.common</span><span class="preprocessor">.collect</span><span class="preprocessor">.ForwardingIterator</span><span class="preprocessor">.hasNext</span>(ForwardingIterator<span class="preprocessor">.java</span>:<span class="number">43</span>)
-        at org<span class="preprocessor">.apache</span><span class="preprocessor">.mahout</span><span class="preprocessor">.classifier</span><span class="preprocessor">.bayes</span><span class="preprocessor">.SequenceFileModelReader</span><span class="preprocessor">.loadFeatureWeights</span>(SequenceFileModelReader<span class="preprocessor">.java</span>:<span class="number">72</span>)
-每个节点修改mapred-site<span class="preprocessor">.xml</span>文件
-    [grid@hadoop02 conf]$ cat mapred-site<span class="preprocessor">.xml</span> 
-    &lt;?xml version=<span class="string">"1.0"</span>?&gt;
-    &lt;?xml-stylesheet type=<span class="string">"text/xsl"</span> href=<span class="string">"configuration.xsl"</span>?&gt;
-
-    &lt;!-- Put site-specific property overrides <span class="keyword">in</span> this file. --&gt;
-
-    &lt;configuration&gt;
-            &lt;property&gt;
-                    &lt;name&gt;mapred<span class="preprocessor">.job</span><span class="preprocessor">.tracker</span>&lt;/name&gt;
-                            &lt;value&gt;hadoop01<span class="preprocessor">.myhadoop</span><span class="preprocessor">.com</span>:<span class="number">9001</span>&lt;/value&gt;
-            &lt;/property&gt;
-            &lt;property&gt;
-                     &lt;name&gt;mapred<span class="preprocessor">.child</span><span class="preprocessor">.java</span><span class="preprocessor">.opts</span>&lt;/name&gt;
-                            &lt;value&gt;-Xmx1000m&lt;/value&gt;
-            &lt;/property&gt;
-    &lt;/configuration&gt;
-</code></pre><h3 id="运行成功后">运行成功后</h3>
-<pre><code>[grid@hadoop01 data]$ hadoop fs -ls ./<span class="number">20</span>news/
-<span class="label">Warning:</span> $HADOOP_HOME is deprecated.
-
-Found <span class="number">4</span> items
-drwxr-xr-<span class="built_in">x</span>   - grid supergroup          <span class="number">0</span> <span class="number">2014</span>-<span class="number">05</span>-<span class="number">07</span> <span class="number">18</span>:<span class="number">05</span> /user/grid/<span class="number">20</span>news/bayes-test-input
-drwxr-xr-<span class="built_in">x</span>   - grid supergroup          <span class="number">0</span> <span class="number">2014</span>-<span class="number">05</span>-<span class="number">07</span> <span class="number">19</span>:<span class="number">28</span> /user/grid/<span class="number">20</span>news/bayes-test-input-output
-drwxr-xr-<span class="built_in">x</span>   - grid supergroup          <span class="number">0</span> <span class="number">2014</span>-<span class="number">05</span>-<span class="number">07</span> <span class="number">18</span>:<span class="number">05</span> /user/grid/<span class="number">20</span>news/bayes-train-input
-drwxr-xr-<span class="built_in">x</span>   - grid supergroup          <span class="number">0</span> <span class="number">2014</span>-<span class="number">05</span>-<span class="number">07</span> <span class="number">18</span>:<span class="number">53</span> /user/grid/<span class="number">20</span>news/newsmodel
-
-运行成功后最后的屏幕信息
-Summary 
-------------------------------------------------------- 
-Correctly Classified Instances          :      <span class="number">18369</span>   <span class="number">97.5621</span>% 
-Incorrectly Classified Instances        :        <span class="number">459</span>    <span class="number">2.4379</span>% 
-Total Classified Instances              :      <span class="number">18828</span> 
-
-======================================================= 
-Confusion Matrix 
-------------------------------------------------------- 
-a    b    c    d    e    f    g    h    i    j    k    l    m    n    o    p    q    r    s    t    &lt;--Classified as 
-<span class="number">994</span>  <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>     |  <span class="number">994</span>   a     = rec<span class="preprocessor">.motorcycles</span> 
-<span class="number">0</span>    <span class="number">976</span>  <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">1</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">2</span>    <span class="number">1</span>     |  <span class="number">980</span>   b     = comp<span class="preprocessor">.windows</span><span class="preprocessor">.x</span> 
-<span class="number">7</span>    <span class="number">0</span>    <span class="number">929</span>  <span class="number">1</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">1</span>    <span class="number">0</span>    <span class="number">2</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>     |  <span class="number">940</span>   c     = talk<span class="preprocessor">.politics</span><span class="preprocessor">.mideast</span>
-<span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">905</span>  <span class="number">0</span>    <span class="number">0</span>    <span class="number">1</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">3</span>    <span class="number">0</span>    <span class="number">1</span>    <span class="number">0</span>     |  <span class="number">910</span>   d     = talk<span class="preprocessor">.politics</span><span class="preprocessor">.guns</span> 
-<span class="number">4</span>    <span class="number">1</span>    <span class="number">4</span>    <span class="number">27</span>   <span class="number">388</span>  <span class="number">1</span>    <span class="number">0</span>    <span class="number">1</span>    <span class="number">0</span>    <span class="number">5</span>    <span class="number">1</span>    <span class="number">1</span>    <span class="number">2</span>    <span class="number">2</span>    <span class="number">149</span>  <span class="number">7</span>    <span class="number">2</span>    <span class="number">33</span>   <span class="number">0</span>    <span class="number">0</span>     |  <span class="number">628</span>   e     = talk<span class="preprocessor">.religion</span><span class="preprocessor">.misc</span>
-<span class="number">3</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">985</span>  <span class="number">0</span>    <span class="number">1</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">1</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>     |  <span class="number">990</span>   f     = rec<span class="preprocessor">.autos</span> 
-<span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">993</span>  <span class="number">1</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>     |  <span class="number">994</span>   g     = rec<span class="preprocessor">.sport</span><span class="preprocessor">.baseball</span> 
-<span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">1</span>    <span class="number">998</span>  <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>     |  <span class="number">999</span>   h     = rec<span class="preprocessor">.sport</span><span class="preprocessor">.hockey</span> 
-<span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">956</span>  <span class="number">0</span>    <span class="number">2</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">2</span>    <span class="number">1</span>     |  <span class="number">961</span>   i     = comp<span class="preprocessor">.sys</span><span class="preprocessor">.mac</span><span class="preprocessor">.hardware</span> 
-<span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">981</span>  <span class="number">0</span>    <span class="number">0</span>    <span class="number">5</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">1</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>     |  <span class="number">987</span>   j     = sci<span class="preprocessor">.space</span> 
-<span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">978</span>  <span class="number">0</span>    <span class="number">1</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">2</span>    <span class="number">1</span>     |  <span class="number">982</span>   k     = comp<span class="preprocessor">.sys</span><span class="preprocessor">.ibm</span><span class="preprocessor">.pc</span><span class="preprocessor">.hardware</span> 
-<span class="number">1</span>    <span class="number">0</span>    <span class="number">3</span>    <span class="number">36</span>   <span class="number">0</span>    <span class="number">1</span>    <span class="number">2</span>    <span class="number">1</span>    <span class="number">0</span>    <span class="number">5</span>    <span class="number">0</span>    <span class="number">697</span>  <span class="number">4</span>    <span class="number">0</span>    <span class="number">3</span>    <span class="number">3</span>    <span class="number">19</span>   <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>     |  <span class="number">775</span>   l     = talk<span class="preprocessor">.politics</span><span class="preprocessor">.misc</span> 
-<span class="number">0</span>    <span class="number">2</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">2</span>    <span class="number">0</span>    <span class="number">966</span>  <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">2</span>    <span class="number">1</span>     |  <span class="number">973</span>   m     = comp<span class="preprocessor">.graphics</span> 
-<span class="number">1</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">6</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">971</span>  <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">3</span>    <span class="number">0</span>     |  <span class="number">981</span>   n     = sci<span class="preprocessor">.electronics</span> 
-<span class="number">1</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">1</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">992</span>  <span class="number">1</span>    <span class="number">0</span>    <span class="number">1</span>    <span class="number">0</span>    <span class="number">1</span>     |  <span class="number">997</span>   o     = soc<span class="preprocessor">.religion</span><span class="preprocessor">.christian</span> 
-<span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">1</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">988</span>  <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">1</span>     |  <span class="number">990</span>   p     = sci<span class="preprocessor">.med</span> 
-<span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">2</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">2</span>    <span class="number">1</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">985</span>  <span class="number">0</span>    <span class="number">1</span>    <span class="number">0</span>     |  <span class="number">991</span>   q     = sci<span class="preprocessor">.crypt</span> 
-<span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">1</span>    <span class="number">1</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">1</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">1</span>    <span class="number">0</span>    <span class="number">19</span>   <span class="number">0</span>    <span class="number">1</span>    <span class="number">775</span>  <span class="number">0</span>    <span class="number">0</span>     |  <span class="number">799</span>   r     = alt<span class="preprocessor">.atheism</span> 
-<span class="number">1</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">3</span>    <span class="number">1</span>    <span class="number">2</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">3</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">5</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">957</span>  <span class="number">0</span>     |  <span class="number">972</span>   s     = misc<span class="preprocessor">.forsale</span> 
-<span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">8</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">6</span>    <span class="number">0</span>    <span class="number">6</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">10</span>   <span class="number">955</span>   |  <span class="number">985</span>   t     = comp<span class="preprocessor">.os</span><span class="preprocessor">.ms</span>-windows<span class="preprocessor">.misc</span> 
-</code></pre><p>这个混合矩阵的意思说明： 上述a到t分别是代表了有20类别，这就是我们之前给的20个输入文件，列中的数据说明每个类别中被分配到的字节个数，classified说明应该被分配到的总数<br>    994  0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0   |  994  a     = rec.motorcycles<br>意思为rec.motorcycles 本来是属于 a，有381篇文档被划为了a类，这个是正确的数据，其它的分别表示划到 b~t类中的数目。我们可以看到其正确率为 994/994=1,可见其正确率还是很高的了。</p>
-]]></content>
-    
-    
-      <category term="Hadoop" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/Hadoop/"/>
-    
-      <category term="Mahout" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/Mahout/"/>
-    
-      <category term="Hadoop" scheme="https://github.com/DaMinger/DaMinger.github.io.git/categories/Hadoop/"/>
-    
-  </entry>
-  
-  <entry>
-    <title><![CDATA[Mahout的初步体验]]></title>
-    <link href="https://github.com/DaMinger/DaMinger.github.io.git/2014/05/08/Hadoop/mahout_1/"/>
-    <id>https://github.com/DaMinger/DaMinger.github.io.git/2014/05/08/Hadoop/mahout_1/</id>
-    <published>2014-05-08T00:19:47.000Z</published>
-    <updated>2014-05-08T00:37:40.000Z</updated>
-    <content type="html"><![CDATA[<h3 id="下载解压Mahout">下载解压Mahout</h3>
-<pre><code>[grid@hadoop01 ~]$ ls
-access_log<span class="preprocessor">.txt</span>                 Documents                       Music                  Public
-apache-ant-<span class="number">1.9</span><span class="number">.3</span>               Downloads                       Pictures               score<span class="preprocessor">.txt</span>
-apache-ant-<span class="number">1.9</span><span class="number">.3</span>-bin<span class="preprocessor">.tar</span><span class="preprocessor">.gz</span>    hadoop-<span class="number">1.2</span><span class="number">.1</span>                    pig-<span class="number">0.12</span><span class="number">.1</span>             share
-apache-hive-<span class="number">0.13</span><span class="number">.0</span>-bin         hadoop-<span class="number">1.2</span><span class="number">.1</span><span class="preprocessor">.tar</span><span class="preprocessor">.gz</span>             pig-<span class="number">0.12</span><span class="number">.1</span><span class="preprocessor">.tar</span><span class="preprocessor">.gz</span>      Templates
-apache-hive-<span class="number">0.13</span><span class="number">.0</span>-bin<span class="preprocessor">.tar</span><span class="preprocessor">.gz</span>  input                           pig_1398238654807<span class="preprocessor">.log</span>  Videos
-Desktop                        mahout-distribution-<span class="number">0.6</span><span class="preprocessor">.tar</span><span class="preprocessor">.gz</span>  pig_1398239586082<span class="preprocessor">.log</span>  workspace
-[grid@hadoop01 ~]$ tar -xzvf mahout-distribution-<span class="number">0.6</span><span class="preprocessor">.tar</span><span class="preprocessor">.gz</span>
-[grid@hadoop01 ~]$ ls
-access_log<span class="preprocessor">.txt</span>                 Downloads                       Pictures               share
-apache-ant-<span class="number">1.9</span><span class="number">.3</span>               hadoop-<span class="number">1.2</span><span class="number">.1</span>                    pig-<span class="number">0.12</span><span class="number">.1</span>             Templates
-apache-ant-<span class="number">1.9</span><span class="number">.3</span>-bin<span class="preprocessor">.tar</span><span class="preprocessor">.gz</span>    hadoop-<span class="number">1.2</span><span class="number">.1</span><span class="preprocessor">.tar</span><span class="preprocessor">.gz</span>             pig-<span class="number">0.12</span><span class="number">.1</span><span class="preprocessor">.tar</span><span class="preprocessor">.gz</span>      Videos
-apache-hive-<span class="number">0.13</span><span class="number">.0</span>-bin         input                           pig_1398238654807<span class="preprocessor">.log</span>  workspace
-apache-hive-<span class="number">0.13</span><span class="number">.0</span>-bin<span class="preprocessor">.tar</span><span class="preprocessor">.gz</span>  mahout-distribution-<span class="number">0.6</span>         pig_1398239586082<span class="preprocessor">.log</span>
-Desktop                        mahout-distribution-<span class="number">0.6</span><span class="preprocessor">.tar</span><span class="preprocessor">.gz</span>  Public
-Documents                      Music                           score<span class="preprocessor">.txt</span>
-</code></pre><h3 id="配置环境变量">配置环境变量</h3>
-<pre><code>[<span class="keyword">grid</span><span class="variable">@hadoop01</span> ~]<span class="variable">$vi</span> .bash_profile 
-PATH=<span class="variable">$PATH</span>:/home/<span class="keyword">grid</span>/hadoop-<span class="number">1.2</span><span class="number">.1</span>:/bin:/home/<span class="keyword">grid</span>/pig-<span class="number">0.12</span><span class="number">.1</span>/bin:<span class="variable">$HOME</span>/bin
-JAVA_HOME=/usr/jdk1<span class="number">.7</span><span class="number">.0</span>_51
-PIG_CLASSPATH=/home/<span class="keyword">grid</span>/hadoop-<span class="number">1.2</span><span class="number">.1</span>/conf/
-MAHOUT_HOME=/home/<span class="keyword">grid</span>/mahout-distribution-<span class="number">0.6</span>
-MAHOUT_CONF_DIR=/home/<span class="keyword">grid</span>/mahout-distribution-<span class="number">0.6</span>/conf
-PATH=<span class="variable">$PATH</span>:<span class="variable">$MAHOUT_HOME</span>/conf:<span class="variable">$MAHOUT_HOME</span>/bin
-export MAHOUT_HOME
-export MAHOUT_CONF_DIR
-export PIG_CLASSPATH
-export PATH
-export JAVA_HOME
-[<span class="keyword">grid</span><span class="variable">@hadoop01</span> ~]$ <span class="keyword">source</span>  .bash_profile  
-</code></pre><h3 id="启动hadoop">启动hadoop</h3>
-<h3 id="检验Mohout是否安装成功">检验Mohout是否安装成功</h3>
-<pre><code>[grid<span class="variable">@hadoop01</span> mahout-distribution-<span class="number">0</span>.<span class="number">6</span>]<span class="variable">$ </span>bin/mahout 
-看到一些算法就<span class="constant">OK</span>了
-</code></pre><h3 id="利用Mohout运行一个简单的k-means算法">利用Mohout运行一个简单的k-means算法</h3>
-<p><a href="http://www.cnblogs.com/leoo2sk/archive/2010/09/20/k-means.html" target="_blank">关于Kmeans的详解</a></p>
-<h4 id="下载数据">下载数据</h4>
-<p>下载一个文件synthetic_control.data，<a href="http://archive.ics.uci.edu/ml/databases/synthetic_control/synthetic_control.data" target="_blank">下载地址</a>,并把这个文件放在$MAHOUT_HOME目录下</p>
-<h4 id="上传数据">上传数据</h4>
-<pre><code>[<span class="keyword">grid</span><span class="variable">@hadoop01</span> mahout-distribution-<span class="number">0.6</span>]$ hadoop fs -mkdir testdata
-Warning: <span class="variable">$HADOOP_HOME</span> is deprecated.
-
-[<span class="keyword">grid</span><span class="variable">@hadoop01</span> mahout-distribution-<span class="number">0.6</span>]$ hadoop fs -put /home/<span class="keyword">grid</span>/mahout-distribution-<span class="number">0.6</span>/synthetic_control.data  testdata
-[<span class="keyword">grid</span><span class="variable">@hadoop01</span> mahout-distribution-<span class="number">0.6</span>]$ hadoop fs -<span class="keyword">ls</span>  ./testdata
-Warning: <span class="variable">$HADOOP_HOME</span> is deprecated.
-
-Found <span class="number">1</span> items
--rw-r--r--   <span class="number">2</span> <span class="keyword">grid</span> supergroup     <span class="number">288374</span> <span class="number">2014</span>-<span class="number">05</span>-<span class="number">07</span> <span class="number">16</span>:<span class="number">49</span> /user/<span class="keyword">grid</span>/testdata/synthetic_control.data
-</code></pre><h4 id="运行k-means算法">运行k-means算法</h4>
-<pre><code>[grid@hadoop01 mahout-distribution-<span class="number">0.6</span>]$ mahout org<span class="preprocessor">.apache</span><span class="preprocessor">.mahout</span><span class="preprocessor">.clustering</span><span class="preprocessor">.syntheticcontrol</span><span class="preprocessor">.kmeans</span><span class="preprocessor">.Job</span>
-等待一会
-最后屏幕刷出结果（部分）
-<span class="number">1.0</span> : [distance=<span class="number">28.040983886281218</span>]: [<span class="number">30.461</span>, <span class="number">29.172</span>, <span class="number">32.510</span>, <span class="number">29.727</span>, <span class="number">23.834</span>, <span class="number">26.091</span>, <span class="number">23.735</span>, <span class="number">23.111</span>, <span class="number">31.726</span>, <span class="number">22.930</span>, <span class="number">31.051</span>, <span class="number">23.321</span>, <span class="number">27.188</span>, <span class="number">18.231</span>, <span class="number">22.951</span>, <span class="number">21.944</span>, <span class="number">25.388</span>, <span class="number">26.809</span>, <span class="number">20.733</span>, <span class="number">16.576</span>, <span class="number">23.558</span>, <span class="number">20.733</span>, <span class="number">18.346</span>, <span class="number">24.153</span>, <span class="number">16.649</span>, <span class="number">16.234</span>, <span class="number">17.985</span>, <span class="number">11.772</span>, <span class="number">19.873</span>, <span class="number">19.622</span>, <span class="number">19.365</span>, <span class="number">14.608</span>, <span class="number">11.265</span>, <span class="number">20.604</span>, <span class="number">11.180</span>, <span class="number">18.643</span>, <span class="number">14.246</span>, <span class="number">10.830</span>, <span class="number">7.235</span>, <span class="number">10.194</span>, <span class="number">16.731</span>, <span class="number">11.470</span>, <span class="number">7.311</span>, <span class="number">10.611</span>, <span class="number">6.924</span>, <span class="number">3.440</span>, <span class="number">9.465</span>, <span class="number">4.764</span>, <span class="number">2.838</span>, <span class="number">8.807</span>, <span class="number">1.960</span>, <span class="number">2.864</span>, <span class="number">6.728</span>, <span class="number">0.369</span>, <span class="number">1.374</span>, -<span class="number">0.167</span>, <span class="number">2.125</span>, <span class="number">8.306</span>, <span class="number">4.908</span>, -<span class="number">0.432</span>]
-        <span class="number">1.0</span> : [distance=<span class="number">26.945992695091952</span>]: [<span class="number">30.817</span>, <span class="number">28.079</span>, <span class="number">24.628</span>, <span class="number">23.933</span>, <span class="number">28.660</span>, <span class="number">25.704</span>, <span class="number">27.501</span>, <span class="number">23.513</span>, <span class="number">30.377</span>, <span class="number">27.595</span>, <span class="number">22.938</span>, <span class="number">26.684</span>, <span class="number">25.208</span>, <span class="number">26.834</span>, <span class="number">22.931</span>, <span class="number">17.732</span>, <span class="number">17.544</span>, <span class="number">24.167</span>, <span class="number">25.602</span>, <span class="number">19.269</span>, <span class="number">14.978</span>, <span class="number">17.223</span>, <span class="number">18.962</span>, <span class="number">22.281</span>, <span class="number">17.035</span>, <span class="number">23.789</span>, <span class="number">14.878</span>, <span class="number">18.113</span>, <span class="number">10.981</span>, <span class="number">11.661</span>, <span class="number">14.331</span>, <span class="number">19.942</span>, <span class="number">11.175</span>, <span class="number">10.714</span>, <span class="number">15.675</span>, <span class="number">15.468</span>, <span class="number">16.010</span>, <span class="number">14.972</span>, <span class="number">15.101</span>, <span class="number">15.131</span>, <span class="number">15.154</span>, <span class="number">10.492</span>, <span class="number">14.754</span>, <span class="number">5.222</span>, <span class="number">5.393</span>, <span class="number">13.606</span>, <span class="number">11.775</span>, <span class="number">6.307</span>, <span class="number">3.370</span>, <span class="number">10.107</span>, <span class="number">7.779</span>, <span class="number">10.209</span>, <span class="number">1.493</span>, <span class="number">4.822</span>, <span class="number">0.019</span>, <span class="number">8.019</span>, -<span class="number">0.279</span>, -<span class="number">0.049</span>, <span class="number">5.757</span>, <span class="number">2.718</span>]
-        <span class="number">1.0</span> : [distance=<span class="number">25.05284328269594</span>]: [<span class="number">31.347</span>, <span class="number">28.245</span>, <span class="number">34.275</span>, <span class="number">29.885</span>, <span class="number">30.573</span>, <span class="number">32.373</span>, <span class="number">24.031</span>, <span class="number">24.057</span>, <span class="number">24.099</span>, <span class="number">23.777</span>, <span class="number">28.993</span>, <span class="number">29.853</span>, <span class="number">26.485</span>, <span class="number">29.245</span>, <span class="number">28.145</span>, <span class="number">22.528</span>, <span class="number">20.390</span>, <span class="number">20.570</span>, <span class="number">27.921</span>, <span class="number">18.786</span>, <span class="number">22.144</span>, <span class="number">20.163</span>, <span class="number">17.616</span>, <span class="number">19.541</span>, <span class="number">20.342</span>, <span class="number">22.061</span>, <span class="number">21.358</span>, <span class="number">23.951</span>, <span class="number">13.447</span>, <span class="number">12.974</span>, <span class="number">18.406</span>, <span class="number">17.349</span>, <span class="number">17.425</span>, <span class="number">11.041</span>, <span class="number">14.912</span>, <span class="number">10.147</span>, <span class="number">16.731</span>, <span class="number">9.845</span>, <span class="number">14.840</span>, <span class="number">18.283</span>, <span class="number">18.426</span>, <span class="number">10.059</span>, <span class="number">16.760</span>, <span class="number">14.187</span>, <span class="number">14.301</span>, <span class="number">14.277</span>, <span class="number">12.823</span>, <span class="number">15.574</span>, <span class="number">10.789</span>, <span class="number">10.957</span>, <span class="number">8.361</span>, <span class="number">4.116</span>, <span class="number">3.732</span>, <span class="number">3.508</span>, <span class="number">2.288</span>, <span class="number">9.768</span>, <span class="number">9.661</span>, <span class="number">2.183</span>, <span class="number">6.933</span>, <span class="number">4.670</span>]
-        <span class="number">1.0</span> : [distance=<span class="number">25.150872291523466</span>]: [<span class="number">26.273</span>, <span class="number">31.229</span>, <span class="number">29.741</span>, <span class="number">34.208</span>, <span class="number">33.329</span>, <span class="number">33.610</span>, <span class="number">31.072</span>, <span class="number">22.530</span>, <span class="number">28.587</span>, <span class="number">21.130</span>, <span class="number">23.557</span>, <span class="number">28.078</span>, <span class="number">27.546</span>, <span class="number">25.825</span>, <span class="number">18.454</span>, <span class="number">25.903</span>, <span class="number">24.448</span>, <span class="number">24.003</span>, <span class="number">23.199</span>, <span class="number">22.158</span>, <span class="number">17.711</span>, <span class="number">23.922</span>, <span class="number">20.550</span>, <span class="number">15.913</span>, <span class="number">17.699</span>, <span class="number">13.883</span>, <span class="number">17.494</span>, <span class="number">16.360</span>, <span class="number">20.679</span>, <span class="number">11.790</span>, <span class="number">18.424</span>, <span class="number">10.493</span>, <span class="number">11.001</span>, <span class="number">17.994</span>, <span class="number">11.673</span>, <span class="number">11.014</span>, <span class="number">11.437</span>, <span class="number">16.197</span>, <span class="number">16.435</span>, <span class="number">7.331</span>, <span class="number">15.089</span>, <span class="number">16.779</span>, <span class="number">14.449</span>, <span class="number">9.551</span>, <span class="number">11.331</span>, <span class="number">10.564</span>, <span class="number">5.992</span>, <span class="number">8.369</span>, <span class="number">11.402</span>, <span class="number">7.865</span>, <span class="number">2.526</span>, <span class="number">4.632</span>, <span class="number">9.335</span>, <span class="number">6.772</span>, <span class="number">3.018</span>, <span class="number">3.675</span>, <span class="number">0.455</span>, <span class="number">5.362</span>, <span class="number">6.945</span>, <span class="number">7.901</span>]
-        <span class="number">1.0</span> : [distance=<span class="number">29.28744984720542</span>]: [<span class="number">26.148</span>, <span class="number">30.828</span>, <span class="number">27.122</span>, <span class="number">31.797</span>, <span class="number">26.812</span>, <span class="number">24.681</span>, <span class="number">31.379</span>, <span class="number">22.047</span>, <span class="number">22.034</span>, <span class="number">24.293</span>, <span class="number">30.875</span>, <span class="number">22.493</span>, <span class="number">30.889</span>, <span class="number">19.167</span>, <span class="number">19.199</span>, <span class="number">27.696</span>, <span class="number">17.370</span>, <span class="number">27.648</span>, <span class="number">23.842</span>, <span class="number">26.493</span>, <span class="number">23.635</span>, <span class="number">23.577</span>, <span class="number">20.884</span>, <span class="number">18.786</span>, <span class="number">18.898</span>, <span class="number">18.091</span>, <span class="number">22.021</span>, <span class="number">20.674</span>, <span class="number">23.890</span>, <span class="number">12.646</span>, <span class="number">18.448</span>, <span class="number">17.732</span>, <span class="number">17.897</span>, <span class="number">14.679</span>, <span class="number">13.598</span>, <span class="number">12.689</span>, <span class="number">19.832</span>, <span class="number">12.489</span>, <span class="number">9.745</span>, <span class="number">18.990</span>, <span class="number">18.820</span>, <span class="number">16.517</span>, <span class="number">12.024</span>, <span class="number">14.131</span>, <span class="number">13.394</span>, <span class="number">15.473</span>, <span class="number">11.140</span>, <span class="number">5.094</span>, <span class="number">15.265</span>, <span class="number">14.651</span>, <span class="number">8.299</span>, <span class="number">3.163</span>, <span class="number">12.039</span>, <span class="number">4.893</span>, <span class="number">7.552</span>, <span class="number">12.315</span>, <span class="number">9.581</span>, <span class="number">5.462</span>, <span class="number">2.984</span>, <span class="number">8.981</span>]
-<span class="number">14</span>/<span class="number">05</span>/<span class="number">07</span> <span class="number">17</span>:<span class="number">10</span>:<span class="number">13</span> INFO clustering<span class="preprocessor">.ClusterDumper</span>: Wrote <span class="number">6</span> clusters
-<span class="number">14</span>/<span class="number">05</span>/<span class="number">07</span> <span class="number">17</span>:<span class="number">10</span>:<span class="number">13</span> INFO driver<span class="preprocessor">.MahoutDriver</span>: Program took <span class="number">456695</span> ms (Minutes: <span class="number">7.611583333333333</span>)
-</code></pre><h4 id="看到一系列clusters，就算成功">看到一系列clusters，就算成功</h4>
-<pre><code>[<span class="keyword">grid</span><span class="variable">@hadoop01</span> ~]$ hadoop fs -<span class="keyword">ls</span> ./output
-Warning: <span class="variable">$HADOOP_HOME</span> is deprecated.
-
-Found <span class="number">13</span> items
-drwxr-xr-x   - <span class="keyword">grid</span> supergroup          <span class="number">0</span> <span class="number">2014</span>-<span class="number">05</span>-<span class="number">07</span> <span class="number">17</span>:<span class="number">10</span> /user/<span class="keyword">grid</span>/output/clusteredPoints
-drwxr-xr-x   - <span class="keyword">grid</span> supergroup          <span class="number">0</span> <span class="number">2014</span>-<span class="number">05</span>-<span class="number">07</span> <span class="number">17</span>:<span class="number">03</span> /user/<span class="keyword">grid</span>/output/clusters-<span class="number">0</span>
-drwxr-xr-x   - <span class="keyword">grid</span> supergroup          <span class="number">0</span> <span class="number">2014</span>-<span class="number">05</span>-<span class="number">07</span> <span class="number">17</span>:<span class="number">03</span> /user/<span class="keyword">grid</span>/output/clusters-<span class="number">1</span>
-drwxr-xr-x   - <span class="keyword">grid</span> supergroup          <span class="number">0</span> <span class="number">2014</span>-<span class="number">05</span>-<span class="number">07</span> <span class="number">17</span>:<span class="number">09</span> /user/<span class="keyword">grid</span>/output/clusters-<span class="number">10</span>-final
-drwxr-xr-x   - <span class="keyword">grid</span> supergroup          <span class="number">0</span> <span class="number">2014</span>-<span class="number">05</span>-<span class="number">07</span> <span class="number">17</span>:<span class="number">04</span> /user/<span class="keyword">grid</span>/output/clusters-<span class="number">2</span>
-drwxr-xr-x   - <span class="keyword">grid</span> supergroup          <span class="number">0</span> <span class="number">2014</span>-<span class="number">05</span>-<span class="number">07</span> <span class="number">17</span>:<span class="number">05</span> /user/<span class="keyword">grid</span>/output/clusters-<span class="number">3</span>
-drwxr-xr-x   - <span class="keyword">grid</span> supergroup          <span class="number">0</span> <span class="number">2014</span>-<span class="number">05</span>-<span class="number">07</span> <span class="number">17</span>:<span class="number">05</span> /user/<span class="keyword">grid</span>/output/clusters-<span class="number">4</span>
-drwxr-xr-x   - <span class="keyword">grid</span> supergroup          <span class="number">0</span> <span class="number">2014</span>-<span class="number">05</span>-<span class="number">07</span> <span class="number">17</span>:<span class="number">06</span> /user/<span class="keyword">grid</span>/output/clusters-<span class="number">5</span>
-drwxr-xr-x   - <span class="keyword">grid</span> supergroup          <span class="number">0</span> <span class="number">2014</span>-<span class="number">05</span>-<span class="number">07</span> <span class="number">17</span>:<span class="number">07</span> /user/<span class="keyword">grid</span>/output/clusters-<span class="number">6</span>
-drwxr-xr-x   - <span class="keyword">grid</span> supergroup          <span class="number">0</span> <span class="number">2014</span>-<span class="number">05</span>-<span class="number">07</span> <span class="number">17</span>:<span class="number">07</span> /user/<span class="keyword">grid</span>/output/clusters-<span class="number">7</span>
-drwxr-xr-x   - <span class="keyword">grid</span> supergroup          <span class="number">0</span> <span class="number">2014</span>-<span class="number">05</span>-<span class="number">07</span> <span class="number">17</span>:<span class="number">08</span> /user/<span class="keyword">grid</span>/output/clusters-<span class="number">8</span>
-drwxr-xr-x   - <span class="keyword">grid</span> supergroup          <span class="number">0</span> <span class="number">2014</span>-<span class="number">05</span>-<span class="number">07</span> <span class="number">17</span>:<span class="number">08</span> /user/<span class="keyword">grid</span>/output/clusters-<span class="number">9</span>
-drwxr-xr-x   - <span class="keyword">grid</span> supergroup          <span class="number">0</span> <span class="number">2014</span>-<span class="number">05</span>-<span class="number">07</span> <span class="number">17</span>:<span class="number">03</span> /user/<span class="keyword">grid</span>/output/data
-[<span class="keyword">grid</span><span class="variable">@hadoop01</span> ~]$ 
-</code></pre>]]></content>
-    
-    
-      <category term="Hadoop" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/Hadoop/"/>
-    
-      <category term="Mahout" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/Mahout/"/>
-    
-      <category term="Hadoop" scheme="https://github.com/DaMinger/DaMinger.github.io.git/categories/Hadoop/"/>
-    
-  </entry>
-  
-  <entry>
-    <title><![CDATA[Linux下进程与线程]]></title>
-    <link href="https://github.com/DaMinger/DaMinger.github.io.git/2014/05/04/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/process/"/>
-    <id>https://github.com/DaMinger/DaMinger.github.io.git/2014/05/04/操作系统/process/</id>
-    <published>2014-05-04T12:12:50.000Z</published>
-    <updated>2014-05-04T12:49:57.000Z</updated>
-    <content type="html"><![CDATA[<h3 id="进程">进程</h3>
-<p>进程是程序执行时的一个实例，即它是程序已经执行到课中程度的数据结构的汇集。从内核的观点看，进程的目的就是担当分配系统资源（CPU时间、内存等）的基本单位。</p>
-<h3 id="线程">线程</h3>
-<p>线程是进程的一个执行流，是CPU调度和分派的基本单位，它是比进程更小的能独立运行的基本单位。一个进程由几个线程组成（拥有很多相对独立的执行流的用户程序共享应用程序的大部分数据结构），线程与同属一个进程的其他的线程共享进程所拥有的全部资源。</p>
-<p>进程——资源分配的最小单位，线程——程序执行的最小单位</p>
-<h4 id="例如：">例如：</h4>
-<p>假设用户启动了一个窗口中的数据库应用程序，操作系统就将对数据库的调用表示为一个进程。假设用户要从数据库中产生一份工资单报表，并传到一个文件中，这是一个子任务；在产生工资单报表的过程中，用户又可以输人数据库查询请求，这又是一个子任务。这样，操作系统则把每一个请求――工资单报表和新输人的数据查询表示为数据库进程中的独立的线程。</p>
-<p>线程可以在处理器上独立调度执行，这样，在多处理器环境下就允许几个线程各自在单独处理器上进行。操作系统提供线程就是为了方便而有效地实现这种并发性。</p>
-<h3 id="引入线程的好处">引入线程的好处</h3>
-<p>易于调度。</p>
-<p>提高并发性。通过线程可方便有效地实现并发性。进程可创建多个线程来执行同一程序的不同部分。</p>
-<p>开销少。创建线程比创建进程要快，所需开销很少。</p>
-<p>利于充分发挥多处理器的功能。通过创建多线程进程，每个线程在一个处理器上运行，从而实现应用程序的并发性，使每个处理器都得到充分运行。</p>
-<h3 id="线程的基本状态">线程的基本状态</h3>
-<p>就绪：调用线程的start方法后线程进入就绪状态</p>
-<p>阻塞：线程调度系统将就绪状态的线程转为运行状态</p>
-<p>运行：遇到synchronized语句时，由运行状态转为阻塞</p>
-<p>结束：当线程关联的代码执行完后，线程变为结束状态</p>
-<h3 id="进程与线程的区别">进程与线程的区别</h3>
-<p>进程有独立的地址空间，一个进程崩溃后，在保护模式下不会对其它进程产生影响，而线程只是一个进程中的不同执行路径。线程有自己的堆栈和局部变量，但线程没有单独的地址空间，一个线程死掉就等于整个进程死掉，所以多进程的程序要比多线程的程序健壮，但在进程切换时，耗费资源较大，效率要差一些。但对于一些要求同时进行并且又要共享某些变量的并发操作，只能用线程，不能用进程。</p>
-<p>总的来说就是：进程有独立的地址空间，线程没有单独的地址空间（同一进程内的线程共享进程的地址空间）。</p>
-<h3 id="多线程有几种实现方法">多线程有几种实现方法</h3>
-<p>多线程有两种实现方法。一种是继承Thread类，一种是实现Runnable接口。<br>同步有两种方法。一种同步方法，一种同步代码。分别是synchronized，wait与notify</p>
-<h3 id="多线程同步和互斥异同">多线程同步和互斥异同</h3>
-<p>线程同步是指线程之间所具有的一种制约关系，一个线程的执行依赖另一个线程的消息，当它没有得到另一个线程的消息时应等待，直到消息到达时才被唤醒。</p>
-<p>线程互斥是指对于共享的进程系统资源，在各单个线程访问时的排它性。当有若干个线程都要使用某一共享资源时，任何时刻最多只允许一个线程去使用，其它要使用该资源的线程必须等待，直到占用资源者释放该资源。线程互斥可以看成是一种特殊的线程同步。</p>
-]]></content>
-    
-    
-      <category term="进程与线程" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/%E8%BF%9B%E7%A8%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B/"/>
-    
-      <category term="操作系统" scheme="https://github.com/DaMinger/DaMinger.github.io.git/categories/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/"/>
-    
-  </entry>
-  
-  <entry>
-    <title><![CDATA[Hive与Mysql本地安装]]></title>
-    <link href="https://github.com/DaMinger/DaMinger.github.io.git/2014/04/24/Hadoop/hadoop_hive&mysql/"/>
-    <id>https://github.com/DaMinger/DaMinger.github.io.git/2014/04/24/Hadoop/hadoop_hive&mysql/</id>
-    <published>2014-04-24T10:49:28.000Z</published>
-    <updated>2014-04-24T11:59:03.000Z</updated>
-    <content type="html"><![CDATA[<h5 id="解压hive包">解压hive包</h5>
-<pre><code>[grid<span class="variable">@hadoop01</span> ~]<span class="variable">$ </span>tar -xzvf apache-hive-<span class="number">0</span>.<span class="number">13.0</span>-bin.tar.gz 
-</code></pre><h5 id="配置环境变量">配置环境变量</h5>
-<pre><code>[root@hadoop01 apache-hive-<span class="number">0.13</span>.<span class="number">0</span>-bin]<span class="comment"># cat /etc/profile</span>
-<span class="keyword">export</span> JAVA_HOME=/usr/jdk1.<span class="number">7.0</span>_51
-<span class="keyword">export</span> HADOOP_FREFIX=/home/grid/hadoop-<span class="number">1.2</span>.<span class="number">1</span>
-<span class="keyword">export</span> HADOOP_COMMON_HOME=<span class="variable">${HADOOP_FREFIX}</span>
-<span class="keyword">export</span> HADOOP_CONF_DIR=<span class="variable">${HADOOP_FREFIX}</span>/conf
-<span class="keyword">export</span> CLASSPATH=.:<span class="variable">$JAVA_HOME</span>/lib:<span class="variable">$JAVA_HOME</span>/lib/tools.jar
-<span class="keyword">export</span> PATH=<span class="variable">$JAVA_HOME</span>/bin:<span class="variable">${HADOOP_FREFIX}</span>/bin:<span class="variable">${HADOOP_FREFIX}</span>/sbin:<span class="variable">$PATH</span>
-<span class="keyword">export</span> HADOOP_HOME=/home/grid/hadoop-<span class="number">1.2</span>.<span class="number">1</span>
-<span class="keyword">export</span> PATH=/home/grid/apache-ant-<span class="number">1.9</span>.<span class="number">3</span>/bin:<span class="variable">$PATH</span>
-<span class="keyword">export</span> HIVE_HOME=/home/grid/apache-hive-<span class="number">0.13</span>.<span class="number">0</span>-bin
-<span class="keyword">export</span> PATH=<span class="variable">$HIVE_HOME</span>/bin:<span class="variable">$PATH</span>
-[root@hadoop01 apache-hive-<span class="number">0.13</span>.<span class="number">0</span>-bin]<span class="comment"># source  /etc/profile</span>
-</code></pre><h5 id="更改配置文件">更改配置文件</h5>
-<pre><code>[grid@hadoop01 conf]$ cp hive-env.sh.template  hive-env.sh
-[grid@hadoop01 conf]$ vi hive-env.sh
-HADOOP_HOME=/home/grid/hadoop-1.2.1
-[grid@hadoop01 conf]$ cp hive-default.xml.template hive-site.xml
-<span class="tag">&lt;<span class="title">property</span>&gt;</span>
-    <span class="tag">&lt;<span class="title">name</span>&gt;</span>hive.metastore.warehouse.dir<span class="tag">&lt;/<span class="title">name</span>&gt;</span>
-    <span class="tag">&lt;<span class="title">value</span>&gt;</span>/home/grid/apache-hive-0.13.0-bin/warehouse<span class="tag">&lt;/<span class="title">value</span>&gt;</span>
-<span class="tag">&lt;<span class="title">description</span>&gt;</span>location of default database for the warehouse<span class="tag">&lt;/<span class="title">description</span>&gt;</span>
-<span class="tag">&lt;/<span class="title">property</span>&gt;</span>
-<span class="tag">&lt;<span class="title">property</span>&gt;</span>
-  <span class="tag">&lt;<span class="title">name</span>&gt;</span>hive.exec.scratchdir<span class="tag">&lt;/<span class="title">name</span>&gt;</span>
-  <span class="tag">&lt;<span class="title">value</span>&gt;</span>/home/grid/apache-hive-0.13.0-bin/temp<span class="tag">&lt;/<span class="title">value</span>&gt;</span>
-  <span class="tag">&lt;<span class="title">description</span>&gt;</span>Scratch space for Hive jobs<span class="tag">&lt;/<span class="title">description</span>&gt;</span>
-  <span class="tag">&lt;/<span class="title">property</span>&gt;</span>
-    <span class="tag">&lt;<span class="title">property</span>&gt;</span>
-          <span class="tag">&lt;<span class="title">name</span>&gt;</span>javax.jdo.option.ConnectionURL<span class="tag">&lt;/<span class="title">name</span>&gt;</span>
-         <span class="tag">&lt;<span class="title">value</span>&gt;</span> jdbc:mysql://localhost:3306/hive?createDatabaseIfNotExist=true <span class="tag">&lt;/<span class="title">value</span>&gt;</span>
-<span class="tag">&lt;/<span class="title">property</span>&gt;</span>
-    <span class="tag">&lt;<span class="title">property</span>&gt;</span>
-         <span class="tag">&lt;<span class="title">name</span>&gt;</span>javax.jdo.option.ConnectionDriverName<span class="tag">&lt;/<span class="title">name</span>&gt;</span>
-         <span class="tag">&lt;<span class="title">value</span>&gt;</span>com.mysql.jdbc.Driver<span class="tag">&lt;/<span class="title">value</span>&gt;</span>
- <span class="tag">&lt;/<span class="title">property</span>&gt;</span>
-    <span class="tag">&lt;<span class="title">property</span>&gt;</span>
-         <span class="tag">&lt;<span class="title">name</span>&gt;</span>javax.jdo.option.ConnectionUserName<span class="tag">&lt;/<span class="title">name</span>&gt;</span>
-          <span class="tag">&lt;<span class="title">value</span>&gt;</span>hive<span class="tag">&lt;/<span class="title">value</span>&gt;</span>
- <span class="tag">&lt;/<span class="title">property</span>&gt;</span>
-    <span class="tag">&lt;<span class="title">property</span>&gt;</span>
-          <span class="tag">&lt;<span class="title">name</span>&gt;</span>javax.jdo.option.ConnectionPassword<span class="tag">&lt;/<span class="title">name</span>&gt;</span>
-          <span class="tag">&lt;<span class="title">value</span>&gt;</span>hive <span class="tag">&lt;/<span class="title">value</span>&gt;</span>
-<span class="tag">&lt;/<span class="title">property</span>&gt;</span>
-<span class="tag">&lt;<span class="title">property</span>&gt;</span>
-<span class="tag">&lt;<span class="title">name</span>&gt;</span>hive.metastore.schema.verification<span class="tag">&lt;/<span class="title">name</span>&gt;</span>
-<span class="tag">&lt;<span class="title">value</span>&gt;</span>false<span class="tag">&lt;/<span class="title">value</span>&gt;</span>
-<span class="tag">&lt;<span class="title">description</span>&gt;</span>
-<span class="tag">&lt;/<span class="title">description</span>&gt;</span>
-<span class="tag">&lt;/<span class="title">property</span>&gt;</span>
-</code></pre><h6 id="这里有技巧">这里有技巧</h6>
-<p>例如在一个文件里面有几千行，这样查找：</p>
-<pre><code>[grid@hadoop01 conf]$ cat hive-site<span class="preprocessor">.xml</span> |grep -n hive<span class="preprocessor">.metastore</span><span class="preprocessor">.schema</span><span class="preprocessor">.verification</span> 
-<span class="number">2371</span>:  &lt;name&gt;hive<span class="preprocessor">.metastore</span><span class="preprocessor">.schema</span><span class="preprocessor">.verification</span>&lt;/name&gt;
-vi  <span class="keyword">set</span> nu显示行号
-</code></pre><h5 id="加入连接器jar包">加入连接器jar包</h5>
-<p>lib文件夹缺少mysql的连接器mysql-connector-java-5.1.25-bin.jar,下载地址<a href="http://download.csdn.net/detail/xqj198404/6338973" target="_blank">http://download.csdn.net/detail/xqj198404/6338973</a> 将其放到hive的lib目录下</p>
-<h5 id="安装mysql">安装mysql</h5>
-<p>查看系统是否安装了MySQL，使用命令：</p>
-<pre><code><span class="preprocessor">#rpm -qa | grep mysql </span>
-</code></pre><h5 id="卸载已安装的MySQL">卸载已安装的MySQL</h5>
-<p>卸载mysql命令如下：</p>
-<pre><code><span class="variable">#rpm</span> <span class="attribute">-e</span> <span class="subst">--</span>nodeps  mysql<span class="attribute">-libs</span><span class="subst">-</span><span class="number">5.1</span><span class="number">.61</span><span class="subst">-</span><span class="number">4.</span>el6<span class="built_in">.</span>x86_64
-要将 /<span class="built_in">var</span>/lib/mysql文件夹下的所有文件都删除干净
-</code></pre><h5 id="安装MySQL">安装MySQL</h5>
-<p>安装顺序: 先安装服务器,然后再安装客户端。找到安装包所在位置，直接安装即可。</p>
-<pre><code>[root<span class="variable">@hadoop01</span> soft]<span class="comment"># rpm -ivh MySQL-server-5.5.37-1.linux2.6.x86_64.rpm </span>
-[root<span class="variable">@hadoop01</span> soft]<span class="comment"># rpm -ivh MySQL-client-5.5.37-1.linux2.6.x86_64.rpm </span>
-[root<span class="variable">@hadoop01</span> soft]<span class="comment"># /etc/init.d/mysql start</span>
-<span class="constant">Starting</span> <span class="constant">MySQL</span>...                                          [  <span class="constant">OK</span>  ]
-</code></pre><p>修改mysql配置文件并重启MySQL,安装完成后在/usr/share/mysql目录中会有一个mysql的启动脚本mysql.server及示例配置文件等(如my-huge.cnf、my-large.cnf、my-medium.cnf)，拷贝一个示例配置文件作为mysql的配置文件：</p>
-<pre><code>cp /usr/share/mysql/<span class="keyword">my</span>-medium.cnf /etc/<span class="keyword">my</span>.cnf
-[root<span class="variable">@hadoop01</span> mysql]<span class="comment"># /etc/init.d/mysql restart</span>
-Shutting down MySQL.                                       [  OK  ]
-Starting MySQL...                                          [  OK  ]
-[root<span class="variable">@hadoop01</span> mysql]<span class="comment"># </span>
-</code></pre><p>登陆mysql，下面给root用户设置密码</p>
-<pre><code>/usr/bin/mysqladmin <span class="attribute">-u</span> root password <span class="number">123456</span> 
-mysql <span class="attribute">-u</span> root <span class="attribute">-p</span> 
-Enter password: (输入修改后的密码<span class="number">123456</span>) <span class="built_in">.</span>
-mysql<span class="subst">&gt;</span>
-</code></pre><h5 id="创建hive元数据库及创建hive用户并授权">创建hive元数据库及创建hive用户并授权</h5>
-<h6 id="创建hive元数据库">创建hive元数据库</h6>
-<pre><code>mysql&gt; <span class="keyword">create</span> database hive;
-</code></pre><h6 id="对hive用户并授权,注意,此处的密码必须和hive-site-xml的javax-jdo-option-ConnectionPassword的密码相一致">对hive用户并授权,注意,此处的密码必须和hive-site.xml的javax.jdo.option.ConnectionPassword的密码相一致</h6>
-<pre><code>mysql<span class="subst">&gt;</span> grant <span class="literal">all</span> privileges <span class="keyword">on</span> hive<span class="built_in">.</span><span class="subst">*</span> <span class="keyword">to</span> <span class="string">'hive'</span>@<span class="string">'localhost'</span>  IDENTIFIED <span class="keyword">BY</span> <span class="string">"hive"</span>;
-mysql<span class="subst">&gt;</span> GRANT <span class="literal">ALL</span>  PRIVILEGES <span class="keyword">ON</span> hive<span class="built_in">.</span><span class="subst">*</span> <span class="keyword">TO</span> <span class="string">'hive'</span>@<span class="string">'%'</span> IDENTIFIED <span class="keyword">BY</span> <span class="string">'hive'</span>;
-mysql<span class="subst">&gt;</span> GRANT <span class="literal">ALL</span>  PRIVILEGES <span class="keyword">ON</span> hive<span class="built_in">.</span><span class="subst">*</span> <span class="keyword">TO</span> <span class="string">'hive'</span>@<span class="string">'localhost'</span> IDENTIFIED <span class="keyword">BY</span> <span class="string">'hive'</span>;
-mysql<span class="subst">&gt;</span> GRANT <span class="literal">ALL</span>  PRIVILEGES <span class="keyword">ON</span> hive<span class="built_in">.</span><span class="subst">*</span> <span class="keyword">TO</span> <span class="string">'hive'</span>@<span class="string">'127.0.0.1'</span> IDENTIFIED <span class="keyword">BY</span> <span class="string">'hive'</span>;
-mysql<span class="subst">&gt;</span> GRANT <span class="literal">ALL</span>  PRIVILEGES <span class="keyword">ON</span> hived<span class="built_in">.</span><span class="subst">*</span> <span class="keyword">TO</span> <span class="string">'hive'</span>@<span class="string">'192.168.255.151'</span> IDENTIFIED <span class="keyword">BY</span> <span class="string">'hive'</span>;
-mysql<span class="subst">&gt;</span>flush privileges;
-</code></pre><h5 id="查看hive用户是否已创建成功">查看hive用户是否已创建成功</h5>
-<pre><code>mysql&gt; use mysql;
-Database changed
-<span class="header">mysql&gt;  select Host,User,Password from user;
-+-----------+------+-------------------------------------------+</span>
-<span class="header">| Host      | User | Password                                  |
-+-----------+------+-------------------------------------------+</span>
-| %         | root | <span class="strong">*6BB4837EB74329105EE4568DDA7DC67ED2CA2AD9 |
-| master    | root |                                           |
-| 127.0.0.1 | root |                                           |
-| ::1       | root |                                           |
-| localhost | hive | *</span>4DF1D66463C18D44E3B001A8FB1BBFBEA13E27FC |
-<span class="code">+-----------+</span>------<span class="code">+-------------------------------------------+</span>
-5 rows in set (0.00 sec)
-</code></pre><h5 id="配置hadoop的hadoop-env-sh文件">配置hadoop的hadoop-env.sh文件</h5>
-<p>增加$HADOOP_CLASSPATH,要不然启动hive时会出错</p>
-<pre><code>export <span class="constant">HADOOP_CLASSPATH</span>=<span class="variable">$HADOOP_CLASSPATH</span><span class="symbol">:/home/grid/hadoop-</span><span class="number">1.2</span>.<span class="number">1</span>/myclass
-</code></pre><p>Hive调试技巧,打开调试可以看到详细错误信息</p>
-<pre><code>./hive -hiveconf hive<span class="preprocessor">.root</span><span class="preprocessor">.logger</span>=DEBUG,console  
-</code></pre><p>Hive简单操作</p>
-<pre><code>[grid@hadoop01 apache-hive-<span class="number">0.13</span><span class="number">.0</span>-bin]$ bin/hive
-<span class="number">14</span>/<span class="number">04</span>/<span class="number">24</span> <span class="number">16</span>:<span class="number">24</span>:<span class="number">23</span> WARN conf.HiveConf: DEPRECATED: hive.metastore.ds.retry.* no longer has any effect.  <span class="keyword">Use</span> hive.hmshandler.retry.* instead
-Logging initialized using <span class="keyword">configuration</span> <span class="keyword">in</span> jar:<span class="keyword">file</span>:/home/grid/apache-hive-<span class="number">0.13</span><span class="number">.0</span>-bin/lib/hive-common-<span class="number">0.13</span><span class="number">.0</span>.jar!/hive-log4j.properties
-hive&gt; show tables;
-OK
-<span class="typename">Time</span> taken: <span class="number">2.062</span> seconds
-hive&gt; create table hivetest(id int,name <span class="typename">string</span>);
-OK
-<span class="typename">Time</span> taken: <span class="number">0.962</span> seconds
-hive&gt; show tables;
-OK
-hivetest
-<span class="typename">Time</span> taken: <span class="number">0.084</span> seconds, Fetched: <span class="number">1</span> row(s)
-hive&gt; <span class="keyword">select</span> count(*) from hivetest;
-Total jobs = <span class="number">1</span>
-Launching Job <span class="number">1</span> <span class="keyword">out</span> <span class="keyword">of</span> <span class="number">1</span>
-Number <span class="keyword">of</span> reduce tasks determined at compile <span class="typename">time</span>: <span class="number">1</span>
-<span class="keyword">In</span> order <span class="keyword">to</span> change the average load <span class="keyword">for</span> a reducer (<span class="keyword">in</span> bytes):
-  set hive.exec.reducers.bytes.per.reducer=&lt;number&gt;
-<span class="keyword">In</span> order <span class="keyword">to</span> limit the maximum number <span class="keyword">of</span> reducers:
-  set hive.exec.reducers.max=&lt;number&gt;
-<span class="keyword">In</span> order <span class="keyword">to</span> set a <span class="keyword">constant</span> number <span class="keyword">of</span> reducers:
-  set mapred.reduce.tasks=&lt;number&gt;
-Starting Job = job_201404241623_0001, Tracking URL = http://hadoop01.myhadoop.com:<span class="number">50030</span>/jobdetails.jsp?jobid=job_201404241623_0001
-Kill Command = /home/grid/hadoop-<span class="number">1.2</span><span class="number">.1</span>/libexec/../bin/hadoop job  -kill job_201404241623_0001
-Hadoop job information <span class="keyword">for</span> Stage-<span class="number">1</span>: number <span class="keyword">of</span> mappers: <span class="number">0</span>; number <span class="keyword">of</span> reducers: <span class="number">1</span>
-<span class="number">2014</span>-<span class="number">04</span>-<span class="number">24</span> <span class="number">16</span>:<span class="number">28</span>:<span class="number">53</span>,<span class="number">414</span> Stage-<span class="number">1</span> <span class="keyword">map</span> = <span class="number">0</span>%,  reduce = <span class="number">0</span>%
-<span class="number">2014</span>-<span class="number">04</span>-<span class="number">24</span> <span class="number">16</span>:<span class="number">28</span>:<span class="number">59</span>,<span class="number">466</span> Stage-<span class="number">1</span> <span class="keyword">map</span> = <span class="number">0</span>%,  reduce = <span class="number">100</span>%, Cumulative CPU <span class="number">1.27</span> sec
-<span class="number">2014</span>-<span class="number">04</span>-<span class="number">24</span> <span class="number">16</span>:<span class="number">29</span>:<span class="number">04</span>,<span class="number">511</span> Stage-<span class="number">1</span> <span class="keyword">map</span> = <span class="number">100</span>%,  reduce = <span class="number">100</span>%, Cumulative CPU <span class="number">1.27</span> sec
-MapReduce Total cumulative CPU <span class="typename">time</span>: <span class="number">1</span> seconds <span class="number">270</span> msec
-Ended Job = job_201404241623_0001
-MapReduce Jobs Launched: 
-Job <span class="number">0</span>: Reduce: <span class="number">1</span>   Cumulative CPU: <span class="number">1.27</span> sec   HDFS Read: <span class="number">0</span> HDFS Write: <span class="number">2</span> SUCCESS
-Total MapReduce CPU <span class="typename">Time</span> Spent: <span class="number">1</span> seconds <span class="number">270</span> msec
-OK
-<span class="number">0</span>
-<span class="typename">Time</span> taken: <span class="number">29.117</span> seconds, Fetched: <span class="number">1</span> row(s)
-hive&gt; desc hivetest;
-OK
-id                      int                                         
-name                    <span class="typename">string</span>                                      
-<span class="typename">Time</span> taken: <span class="number">0.376</span> seconds, Fetched: <span class="number">2</span> row(s)
-hive&gt; 
-</code></pre><p>以hive用户进入mysql    </p>
-<pre><code>mysql &gt; <span class="keyword">select</span> * <span class="keyword">from</span> tbls 查看元数据
-</code></pre>]]></content>
-    
-    
-      <category term="Hadoop" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/Hadoop/"/>
-    
-      <category term="Hive" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/Hive/"/>
     
       <category term="Hadoop" scheme="https://github.com/DaMinger/DaMinger.github.io.git/categories/Hadoop/"/>
     

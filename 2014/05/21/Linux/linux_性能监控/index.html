@@ -1,0 +1,672 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>vmstat iostat top sar总结 | DaMinger&#39;s blog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="DaMinger">
+    
+    <meta name="description" content="vmstat
+一般vmstat工具的使用是通过两个数字参数来完成的，第一个参数是采样的时间间隔数，单位是秒，第二个参数是采样的次数
+root@localhost:~# vmstat 2 100
+procs -----------memory---------- ---swap-- -----io--">
+    
+    
+    
+    
+    <link rel="alternative" href="/atom.xml" title="DaMinger&#39;s blog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/pacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/pacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+    <link href="/css/hover.css" rel="stylesheet">
+    <link href="/css/bottom.css" rel="stylesheet">
+</head>
+
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a rel="pulse" class="pulse" href="/"><img src="/img/pacman.png" alt="DaMinger&#39;s blog" title="DaMinger&#39;s blog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a rel="hover" class="hover" href="/" title="DaMinger&#39;s blog">DaMinger&#39;s blog</a></h1>
+				<h2 class="blog-motto"><a rel="wobble-to-bottom-right" class="wobble-to-bottom-right" href="#" title="#">信春哥，系统稳，闭眼上线不回滚</a></h2>
+			</div>
+			<div class="navbar"><a rel="buzz" class="buzz" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a rel="wobble-top" class="wobble-top" href="/">Home</a></li>
+					
+						<li><a rel="wobble-top" class="wobble-top" href="/archives">Menu</a></li>
+					
+						<li><a rel="wobble-top" class="wobble-top" href="/about">About</a></li>
+					
+				</ul>
+				
+			</nav>			
+</div>
+<div style="text-align:right;">
+<form  class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+ <input type="search" name="q" id="search" autocomplete="off" autocorrect="off" autocapitalize="off" maxlength="20" placeholder="Search" />
+ <input type="hidden" name="q" value="site:github.com/DaMinger/DaMinger.github.io.git">
+</form>
+</div>
+
+
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2014/05/21/Linux/linux_性能监控/" title="vmstat iostat top sar总结" itemprop="url">vmstat iostat top sar总结</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="https://github.com/DaMinger/DaMinger.github.io.git" title="DaMinger">DaMinger</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2014-05-21T02:30:30.000Z" itemprop="datePublished">5月 21 2014</time>
+    更新日期:<time datetime="2014-05-21T03:46:07.000Z" itemprop="dateModified">5月 21 2014</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#vmstat"><span class="toc-number">1.</span> <span class="toc-text">vmstat</span></a></li><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#进程procs："><span class="toc-number">1.0.0.1.</span> <span class="toc-text">进程procs：</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#Linux_内存监控内存memoy："><span class="toc-number">1.0.0.2.</span> <span class="toc-text">Linux 内存监控内存memoy：</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#Linux_内存监控swap交换页面"><span class="toc-number">1.0.0.3.</span> <span class="toc-text">Linux 内存监控swap交换页面</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#Linux_内存监控_io块设备:"><span class="toc-number">1.0.0.4.</span> <span class="toc-text">Linux 内存监控 io块设备:</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#Linux_内存监控system系统："><span class="toc-number">1.0.0.5.</span> <span class="toc-text">Linux 内存监控system系统：</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#Linux_内存监控cpu中央处理器："><span class="toc-number">1.0.0.6.</span> <span class="toc-text">Linux 内存监控cpu中央处理器：</span></a></li></ol></ol></ol><li class="toc-item toc-level-3"><a class="toc-link" href="#iostat"><span class="toc-number">2.</span> <span class="toc-text">iostat</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#top"><span class="toc-number">3.</span> <span class="toc-text">top</span></a></li><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#统计信息区："><span class="toc-number">3.0.0.1.</span> <span class="toc-text">统计信息区：</span></a></li></ol></ol></ol><li class="toc-item toc-level-3"><a class="toc-link" href="#sar"><span class="toc-number">4.</span> <span class="toc-text">sar</span></a></li></ol>
+		</div>
+		
+		<h3 id="vmstat">vmstat</h3>
+<p>一般vmstat工具的使用是通过两个数字参数来完成的，第一个参数是采样的时间间隔数，单位是秒，第二个参数是采样的次数</p>
+<pre><code><span class="comment">root@localhost:~#</span> <span class="comment">vmstat</span> <span class="comment">2</span> <span class="comment">100</span>
+<span class="comment">procs</span> <span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="comment">memory</span><span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="literal">-</span> <span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="comment">swap</span><span class="literal">-</span><span class="literal">-</span> <span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="comment">io</span><span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="literal">-</span> <span class="literal">-</span><span class="comment">system</span><span class="literal">-</span><span class="literal">-</span> <span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="comment">cpu</span><span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="literal">-</span>
+ <span class="comment">r</span>  <span class="comment">b</span>   <span class="comment">swpd</span>   <span class="comment">free</span>   <span class="comment">buff</span>  <span class="comment">cache</span>   <span class="comment">si</span>   <span class="comment">so</span>    <span class="comment">bi</span>    <span class="comment">bo</span>   <span class="comment">in</span>   <span class="comment">cs</span> <span class="comment">us</span> <span class="comment">sy</span> <span class="comment">id</span> <span class="comment">wa</span>
+ <span class="comment">1</span>  <span class="comment">0</span>      <span class="comment">0</span> <span class="comment">3498472</span> <span class="comment">315836</span> <span class="comment">3819540</span>    <span class="comment">0</span>    <span class="comment">0</span>     <span class="comment">0</span>     <span class="comment">1</span>    <span class="comment">2</span>    <span class="comment">0</span>  <span class="comment">0</span>  <span class="comment">0</span> <span class="comment">100</span>  <span class="comment">0</span>
+ <span class="comment">0</span>  <span class="comment">0</span>      <span class="comment">0</span> <span class="comment">3499584</span> <span class="comment">315836</span> <span class="comment">3819660</span>    <span class="comment">0</span>    <span class="comment">0</span>     <span class="comment">0</span>     <span class="comment">0</span>   <span class="comment">88</span>  <span class="comment">158</span>  <span class="comment">0</span>  <span class="comment">0</span> <span class="comment">100</span>  <span class="comment">0</span>
+ <span class="comment">0</span>  <span class="comment">0</span>      <span class="comment">0</span> <span class="comment">3499708</span> <span class="comment">315836</span> <span class="comment">3819660</span>    <span class="comment">0</span>    <span class="comment">0</span>     <span class="comment">0</span>     <span class="comment">2</span>   <span class="comment">86</span>  <span class="comment">162</span>  <span class="comment">0</span>  <span class="comment">0</span> <span class="comment">100</span>  <span class="comment">0</span>
+ <span class="comment">0</span>  <span class="comment">0</span>      <span class="comment">0</span> <span class="comment">3499708</span> <span class="comment">315836</span> <span class="comment">3819660</span>    <span class="comment">0</span>    <span class="comment">0</span>     <span class="comment">0</span>    <span class="comment">10</span>   <span class="comment">81</span>  <span class="comment">151</span>  <span class="comment">0</span>  <span class="comment">0</span> <span class="comment">100</span>  <span class="comment">0</span>
+ <span class="comment">1</span>  <span class="comment">0</span>      <span class="comment">0</span> <span class="comment">3499732</span> <span class="comment">315836</span> <span class="comment">3819660</span>    <span class="comment">0</span>    <span class="comment">0</span>     <span class="comment">0</span>     <span class="comment">2</span>   <span class="comment">83</span>  <span class="comment">154</span>  <span class="comment">0</span>  <span class="comment">0</span> <span class="comment">100</span>  <span class="comment">0</span>
+</code></pre><h6 id="进程procs：">进程procs：</h6>
+<p>r：在运行队列中等待的进程数(就是说多少个进程真的分配到CPU) 。当这个值超过了CPU数目，就会出现CPU瓶颈了</p>
+<p>b：在等待io的进程数 。</p>
+<h6 id="Linux_内存监控内存memoy：">Linux 内存监控内存memoy：</h6>
+<p>swpd：现时可用的交换内存（单位KB）。 如果大于0，表示你的机器物理内存不足了，如果不是程序内存泄露的原因，那么你该升级内存了或者把耗内存的任务迁移到其他机器</p>
+<p>free：空闲的内存（单位KB）。</p>
+<p>buff: 缓冲去中的内存数（单位：KB）。</p>
+<p>cache：被用来做为高速缓存的内存数（单位：KB）。</p>
+<h6 id="Linux_内存监控swap交换页面">Linux 内存监控swap交换页面</h6>
+<p>si: 从磁盘交换到内存的交换页数量，单位：KB/秒。 如果这个值大于0，表示物理内存不够用或者内存泄露了，要查找耗内存进程解决掉</p>
+<p>so: 从内存交换到磁盘的交换页数量，单位：KB/秒。 如上</p>
+<h6 id="Linux_内存监控_io块设备:">Linux 内存监控 io块设备:</h6>
+<p>bi: 发送到块设备的块数，单位：块/秒。</p>
+<p>bo: 从块设备接收到的块数，单位：块/秒。</p>
+<h6 id="Linux_内存监控system系统：">Linux 内存监控system系统：</h6>
+<p>in: 每秒的中断数，包括时钟中断。</p>
+<p>cs: 每秒的环境（上下文）转换次数。例如我们调用系统函数，就要进行上下文切换，线程的切换，也要进程上下文切换，这个值要越小越好，太大了，要考虑调低线程或者进程的数目,例如在apache和nginx这种web服务器中，我们一般做性能测试时会进行几千并发甚至几万并发的测试，选择web服务器的进程可以由进程或者线程的峰值一直下调，压测，直到cs到一个比较小的值，这个进程和线程数就是比较合适的值了。系统调用也是，每次调用系统函数，我们的代码就会进入内核空间，导致上下文切换，这个是很耗资源，也要尽量避免频繁调用系统函数。上下文切换次数过多表示你的CPU大部分浪费在上下文切换，导致CPU干正经事的时间少了，CPU没有充分利用，是不可取的。</p>
+<h6 id="Linux_内存监控cpu中央处理器：">Linux 内存监控cpu中央处理器：</h6>
+<p>us：用户进程使用的时间 。以百分比表示。</p>
+<p>sy：系统进程使用的时间。 以百分比表示。如果太高，表示系统调用时间长，例如是IO操作频繁</p>
+<p>id：中央处理器的空闲时间 。以百分比表示。一般来说，id + us + sy = 100,一般认为id是空闲CPU使用率，us是用户CPU使用率，sy是系统CPU使用率</p>
+<p>wa 等待IO CPU时间</p>
+<p>假如 r经常大于 4 ，且id经常小于40，表示中央处理器的负荷很重。 假如bi，bo 长期不等于0，表示物理内存容量太小。</p>
+<h3 id="iostat">iostat</h3>
+<p>个人常用iostat -x 1每一秒输出IO信息，-x能让你看到更多信息</p>
+<pre><code><span class="variable">$iostat</span> -<span class="keyword">x</span> <span class="number">1</span>
+Linux <span class="number">2.6</span>.<span class="number">33</span>-fukai (fukai-laptop)          _i686<span class="number">_</span>    (<span class="number">2</span> CPU)
+avg-cpu:  <span class="variable">%user</span>   <span class="variable">%nice</span> <span class="variable">%system</span> <span class="variable">%iowait</span>  <span class="variable">%steal</span>   <span class="variable">%idle</span>
+           <span class="number">5.47</span>    <span class="number">0</span>.<span class="number">50</span>    <span class="number">8.96</span>   <span class="number">48.26</span>    <span class="number">0</span>.<span class="number">00</span>   <span class="number">36.82</span>
+
+Device:         rrqm/<span class="keyword">s</span>   wrqm/<span class="keyword">s</span>     r/<span class="keyword">s</span>     w/<span class="keyword">s</span>   rsec/<span class="keyword">s</span>   wsec/<span class="keyword">s</span> avgrq-sz avgqu-sz   await  svctm  <span class="variable">%util</span>
+sda               <span class="number">6.00</span>   <span class="number">273.00</span>   <span class="number">99.00</span>    <span class="number">7.00</span>  <span class="number">2240.00</span>  <span class="number">2240.00</span>    <span class="number">42.26</span>     <span class="number">1.12</span>   <span class="number">10.57</span>   <span class="number">7.96</span>  <span class="number">84.40</span>
+sdb               <span class="number">0</span>.<span class="number">00</span>     <span class="number">4.00</span>    <span class="number">0</span>.<span class="number">00</span>  <span class="number">350.00</span>     <span class="number">0</span>.<span class="number">00</span>  <span class="number">2068.00</span>     <span class="number">5.91</span>     <span class="number">0</span>.<span class="number">55</span>    <span class="number">1.58</span>   <span class="number">0</span>.<span class="number">54</span>  <span class="number">18.80</span>
+
+rrqm/<span class="keyword">s</span>:  每秒进行 merge 的读操作数目.即 delta(rmerge)/<span class="keyword">s</span>
+（当系统调用需要读取数据的时候，VFS（虚拟文件系统）将请求发到各个FS，如果FS发现不同的读取请求读取的是相同Block的数据，FS会将这个请求合并Merge）
+wrqm/<span class="keyword">s</span>:  每秒进行 merge 的写操作数目.即 delta(wmerge)/<span class="keyword">s</span>
+r/<span class="keyword">s</span>:     每秒完成的读 I/O 设备次数.即 delta(rio)/<span class="keyword">s</span>
+w/<span class="keyword">s</span>:     每秒完成的写 I/O 设备次数.即 delta(wio)/<span class="keyword">s</span>
+rsec/<span class="keyword">s</span>:  每秒读扇区数.即 delta(rsect)/<span class="keyword">s</span>
+wsec/<span class="keyword">s</span>:  每秒写扇区数.即 delta(wsect)/<span class="keyword">s</span>
+rkB/<span class="keyword">s</span>:   每秒读K字节数.是 rsect/<span class="keyword">s</span> 的一半,因为每扇区大小为<span class="number">512</span>字节.(需要计算)
+wkB/<span class="keyword">s</span>:   每秒写K字节数.是 wsect/<span class="keyword">s</span> 的一半.(需要计算)
+avgrq-sz: 平均每次设备I/O操作的数据大小 (扇区).delta(rsect+wsect)/delta(rio+wio)
+avgqu-sz: 平均I/O队列长度.即 delta(aveq)/<span class="regexp">s/1000 (因为aveq的单位为毫秒).
+await:  平均每次设备I/O操作的等待时间 (毫秒).即 delta(ruse+wuse)/delta</span>(rio+wio)
+svctm:  平均每次设备I/O操作的服务时间 (毫秒).即 delta(<span class="keyword">use</span>)/delta(rio+wio)
+<span class="variable">%util</span>:  一秒中有百分之多少的时间用于 I/O 操作,或者说一秒中有多少时间 I/O 队列是非空的.即 delta(<span class="keyword">use</span>)/<span class="keyword">s</span>/<span class="number">1000</span> (因为<span class="keyword">use</span>的单位为毫秒)
+</code></pre><p>如果 %util 接近 100%,说明产生的I/O请求太多,I/O系统已经满负荷,该磁盘可能存在瓶颈.idle小于70% IO压力就较大了,一般读取速度有较多的wait.同时可以结合vmstat 查看查看b参数(等待资源的进程数)和wa参数(IO等待所占用的CPU时间的百分比,高过30%时IO压力高)</p>
+<p>另外 await 的参数也要多和 svctm 来参考.差的过高就一定有 IO 的问题.avgqu-sz 也是个做 IO 调优时需要注意的地方,这个就是直接每次操作的数据的大小,如果次数多,但数据拿的小的话,其实 IO 也会很小.如果数据拿的大,才IO 的数据会高.也可以通过 avgqu-sz × ( r/s or w/s ) = rsec/s or wsec/s.也就是讲,读定速度是这个来决定的.</p>
+<h3 id="top">top</h3>
+<p>top命令是Linux下常用的性能分析工具，能够实时显示系统中各个进程的资源占用状况</p>
+<pre><code>[root<span class="variable">@localhost</span> <span class="keyword">log</span>]<span class="comment"># top</span>
+top - <span class="number">14</span>:<span class="number">06</span>:<span class="number">23</span> up <span class="number">70</span> days, <span class="number">16</span>:<span class="number">44</span>,  <span class="number">2</span> users,  load average: <span class="number">1.25</span>, <span class="number">1.32</span>, <span class="number">1.35</span>
+Tasks: <span class="number">206</span> total,   <span class="number">1</span> running, <span class="number">205</span> sleeping,   <span class="number">0</span> stopped,   <span class="number">0</span> zombie
+Cpu(<span class="keyword">s</span>):  <span class="number">5.9</span><span class="variable">%us</span>,  <span class="number">3.4</span><span class="variable">%sy</span>,  <span class="number">0</span>.<span class="number">0</span><span class="variable">%ni</span>, <span class="number">90.4</span><span class="variable">%id</span>,  <span class="number">0</span>.<span class="number">0</span><span class="variable">%wa</span>,  <span class="number">0</span>.<span class="number">0</span><span class="variable">%hi</span>,  <span class="number">0</span>.<span class="number">2</span><span class="variable">%si</span>,  <span class="number">0</span>.<span class="number">0</span><span class="variable">%st</span>
+Mem:  <span class="number">32949016</span>k total, <span class="number">14411180</span>k used, <span class="number">18537836</span>k free,   <span class="number">169884</span>k buffers
+Swap: <span class="number">32764556</span>k total,        0k used, <span class="number">32764556</span>k free,  <span class="number">3612636</span>k cached
+  PID USER      PR  NI  VIRT  RES  SHR S <span class="variable">%CPU</span> <span class="variable">%MEM</span>    TIME+  COMMAND                                                                
+<span class="number">28894</span> root      <span class="number">22</span>   <span class="number">0</span> <span class="number">1501</span><span class="keyword">m</span> <span class="number">405</span><span class="keyword">m</span>  <span class="number">10</span><span class="keyword">m</span> S <span class="number">52.2</span>  <span class="number">1.3</span>   <span class="number">2534</span>:<span class="number">16</span> java                                                                   
+<span class="number">18249</span> root      <span class="number">18</span>   <span class="number">0</span> <span class="number">3201</span><span class="keyword">m</span> <span class="number">1.9</span>g  <span class="number">11</span><span class="keyword">m</span> S <span class="number">35.9</span>  <span class="number">6.0</span> <span class="number">569</span>:<span class="number">39.41</span> java                                                                   
+ <span class="number">2808</span> root      <span class="number">25</span>   <span class="number">0</span> <span class="number">3333</span><span class="keyword">m</span> <span class="number">1.0</span>g  <span class="number">11</span><span class="keyword">m</span> S <span class="number">24.3</span>  <span class="number">3.1</span> <span class="number">526</span>:<span class="number">51.85</span> java                                                                   
+<span class="number">25668</span> root      <span class="number">23</span>   <span class="number">0</span> <span class="number">3180</span><span class="keyword">m</span> <span class="number">704</span><span class="keyword">m</span>  <span class="number">11</span><span class="keyword">m</span> S <span class="number">14.0</span>  <span class="number">2.2</span> <span class="number">360</span>:<span class="number">44.53</span> java                                                                   
+  <span class="number">574</span> root      <span class="number">25</span>   <span class="number">0</span> <span class="number">3168</span><span class="keyword">m</span> <span class="number">611</span><span class="keyword">m</span>  <span class="number">10</span><span class="keyword">m</span> S <span class="number">12.6</span>  <span class="number">1.9</span> <span class="number">556</span>:<span class="number">59.63</span> java                                                                   
+ <span class="number">1599</span> root      <span class="number">20</span>   <span class="number">0</span> <span class="number">3237</span><span class="keyword">m</span> <span class="number">1.9</span>g  <span class="number">11</span><span class="keyword">m</span> S <span class="number">12.3</span>  <span class="number">6.2</span> <span class="number">262</span>:<span class="number">01</span>.<span class="number">14</span> java                                                                   
+ <span class="number">1008</span> root      <span class="number">21</span>   <span class="number">0</span> <span class="number">3147</span><span class="keyword">m</span> <span class="number">842</span><span class="keyword">m</span>  <span class="number">10</span><span class="keyword">m</span> S  <span class="number">0</span>.<span class="number">3</span>  <span class="number">2.6</span>   <span class="number">4</span>:<span class="number">31.08</span> java                                                                   
+<span class="number">13823</span> root      <span class="number">23</span>   <span class="number">0</span> <span class="number">3031</span><span class="keyword">m</span> <span class="number">2.1</span>g  <span class="number">10</span><span class="keyword">m</span> S  <span class="number">0</span>.<span class="number">3</span>  <span class="number">6.8</span> <span class="number">176</span>:<span class="number">57.34</span> java                                                                   
+<span class="number">28218</span> root      <span class="number">15</span>   <span class="number">0</span> <span class="number">12760</span> <span class="number">1168</span>  <span class="number">808</span> R  <span class="number">0</span>.<span class="number">3</span>  <span class="number">0</span>.<span class="number">0</span>   <span class="number">0</span>:<span class="number">01</span>.<span class="number">43</span> top                                                                    
+<span class="number">29062</span> root      <span class="number">20</span>   <span class="number">0</span> <span class="number">1241</span><span class="keyword">m</span> <span class="number">227</span><span class="keyword">m</span>  <span class="number">10</span><span class="keyword">m</span> S  <span class="number">0</span>.<span class="number">3</span>  <span class="number">0</span>.<span class="number">7</span>   <span class="number">2</span>:<span class="number">07</span>.<span class="number">32</span> java                                                                   
+    <span class="number">1</span> root      <span class="number">15</span>   <span class="number">0</span> <span class="number">10368</span>  <span class="number">684</span>  <span class="number">572</span> S  <span class="number">0</span>.<span class="number">0</span>  <span class="number">0</span>.<span class="number">0</span>   <span class="number">1</span>:<span class="number">30.85</span> init                                                                   
+    <span class="number">2</span> root      RT  -<span class="number">5</span>     <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span> S  <span class="number">0</span>.<span class="number">0</span>  <span class="number">0</span>.<span class="number">0</span>   <span class="number">0</span>:<span class="number">01</span>.<span class="number">01</span> migration/<span class="number">0</span>                                                            
+    <span class="number">3</span> root      <span class="number">34</span>  <span class="number">19</span>     <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span> S  <span class="number">0</span>.<span class="number">0</span>  <span class="number">0</span>.<span class="number">0</span>   <span class="number">0</span>:<span class="number">00</span>.<span class="number">00</span> ksoftirqd/<span class="number">0</span>                                                            
+    <span class="number">4</span> root      RT  -<span class="number">5</span>     <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span> S  <span class="number">0</span>.<span class="number">0</span>  <span class="number">0</span>.<span class="number">0</span>   <span class="number">0</span>:<span class="number">00</span>.<span class="number">00</span> watchdog/<span class="number">0</span>                                                             
+    <span class="number">5</span> root      RT  -<span class="number">5</span>     <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span> S  <span class="number">0</span>.<span class="number">0</span>  <span class="number">0</span>.<span class="number">0</span>   <span class="number">0</span>:<span class="number">00</span>.<span class="number">80</span> migration/<span class="number">1</span>                                                            
+    <span class="number">6</span> root      <span class="number">34</span>  <span class="number">19</span>     <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span> S  <span class="number">0</span>.<span class="number">0</span>  <span class="number">0</span>.<span class="number">0</span>   <span class="number">0</span>:<span class="number">00</span>.<span class="number">00</span> ksoftirqd/<span class="number">1</span>                                                            
+    <span class="number">7</span> root      RT  -<span class="number">5</span>     <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span> S  <span class="number">0</span>.<span class="number">0</span>  <span class="number">0</span>.<span class="number">0</span>   <span class="number">0</span>:<span class="number">00</span>.<span class="number">00</span> watchdog/<span class="number">1</span>                                                             
+    <span class="number">8</span> root      RT  -<span class="number">5</span>     <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span> S  <span class="number">0</span>.<span class="number">0</span>  <span class="number">0</span>.<span class="number">0</span>   <span class="number">0</span>:<span class="number">20.59</span> migration/<span class="number">2</span>                                                            
+    <span class="number">9</span> root      <span class="number">34</span>  <span class="number">19</span>     <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span> S  <span class="number">0</span>.<span class="number">0</span>  <span class="number">0</span>.<span class="number">0</span>   <span class="number">0</span>:<span class="number">00</span>.09 ksoftirqd/<span class="number">2</span>                                                            
+   <span class="number">10</span> root      RT  -<span class="number">5</span>     <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span> S  <span class="number">0</span>.<span class="number">0</span>  <span class="number">0</span>.<span class="number">0</span>   <span class="number">0</span>:<span class="number">00</span>.<span class="number">00</span> watchdog/<span class="number">2</span>                                                             
+   <span class="number">11</span> root      RT  -<span class="number">5</span>     <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span> S  <span class="number">0</span>.<span class="number">0</span>  <span class="number">0</span>.<span class="number">0</span>   <span class="number">0</span>:<span class="number">23.66</span> migration/<span class="number">3</span>                                                            
+   <span class="number">12</span> root      <span class="number">34</span>  <span class="number">19</span>     <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span> S  <span class="number">0</span>.<span class="number">0</span>  <span class="number">0</span>.<span class="number">0</span>   <span class="number">0</span>:<span class="number">00</span>.<span class="number">03</span> ksoftirqd/<span class="number">3</span>                                                            
+   <span class="number">13</span> root      RT  -<span class="number">5</span>     <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span> S  <span class="number">0</span>.<span class="number">0</span>  <span class="number">0</span>.<span class="number">0</span>   <span class="number">0</span>:<span class="number">00</span>.<span class="number">00</span> watchdog/<span class="number">3</span>                                                             
+   <span class="number">14</span> root      RT  -<span class="number">5</span>     <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span> S  <span class="number">0</span>.<span class="number">0</span>  <span class="number">0</span>.<span class="number">0</span>   <span class="number">0</span>:<span class="number">20.29</span> migration/<span class="number">4</span>                                                            
+   <span class="number">15</span> root      <span class="number">34</span>  <span class="number">19</span>     <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span> S  <span class="number">0</span>.<span class="number">0</span>  <span class="number">0</span>.<span class="number">0</span>   <span class="number">0</span>:<span class="number">00</span>.<span class="number">07</span> ksoftirqd/<span class="number">4</span>                                                            
+   <span class="number">16</span> root      RT  -<span class="number">5</span>     <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span> S  <span class="number">0</span>.<span class="number">0</span>  <span class="number">0</span>.<span class="number">0</span>   <span class="number">0</span>:<span class="number">00</span>.<span class="number">00</span> watchdog/<span class="number">4</span>                                                             
+   <span class="number">17</span> root      RT  -<span class="number">5</span>     <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span> S  <span class="number">0</span>.<span class="number">0</span>  <span class="number">0</span>.<span class="number">0</span>   <span class="number">0</span>:<span class="number">23.07</span> migration/<span class="number">5</span>                                                            
+   <span class="number">18</span> root      <span class="number">34</span>  <span class="number">19</span>     <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span> S  <span class="number">0</span>.<span class="number">0</span>  <span class="number">0</span>.<span class="number">0</span>   <span class="number">0</span>:<span class="number">00</span>.<span class="number">07</span> ksoftirqd/<span class="number">5</span>                                                            
+   <span class="number">19</span> root      RT  -<span class="number">5</span>     <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span> S  <span class="number">0</span>.<span class="number">0</span>  <span class="number">0</span>.<span class="number">0</span>   <span class="number">0</span>:<span class="number">00</span>.<span class="number">00</span> watchdog/<span class="number">5</span>                                                             
+   <span class="number">20</span> root      RT  -<span class="number">5</span>     <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span> S  <span class="number">0</span>.<span class="number">0</span>  <span class="number">0</span>.<span class="number">0</span>   <span class="number">0</span>:<span class="number">17.16</span> migration/<span class="number">6</span>                                                            
+   <span class="number">21</span> root      <span class="number">34</span>  <span class="number">19</span>     <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span> S  <span class="number">0</span>.<span class="number">0</span>  <span class="number">0</span>.<span class="number">0</span>   <span class="number">0</span>:<span class="number">00</span>.<span class="number">05</span> ksoftirqd/<span class="number">6</span>                                                            
+   <span class="number">22</span> root      RT  -<span class="number">5</span>     <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span> S  <span class="number">0</span>.<span class="number">0</span>  <span class="number">0</span>.<span class="number">0</span>   <span class="number">0</span>:<span class="number">00</span>.<span class="number">00</span> watchdog/<span class="number">6</span>                                                             
+   <span class="number">23</span> root      RT  -<span class="number">5</span>     <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span> S  <span class="number">0</span>.<span class="number">0</span>  <span class="number">0</span>.<span class="number">0</span>   <span class="number">0</span>:<span class="number">58.28</span> migration/<span class="number">7</span>
+</code></pre><h6 id="统计信息区：">统计信息区：</h6>
+<p>前五行是当前系统情况整体的统计信息区。下面我们看每一行信息的具体意义。</p>
+<p>第一行，任务队列信息，同 uptime 命令的执行结果，具体参数说明情况如下：</p>
+<pre><code><span class="number">14</span>:<span class="number">06</span>:<span class="number">23</span> — 当前系统时间
+up <span class="number">70</span> days, <span class="number">16</span>:<span class="number">44</span> — 系统已经运行了<span class="number">70</span>天<span class="number">16</span>小时<span class="number">44</span>分钟（在这期间系统没有重启过的吆！）
+<span class="number">2</span> users — 当前有<span class="number">2</span>个用户登录系统
+<span class="built_in">load</span> <span class="built_in">average</span>: <span class="number">1.15</span>, <span class="number">1.42</span>, <span class="number">1.44</span> — <span class="built_in">load</span> <span class="built_in">average</span>后面的三个数分别是<span class="number">1</span>分钟、<span class="number">5</span>分钟、<span class="number">15</span>分钟的负载情况。
+<span class="built_in">load</span> <span class="built_in">average</span>数据是每隔<span class="number">5</span>秒钟检查一次活跃的进程数，然后按特定算法计算出的数值。
+如果这个数除以逻辑CPU的数量，结果高于<span class="number">5</span>的时候就表明系统在超负荷运转了。
+</code></pre><p>第二行，Tasks — 任务（进程），具体信息说明如下：</p>
+<p>系统现在共有206个进程，其中处于运行中的有1个，205个在休眠（sleep），stoped状态的有0个，zombie状态（僵尸）的有0个。</p>
+<p>第三行，cpu状态信息，具体属性说明如下：</p>
+<pre><code><span class="number">5.9</span><span class="comment">%us — 用户空间占用CPU的百分比。</span>
+<span class="number">3.4</span><span class="comment">% sy — 内核空间占用CPU的百分比。</span>
+<span class="number">0.0</span><span class="comment">% ni — 改变过优先级的进程占用CPU的百分比</span>
+<span class="number">90.4</span><span class="comment">% id — 空闲CPU百分比</span>
+<span class="number">0.0</span><span class="comment">% wa — IO等待占用CPU的百分比</span>
+<span class="number">0.0</span><span class="comment">% hi — 硬中断（Hardware IRQ）占用CPU的百分比</span>
+<span class="number">0.2</span><span class="comment">% si — 软中断（Software Interrupts）占用CPU的百分比</span>
+</code></pre><p>第四行,内存状态，具体信息如下：</p>
+<pre><code><span class="number">32949016</span>k total — 物理内存总量（<span class="number">32</span>GB）
+<span class="number">14411180</span>k used — 使用中的内存总量（<span class="number">14</span>GB）
+<span class="number">18537836</span>k <span class="built_in">free</span> — 空闲内存总量（<span class="number">18</span>GB）
+<span class="number">169884</span>k buffers — 缓存的内存量 （<span class="number">169</span>M）
+</code></pre><p>第五行，swap交换分区信息，具体信息说明如下：</p>
+<pre><code><span class="number">32764556</span>k total — 交换区总量（<span class="number">32</span>GB）
+<span class="number">0</span>k used — 使用的交换区总量（<span class="number">0</span><span class="keyword">K</span>）
+<span class="number">32764556</span>k free — 空闲交换区总量（<span class="number">32</span>GB）
+<span class="number">3612636</span>k cached — 缓冲的交换区总量（<span class="number">3.6</span>GB）
+</code></pre><p>备注：</p>
+<p>如果出于习惯去计算可用内存数，这里有个近似的计算公式：第四行的free + 第四行的buffers + 第五行的cached，按这个公式此台服务器的可用内存：18537836k +169884k +3612636k = 22GB左右。</p>
+<p>对于内存监控，在top里我们要时刻监控第五行swap交换分区的used，如果这个数值在不断的变化，说明内核在不断进行内存和swap的数据交换，这是真正的内存不够用了。</p>
+<p>第六行，空行。</p>
+<p>第七行以下：各进程（任务）的状态监控，项目列信息说明如下：</p>
+<pre><code><span class="xml"><span class="tag"><span class="attribute">PID</span> — 进程<span class="attribute">id</span>
+<span class="attribute">USER</span> — 进程所有者
+<span class="attribute">PR</span> — 进程优先级
+<span class="attribute">NI</span> — <span class="attribute">nice</span>值。负值表示高优先级，正值表示低优先级
+<span class="attribute">VIRT</span> — 进程使用的虚拟内存总量，单位<span class="attribute">kb</span>。<span class="attribute">VIRT</span>=<span class="value">SWAP+RES</span>
+<span class="attribute">RES</span> — 进程使用的、未被换出的物理内存大小，单位<span class="attribute">kb</span>。<span class="attribute">RES</span>=<span class="value">CODE+DATA</span>
+<span class="attribute">SHR</span> — 共享内存大小，单位<span class="attribute">kb</span>
+<span class="attribute">S</span> — 进程状态。<span class="attribute">D</span>=<span class="value">不可中断的睡眠状态</span> <span class="attribute">R</span>=<span class="value">运行</span> <span class="attribute">S</span>=<span class="value">睡眠</span> <span class="attribute">T</span>=<span class="value">跟踪</span>/停止 <span class="attribute">Z</span>=<span class="value">僵尸进程</span>
+%<span class="attribute">CPU</span> — 上次更新到现在的<span class="attribute">CPU</span>时间占用百分比
+%<span class="attribute">MEM</span> — 进程使用的物理内存百分比
+<span class="attribute">TIME</span>+ — 进程使用的<span class="attribute">CPU</span>时间总计，单位<span class="attribute">1</span>/<span class="attribute">100</span>秒
+<span class="attribute">COMMAND</span> — 进程名称（命令名/命令行）</span></span>
+</code></pre><h3 id="sar">sar</h3>
+<p>sar（System Activity Reporter）是系统活动情况报告的缩写。sar 工具将对系统当前的状态进行取样，然后通过计算数据和比例来表达系统的当前运行状态。它的特点是可以连续对系统取样，获得大量的取样数据；取样数据和分析的结果都可以存入文件，所需的负载很小。 sar 是目前 Linux 上最为全面的系统性能分析工具之一，可以从多方面对系统的活动进行报告，包括：文件的读写情况、系统调用的使用情况、磁盘I/O、CPU效率、内存使用状况、进程活动及IPC有关的活动等。为了提供不同的信息，sar 提供了丰富的选项、因此使用较为复杂。</p>
+<p>安装：</p>
+<pre><code><span class="preprocessor"># yum install sysstat</span>
+</code></pre><p>一般格式：</p>
+<pre><code>sar [ options... ] [ <span class="tag">&lt;<span class="title">interval</span>&gt;</span> [ <span class="tag">&lt;<span class="title">count</span>&gt;</span> ] ]
+</code></pre><p>常用选项：</p>
+<pre><code>-<span class="ruby"><span class="constant">A</span> ：包括绝大多数选项。
+</span>-<span class="ruby">b ：报告<span class="constant">I</span>/<span class="constant">O</span>和传输速率统计。
+</span>-<span class="ruby"><span class="constant">B</span> ：报告分页统计。
+</span>-<span class="ruby">c ：报告进程创建活动。
+</span>-<span class="ruby">d ：报告每个活动的块设备。(指磁盘)
+</span>-<span class="ruby">e [ <span class="symbol">hh:</span><span class="symbol">mm:</span>ss ] ：设置sar命令执行的结束时间，时间为<span class="number">24</span>小时制格式。
+</span>-<span class="ruby"><span class="constant">I</span> { irq | <span class="constant">SUM</span> | <span class="constant">ALL</span> | <span class="constant">XALL</span> } ：报告给定中断的统计。
+</span>-<span class="ruby">n { <span class="constant">DEV</span> | <span class="constant">EDEV</span> | <span class="constant">NFS</span> | <span class="constant">NFSD</span> | <span class="constant">SOCK</span> | <span class="constant">ALL</span> } ：报告网络统计。
+</span>-<span class="ruby"><span class="constant">P</span> { cpu | <span class="constant">ALL</span> } ：报告每个处理器的统计信息，可以统计指定或全部处理器。
+</span>-<span class="ruby">q ：报告队列长度和平均负载。
+</span>-<span class="ruby">r ：报告内存和交换空间的利用情况统计。
+</span>-<span class="ruby"><span class="constant">R</span> ：报告内存统计。
+</span>-<span class="ruby">u ：报告<span class="constant">CPU</span>利用率。
+</span>interval ：两次输出之间的间隔时间。
+count ：按照这个时间间隔统计的次数。
+</code></pre><p>举例：</p>
+<pre><code># sar 5 10
+查看CUP使用情况，每隔5秒统计一次，共打印10次。
+<span class="tag">%<span class="title">user</span></span> ：CPU在用户使用下的时间百分比。
+<span class="tag">%<span class="title">nice</span></span> ：CPU在优先级用户下的使用时间百分比。
+<span class="tag">%<span class="title">system</span></span> ：CPU在系统使用下的时间百分比。
+<span class="tag">%<span class="title">iowait</span></span> ：CPU等待磁盘I/O完成时间的百分比。
+<span class="tag">%<span class="title">steal</span></span> ：虚拟机占用的时间百分比。
+<span class="tag">%<span class="title">idle</span></span> ：CPU空闲时间百分比。
+# sar -b 2 5
+查看磁盘I/O和传输速率情况，每隔2秒统计一次，共打印5次。
+tps ：每秒传送到物理设备的总数。
+rtps ：每秒读取物理设备请求的总数。
+wtps ：每秒写入到物理设备请求的总数。
+bread/s ：每秒从块设备读取数据的速度。
+bwrtn/s ：每秒向块设备写入数据的速度。
+单位为块(block)，一块为512 bytes。
+# sar -c
+查看进程创建情况。
+proc/s ：每秒进程创建数。
+# sar -d 2 3
+查看设备使用情况。
+DEV ：磁盘设备。
+tps ：每秒传送到设备的总数。
+rd_sec/s ：每秒读取数。(一扇区为512 bytes)
+wr_sec/s ：每秒写入数。(一扇区为512 bytes)
+avgrq-sz ：设备扇区请求的平均大小。
+avgqu-sz ：设备队列请求的平均大小。
+await ：服务等待I/O请求的平均时间。(单位毫秒)
+svctm ：设备处理I/O请求的平均时间。(单位毫秒)
+<span class="tag">%<span class="title">util</span></span> ：向设备I/O请求期间的CPU时间的百分比。
+# sar -n DEV
+查看网络接口信息。
+IFACE ：LAN接口。
+rxpck/s ：每秒钟接收的数据包。
+txpck/s ：每秒钟发送的数据包。
+rxbyt/s ：每秒钟接收的字节数。
+txbyt/s ：每秒钟发送的字节数。
+rxcmp/s ：每秒钟接收的压缩数据包。
+txcmp/s ：每秒钟发送的压缩数据包。
+rxmcst/s ：每秒钟接收的多播数据包。
+# sar -u
+查看CPU使用情况，与不带-u选项一样。
+</code></pre>  
+	</div>
+		<footer class="article-footer clearfix">
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Linux/">Linux</a>
+  </div>
+
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Linux/">Linux</a>
+</div>
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="https://github.com/DaMinger/DaMinger.github.io.git/2014/05/21/Linux/linux_性能监控/" data-title="vmstat iostat top sar总结 | DaMinger&#39;s blog" data-tsina="null" class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2014/05/21/Java/java_thread/" title="Java多线程总结">
+  <strong>PREVIOUS:</strong><br/>
+  <span>
+  Java多线程总结</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2014/05/21/设计模式/observer/"  title="设计模式之观察者模式">
+ <strong>NEXT:</strong><br/> 
+ <span>设计模式之观察者模式
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section class="comment">
+	<div class="ds-thread"></div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+  <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#vmstat"><span class="toc-number">1.</span> <span class="toc-text">vmstat</span></a></li><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#进程procs："><span class="toc-number">1.0.0.1.</span> <span class="toc-text">进程procs：</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#Linux_内存监控内存memoy："><span class="toc-number">1.0.0.2.</span> <span class="toc-text">Linux 内存监控内存memoy：</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#Linux_内存监控swap交换页面"><span class="toc-number">1.0.0.3.</span> <span class="toc-text">Linux 内存监控swap交换页面</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#Linux_内存监控_io块设备:"><span class="toc-number">1.0.0.4.</span> <span class="toc-text">Linux 内存监控 io块设备:</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#Linux_内存监控system系统："><span class="toc-number">1.0.0.5.</span> <span class="toc-text">Linux 内存监控system系统：</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#Linux_内存监控cpu中央处理器："><span class="toc-number">1.0.0.6.</span> <span class="toc-text">Linux 内存监控cpu中央处理器：</span></a></li></ol></ol></ol><li class="toc-item toc-level-3"><a class="toc-link" href="#iostat"><span class="toc-number">2.</span> <span class="toc-text">iostat</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#top"><span class="toc-number">3.</span> <span class="toc-text">top</span></a></li><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#统计信息区："><span class="toc-number">3.0.0.1.</span> <span class="toc-text">统计信息区：</span></a></li></ol></ol></ol><li class="toc-item toc-level-3"><a class="toc-link" href="#sar"><span class="toc-number">4.</span> <span class="toc-text">sar</span></a></li></ol>
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p rel="asidetitle grow" class="asidetitle grow">分类</p>
+		<ul>
+		
+			<li><a rel="grow" class="grow" href="/categories/Hadoop/" title="Hadoop">Hadoop<sup>20</sup></a></li>
+		
+			<li><a rel="grow" class="grow" href="/categories/Java/" title="Java">Java<sup>2</sup></a></li>
+		
+			<li><a rel="grow" class="grow" href="/categories/Linux/" title="Linux">Linux<sup>5</sup></a></li>
+		
+			<li><a rel="grow" class="grow" href="/categories/Shell/" title="Shell">Shell<sup>4</sup></a></li>
+		
+			<li><a rel="grow" class="grow" href="/categories/操作系统/" title="操作系统">操作系统<sup>1</sup></a></li>
+		
+			<li><a rel="grow" class="grow" href="/categories/杂谈/" title="杂谈">杂谈<sup>2</sup></a></li>
+		
+			<li><a rel="grow" class="grow" href="/categories/计算机网络/" title="计算机网络">计算机网络<sup>1</sup></a></li>
+		
+			<li><a rel="grow" class="grow" href="/categories/设计模式/" title="设计模式">设计模式<sup>8</sup></a></li>
+		
+		</ul>
+</div>
+
+
+
+  <div class="linkslist">
+<h3 rel="grow" class="grow asidetitle">友情链接</h3>
+<ul class="entry">
+<li><a rel="grow" class="grow" href="http://tahiti.oracle.com/" title="Oracle文档">Oracle文档</a></li>
+<li><a rel="grow" class="grow" href="http://dev.mysql.com/doc/" title="Mysql文档">Mysql文档</a></li>
+<li><a rel="grow" class="grow" href="http://pythontip.sinaapp.com/" title="Python在线挑战">Python在线挑战</a></li>
+<li><a rel="grow" class="grow" href="http://www.programcreek.com/" title="Java">Java</a></li>
+<li><a rel="grow" class="grow" href="http://asktom.oracle.com/" title="AskTom">AskTom</a></li>
+<li><a rel="grow" class="grow" href="http://blog.csdn.net/tianlesoftware/" title="Dave">Dave</a></li>
+<li><a rel="grow" class="grow" href="http://www.eygle.com/" title="eygle">eygle</a></li>
+<li><a rel="grow" class="grow" href="http://www.dbsnake.com/" title="dbsnake">dbsnake</a></li>
+</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/Eclipse/" title="Eclipse">Eclipse<sup>1</sup></a></li>
+		
+			<li><a href="/tags/HBase/" title="HBase">HBase<sup>4</sup></a></li>
+		
+			<li><a href="/tags/HDFS/" title="HDFS">HDFS<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Hadoop/" title="Hadoop">Hadoop<sup>20</sup></a></li>
+		
+			<li><a href="/tags/Hadoop_Stream/" title="Hadoop_Stream">Hadoop_Stream<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Hive/" title="Hive">Hive<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Java/" title="Java">Java<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Linux/" title="Linux">Linux<sup>5</sup></a></li>
+		
+			<li><a href="/tags/Mahout/" title="Mahout">Mahout<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Map-Reduce/" title="Map-Reduce">Map-Reduce<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Mysql/" title="Mysql">Mysql<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Pig/" title="Pig">Pig<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Shell/" title="Shell">Shell<sup>4</sup></a></li>
+		
+			<li><a href="/tags/Sqoop/" title="Sqoop">Sqoop<sup>1</sup></a></li>
+		
+			<li><a href="/tags/awk/" title="awk">awk<sup>2</sup></a></li>
+		
+			<li><a href="/tags/sed/" title="sed">sed<sup>1</sup></a></li>
+		
+			<li><a href="/tags/yum/" title="yum">yum<sup>1</sup></a></li>
+		
+			<li><a href="/tags/学习计划/" title="学习计划">学习计划<sup>1</sup></a></li>
+		
+			<li><a href="/tags/杂谈/" title="杂谈">杂谈<sup>1</sup></a></li>
+		
+			<li><a href="/tags/网卡错误/" title="网卡错误">网卡错误<sup>1</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle"><a href="/archives">归档</a></p>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/05">五月 2014</a><span class="archive-list-count">24</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/04">四月 2014</a><span class="archive-list-count">19</span></li></ul>
+  </div>
+
+
+  
+  <div class="tagcloudlist">
+    <p class="asidetitle">标签云</p>
+    <div class="tagcloudlist clearfix">
+       <a href="/tags/Eclipse/" style="font-size: 10.00px;">Eclipse</a><a href="/tags/HBase/" style="font-size: 14.00px;">HBase</a><a href="/tags/HDFS/" style="font-size: 12.00px;">HDFS</a><a href="/tags/Hadoop/" style="font-size: 20.00px;">Hadoop</a><a href="/tags/Hadoop_Stream/" style="font-size: 10.00px;">Hadoop_Stream</a><a href="/tags/Hive/" style="font-size: 12.00px;">Hive</a><a href="/tags/Java/" style="font-size: 12.00px;">Java</a><a href="/tags/Linux/" style="font-size: 16.00px;">Linux</a><a href="/tags/Mahout/" style="font-size: 12.00px;">Mahout</a><a href="/tags/Map-Reduce/" style="font-size: 12.00px;">Map-Reduce</a><a href="/tags/Mysql/" style="font-size: 10.00px;">Mysql</a><a href="/tags/Pig/" style="font-size: 10.00px;">Pig</a><a href="/tags/Shell/" style="font-size: 14.00px;">Shell</a><a href="/tags/Sqoop/" style="font-size: 10.00px;">Sqoop</a><a href="/tags/awk/" style="font-size: 12.00px;">awk</a><a href="/tags/sed/" style="font-size: 10.00px;">sed</a><a href="/tags/yum/" style="font-size: 10.00px;">yum</a><a href="/tags/学习计划/" style="font-size: 10.00px;">学习计划</a><a href="/tags/杂谈/" style="font-size: 10.00px;">杂谈</a><a href="/tags/网卡错误/" style="font-size: 10.00px;">网卡错误</a><a href="/tags/网络/" style="font-size: 10.00px;">网络</a><a href="/tags/设计模式/" style="font-size: 18.00px;">设计模式</a><a href="/tags/进程与线程/" style="font-size: 10.00px;">进程与线程</a>
+    </div>
+  </div>
+
+
+  <iframe width="100%" height="550" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=2&ptype=1&speed=0&skin=1&isTitle=1&noborder=1&isWeibo=1&isFans=1&uid=3819451430&verifier=f953543e&dpc=1"></iframe>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<span class="buzz" rel="buzz"> Hello,I&#39;m liuqinming.For now I&#39;m a student at collage. <br/>
+			I will share my learning experience with you at this blog.</span>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		<a rel="push" class="push" href="https://github.com/https://github.com/DaMinger" target="_blank" title="github"></a>
+		
+		
+	</div>
+		<p class="copyright">Powered by <a rel="float-shadow" class="float-shadow" href="http://zespia.tw/hexo/" target="_blank" title="hexo">Hexo</a> and Theme by <a class="box-shadow-inset"href="https://github.com/uruir/pacmanhover" target="_blank" title="Pacman">PacmanHover</a> © 2014 
+		
+		
+		<a class="wobble-horizontal" rel="wobble-horizontal" href="https://github.com/DaMinger/DaMinger.github.io.git" target="_blank" title="DaMinger">DaMinger</a>
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+    c.click(function(){
+      ta.css('display', 'block').addClass('fadeIn');
+    });
+    o.click(function(){
+      ta.css('display', 'none');
+    });
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,320-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"null"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+<div id="totop" style="position:fixed;bottom:150px;right:50px;cursor: pointer;">
+<a title="���ض���"><img src="/img/scrollup.png"/></a>
+</div>
+<script src="/js/totop.js"></script>
+
+
+
+  </body>
+</html>

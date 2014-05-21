@@ -1,0 +1,195 @@
+
+  <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>Category: Java | DaMinger&#39;s blog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="DaMinger">
+    
+    <meta name="description" content="DaMinger&#39;s blog | java | Oracle | Linux">
+    
+    
+    
+    
+    <link rel="alternative" href="/atom.xml" title="DaMinger&#39;s blog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/pacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/pacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+    <link href="/css/hover.css" rel="stylesheet">
+    <link href="/css/bottom.css" rel="stylesheet">
+</head>
+
+    <body>
+      <header>
+        <div>
+		
+			<div id="imglogo">
+				<a rel="pulse" class="pulse" href="/"><img src="/img/pacman.png" alt="DaMinger&#39;s blog" title="DaMinger&#39;s blog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a rel="hover" class="hover" href="/" title="DaMinger&#39;s blog">DaMinger&#39;s blog</a></h1>
+				<h2 class="blog-motto"><a rel="wobble-to-bottom-right" class="wobble-to-bottom-right" href="#" title="#">信春哥，系统稳，闭眼上线不回滚</a></h2>
+			</div>
+			<div class="navbar"><a rel="buzz" class="buzz" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a rel="wobble-top" class="wobble-top" href="/">Home</a></li>
+					
+						<li><a rel="wobble-top" class="wobble-top" href="/archives">Menu</a></li>
+					
+						<li><a rel="wobble-top" class="wobble-top" href="/about">About</a></li>
+					
+				</ul>
+				
+			</nav>			
+</div>
+<div style="text-align:right;">
+<form  class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+ <input type="search" name="q" id="search" autocomplete="off" autocorrect="off" autocapitalize="off" maxlength="20" placeholder="Search" />
+ <input type="hidden" name="q" value="site:github.com/DaMinger/DaMinger.github.io.git">
+</form>
+</div>
+
+
+      </header>
+      <div id="container">
+        
+
+<div class="archive-title" >
+  <h2 class="category-icon">Java</h2>
+  
+</div>
+<div id="main" class="archive-part clearfix">
+  <div id="archive-page">
+
+  <section class="post" itemscope itemprop="blogPost">
+  
+    <a rel="sink" class="sink" href="/2014/05/21/Java/java_io/" title="Java的IO总结" itemprop="url">
+  
+    <h1 itemprop="name">Java的IO总结</h1>
+    
+    <time datetime="2014-05-21T05:20:59.000Z" itemprop="datePublished">5月 21 2014</time>
+  </a>
+</section>
+
+
+
+  <section class="post" itemscope itemprop="blogPost">
+  
+    <a rel="sink" class="sink" href="/2014/05/21/Java/java_thread/" title="Java多线程总结" itemprop="url">
+  
+    <h1 itemprop="name">Java多线程总结</h1>
+    
+    <time datetime="2014-05-21T03:48:20.000Z" itemprop="datePublished">5月 21 2014</time>
+  </a>
+</section>
+
+
+
+
+  </div>
+</div>
+
+      </div>
+      <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<span class="buzz" rel="buzz"> Hello,I&#39;m liuqinming.For now I&#39;m a student at collage. <br/>
+			I will share my learning experience with you at this blog.</span>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		<a rel="push" class="push" href="https://github.com/https://github.com/DaMinger" target="_blank" title="github"></a>
+		
+		
+	</div>
+		<p class="copyright">Powered by <a rel="float-shadow" class="float-shadow" href="http://zespia.tw/hexo/" target="_blank" title="hexo">Hexo</a> and Theme by <a class="box-shadow-inset"href="https://github.com/uruir/pacmanhover" target="_blank" title="Pacman">PacmanHover</a> © 2014 
+		
+		
+		<a class="wobble-horizontal" rel="wobble-horizontal" href="https://github.com/DaMinger/DaMinger.github.io.git" target="_blank" title="DaMinger">DaMinger</a>
+		
+		</p>
+</div>
+</footer>
+      <script src="/js/jquery-2.0.3.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+        
+    }
+  });
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+
+
+
+
+<div id="totop" style="position:fixed;bottom:150px;right:50px;cursor: pointer;">
+<a title="���ض���"><img src="/img/scrollup.png"/></a>
+</div>
+<script src="/js/totop.js"></script>
+
+
+
+    </body>
+   </html>
