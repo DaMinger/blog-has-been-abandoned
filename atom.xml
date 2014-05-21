@@ -4,7 +4,7 @@
   <subtitle><![CDATA[信春哥，系统稳，闭眼上线不回滚]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="https://github.com/DaMinger/DaMinger.github.io.git/"/>
-  <updated>2014-05-21T13:05:39.652Z</updated>
+  <updated>2014-05-21T13:12:00.259Z</updated>
   <id>https://github.com/DaMinger/DaMinger.github.io.git/</id>
   
   <author>
@@ -15,17 +15,17 @@
   <generator uri="http://zespia.tw/hexo/">Hexo</generator>
   
   <entry>
-    <title><![CDATA[maxpoints]]></title>
+    <title><![CDATA[Max Points on a Line]]></title>
     <link href="https://github.com/DaMinger/DaMinger.github.io.git/2014/05/21/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/LeetCode/maxpoints/"/>
     <id>https://github.com/DaMinger/DaMinger.github.io.git/2014/05/21/数据结构与算法/LeetCode/maxpoints/</id>
     <published>2014-05-21T12:56:43.000Z</published>
-    <updated>2014-05-21T13:05:14.000Z</updated>
+    <updated>2014-05-21T13:10:28.000Z</updated>
     <content type="html"><![CDATA[<h4 id="题目">题目</h4>
 <pre><code>Max Points <span class="function_start"><span class="keyword">on</span></span> a Line Total 
 
 Given n points <span class="function_start"><span class="keyword">on</span></span> a <span class="number">2</span>D plane, find <span class="keyword">the</span> maximum <span class="type">number</span> <span class="keyword">of</span> points <span class="keyword">that</span> lie <span class="function_start"><span class="keyword">on</span></span> <span class="keyword">the</span> same straight line.
-</code></pre><p>计算同一直线上最多的点数，思路：枚举+计算斜率，map(斜率，点数)</p>
-<p>解法：</p>
+</code></pre><p>计算同一直线上最多的点数，思路：枚举+计算斜率，map存(斜率，点数)</p>
+<h4 id="解法">解法</h4>
 <pre><code>import java.util.HashMap;
 import java.util.Map;
 
@@ -96,11 +96,11 @@ class Point {
   </entry>
   
   <entry>
-    <title><![CDATA[PolishNotation]]></title>
+    <title><![CDATA[Evaluate Reverse Polish Notation]]></title>
     <link href="https://github.com/DaMinger/DaMinger.github.io.git/2014/05/21/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/LeetCode/polishnotation/"/>
     <id>https://github.com/DaMinger/DaMinger.github.io.git/2014/05/21/数据结构与算法/LeetCode/polishnotation/</id>
     <published>2014-05-21T12:55:41.000Z</published>
-    <updated>2014-05-21T13:00:20.000Z</updated>
+    <updated>2014-05-21T13:08:51.000Z</updated>
     <content type="html"><![CDATA[<h4 id="题目">题目</h4>
 <pre><code>Evaluate the value <span class="keyword">of</span> an arithmetic expression <span class="keyword">in</span> Reverse Polish Notation.
 
@@ -110,16 +110,24 @@ Some <span class="attribute">examples</span>:
   [<span class="string">"2"</span>, <span class="string">"1"</span>, <span class="string">"+"</span>, <span class="string">"3"</span>, <span class="string">"*"</span>]<span class="function"> -&gt;</span> <span class="function"><span class="params">((<span class="number">2</span> + <span class="number">1</span>) * <span class="number">3</span>)</span> -&gt;</span> <span class="number">9</span>
   [<span class="string">"4"</span>, <span class="string">"13"</span>, <span class="string">"5"</span>, <span class="string">"/"</span>, <span class="string">"+"</span>]<span class="function"> -&gt;</span> <span class="function"><span class="params">(<span class="number">4</span> + (<span class="number">13</span> / <span class="number">5</span>))</span> -&gt;</span> <span class="number">6</span>
 </code></pre><p>波兰表达式，用栈就OK了</p>
-<p>解法：<br>    import java.util.Stack;<br>    //波兰表达式 用栈不解释<br>    public class test {<br>        public static void main(String args[]){<br>            String[] tokens =new String[]{“4”, “13”, “5”, “/“, “+”};<br>            System.out.println(evalRPN(tokens));<br>        }</p>
-<pre><code>    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> evalRPN(String[] tokens){
+<h4 id="解法">解法</h4>
+<pre><code>import java.util.Stack;
+<span class="comment">//波兰表达式 用栈不解释</span>
+<span class="keyword">public</span> <span class="keyword">class</span> test {
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span>(String args[]){
+        String[] tokens =<span class="keyword">new</span> String[]{<span class="string">"4"</span>, <span class="string">"13"</span>, <span class="string">"5"</span>, <span class="string">"/"</span>, <span class="string">"+"</span>};
+        System.<span class="keyword">out</span>.println(evalRPN(tokens));
+    }
+
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">evalRPN</span>(String[] tokens){
         String operators =<span class="string">"+-*/"</span>;
         Stack&lt;String&gt; s = <span class="keyword">new</span> Stack&lt;String&gt;();
-        <span class="keyword">for</span>(String <span class="keyword">str</span> : tokens){
-            <span class="keyword">if</span>(operators.contains(<span class="keyword">str</span>)){
+        <span class="keyword">for</span>(String str : tokens){
+            <span class="keyword">if</span>(operators.contains(str)){
                 <span class="keyword">int</span> num2 = Integer.valueOf(s.pop());
                 <span class="keyword">int</span> num1 = Integer.valueOf(s.pop());
-                <span class="keyword">int</span> <span class="keyword">index</span> = operators.indexOf(<span class="keyword">str</span>);
-                <span class="keyword">switch</span>(<span class="keyword">index</span>){
+                <span class="keyword">int</span> index = operators.indexOf(str);
+                <span class="keyword">switch</span>(index){
                 <span class="keyword">case</span> <span class="number">0</span>:
                     s.push(String.valueOf(num1+num2));
                     <span class="keyword">break</span>;
@@ -134,7 +142,7 @@ Some <span class="attribute">examples</span>:
                     <span class="keyword">break</span>;
                 }
             }<span class="keyword">else</span>{
-                s.push(<span class="keyword">str</span>);
+                s.push(str);
             }
         }
         <span class="keyword">return</span> Integer.valueOf(s.pop());
@@ -154,7 +162,7 @@ Some <span class="attribute">examples</span>:
     <link href="https://github.com/DaMinger/DaMinger.github.io.git/2014/05/21/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/LeetCode/reversewords/"/>
     <id>https://github.com/DaMinger/DaMinger.github.io.git/2014/05/21/数据结构与算法/LeetCode/reversewords/</id>
     <published>2014-05-21T10:01:31.000Z</published>
-    <updated>2014-05-21T12:58:48.000Z</updated>
+    <updated>2014-05-21T13:08:44.000Z</updated>
     <content type="html"><![CDATA[<h4 id="题目">题目</h4>
 <pre><code>Given <span class="operator">an</span> input <span class="keyword">string</span>, reverse <span class="operator">the</span> <span class="keyword">string</span> <span class="built_in">word</span> <span class="keyword">by</span> <span class="built_in">word</span>.
 For example,
@@ -162,7 +170,7 @@ Given s = <span class="string">"the sky is blue"</span>,
 <span class="constant">return</span> <span class="string">"blue is sky the"</span>.
 </code></pre><p>一道反转字符串的题，可以用栈实现，也可以利用字符串的split方法进行分割字符串后处理</p>
 <p>输入情况较多 ： 易遗漏” “ </p>
-<p>解法</p>
+<h4 id="解法">解法</h4>
 <pre><code>    <span class="keyword">public</span> <span class="keyword">class</span> Solution {
     <span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">reverseWords</span>(String s){
         <span class="comment">//判断字符串是否为空</span>

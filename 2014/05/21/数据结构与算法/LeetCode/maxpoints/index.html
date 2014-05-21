@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>maxpoints | DaMinger&#39;s blog</title>
+    <title>Max Points on a Line | DaMinger&#39;s blog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="DaMinger">
@@ -75,7 +75,7 @@ Given n points on a 2D plane, find the maximum number of points that lie on the 
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2014/05/21/数据结构与算法/LeetCode/maxpoints/" title="maxpoints" itemprop="url">maxpoints</a>
+      <a href="/2014/05/21/数据结构与算法/LeetCode/maxpoints/" title="Max Points on a Line" itemprop="url">Max Points on a Line</a>
   </h1>
   <p class="article-author">By
     
@@ -83,7 +83,7 @@ Given n points on a 2D plane, find the maximum number of points that lie on the 
     </p>
   <p class="article-time">
     <time datetime="2014-05-21T12:56:43.000Z" itemprop="datePublished">5月 21 2014</time>
-    更新日期:<time datetime="2014-05-21T13:05:14.000Z" itemprop="dateModified">5月 21 2014</time>
+    更新日期:<time datetime="2014-05-21T13:10:28.000Z" itemprop="dateModified">5月 21 2014</time>
     
   </p>
 </header>
@@ -92,15 +92,15 @@ Given n points on a 2D plane, find the maximum number of points that lie on the 
 		
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
-		<ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#题目"><span class="toc-number">1.</span> <span class="toc-text">题目</span></a></li></ol>
+		<ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#题目"><span class="toc-number">1.</span> <span class="toc-text">题目</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#解法"><span class="toc-number">2.</span> <span class="toc-text">解法</span></a></li></ol>
 		</div>
 		
 		<h4 id="题目">题目</h4>
 <pre><code>Max Points <span class="function_start"><span class="keyword">on</span></span> a Line Total 
 
 Given n points <span class="function_start"><span class="keyword">on</span></span> a <span class="number">2</span>D plane, find <span class="keyword">the</span> maximum <span class="type">number</span> <span class="keyword">of</span> points <span class="keyword">that</span> lie <span class="function_start"><span class="keyword">on</span></span> <span class="keyword">the</span> same straight line.
-</code></pre><p>计算同一直线上最多的点数，思路：枚举+计算斜率，map(斜率，点数)</p>
-<p>解法：</p>
+</code></pre><p>计算同一直线上最多的点数，思路：枚举+计算斜率，map存(斜率，点数)</p>
+<h4 id="解法">解法</h4>
 <pre><code>import java.util.HashMap;
 import java.util.Map;
 
@@ -180,7 +180,7 @@ class Point {
 
 <div class="article-share" id="share">
 
-  <div data-url="https://github.com/DaMinger/DaMinger.github.io.git/2014/05/21/数据结构与算法/LeetCode/maxpoints/" data-title="maxpoints | DaMinger&#39;s blog" data-tsina="null" class="share clearfix">
+  <div data-url="https://github.com/DaMinger/DaMinger.github.io.git/2014/05/21/数据结构与算法/LeetCode/maxpoints/" data-title="Max Points on a Line | DaMinger&#39;s blog" data-tsina="null" class="share clearfix">
   </div>
 
 </div>
@@ -191,9 +191,9 @@ class Point {
  
 
 <div class="next">
-<a href="/2014/05/21/数据结构与算法/LeetCode/polishnotation/"  title="PolishNotation">
+<a href="/2014/05/21/数据结构与算法/LeetCode/polishnotation/"  title="Evaluate Reverse Polish Notation">
  <strong>NEXT:</strong><br/> 
- <span>PolishNotation
+ <span>Evaluate Reverse Polish Notation
 </span>
 </a>
 </div>
@@ -210,7 +210,7 @@ class Point {
 
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
-  <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#题目"><span class="toc-number">1.</span> <span class="toc-text">题目</span></a></li></ol>
+  <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#题目"><span class="toc-number">1.</span> <span class="toc-text">题目</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#解法"><span class="toc-number">2.</span> <span class="toc-text">解法</span></a></li></ol>
   </div>
 
 <div id="asidepart">

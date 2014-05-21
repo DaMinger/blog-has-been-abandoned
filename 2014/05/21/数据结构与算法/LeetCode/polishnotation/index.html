@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>PolishNotation | DaMinger&#39;s blog</title>
+    <title>Evaluate Reverse Polish Notation | DaMinger&#39;s blog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="DaMinger">
@@ -74,7 +74,7 @@ Valid operators are +, -, *, /. Each operand may be an integer or anoth">
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2014/05/21/数据结构与算法/LeetCode/polishnotation/" title="PolishNotation" itemprop="url">PolishNotation</a>
+      <a href="/2014/05/21/数据结构与算法/LeetCode/polishnotation/" title="Evaluate Reverse Polish Notation" itemprop="url">Evaluate Reverse Polish Notation</a>
   </h1>
   <p class="article-author">By
     
@@ -82,7 +82,7 @@ Valid operators are +, -, *, /. Each operand may be an integer or anoth">
     </p>
   <p class="article-time">
     <time datetime="2014-05-21T12:55:41.000Z" itemprop="datePublished">5月 21 2014</time>
-    更新日期:<time datetime="2014-05-21T13:00:20.000Z" itemprop="dateModified">5月 21 2014</time>
+    更新日期:<time datetime="2014-05-21T13:08:51.000Z" itemprop="dateModified">5月 21 2014</time>
     
   </p>
 </header>
@@ -91,7 +91,7 @@ Valid operators are +, -, *, /. Each operand may be an integer or anoth">
 		
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
-		<ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#题目"><span class="toc-number">1.</span> <span class="toc-text">题目</span></a></li></ol>
+		<ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#题目"><span class="toc-number">1.</span> <span class="toc-text">题目</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#解法"><span class="toc-number">2.</span> <span class="toc-text">解法</span></a></li></ol>
 		</div>
 		
 		<h4 id="题目">题目</h4>
@@ -103,16 +103,24 @@ Some <span class="attribute">examples</span>:
   [<span class="string">"2"</span>, <span class="string">"1"</span>, <span class="string">"+"</span>, <span class="string">"3"</span>, <span class="string">"*"</span>]<span class="function"> -&gt;</span> <span class="function"><span class="params">((<span class="number">2</span> + <span class="number">1</span>) * <span class="number">3</span>)</span> -&gt;</span> <span class="number">9</span>
   [<span class="string">"4"</span>, <span class="string">"13"</span>, <span class="string">"5"</span>, <span class="string">"/"</span>, <span class="string">"+"</span>]<span class="function"> -&gt;</span> <span class="function"><span class="params">(<span class="number">4</span> + (<span class="number">13</span> / <span class="number">5</span>))</span> -&gt;</span> <span class="number">6</span>
 </code></pre><p>波兰表达式，用栈就OK了</p>
-<p>解法：<br>    import java.util.Stack;<br>    //波兰表达式 用栈不解释<br>    public class test {<br>        public static void main(String args[]){<br>            String[] tokens =new String[]{“4”, “13”, “5”, “/“, “+”};<br>            System.out.println(evalRPN(tokens));<br>        }</p>
-<pre><code>    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> evalRPN(String[] tokens){
+<h4 id="解法">解法</h4>
+<pre><code>import java.util.Stack;
+<span class="comment">//波兰表达式 用栈不解释</span>
+<span class="keyword">public</span> <span class="keyword">class</span> test {
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span>(String args[]){
+        String[] tokens =<span class="keyword">new</span> String[]{<span class="string">"4"</span>, <span class="string">"13"</span>, <span class="string">"5"</span>, <span class="string">"/"</span>, <span class="string">"+"</span>};
+        System.<span class="keyword">out</span>.println(evalRPN(tokens));
+    }
+
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">evalRPN</span>(String[] tokens){
         String operators =<span class="string">"+-*/"</span>;
         Stack&lt;String&gt; s = <span class="keyword">new</span> Stack&lt;String&gt;();
-        <span class="keyword">for</span>(String <span class="keyword">str</span> : tokens){
-            <span class="keyword">if</span>(operators.contains(<span class="keyword">str</span>)){
+        <span class="keyword">for</span>(String str : tokens){
+            <span class="keyword">if</span>(operators.contains(str)){
                 <span class="keyword">int</span> num2 = Integer.valueOf(s.pop());
                 <span class="keyword">int</span> num1 = Integer.valueOf(s.pop());
-                <span class="keyword">int</span> <span class="keyword">index</span> = operators.indexOf(<span class="keyword">str</span>);
-                <span class="keyword">switch</span>(<span class="keyword">index</span>){
+                <span class="keyword">int</span> index = operators.indexOf(str);
+                <span class="keyword">switch</span>(index){
                 <span class="keyword">case</span> <span class="number">0</span>:
                     s.push(String.valueOf(num1+num2));
                     <span class="keyword">break</span>;
@@ -127,7 +135,7 @@ Some <span class="attribute">examples</span>:
                     <span class="keyword">break</span>;
                 }
             }<span class="keyword">else</span>{
-                s.push(<span class="keyword">str</span>);
+                s.push(str);
             }
         }
         <span class="keyword">return</span> Integer.valueOf(s.pop());
@@ -152,7 +160,7 @@ Some <span class="attribute">examples</span>:
 
 <div class="article-share" id="share">
 
-  <div data-url="https://github.com/DaMinger/DaMinger.github.io.git/2014/05/21/数据结构与算法/LeetCode/polishnotation/" data-title="PolishNotation | DaMinger&#39;s blog" data-tsina="null" class="share clearfix">
+  <div data-url="https://github.com/DaMinger/DaMinger.github.io.git/2014/05/21/数据结构与算法/LeetCode/polishnotation/" data-title="Evaluate Reverse Polish Notation | DaMinger&#39;s blog" data-tsina="null" class="share clearfix">
   </div>
 
 </div>
@@ -162,10 +170,10 @@ Some <span class="attribute">examples</span>:
 <nav class="article-nav clearfix">
  
  <div class="prev" >
- <a href="/2014/05/21/数据结构与算法/LeetCode/maxpoints/" title="maxpoints">
+ <a href="/2014/05/21/数据结构与算法/LeetCode/maxpoints/" title="Max Points on a Line">
   <strong>PREVIOUS:</strong><br/>
   <span>
-  maxpoints</span>
+  Max Points on a Line</span>
 </a>
 </div>
 
@@ -190,7 +198,7 @@ Some <span class="attribute">examples</span>:
 
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
-  <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#题目"><span class="toc-number">1.</span> <span class="toc-text">题目</span></a></li></ol>
+  <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#题目"><span class="toc-number">1.</span> <span class="toc-text">题目</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#解法"><span class="toc-number">2.</span> <span class="toc-text">解法</span></a></li></ol>
   </div>
 
 <div id="asidepart">
