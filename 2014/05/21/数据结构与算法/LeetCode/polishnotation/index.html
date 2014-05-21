@@ -4,16 +4,15 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>Hive 体系结构入门 | DaMinger&#39;s blog</title>
+    <title>PolishNotation | DaMinger&#39;s blog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="DaMinger">
     
-    <meta name="description" content="第一部分：概念
-基本概念•用户接口：用户访问Hive的入口•元数据：Hive的用户信息与表的MetaData•解释器：分析翻译HQL的组件•编译器：编译HQL的组件•优化器：优化HQL的组件
-第二部分：Hive架构与基本组成
-架构图
-基本组成•用户接口，包括 CLI，JDBC/ODBC，WebUI•">
+    <meta name="description" content="题目
+Evaluate the value of an arithmetic expression in Reverse Polish Notation.
+
+Valid operators are +, -, *, /. Each operand may be an integer or anoth">
     
     
     
@@ -75,15 +74,15 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2014/04/24/Hadoop/hadoop_hive/" title="Hive 体系结构入门" itemprop="url">Hive 体系结构入门</a>
+      <a href="/2014/05/21/数据结构与算法/LeetCode/polishnotation/" title="PolishNotation" itemprop="url">PolishNotation</a>
   </h1>
   <p class="article-author">By
     
       <a href="https://github.com/DaMinger/DaMinger.github.io.git" title="DaMinger">DaMinger</a>
     </p>
   <p class="article-time">
-    <time datetime="2014-04-24T10:49:01.000Z" itemprop="datePublished">4月 24 2014</time>
-    更新日期:<time datetime="2014-04-24T11:38:28.000Z" itemprop="dateModified">4月 24 2014</time>
+    <time datetime="2014-05-21T12:55:41.000Z" itemprop="datePublished">5月 21 2014</time>
+    更新日期:<time datetime="2014-05-21T13:00:20.000Z" itemprop="dateModified">5月 21 2014</time>
     
   </p>
 </header>
@@ -92,63 +91,68 @@
 		
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
-		<ol class="toc"><li class="toc-item toc-level-5"><a class="toc-link" href="#第一部分：概念"><span class="toc-number">1.</span> <span class="toc-text">第一部分：概念</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#第二部分：Hive架构与基本组成"><span class="toc-number">2.</span> <span class="toc-text">第二部分：Hive架构与基本组成</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#第三部分：Hive运行模式"><span class="toc-number">3.</span> <span class="toc-text">第三部分：Hive运行模式</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#第四部分：数据类型"><span class="toc-number">4.</span> <span class="toc-text">第四部分：数据类型</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#第五部分：Hive的元数据存储"><span class="toc-number">5.</span> <span class="toc-text">第五部分：Hive的元数据存储</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#第六部分：Hive的数据存储"><span class="toc-number">6.</span> <span class="toc-text">第六部分：Hive的数据存储</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#第七部分：HiveUI介绍"><span class="toc-number">7.</span> <span class="toc-text">第七部分：HiveUI介绍</span></a></li></ol>
+		<ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#题目"><span class="toc-number">1.</span> <span class="toc-text">题目</span></a></li></ol>
 		</div>
 		
-		<h5 id="第一部分：概念">第一部分：概念</h5>
-<p>基本概念<br>•用户接口：用户访问Hive的入口<br>•元数据：Hive的用户信息与表的MetaData<br>•解释器：分析翻译HQL的组件<br>•编译器：编译HQL的组件<br>•优化器：优化HQL的组件</p>
-<h5 id="第二部分：Hive架构与基本组成">第二部分：Hive架构与基本组成</h5>
-<p>架构图<br><img src="/img/Hadoop/Hive/1.png" alt="图1"></p>
-<p>基本组成<br>•用户接口，包括 CLI，JDBC/ODBC，WebUI<br>•元数据存储，通常是存储在关系数据库如 mysql, derby 中<br>•解释器、编译器、优化器、执行器<br>•Hadoop：用 HDFS 进行存储，利用 MapReduce 进行计算</p>
-<p>各组件的基本功能<br>•用户接口主要有三个：CLI，JDBC/ODBC和 WebUI<br>•CLI，即Shell命令行<br>•JDBC/ODBC 是 Hive 的JAVA，与使用传统数据库JDBC的方式类似<br>•WebGUI是通过浏览器访问 Hive<br>•Hive 将元数据存储在数据库中，目前只支持 mysql、derby，下一版本会支持更多的数据库。Hive 中的元数据包括表的名字，表的列和分区及其属性，表的属性（是否为外部表等），表的数据所在目录等<br>•解释器、编译器、优化器完成 HQL 查询语句从词法分析、语法分析、编译、优化以及查询计划的生成。生成的查询计划存储在 HDFS 中，并在随后有 MapReduce 调用执行<br>•Hive 的数据存储在 HDFS 中，大部分的查询由 MapReduce 完成（包含 星号的查询，比如 select 星号 from table 不会生成 MapRedcue 任务）<br>Metastore<br>•Metastore是系统目录(catalog)用于保存Hive中所存储的表的元数据（metadata）信息<br>•Metastore是Hive被用作传统数据库解决方案（如oracle和db2）时区别其它类似系统的一个特征<br>•Metastore包含如下的部分：<br>•Database 是表（table）的名字空间。默认的数据库（database）名为‘default’<br>•Table 表（table）的原数据包含信息有：列（list of columns）和它们的类型（types），拥有者（owner），存储空间（storage）和SerDei信息<br>•Partition 每个分区（partition）都有自己的列（columns），SerDe和存储空间（storage）。这一特征将被用来支持Hive中的模式演变（schema evolution）<br>Compiler<br>•Driver调用编译器（compiler）处理HiveQL字串，这些字串可能是一条DDL、DML或查询语句<br>•编译器将字符串转化为策略（plan）<br>•策略仅由元数据操作和HDFS操作组成，元数据操作只包含DDL语句，HDFS操作只包含LOAD语句<br>•对插入和查询而言，策略由map-reduce任务中的具有方向的非循环图（directedacyclic graph，DAG）组成</p>
-<h5 id="第三部分：Hive运行模式">第三部分：Hive运行模式</h5>
-<p>Hive运行模式<br>•Hive的运行模式即任务的执行环境<br>•分为本地与集群两种<br>•我们可以通过mapred.job.tracker 来指明<br>•设置方式<br>•hive &gt; SET  mapred.job.tracker=local</p>
-<h5 id="第四部分：数据类型">第四部分：数据类型</h5>
-<p>原始数据类型<br>•Integers<br>TINYINT - 1 byte<br>SMALLINT - 2 byte<br>INT - 4 byte<br>BIGINT - 8 byte<br>•Boolean type<br>BOOLEAN - TRUE/FALSE<br>•Floating point numbers<br>FLOAT –单精度<br>DOUBLE – 双精度<br>•String type<br>STRING - sequence of characters in a specified character set</p>
-<p>复杂数据类型<br>•Structs: 例子  {c INT; d INT}<br>•Maps (key-value tuples):. 例子’group’ -&gt; gid  M[‘group’]<br>•Arrays (indexable lists):  例子[‘1’, ‘2’, ‘3’]<br>•TIMESTAMP  0.8版本新加属性</p>
-<h5 id="第五部分：Hive的元数据存储">第五部分：Hive的元数据存储</h5>
-<p>存储方式与模式<br>•Hive 将元数据存储在 数据库中<br>•连接到数据库模式有三种<br>•单用户模式<br><img src="/img/Hadoop/Hive/2.png" alt="图2"><br>•多用户模式<br><img src="/img/Hadoop/Hive/3.png" alt="图3"><br>•远程服务器模式<br><img src="/img/Hadoop/Hive/4.png" alt="图4"></p>
-<p><p align=left>单用户模式</p>
-<p>此模式连接到一个 In-memory 的数据库 Derby ，一般用于 Unit Test</p>
-<p>多用户模式</p>
-<p>通过网络连接到一个数据库中，是最经常使用到的模式</p>
-<p>远程服务器模式</p>
-<p>用于非 Java 客户端访问元数据库，在服务器端启动MetaStoreServer，客户端利用 Thrift 协议通过MetaStoreServer 访问元数据库</p>
-<h5 id="第六部分：Hive的数据存储">第六部分：Hive的数据存储</h5>
-<p>Hive数据存储的基本概念<br>•Hive的数据存储是建立在Hadoop HDFS之上的<br>•Hive没有专门的数据存储格式<br>•存储结构主要包括：数据库、文件、表、视图<br>•Hive默认可以直接加载文本文件，还支持sequence file 、RCFile<br>•创建表时，我们直接告诉Hive数据的列分隔符与行分隔符，Hive即可解析数据</p>
-<p>Hive的数据模型-数据库<br>•类似传统数据库的DataBase<br>•在第三方数据库里实际是一张表<br>•简单示例<br>•命令行hive &gt; create database test_database;</p>
-<p>Hive的数据模型-表<br>•Table 内部表<br>•Partition  分区表<br>•External Table 外部表<br>•Bucket  Table </p>
-<p>内部表<br>•与数据库中的 Table 在概念上是类似<br>•每一个 Table 在 Hive 中都有一个相应的目录存储数据<br>•例如，一个表 test，它在 HDFS 中的路径为：/ warehouse /test<br>• warehouse是在 hive-site.xml 中由 ${hive.metastore.warehouse.dir} 指定的数据仓库的目录<br>•所有的 Table 数据（不包括 External Table）都保存在这个目录中。<br>•删除表时，元数据与数据都会被删除</p>
-<p>内部表简单示例<br>•创建数据文件test_inner_table.txt<br>•创建表<br>•create table test_inner_table (key string)<br>•加载数据<br>•LOAD DATA LOCAL INPATH ‘filepath’ INTO TABLE test_inner_table<br>•查看数据<br>•select 星号 from test_inner_table<br>•select count(星号) from test_inner_table<br>•删除表 drop table test_inner_table</p>
-<p>分区表<br>•Partition 对应于数据库中的 Partition 列的密集索引<br>•在 Hive 中，表中的一个 Partition 对应于表下的一个目录，所有的 Partition 的数据都存储在对应的目录中<br>•例如：test表中包含 date 和 position 两个 Partition，则对应于 date = 20120801, position = zh 的 HDFS 子目录为：/ warehouse /test/date=20120801/ position =zh<br>•对应于  = 20100801, position = US 的HDFS 子目录为；/ warehouse /xiaojun/date=20120801/ position =US</p>
-<p>分区表简单示例<br>•创建数据文件test_partition_table.txt<br>•创建表<br>•create table test_partition_table (key string) partitioned by (dt string)<br>•加载数据<br>•LOAD DATA INPATH ‘filepath’ INTO TABLE test_partition_table partition (dt=‘2006’)<br>•查看数据<br>•select 星号 from test_partition_table<br>•select count(星号) from test_partition_table<br>•删除表 drop table test_partition_table</p>
-<p>外部表<br>•指向已经在 HDFS 中存在的数据，可以创建 Partition<br>•它和 内部表 在元数据的组织上是相同的，而实际数据的存储则有较大的差异<br>•内部表 的创建过程和数据加载过程（这两个过程可以在同一个语句中完成），在加载数据的过程中，实际数据会被移动到数据仓库目录中；之后对数据对访问将会直接在数据仓库目录中完成。删除表时，表中的数据和元数据将会被同时删除<br>• 外部表 只有一个过程，加载数据和创建表同时完成，并不会移动到数据仓库目录中，只是与外部数据建立一个链接。当删除一个 外部表 时，仅删除该链接</p>
-<p>外部表简单示例<br>•创建数据文件test_external_table.txt<br>•创建表<br>•create external table test_external_table (key string)<br>•加载数据<br>•LOAD DATA INPATH ‘filepath’ INTO TABLE test_inner_table<br>•查看数据<br>•select 星号 from test_external_table<br>•select count(星号) from test_external_table<br>•删除表 drop table test_external_table</p>
-<p>Bucket Table<br>•可以将表的列通过Hash算法进一步分解成不同的文件存储<br>•例如：将age列分散成20个文件，首先要对AGE进行Hash计算，对应为0的写入/warehouse/test/date=20120801/postion=zh/part-00000,对应为1的写入/warehouse/test/date=20120801/postion=zh/part-00001<br>•如果想应用很多的Map任务这样是不错的选择<br><img src="/img/Hadoop/Hive/5.png" alt="图5"></p>
-<p>Bucket Table简单示例<br>•创建数据文件test_bucket_table.txt<br>•创建表<br>•create table test_bucket_table (key string)<br>     clustered by (key) into 20 buckets<br>•加载数据<br>•LOAD DATA INPATH ‘filepath’ INTO TABLE test_bucket_table<br>•查看数据<br>•select 星号 from test_bucket_table<br>•set hive.enforce.bucketing = true;</p>
-<p>Hive的数据模型-视图<br>•视图与传统数据库的视图类似<br>•视图是只读的<br>•视图基于的基本表，如果改变，指增加不会影响视图的呈现；如果删除，会出现问题<br>•如果不指定视图的列，会根据select语句后的生成<br>•示例<br>•create view test_view as select * from test</p>
-<h5 id="第七部分：HiveUI介绍">第七部分：HiveUI介绍</h5>
-<p>启动UI<br>•配置<br>•hive-site.xml 添加<br>  <property><br>       <name>hive.hwi.war.file</name><br>       <value>lib/hive-hwi-0.8.1.war</value><br>  </property><br>•启动Hive的UI sh $HIVE_HOME/bin/hive —service hwi</p>
-  
+		<h4 id="题目">题目</h4>
+<pre><code>Evaluate the value <span class="keyword">of</span> an arithmetic expression <span class="keyword">in</span> Reverse Polish Notation.
+
+Valid operators are +, -, *, /. Each operand may be an integer <span class="keyword">or</span> another expression.
+
+Some <span class="attribute">examples</span>:
+  [<span class="string">"2"</span>, <span class="string">"1"</span>, <span class="string">"+"</span>, <span class="string">"3"</span>, <span class="string">"*"</span>]<span class="function"> -&gt;</span> <span class="function"><span class="params">((<span class="number">2</span> + <span class="number">1</span>) * <span class="number">3</span>)</span> -&gt;</span> <span class="number">9</span>
+  [<span class="string">"4"</span>, <span class="string">"13"</span>, <span class="string">"5"</span>, <span class="string">"/"</span>, <span class="string">"+"</span>]<span class="function"> -&gt;</span> <span class="function"><span class="params">(<span class="number">4</span> + (<span class="number">13</span> / <span class="number">5</span>))</span> -&gt;</span> <span class="number">6</span>
+</code></pre><p>波兰表达式，用栈就OK了</p>
+<p>解法：<br>    import java.util.Stack;<br>    //波兰表达式 用栈不解释<br>    public class test {<br>        public static void main(String args[]){<br>            String[] tokens =new String[]{“4”, “13”, “5”, “/“, “+”};<br>            System.out.println(evalRPN(tokens));<br>        }</p>
+<pre><code>    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> evalRPN(String[] tokens){
+        String operators =<span class="string">"+-*/"</span>;
+        Stack&lt;String&gt; s = <span class="keyword">new</span> Stack&lt;String&gt;();
+        <span class="keyword">for</span>(String <span class="keyword">str</span> : tokens){
+            <span class="keyword">if</span>(operators.contains(<span class="keyword">str</span>)){
+                <span class="keyword">int</span> num2 = Integer.valueOf(s.pop());
+                <span class="keyword">int</span> num1 = Integer.valueOf(s.pop());
+                <span class="keyword">int</span> <span class="keyword">index</span> = operators.indexOf(<span class="keyword">str</span>);
+                <span class="keyword">switch</span>(<span class="keyword">index</span>){
+                <span class="keyword">case</span> <span class="number">0</span>:
+                    s.push(String.valueOf(num1+num2));
+                    <span class="keyword">break</span>;
+                <span class="keyword">case</span> <span class="number">1</span>:
+                    s.push(String.valueOf(num1-num2));
+                    <span class="keyword">break</span>;
+                <span class="keyword">case</span> <span class="number">2</span>:
+                    s.push(String.valueOf(num1*num2));
+                    <span class="keyword">break</span>;
+                <span class="keyword">case</span> <span class="number">3</span>:
+                    s.push(String.valueOf(num1/num2));
+                    <span class="keyword">break</span>;
+                }
+            }<span class="keyword">else</span>{
+                s.push(<span class="keyword">str</span>);
+            }
+        }
+        <span class="keyword">return</span> Integer.valueOf(s.pop());
+    }
+}
+</code></pre>  
 	</div>
 		<footer class="article-footer clearfix">
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/Hadoop/">Hadoop</a><a href="/tags/Hive/">Hive</a>
+  <span></span> <a href="/tags/数据结构与算法/">数据结构与算法</a>
   </div>
 
 
 <div class="article-categories">
   <span></span>
-  <a class="article-category-link" href="/categories/Hadoop/">Hadoop</a>
+  <a class="article-category-link" href="/categories/数据结构与算法/">数据结构与算法</a>
 </div>
 
 
 
 <div class="article-share" id="share">
 
-  <div data-url="https://github.com/DaMinger/DaMinger.github.io.git/2014/04/24/Hadoop/hadoop_hive/" data-title="Hive 体系结构入门 | DaMinger&#39;s blog" data-tsina="null" class="share clearfix">
+  <div data-url="https://github.com/DaMinger/DaMinger.github.io.git/2014/05/21/数据结构与算法/LeetCode/polishnotation/" data-title="PolishNotation | DaMinger&#39;s blog" data-tsina="null" class="share clearfix">
   </div>
 
 </div>
@@ -158,18 +162,18 @@
 <nav class="article-nav clearfix">
  
  <div class="prev" >
- <a href="/2014/04/24/Hadoop/hadoop_hive&mysql/" title="Hive与Mysql本地安装">
+ <a href="/2014/05/21/数据结构与算法/LeetCode/maxpoints/" title="maxpoints">
   <strong>PREVIOUS:</strong><br/>
   <span>
-  Hive与Mysql本地安装</span>
+  maxpoints</span>
 </a>
 </div>
 
 
 <div class="next">
-<a href="/2014/04/23/Hadoop/hadoop_pig/"  title="Pig的简单使用">
+<a href="/2014/05/21/数据结构与算法/LeetCode/reversewords/"  title="Reverse Words in a String">
  <strong>NEXT:</strong><br/> 
- <span>Pig的简单使用
+ <span>Reverse Words in a String
 </span>
 </a>
 </div>
@@ -186,7 +190,7 @@
 
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
-  <ol class="toc"><li class="toc-item toc-level-5"><a class="toc-link" href="#第一部分：概念"><span class="toc-number">1.</span> <span class="toc-text">第一部分：概念</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#第二部分：Hive架构与基本组成"><span class="toc-number">2.</span> <span class="toc-text">第二部分：Hive架构与基本组成</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#第三部分：Hive运行模式"><span class="toc-number">3.</span> <span class="toc-text">第三部分：Hive运行模式</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#第四部分：数据类型"><span class="toc-number">4.</span> <span class="toc-text">第四部分：数据类型</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#第五部分：Hive的元数据存储"><span class="toc-number">5.</span> <span class="toc-text">第五部分：Hive的元数据存储</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#第六部分：Hive的数据存储"><span class="toc-number">6.</span> <span class="toc-text">第六部分：Hive的数据存储</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#第七部分：HiveUI介绍"><span class="toc-number">7.</span> <span class="toc-text">第七部分：HiveUI介绍</span></a></li></ol>
+  <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#题目"><span class="toc-number">1.</span> <span class="toc-text">题目</span></a></li></ol>
   </div>
 
 <div id="asidepart">
