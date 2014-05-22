@@ -4,16 +4,19 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>hadoop报错：could only be replicated to 0 nodes, instead of 1 解决思路 | DaMinger&#39;s blog</title>
+    <title>LeetCode:Insertion Sort List | DaMinger&#39;s blog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="DaMinger">
     
-    <meta name="description" content="有时候做一些hadoop操作时候，例如上传文件、运行程序时hadoop报错：could only be replicated to 0 nodes, instead of 1
-其思路可以这样考虑一下
-一、优先考虑看下hadoop的日志，根据日志排错。
-二、如果不会看日志，注意以下几点做了没：
-1、看">
+    <meta name="description" content="题目
+Sort a linked list using insertion sort.
+插入排序大致思路
+
+设数组为a[0…n-1]。
+初始时，a[0]自成1个有序区，无序区为a[1..n-1]。令i=1
+将a[i]并入当前的有序区a[0…i-1]中形成a[0…i]的有序区间。
+i++并重复第二步直">
     
     
     
@@ -75,15 +78,15 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2014/04/15/Hadoop/hadoop_error_1/" title="hadoop报错：could only be replicated to 0 nodes, instead of 1 解决思路" itemprop="url">hadoop报错：could only be replicated to 0 nodes, instead of 1 解决思路</a>
+      <a href="/2014/05/22/数据结构与算法/LeetCode/insertsortlist/" title="LeetCode:Insertion Sort List" itemprop="url">LeetCode:Insertion Sort List</a>
   </h1>
   <p class="article-author">By
     
       <a href="https://github.com/DaMinger/DaMinger.github.io.git" title="DaMinger">DaMinger</a>
     </p>
   <p class="article-time">
-    <time datetime="2014-04-15T03:36:28.000Z" itemprop="datePublished">4月 15 2014</time>
-    更新日期:<time datetime="2014-04-15T04:07:09.000Z" itemprop="dateModified">4月 15 2014</time>
+    <time datetime="2014-05-22T05:48:59.000Z" itemprop="datePublished">5月 22 2014</time>
+    更新日期:<time datetime="2014-05-22T06:20:21.000Z" itemprop="dateModified">5月 22 2014</time>
     
   </p>
 </header>
@@ -92,44 +95,72 @@
 		
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
-		<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#一、优先考虑看下hadoop的日志，根据日志排错。"><span class="toc-number">1.</span> <span class="toc-text">一、优先考虑看下hadoop的日志，根据日志排错。</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#二、如果不会看日志，注意以下几点做了没："><span class="toc-number">2.</span> <span class="toc-text">二、如果不会看日志，注意以下几点做了没：</span></a></li></ol>
+		<ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#题目"><span class="toc-number">1.</span> <span class="toc-text">题目</span></a></li><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#插入排序大致思路"><span class="toc-number">1.0.1.</span> <span class="toc-text">插入排序大致思路</span></a></li></ol></ol><li class="toc-item toc-level-4"><a class="toc-link" href="#解法"><span class="toc-number">2.</span> <span class="toc-text">解法</span></a></li></ol>
 		</div>
 		
-		<p>有时候做一些hadoop操作时候，例如上传文件、运行程序时<br>hadoop报错：could only be replicated to 0 nodes, instead of 1</p>
-<p>其思路可以这样考虑一下</p>
-<h1 id="一、优先考虑看下hadoop的日志，根据日志排错。">一、优先考虑看下hadoop的日志，根据日志排错。</h1>
-<h1 id="二、如果不会看日志，注意以下几点做了没：">二、如果不会看日志，注意以下几点做了没：</h1>
-<pre><code><span class="number">1</span>、看看各节点的防火墙关了没。
-<span class="number">2</span>、这个问题是由于没有添加节点的原因，也就是说需要先启动namenode，
-再启动datanode，然后启动jobtracker和tasktracker。
-<span class="variable">$hadoop</span><span class="attribute">-daemon</span><span class="built_in">.</span>sh start namenode
-<span class="variable">$hadoop</span><span class="attribute">-daemon</span><span class="built_in">.</span>sh start datanode
-<span class="number">3</span>、查看配置文件   conf/hdfs<span class="attribute">-site</span><span class="built_in">.</span><span class="built_in">xml</span> 观察配置的域名和IP改了么。
-<span class="number">4</span>、实验环境可以这样做，生产环境别这样做：
-先把服务都停掉 stop<span class="attribute">-all</span><span class="built_in">.</span>sh
-格式化namenode hadoop namenode <span class="attribute">-foramt</span>
-重新启动所有服务 start<span class="attribute">-all</span><span class="built_in">.</span>sh
-可以进行正常操作了
+		<h4 id="题目">题目</h4>
+<pre><code>Sort <span class="operator">a</span> linked list <span class="keyword">using</span> insertion <span class="built_in">sort</span>.
+</code></pre><h6 id="插入排序大致思路">插入排序大致思路</h6>
+<ul>
+<li>设数组为a[0…n-1]。</li>
+<li>初始时，a[0]自成1个有序区，无序区为a[1..n-1]。令i=1</li>
+<li>将a[i]并入当前的有序区a[0…i-1]中形成a[0…i]的有序区间。</li>
+<li>i++并重复第二步直到i==n-1。排序完成。 </li>
+</ul>
+<h4 id="解法">解法</h4>
+<pre><code>该题是在链表中使用插入排序，其思路都是一样的
+<span class="keyword">class</span> ListNode {
+     int <span class="keyword">val</span>;
+     ListNode next;
+     ListNode(int x) {
+         <span class="keyword">val</span> = x;
+         next = <span class="keyword">null</span>;
+    }
+ }
+<span class="keyword">public</span> <span class="keyword">class</span> insertSortList {
+    <span class="keyword">public</span> ListNode insertionSortList(ListNode head){
+        <span class="keyword">if</span>(head ==<span class="keyword">null</span> ||head.next==<span class="keyword">null</span>)
+            <span class="keyword">return</span> head;
+        ListNode cur =head.next;
+        <span class="keyword">while</span>(cur !=<span class="keyword">null</span>){
+            ListNode tmp=head;
+            <span class="comment">//用tmp节点代表有序区的最后一个节点</span>
+            <span class="keyword">while</span>(tmp.<span class="keyword">val</span>&lt;cur.<span class="keyword">val</span> &amp;&amp; tmp!=cur)
+                tmp=tmp.next;
+            <span class="keyword">if</span>(tmp !=cur){
+                <span class="keyword">while</span>(tmp !=cur){
+                    int tmpvalue=tmp.<span class="keyword">val</span>;
+                    tmp.<span class="keyword">val</span>=cur.<span class="keyword">val</span>;
+                    cur.<span class="keyword">val</span>=tmpvalue;
+                    tmp=tmp.next;
+                }
+            }
+            cur =cur.next;
+        }
+        <span class="keyword">return</span> head;
+    }
+
+}
 </code></pre>  
 	</div>
 		<footer class="article-footer clearfix">
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/Hadoop/">Hadoop</a>
+  <span></span> <a href="/tags/数据结构与算法/">数据结构与算法</a>
   </div>
 
 
 <div class="article-categories">
   <span></span>
-  <a class="article-category-link" href="/categories/Hadoop/">Hadoop</a>
+  <a class="article-category-link" href="/categories/数据结构与算法/">数据结构与算法</a>
 </div>
 
 
 
 <div class="article-share" id="share">
 
-  <div data-url="https://github.com/DaMinger/DaMinger.github.io.git/2014/04/15/Hadoop/hadoop_error_1/" data-title="hadoop报错：could only be replicated to 0 nodes, instead of 1 解决思路 | DaMinger&#39;s blog" data-tsina="null" class="share clearfix">
+  <div data-url="https://github.com/DaMinger/DaMinger.github.io.git/2014/05/22/数据结构与算法/LeetCode/insertsortlist/" data-title="LeetCode:Insertion Sort List | DaMinger&#39;s blog" data-tsina="null" class="share clearfix">
   </div>
 
 </div>
@@ -139,18 +170,18 @@
 <nav class="article-nav clearfix">
  
  <div class="prev" >
- <a href="/2014/04/16/Hadoop/hadoop_error_2/" title="利用wordcount程序检验hadoop集群搭建是否成功">
+ <a href="/2014/05/22/数据结构与算法/basicadt/" title="基础的数据结构总结">
   <strong>PREVIOUS:</strong><br/>
   <span>
-  利用wordcount程序检验hadoop集群搭建是否成功</span>
+  基础的数据结构总结</span>
 </a>
 </div>
 
 
 <div class="next">
-<a href="/2014/04/13/Linux/linux_error_1/"  title="启动eth0 网卡时报错Error: Connection activation failed: Device not managed by NetworkManager">
+<a href="/2014/05/22/数据结构与算法/LeetCode/sortlist/"  title="LeetCode:Sort List">
  <strong>NEXT:</strong><br/> 
- <span>启动eth0 网卡时报错Error: Connection activation failed: Device not managed by NetworkManager
+ <span>LeetCode:Sort List
 </span>
 </a>
 </div>
@@ -167,7 +198,7 @@
 
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
-  <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#一、优先考虑看下hadoop的日志，根据日志排错。"><span class="toc-number">1.</span> <span class="toc-text">一、优先考虑看下hadoop的日志，根据日志排错。</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#二、如果不会看日志，注意以下几点做了没："><span class="toc-number">2.</span> <span class="toc-text">二、如果不会看日志，注意以下几点做了没：</span></a></li></ol>
+  <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#题目"><span class="toc-number">1.</span> <span class="toc-text">题目</span></a></li><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#插入排序大致思路"><span class="toc-number">1.0.1.</span> <span class="toc-text">插入排序大致思路</span></a></li></ol></ol><li class="toc-item toc-level-4"><a class="toc-link" href="#解法"><span class="toc-number">2.</span> <span class="toc-text">解法</span></a></li></ol>
   </div>
 
 <div id="asidepart">

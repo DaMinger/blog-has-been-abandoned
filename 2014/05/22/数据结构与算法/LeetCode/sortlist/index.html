@@ -4,16 +4,15 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>hadoop报错：could only be replicated to 0 nodes, instead of 1 解决思路 | DaMinger&#39;s blog</title>
+    <title>LeetCode:Sort List | DaMinger&#39;s blog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="DaMinger">
     
-    <meta name="description" content="有时候做一些hadoop操作时候，例如上传文件、运行程序时hadoop报错：could only be replicated to 0 nodes, instead of 1
-其思路可以这样考虑一下
-一、优先考虑看下hadoop的日志，根据日志排错。
-二、如果不会看日志，注意以下几点做了没：
-1、看">
+    <meta name="description" content="题目
+Sort a linked list in O(n log n) time using constant space complexity.
+题目要求时间复杂度是O(n log n) ,想到了快排和归并，但是链表对于快排来说，交换次数太多，可以采用归并排序，但需要额外空间O(n)
+归并排序：其">
     
     
     
@@ -75,15 +74,15 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2014/04/15/Hadoop/hadoop_error_1/" title="hadoop报错：could only be replicated to 0 nodes, instead of 1 解决思路" itemprop="url">hadoop报错：could only be replicated to 0 nodes, instead of 1 解决思路</a>
+      <a href="/2014/05/22/数据结构与算法/LeetCode/sortlist/" title="LeetCode:Sort List" itemprop="url">LeetCode:Sort List</a>
   </h1>
   <p class="article-author">By
     
       <a href="https://github.com/DaMinger/DaMinger.github.io.git" title="DaMinger">DaMinger</a>
     </p>
   <p class="article-time">
-    <time datetime="2014-04-15T03:36:28.000Z" itemprop="datePublished">4月 15 2014</time>
-    更新日期:<time datetime="2014-04-15T04:07:09.000Z" itemprop="dateModified">4月 15 2014</time>
+    <time datetime="2014-05-22T05:48:29.000Z" itemprop="datePublished">5月 22 2014</time>
+    更新日期:<time datetime="2014-05-22T06:16:19.000Z" itemprop="dateModified">5月 22 2014</time>
     
   </p>
 </header>
@@ -92,44 +91,147 @@
 		
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
-		<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#一、优先考虑看下hadoop的日志，根据日志排错。"><span class="toc-number">1.</span> <span class="toc-text">一、优先考虑看下hadoop的日志，根据日志排错。</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#二、如果不会看日志，注意以下几点做了没："><span class="toc-number">2.</span> <span class="toc-text">二、如果不会看日志，注意以下几点做了没：</span></a></li></ol>
+		<ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#题目"><span class="toc-number">1.</span> <span class="toc-text">题目</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#解法"><span class="toc-number">2.</span> <span class="toc-text">解法</span></a></li></ol>
 		</div>
 		
-		<p>有时候做一些hadoop操作时候，例如上传文件、运行程序时<br>hadoop报错：could only be replicated to 0 nodes, instead of 1</p>
-<p>其思路可以这样考虑一下</p>
-<h1 id="一、优先考虑看下hadoop的日志，根据日志排错。">一、优先考虑看下hadoop的日志，根据日志排错。</h1>
-<h1 id="二、如果不会看日志，注意以下几点做了没：">二、如果不会看日志，注意以下几点做了没：</h1>
-<pre><code><span class="number">1</span>、看看各节点的防火墙关了没。
-<span class="number">2</span>、这个问题是由于没有添加节点的原因，也就是说需要先启动namenode，
-再启动datanode，然后启动jobtracker和tasktracker。
-<span class="variable">$hadoop</span><span class="attribute">-daemon</span><span class="built_in">.</span>sh start namenode
-<span class="variable">$hadoop</span><span class="attribute">-daemon</span><span class="built_in">.</span>sh start datanode
-<span class="number">3</span>、查看配置文件   conf/hdfs<span class="attribute">-site</span><span class="built_in">.</span><span class="built_in">xml</span> 观察配置的域名和IP改了么。
-<span class="number">4</span>、实验环境可以这样做，生产环境别这样做：
-先把服务都停掉 stop<span class="attribute">-all</span><span class="built_in">.</span>sh
-格式化namenode hadoop namenode <span class="attribute">-foramt</span>
-重新启动所有服务 start<span class="attribute">-all</span><span class="built_in">.</span>sh
-可以进行正常操作了
+		<h4 id="题目">题目</h4>
+<pre><code>Sort <span class="operator">a</span> linked list <span class="operator">in</span> O(n <span class="built_in">log</span> n) <span class="built_in">time</span> <span class="keyword">using</span> <span class="built_in">constant</span> <span class="constant">space</span> complexity.
+</code></pre><p>题目要求时间复杂度是O(n log n) ,想到了快排和归并，但是链表对于快排来说，交换次数太多，可以采用归并排序，但需要额外空间O(n)</p>
+<p>归并排序：其的基本思路就是将数组分成二组A，B，如果这二组组内的数据都是有序的，那么就可以很方便的将这二组数据进行排序。如何让这二组组内数据有序了？</p>
+<p>可以将A，B组各自再分成二组。依次类推，当分出来的小组只有一个数据时，可以认为这个小组组内已经达到了有序，然后再合并相邻的二个小组就可以了。这样通过先递归的分解数列，再合并数列就完成了归并排序。</p>
+<p>解法参考 <a href="http://www.programcreek.com/2012/11/leetcode-solution-merge-sort-linkedlist-in-java/" target="_blank">http://www.programcreek.com/2012/11/leetcode-solution-merge-sort-linkedlist-in-java/</a></p>
+<h4 id="解法">解法</h4>
+<pre><code>class ListNode{
+    <span class="keyword">int</span> val;
+    ListNode next;
+    ListNode(<span class="keyword">int</span> x){
+        val=x;
+        next=<span class="keyword">null</span>;
+    }
+}
+<span class="keyword">public</span> <span class="keyword">class</span> SortLinkedList {
+    <span class="keyword">public</span> <span class="keyword">static</span> ListNode <span class="title">mergeSortList</span>(ListNode head){
+            <span class="keyword">if</span>(head ==<span class="keyword">null</span> ||head.next ==<span class="keyword">null</span>)
+                <span class="keyword">return</span> head;
+            <span class="comment">//计算链表节点数</span>
+            <span class="keyword">int</span> count=<span class="number">0</span>;
+            ListNode p=head;
+            <span class="keyword">while</span>(p!=<span class="keyword">null</span>){
+                count++;
+                p=p.next;
+            }
+            <span class="comment">//将链表一分为2</span>
+            <span class="keyword">int</span> middle =count/<span class="number">2</span>;
+            ListNode l=head,r=<span class="keyword">null</span>;
+            ListNode p2=head;
+            <span class="keyword">int</span> countHalf =<span class="number">0</span>;
+            <span class="keyword">while</span>(p2 !=<span class="keyword">null</span>){
+                countHalf++;
+                ListNode next=p2.next;
+                <span class="keyword">if</span>(countHalf ==middle){
+                    p2.next=<span class="keyword">null</span>;<span class="comment">//左区尾节点为空</span>
+                    r = next;
+                }
+                p2=next;
+            }
+            <span class="comment">//part l and part r ,循环排序</span>
+            ListNode h1 = mergeSortList(l);
+            ListNode h2 = mergeSortList(r);
+            <span class="comment">//归并</span>
+            ListNode merged = merge(h1,h2);
+            <span class="keyword">return</span> merged;
+    }
+
+    <span class="keyword">public</span>  <span class="keyword">static</span> ListNode <span class="title">merge</span>(ListNode h1, ListNode h2) {
+        ListNode p1=h1;
+        ListNode p2=h2;
+        ListNode fakeHead = <span class="keyword">new</span> ListNode(-<span class="number">1</span>);
+        ListNode pNew =fakeHead;
+        <span class="keyword">while</span>(p1!=<span class="keyword">null</span>||p2!=<span class="keyword">null</span>){
+            <span class="keyword">if</span>(p1 ==<span class="keyword">null</span>){
+                pNew.next =<span class="keyword">new</span> ListNode(p2.val);
+                p2=p2.next;
+                pNew = pNew.next;
+            }<span class="keyword">else</span> <span class="keyword">if</span> (p2 == <span class="keyword">null</span>) {
+                pNew.next = <span class="keyword">new</span> ListNode(p1.val);
+                p1 = p1.next;
+                pNew = pNew.next;
+            } <span class="keyword">else</span> {
+                <span class="keyword">if</span> (p1.val &lt; p2.val) {
+                    pNew.next = <span class="keyword">new</span> ListNode(p1.val);
+                    p1 = p1.next;
+                    pNew = pNew.next;    
+                } <span class="keyword">else</span> <span class="keyword">if</span> (p1.val == p2.val) {
+                    pNew.next = <span class="keyword">new</span> ListNode(p1.val);
+                    pNew.next.next = <span class="keyword">new</span> ListNode(p1.val);
+                    pNew = pNew.next.next;
+                    p1 = p1.next;
+                    p2 = p2.next;
+
+                } <span class="keyword">else</span> {
+                    pNew.next = <span class="keyword">new</span> ListNode(p2.val);
+                    p2 = p2.next;
+                    pNew = pNew.next;
+                }
+            }
+        }
+
+        <span class="comment">// printList(fakeHead.next);</span>
+        <span class="keyword">return</span> fakeHead.next;
+    }
+
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span>(String[] args) {
+        ListNode n1 = <span class="keyword">new</span> ListNode(<span class="number">2</span>);
+        ListNode n2 = <span class="keyword">new</span> ListNode(<span class="number">3</span>);
+        ListNode n3 = <span class="keyword">new</span> ListNode(<span class="number">4</span>);
+
+        ListNode n4 = <span class="keyword">new</span> ListNode(<span class="number">3</span>);
+        ListNode n5 = <span class="keyword">new</span> ListNode(<span class="number">4</span>);
+        ListNode n6 = <span class="keyword">new</span> ListNode(<span class="number">5</span>);
+
+        n1.next = n2;
+        n2.next = n3;
+        n3.next = n4;
+        n4.next = n5;
+        n5.next = n6;
+
+        n1 = mergeSortList(n1);
+
+        printList(n1);
+    }
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">printList</span>(ListNode x) {
+        <span class="keyword">if</span>(x != <span class="keyword">null</span>){
+            System.<span class="keyword">out</span>.print(x.val + <span class="string">" "</span>);
+            <span class="keyword">while</span> (x.next != <span class="keyword">null</span>) {
+                System.<span class="keyword">out</span>.print(x.next.val + <span class="string">" "</span>);
+                x = x.next;
+            }
+            System.<span class="keyword">out</span>.println();
+        }
+
+    }
+
+}
 </code></pre>  
 	</div>
 		<footer class="article-footer clearfix">
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/Hadoop/">Hadoop</a>
+  <span></span> <a href="/tags/数据结构与算法/">数据结构与算法</a>
   </div>
 
 
 <div class="article-categories">
   <span></span>
-  <a class="article-category-link" href="/categories/Hadoop/">Hadoop</a>
+  <a class="article-category-link" href="/categories/数据结构与算法/">数据结构与算法</a>
 </div>
 
 
 
 <div class="article-share" id="share">
 
-  <div data-url="https://github.com/DaMinger/DaMinger.github.io.git/2014/04/15/Hadoop/hadoop_error_1/" data-title="hadoop报错：could only be replicated to 0 nodes, instead of 1 解决思路 | DaMinger&#39;s blog" data-tsina="null" class="share clearfix">
+  <div data-url="https://github.com/DaMinger/DaMinger.github.io.git/2014/05/22/数据结构与算法/LeetCode/sortlist/" data-title="LeetCode:Sort List | DaMinger&#39;s blog" data-tsina="null" class="share clearfix">
   </div>
 
 </div>
@@ -139,18 +241,18 @@
 <nav class="article-nav clearfix">
  
  <div class="prev" >
- <a href="/2014/04/16/Hadoop/hadoop_error_2/" title="利用wordcount程序检验hadoop集群搭建是否成功">
+ <a href="/2014/05/22/数据结构与算法/LeetCode/insertsortlist/" title="LeetCode:Insertion Sort List">
   <strong>PREVIOUS:</strong><br/>
   <span>
-  利用wordcount程序检验hadoop集群搭建是否成功</span>
+  LeetCode:Insertion Sort List</span>
 </a>
 </div>
 
 
 <div class="next">
-<a href="/2014/04/13/Linux/linux_error_1/"  title="启动eth0 网卡时报错Error: Connection activation failed: Device not managed by NetworkManager">
+<a href="/2014/05/21/数据结构与算法/LeetCode/maxpoints/"  title="LeetCode:Max Points on a Line">
  <strong>NEXT:</strong><br/> 
- <span>启动eth0 网卡时报错Error: Connection activation failed: Device not managed by NetworkManager
+ <span>LeetCode:Max Points on a Line
 </span>
 </a>
 </div>
@@ -167,7 +269,7 @@
 
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
-  <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#一、优先考虑看下hadoop的日志，根据日志排错。"><span class="toc-number">1.</span> <span class="toc-text">一、优先考虑看下hadoop的日志，根据日志排错。</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#二、如果不会看日志，注意以下几点做了没："><span class="toc-number">2.</span> <span class="toc-text">二、如果不会看日志，注意以下几点做了没：</span></a></li></ol>
+  <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#题目"><span class="toc-number">1.</span> <span class="toc-text">题目</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#解法"><span class="toc-number">2.</span> <span class="toc-text">解法</span></a></li></ol>
   </div>
 
 <div id="asidepart">
