@@ -4,7 +4,7 @@
   <subtitle><![CDATA[信春哥，系统稳，闭眼上线不回滚]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="https://github.com/DaMinger/DaMinger.github.io.git/"/>
-  <updated>2014-05-22T08:04:35.841Z</updated>
+  <updated>2014-05-23T13:12:20.579Z</updated>
   <id>https://github.com/DaMinger/DaMinger.github.io.git/</id>
   
   <author>
@@ -13,6 +13,310 @@
   </author>
   
   <generator uri="http://zespia.tw/hexo/">Hexo</generator>
+  
+  <entry>
+    <title><![CDATA[LeetCode:String to Integer(atoi)]]></title>
+    <link href="https://github.com/DaMinger/DaMinger.github.io.git/2014/05/23/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/LeetCode/stringtointeger/"/>
+    <id>https://github.com/DaMinger/DaMinger.github.io.git/2014/05/23/数据结构与算法/LeetCode/stringtointeger/</id>
+    <published>2014-05-23T12:27:57.000Z</published>
+    <updated>2014-05-23T13:07:58.000Z</updated>
+    <content type="html"><![CDATA[<h4 id="题目">题目</h4>
+<pre><code>String <span class="built_in">to</span> Integer (atoi) 
+Implement atoi <span class="built_in">to</span> <span class="built_in">convert</span> <span class="operator">a</span> <span class="keyword">string</span> <span class="built_in">to</span> <span class="operator">an</span> <span class="keyword">integer</span>.
+</code></pre><p>思路：输入的情况比较多，空串，一串空格，空，正负数，数组越界</p>
+<h4 id="解法">解法</h4>
+<pre><code><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">StringtoInteger</span> {</span>
+     <span class="keyword">public</span> <span class="keyword">int</span> atoi(String <span class="keyword">str</span>) {
+            <span class="comment">//空串</span>
+            <span class="keyword">if</span>(<span class="keyword">str</span>==<span class="keyword">null</span>){
+                <span class="keyword">return</span> <span class="number">0</span>;
+            }
+            <span class="comment">//一堆空格</span>
+            <span class="keyword">str</span>=<span class="keyword">str</span>.trim();
+            <span class="keyword">if</span>(<span class="keyword">str</span>.length()==<span class="number">0</span>){
+                <span class="keyword">return</span> <span class="number">0</span>;
+            }
+            <span class="comment">//正负数</span>
+            <span class="keyword">boolean</span> flag=<span class="keyword">true</span>;
+            <span class="keyword">int</span> i=<span class="number">0</span>;
+            <span class="keyword">if</span>(<span class="keyword">str</span>.charAt(<span class="number">0</span>)==<span class="string">'-'</span>){
+                flag=<span class="keyword">false</span>;
+                i++;
+            }<span class="keyword">else</span> <span class="keyword">if</span>(<span class="keyword">str</span>.charAt(<span class="number">0</span>)==<span class="string">'+'</span>){
+                i++;
+            }
+            <span class="comment">//这里一定要用比INT大的数据类型，用INT，数组刚刚越界时（自动转型），过不去</span>
+            <span class="keyword">long</span>  result =<span class="number">0</span>;
+            <span class="keyword">while</span>(<span class="keyword">str</span>.length()&gt;i&amp;&amp;<span class="keyword">str</span>.charAt(i)&gt;=<span class="string">'0'</span>&amp;&amp;<span class="keyword">str</span>.charAt(i)&lt;=<span class="string">'9'</span>){
+                result=result*<span class="number">10</span>+<span class="keyword">str</span>.charAt(i)-<span class="string">'0'</span>;
+                i++;
+            }
+            <span class="keyword">if</span>(!flag){
+                result=-result;
+            }
+            <span class="keyword">if</span> (result &gt; Integer.MAX_VALUE)
+                <span class="keyword">return</span> Integer.MAX_VALUE;
+
+            <span class="keyword">if</span> (result &lt; Integer.MIN_VALUE)
+                <span class="keyword">return</span> Integer.MIN_VALUE;
+            <span class="keyword">return</span> (<span class="keyword">int</span>) result;
+        }
+}
+</code></pre>]]></content>
+    
+    
+      <category term="数据结构与算法" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/"/>
+    
+      <category term="数据结构与算法" scheme="https://github.com/DaMinger/DaMinger.github.io.git/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[LeetCode:Reverse Integer]]></title>
+    <link href="https://github.com/DaMinger/DaMinger.github.io.git/2014/05/23/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/LeetCode/reverinteger/"/>
+    <id>https://github.com/DaMinger/DaMinger.github.io.git/2014/05/23/数据结构与算法/LeetCode/reverinteger/</id>
+    <published>2014-05-23T12:27:35.000Z</published>
+    <updated>2014-05-23T13:05:17.000Z</updated>
+    <content type="html"><![CDATA[<h4 id="题目">题目</h4>
+<pre><code>Reverse Integer 
+Reverse digits <span class="operator">of</span> <span class="operator">an</span> <span class="keyword">integer</span>.
+
+Example1: x = <span class="number">123</span>, <span class="constant">return</span> <span class="number">321</span>
+Example2: x = -<span class="number">123</span>, <span class="constant">return</span> -<span class="number">321</span>
+</code></pre><p>思路：整数各位取余</p>
+<h4 id="解法">解法</h4>
+<pre><code><span class="keyword">public</span> <span class="keyword">class</span> Solution {
+    <span class="keyword">public</span> <span class="keyword">int</span> <span class="title">reverse</span>(<span class="keyword">int</span> x) {
+    <span class="keyword">int</span> nReverse = <span class="number">0</span>;
+            <span class="keyword">while</span> (x != <span class="number">0</span>) {
+                nReverse = nReverse * <span class="number">10</span> + x % <span class="number">10</span>;
+                x = x / <span class="number">10</span>;
+            }
+            <span class="keyword">return</span> nReverse;
+    }
+}
+</code></pre>]]></content>
+    
+    
+      <category term="数据结构与算法" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/"/>
+    
+      <category term="数据结构与算法" scheme="https://github.com/DaMinger/DaMinger.github.io.git/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[LeetCode:Linked List Cycle II]]></title>
+    <link href="https://github.com/DaMinger/DaMinger.github.io.git/2014/05/23/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/LeetCode/linkedlistcycle2/"/>
+    <id>https://github.com/DaMinger/DaMinger.github.io.git/2014/05/23/数据结构与算法/LeetCode/linkedlistcycle2/</id>
+    <published>2014-05-23T12:26:02.000Z</published>
+    <updated>2014-05-23T13:09:17.000Z</updated>
+    <content type="html"><![CDATA[<h4 id="题目">题目</h4>
+<pre><code>Linked List Cycle II 
+Given <span class="operator">a</span> linked list, <span class="constant">return</span> <span class="operator">the</span> node where <span class="operator">the</span> cycle <span class="operator">begins</span>. If there is no cycle, <span class="constant">return</span> <span class="constant">null</span>.
+
+Follow up:
+Can you solve <span class="keyword">it</span> <span class="keyword">without</span> <span class="keyword">using</span> extra <span class="constant">space</span>?
+</code></pre><p>思路：此题除判断回路外还需要判断闭环的位置。依旧设置快慢指针p1,p2.假设链表长度为n，环开始的节点Y为到头节点X有a步，p1和p2在距离环开始的节点b步的Z地方相遇（按顺时针），假设相遇节点Z到环开始的节点c步（按顺时针），那么p1走的路程为a+b，p2走的路程为a+b+c+b，显然p2走的路程为p1的2倍，于是2(a+b)=a+2b+c，于是我们推出a=c。</p>
+<p>知道这个结论后面的解答就很简单了，p1和p2相遇后，把p1指向头节点，然后p1,p2都一次走一步，走了c步后p1 p2相遇，该节点Y就是环开始的节点。<br><img src="/img/数据结构与算法/2.jpg" alt=""></p>
+<h4 id="解法">解法</h4>
+<pre><code><span class="keyword">class</span> ListNode {
+      <span class="built_in">int</span> val;
+      ListNode <span class="keyword">next</span>;
+      ListNode(<span class="built_in">int</span> x) {
+         val = x;
+          <span class="keyword">next</span> = <span class="literal">null</span>;
+      }
+}
+<span class="keyword">public</span> <span class="keyword">class</span> detectCycle222 {
+    <span class="keyword">public</span> ListNode detectCycle(ListNode head) {
+        ListNode slow=head,fast=head;
+        <span class="keyword">while</span>(<span class="literal">true</span>){
+            <span class="keyword">if</span>(fast ==<span class="literal">null</span>||fast.<span class="keyword">next</span>==<span class="literal">null</span>){
+                return <span class="literal">null</span>;
+            }
+            slow =slow.<span class="keyword">next</span>;
+            fast =fast.<span class="keyword">next</span>.<span class="keyword">next</span>;
+            <span class="keyword">if</span>(slow ==fast){
+                break;
+            }
+        }
+        slow=head;
+        <span class="keyword">while</span>(slow!=fast){
+            slow=slow.<span class="keyword">next</span>;
+            fast=fast.<span class="keyword">next</span>;
+        }
+        return slow;
+    }
+}
+</code></pre>]]></content>
+    
+    
+      <category term="数据结构与算法" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/"/>
+    
+      <category term="数据结构与算法" scheme="https://github.com/DaMinger/DaMinger.github.io.git/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[LeetCode:Linked List Cycle]]></title>
+    <link href="https://github.com/DaMinger/DaMinger.github.io.git/2014/05/23/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/LeetCode/linkedlistcycle/"/>
+    <id>https://github.com/DaMinger/DaMinger.github.io.git/2014/05/23/数据结构与算法/LeetCode/linkedlistcycle/</id>
+    <published>2014-05-23T12:25:51.000Z</published>
+    <updated>2014-05-23T13:04:27.000Z</updated>
+    <content type="html"><![CDATA[<h4 id="题目">题目</h4>
+<pre><code>Linked List Cycle
+Given <span class="operator">a</span> linked list, determine <span class="keyword">if</span> <span class="keyword">it</span> has <span class="operator">a</span> cycle <span class="operator">in</span> <span class="keyword">it</span>.
+
+Follow up:
+Can you solve <span class="keyword">it</span> <span class="keyword">without</span> <span class="keyword">using</span> extra <span class="constant">space</span>?
+</code></pre><p>思路：设计两个快慢指针，慢节点每次移动一个节点，快节点每次移动两个节点，当快慢指针相等时，则存在闭环</p>
+<h4 id="解法">解法</h4>
+<pre><code>class ListNode {
+      <span class="keyword">int</span> val;
+      ListNode next;
+      ListNode(<span class="keyword">int</span> x) {
+         val = x;
+          next = <span class="keyword">null</span>;
+      }
+}
+
+<span class="keyword">public</span> <span class="keyword">class</span> Reorderlist {
+    <span class="keyword">public</span> boolean <span class="title">hasCycle</span>(ListNode head){
+        ListNode slow=head,fast=head;
+        <span class="keyword">while</span>(<span class="keyword">true</span>){
+            <span class="keyword">if</span>(fast ==<span class="keyword">null</span>||fast.next==<span class="keyword">null</span>){
+                <span class="keyword">return</span> <span class="keyword">false</span>;
+            }
+            slow =slow.next;
+            fast =fast.next.next;
+            <span class="keyword">if</span>(slow ==fast){
+                <span class="keyword">return</span> <span class="keyword">true</span>;
+            }
+        }
+    }
+
+}
+</code></pre>]]></content>
+    
+    
+      <category term="数据结构与算法" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/"/>
+    
+      <category term="数据结构与算法" scheme="https://github.com/DaMinger/DaMinger.github.io.git/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[LeetCode:LRU Cache]]></title>
+    <link href="https://github.com/DaMinger/DaMinger.github.io.git/2014/05/23/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/LeetCode/lrucache/"/>
+    <id>https://github.com/DaMinger/DaMinger.github.io.git/2014/05/23/数据结构与算法/LeetCode/lrucache/</id>
+    <published>2014-05-23T12:24:58.000Z</published>
+    <updated>2014-05-23T13:03:41.000Z</updated>
+    <content type="html"><![CDATA[<h4 id="题目">题目</h4>
+<pre><code>LRU Cache
+Design <span class="operator">and</span> implement <span class="operator">a</span> data structure <span class="keyword">for</span> Least Recently Used (LRU) cache. It should support <span class="operator">the</span> following operations: <span class="built_in">get</span> <span class="operator">and</span> <span class="built_in">set</span>.
+
+<span class="built_in">get</span>(key) - Get <span class="operator">the</span> <span class="built_in">value</span> (will always be positive) <span class="operator">of</span> <span class="operator">the</span> key <span class="keyword">if</span> <span class="operator">the</span> key exists <span class="operator">in</span> <span class="operator">the</span> cache, otherwise <span class="constant">return</span> -<span class="number">1.</span>
+<span class="built_in">set</span>(key, <span class="built_in">value</span>) - Set <span class="operator">or</span> insert <span class="operator">the</span> <span class="built_in">value</span> <span class="keyword">if</span> <span class="operator">the</span> key is <span class="operator">not</span> already present. When <span class="operator">the</span> cache reached its capacity, 
+                  <span class="keyword">it</span> should invalidate <span class="operator">the</span> least recently used <span class="keyword">item</span> <span class="keyword">before</span> inserting <span class="operator">a</span> <span class="built_in">new</span> <span class="keyword">item</span>.
+</code></pre><p>思路：双向链表+hashmap 没有超出容量之前，新节点放在头部，有重复的话，把该节点移到头结点，超出容量的话，移除尾节点<br><img src="/img/数据结构与算法/1.png" alt="双向链表"></p>
+<h4 id="解法">解法</h4>
+<pre><code>import java.util.HashMap;
+
+<span class="comment">//双链表＋HashMap</span>
+class Node{
+    Node prev;
+    Node next;
+    <span class="keyword">int</span> <span class="keyword">value</span>;
+    <span class="keyword">int</span> key;
+    Node(<span class="keyword">int</span> key,<span class="keyword">int</span> <span class="keyword">value</span>){
+        <span class="keyword">this</span>.<span class="keyword">value</span>=<span class="keyword">value</span>;
+        <span class="keyword">this</span>.key=key;
+    }
+}
+
+<span class="keyword">public</span> <span class="keyword">class</span> LRUCache {
+    <span class="keyword">private</span> <span class="keyword">int</span>  capacity;
+    <span class="keyword">private</span> <span class="keyword">int</span> len;
+    <span class="keyword">private</span> Node head;
+    <span class="keyword">private</span> Node end;
+    <span class="keyword">private</span> HashMap&lt;Integer, Node&gt; map =<span class="keyword">new</span> HashMap&lt;Integer, Node&gt;();
+    <span class="keyword">public</span> <span class="title">LRUCache</span>(<span class="keyword">int</span> capacity) {
+        <span class="keyword">this</span>.capacity=capacity;
+        len=<span class="number">0</span>;
+    }
+    <span class="keyword">public</span> <span class="keyword">int</span> <span class="title">get</span>(<span class="keyword">int</span> key) {
+        <span class="keyword">if</span>(map.containsKey(key)){
+            Node last=map.<span class="keyword">get</span>(key);
+            removeNode(last);
+            setHead(last);
+            <span class="keyword">return</span> last.<span class="keyword">value</span>;
+        }<span class="keyword">else</span>{
+            <span class="keyword">return</span> -<span class="number">1</span>;
+        }
+    }
+    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title">removeNode</span>(Node node){
+        Node cur=node;
+        Node pre=cur.prev;
+        Node post = cur.next;
+        <span class="keyword">if</span>(pre !=<span class="keyword">null</span>){
+            pre.next=post;
+        }<span class="keyword">else</span>{
+            <span class="comment">//前驱节点为空</span>
+            head =post;
+        }
+        <span class="keyword">if</span>(post !=<span class="keyword">null</span>){
+            post.prev=pre;
+        }<span class="keyword">else</span>{
+            <span class="comment">//后驱节点为空</span>
+            end =pre;
+        }
+    }
+    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setHead</span>(Node node){
+        node.next=head;
+        node.prev=<span class="keyword">null</span>;
+        <span class="keyword">if</span>(head!=<span class="keyword">null</span>){
+            head.prev=node;
+        }
+        head=node;
+        <span class="keyword">if</span>(end==<span class="keyword">null</span>){
+            end=node;
+        }
+    }
+    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title">set</span>(<span class="keyword">int</span> key, <span class="keyword">int</span> <span class="keyword">value</span>) {
+        <span class="keyword">if</span>(map.containsKey(key)){
+            Node oldNode=map.<span class="keyword">get</span>(key);
+            oldNode.<span class="keyword">value</span>=<span class="keyword">value</span>;
+            removeNode(oldNode);
+            setHead(oldNode);
+        }<span class="keyword">else</span>{
+            Node newNode =<span class="keyword">new</span> Node(key, <span class="keyword">value</span>);
+            <span class="keyword">if</span>(len&lt;capacity){
+                <span class="comment">//把LRU里面的新节点放在头部</span>
+                setHead(newNode);
+                map.put(key, newNode);
+                len++;
+            }<span class="keyword">else</span>{
+                <span class="comment">//超出容量，则移除尾节点</span>
+                map.remove(end.key);
+                end=end.prev;
+                <span class="keyword">if</span>(end!=<span class="keyword">null</span>){
+                    end.next=<span class="keyword">null</span>;
+                }
+                setHead(newNode);
+                map.put(key, newNode);
+            }
+        }
+    }
+
+}
+</code></pre>]]></content>
+    
+    
+      <category term="数据结构与算法" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/"/>
+    
+      <category term="数据结构与算法" scheme="https://github.com/DaMinger/DaMinger.github.io.git/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/"/>
+    
+  </entry>
   
   <entry>
     <title><![CDATA[基础的数据结构总结]]></title>
@@ -1406,18 +1710,18 @@ up <span class="number">70</span> days, <span class="number">16</span>:<span cla
 <p>对于内存监控，在top里我们要时刻监控第五行swap交换分区的used，如果这个数值在不断的变化，说明内核在不断进行内存和swap的数据交换，这是真正的内存不够用了。</p>
 <p>第六行，空行。</p>
 <p>第七行以下：各进程（任务）的状态监控，项目列信息说明如下：</p>
-<pre><code><span class="xml"><span class="tag"><span class="attribute">PID</span> — 进程<span class="attribute">id</span>
-<span class="attribute">USER</span> — 进程所有者
-<span class="attribute">PR</span> — 进程优先级
-<span class="attribute">NI</span> — <span class="attribute">nice</span>值。负值表示高优先级，正值表示低优先级
-<span class="attribute">VIRT</span> — 进程使用的虚拟内存总量，单位<span class="attribute">kb</span>。<span class="attribute">VIRT</span>=<span class="value">SWAP+RES</span>
-<span class="attribute">RES</span> — 进程使用的、未被换出的物理内存大小，单位<span class="attribute">kb</span>。<span class="attribute">RES</span>=<span class="value">CODE+DATA</span>
-<span class="attribute">SHR</span> — 共享内存大小，单位<span class="attribute">kb</span>
-<span class="attribute">S</span> — 进程状态。<span class="attribute">D</span>=<span class="value">不可中断的睡眠状态</span> <span class="attribute">R</span>=<span class="value">运行</span> <span class="attribute">S</span>=<span class="value">睡眠</span> <span class="attribute">T</span>=<span class="value">跟踪</span>/停止 <span class="attribute">Z</span>=<span class="value">僵尸进程</span>
-%<span class="attribute">CPU</span> — 上次更新到现在的<span class="attribute">CPU</span>时间占用百分比
-%<span class="attribute">MEM</span> — 进程使用的物理内存百分比
-<span class="attribute">TIME</span>+ — 进程使用的<span class="attribute">CPU</span>时间总计，单位<span class="attribute">1</span>/<span class="attribute">100</span>秒
-<span class="attribute">COMMAND</span> — 进程名称（命令名/命令行）</span></span>
+<pre><code>PID — 进程id
+USER — 进程所有者
+PR — 进程优先级
+NI — nice值。负值表示高优先级，正值表示低优先级
+VIRT — 进程使用的虚拟内存总量，单位kb。VIRT=SWAP+RES
+RES — 进程使用的、未被换出的物理内存大小，单位kb。RES=CODE+DATA
+SHR — 共享内存大小，单位kb
+S — 进程状态。D=不可中断的睡眠状态 R=运行 S=睡眠 T=跟踪/停止 Z=僵尸进程
+<span class="tag">%<span class="title">CPU</span></span> — 上次更新到现在的CPU时间占用百分比
+<span class="tag">%<span class="title">MEM</span></span> — 进程使用的物理内存百分比
+TIME+ — 进程使用的CPU时间总计，单位1/100秒
+COMMAND — 进程名称（命令名/命令行）
 </code></pre><h3 id="sar">sar</h3>
 <p>sar（System Activity Reporter）是系统活动情况报告的缩写。sar 工具将对系统当前的状态进行取样，然后通过计算数据和比例来表达系统的当前运行状态。它的特点是可以连续对系统取样，获得大量的取样数据；取样数据和分析的结果都可以存入文件，所需的负载很小。 sar 是目前 Linux 上最为全面的系统性能分析工具之一，可以从多方面对系统的活动进行报告，包括：文件的读写情况、系统调用的使用情况、磁盘I/O、CPU效率、内存使用状况、进程活动及IPC有关的活动等。为了提供不同的信息，sar 提供了丰富的选项、因此使用较为复杂。</p>
 <p>安装：</p>
@@ -2454,708 +2758,6 @@ CashReturn.java
       <category term="设计模式" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/"/>
     
       <category term="设计模式" scheme="https://github.com/DaMinger/DaMinger.github.io.git/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/"/>
-    
-  </entry>
-  
-  <entry>
-    <title><![CDATA[设计模式之简单工厂模式]]></title>
-    <link href="https://github.com/DaMinger/DaMinger.github.io.git/2014/05/20/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/simplefactory/"/>
-    <id>https://github.com/DaMinger/DaMinger.github.io.git/2014/05/20/设计模式/simplefactory/</id>
-    <published>2014-05-20T07:31:09.000Z</published>
-    <updated>2014-05-20T08:25:23.000Z</updated>
-    <content type="html"><![CDATA[<p>何谓是简单工厂模式呢，因为在我们日常编程中，经常出现一种情况就是每当“new”一个对象之后，这个对象就依赖于某个类。如果在后期的维护过程中由于某些原因需要修改一下这个类，则唯一的做法就是打开源代码，进行修改，修改所有与这个对象有关的操作。这对我们是非常不利的。问题出来了：对象不能应对“具体实例化类型”的变化。那么简单工厂模式就是出来了，它的意图就是：专门定义一个类来负责创建其他类的实例，被创建的实例通常都具有共同的父类或接口。或者是提供一个类，由它负责根据一定的条件创建某一具体类的实例。</p>
-<p>实验来自&lt;&lt;大话设计模式&gt;&gt;<br><img src="/img/Design patterns/simplefactory_1.png" alt="类图"></p>
-<h4 id="Java版">Java版</h4>
-<p>计算类</p>
-<pre><code><span class="keyword">public</span> <span class="keyword">class</span> Operation {
-
-    <span class="keyword">protected</span> <span class="keyword">double</span> numA;
-    <span class="keyword">protected</span> <span class="keyword">double</span> numB;
-    <span class="keyword">public</span> <span class="keyword">double</span> <span class="title">getNumA</span>() {
-        <span class="keyword">return</span> numA;
-    }
-    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setNumA</span>(<span class="keyword">double</span> numA) {
-        <span class="keyword">this</span>.numA = numA;
-    }
-    <span class="keyword">public</span> <span class="keyword">double</span> <span class="title">getNumB</span>() {
-        <span class="keyword">return</span> numB;
-    }
-    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setNumB</span>(<span class="keyword">double</span> numB) {
-        <span class="keyword">this</span>.numB = numB;
-    }
-    <span class="keyword">public</span> <span class="keyword">double</span> <span class="title">GetResult</span>(){
-        <span class="keyword">double</span> result=<span class="number">0</span>;
-        <span class="keyword">return</span> result;
-    }
-}
-</code></pre><p>加减乘除类，继承计算类</p>
-<pre><code>Add.java
-<span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Add</span> <span class="keyword">extends</span> <span class="title">Operation</span>{</span>
-    <span class="keyword">public</span> <span class="keyword">double</span> <span class="title">GetResult</span>(){
-    <span class="keyword">double</span> result=<span class="number">0</span>;
-    result =numA+numB;
-    <span class="keyword">return</span> result;
-    }
-}
-Mul.java
-<span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Mul</span> <span class="keyword">extends</span> <span class="title">Operation</span>{</span>
-    <span class="keyword">public</span> <span class="keyword">double</span> <span class="title">GetResult</span>(){
-        <span class="keyword">double</span> result=<span class="number">0</span>;
-        result =numA*numB;
-        <span class="keyword">return</span> result;
-    }
-}
-Sub.java
-<span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Sub</span> <span class="keyword">extends</span> <span class="title">Operation</span> {</span>
-    <span class="keyword">public</span> <span class="keyword">double</span> <span class="title">GetResult</span>(){
-        <span class="keyword">double</span> result=<span class="number">0</span>;
-        result =numA-numB;
-        <span class="keyword">return</span> result;
-    }
-}
-Div.java
-<span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Div</span> <span class="keyword">extends</span> <span class="title">Operation</span>{</span>
-    <span class="keyword">public</span> <span class="keyword">double</span> <span class="title">GetResult</span>(){
-        <span class="keyword">double</span> result=<span class="number">0</span>;
-        <span class="keyword">if</span>(numB == <span class="number">0</span>){
-            <span class="keyword">try</span>{
-                <span class="keyword">throw</span> <span class="keyword">new</span> Exception(<span class="string">"00000"</span>);
-            }<span class="keyword">catch</span> (Exception e) {
-                e.printStackTrace();
-            }
-        }<span class="keyword">else</span>{
-            result =numA+numB;
-        }
-    <span class="keyword">return</span> result;
-    }    
-}
-</code></pre><p>工厂类    </p>
-<pre><code><span class="keyword">public</span> <span class="keyword">class</span> OperationFactory {
-    <span class="keyword">public</span> <span class="keyword">static</span> Operation <span class="title">createOperation</span>(String operate){
-        Operation oper =<span class="keyword">null</span>;
-        <span class="keyword">switch</span>(operate){
-        <span class="keyword">case</span> <span class="string">"+"</span>:
-            oper =<span class="keyword">new</span> Add();
-            <span class="keyword">break</span>;
-        <span class="keyword">case</span> <span class="string">"-"</span>:
-            oper =<span class="keyword">new</span> Sub();
-            <span class="keyword">break</span>;
-        <span class="keyword">case</span> <span class="string">"*"</span>:
-            oper =<span class="keyword">new</span> Mul();
-            <span class="keyword">break</span>;
-        <span class="keyword">case</span> <span class="string">"/"</span>:
-            oper =<span class="keyword">new</span> Div();
-            <span class="keyword">break</span>;
-        }
-        <span class="keyword">return</span> oper;
-    }
-
-}
-</code></pre><p>客户端</p>
-<pre><code>import java<span class="preprocessor">.util</span><span class="preprocessor">.Scanner</span>；
-public class test {
-    public static void main(String[] args) {
-        try{
-            Operation oper<span class="comment">;</span>
-            Scanner read =new Scanner (System<span class="preprocessor">.in</span>)<span class="comment">;</span>
-            System<span class="preprocessor">.out</span><span class="preprocessor">.println</span>(<span class="string">"The first number"</span>)<span class="comment">;</span>
-            String numA=read<span class="preprocessor">.next</span>()<span class="comment">;</span>
-            System<span class="preprocessor">.out</span><span class="preprocessor">.println</span>(<span class="string">"The Operation"</span>)<span class="comment">;</span>
-            String operate=read<span class="preprocessor">.next</span>()<span class="comment">;</span>
-            System<span class="preprocessor">.out</span><span class="preprocessor">.println</span>(<span class="string">"The sencond number"</span>)<span class="comment">;</span>
-            String numB=read<span class="preprocessor">.next</span>()<span class="comment">;</span>
-            oper=OperationFactory<span class="preprocessor">.createOperation</span>(operate)<span class="comment">;</span>
-            oper<span class="preprocessor">.numA</span> = Double<span class="preprocessor">.valueOf</span>(numA)<span class="comment">;</span>
-            oper<span class="preprocessor">.numB</span> = Double<span class="preprocessor">.valueOf</span>(numB)<span class="comment">;</span>
-            System<span class="preprocessor">.out</span><span class="preprocessor">.println</span>(numA+operate+numB+<span class="string">"==?"</span>)<span class="comment">;</span>
-
-            double result=<span class="number">0</span> <span class="comment">;</span>
-            result =oper<span class="preprocessor">.GetResult</span>()<span class="comment">;</span>
-            System<span class="preprocessor">.out</span><span class="preprocessor">.println</span>(<span class="string">"the result is:"</span>+result)<span class="comment">;</span>
-            }catch (Exception e){
-            System<span class="preprocessor">.out</span><span class="preprocessor">.println</span>(<span class="string">"you have something wrong : "</span> + e<span class="preprocessor">.getMessage</span>())<span class="comment">;</span>
-            }
-    }
-
-}
-</code></pre><h4 id="优势">优势</h4>
-<ul>
-<li>简单工厂模式能够根据外界给定的信息，决定究竟应该创建哪个具体类的对象。通过它，外界可以从直接创建具体产品对象的尴尬局面中摆脱出来。</li>
-<li>外界与具体类隔离开来，偶合性低。</li>
-<li>明确区分了各自的职责和权力，有利于整个软件体系结构的优化。　</li>
-</ul>
-<h4 id="劣势">劣势</h4>
-<ul>
-<li>工厂类集中了所有实例的创建逻辑，容易违反高内聚的责任分配原则 </li>
-<li>虽然简单工厂模式能够适应一定的变化，但是它所能解决的问题是远远有限的。它所能创建的类只能是事先教考虑到的，如果需要添加新的类，则就需要改变工厂类了。</li>
-</ul>
-<h4 id="应用情况">应用情况</h4>
-<ul>
-<li>工厂类负责创建的对象比较少</li>
-<li>客户只知道传入了工厂类的参数，对于始何创建对象（逻辑）不关心 </li>
-</ul>
-<h4 id="Python版">Python版</h4>
-<p>技巧 ：字典的使用</p>
-<pre><code><span class="class"><span class="keyword">class</span> <span class="title">Operation</span>:</span>
-    <span class="function"><span class="keyword">def</span> <span class="title">GetResult</span><span class="params">(self)</span>:</span>
-        <span class="keyword">pass</span>
-
-<span class="class"><span class="keyword">class</span> <span class="title">OperationAdd</span><span class="params">(Operation)</span>:</span>
-    <span class="function"><span class="keyword">def</span> <span class="title">GetResult</span><span class="params">(self)</span>:</span>
-        <span class="keyword">return</span> self.numA+self.numB
-
-<span class="class"><span class="keyword">class</span> <span class="title">OperationSub</span><span class="params">(Operation)</span>:</span>
-    <span class="function"><span class="keyword">def</span> <span class="title">GetResult</span><span class="params">(self)</span>:</span>
-        <span class="keyword">return</span> self.numA-self.numB
-
-<span class="class"><span class="keyword">class</span> <span class="title">OperationMul</span><span class="params">(Operation)</span>:</span>
-    <span class="function"><span class="keyword">def</span> <span class="title">GetResult</span><span class="params">(self)</span>:</span>
-        <span class="keyword">return</span> self.numA*self.numB
-
-
-<span class="class"><span class="keyword">class</span> <span class="title">OperationDiv</span><span class="params">(Operation)</span>:</span>
-    <span class="function"><span class="keyword">def</span> <span class="title">GetResult</span><span class="params">(self)</span>:</span>
-        <span class="keyword">try</span>:
-            result = self.numA/self.numB
-            <span class="keyword">return</span> result
-        <span class="keyword">except</span>:
-            <span class="keyword">print</span> <span class="string">"000000000!!"</span>
-            <span class="keyword">return</span> <span class="number">0</span>
-
-
-<span class="class"><span class="keyword">class</span> <span class="title">OperationFactory</span>:</span>
-    operation = {}
-    operation[<span class="string">"+"</span>] = OperationAdd();
-    operation[<span class="string">"-"</span>] = OperationSub();
-    operation[<span class="string">"*"</span>] = OperationMul();
-    operation[<span class="string">"/"</span>] = OperationDiv();
-    <span class="function"><span class="keyword">def</span> <span class="title">createOperation</span><span class="params">(self,ch)</span>:</span>
-        <span class="keyword">if</span> ch <span class="keyword">in</span> self.operation:
-            op = self.operation[ch]
-        <span class="keyword">return</span> op
-
-<span class="keyword">if</span> __name__ == <span class="string">"__main__"</span>:
-    op = raw_input(<span class="string">"operator: "</span>)
-    numA = input(<span class="string">"a: "</span>)
-    numB = input(<span class="string">"b: "</span>)
-    factory = OperationFactory()
-    cal = factory.createOperation(op)
-    cal.numA = numA
-    cal.numB = numB
-    <span class="keyword">print</span> cal.GetResult()
-</code></pre>]]></content>
-    
-    
-      <category term="设计模式" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/"/>
-    
-      <category term="设计模式" scheme="https://github.com/DaMinger/DaMinger.github.io.git/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/"/>
-    
-  </entry>
-  
-  <entry>
-    <title><![CDATA[UML中类之间的关系详解]]></title>
-    <link href="https://github.com/DaMinger/DaMinger.github.io.git/2014/05/20/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/uml/"/>
-    <id>https://github.com/DaMinger/DaMinger.github.io.git/2014/05/20/设计模式/uml/</id>
-    <published>2014-05-20T07:05:22.000Z</published>
-    <updated>2014-05-20T07:27:00.000Z</updated>
-    <content type="html"><![CDATA[<p>面向对象设计中，类与类之间主要有6种关系，他们分别是：依赖、关联、聚合、组合、继承、实现。他们的耦合度依次增强。</p>
-<h5 id="依赖(Dependence)">依赖(Dependence)</h5>
-<p><img src="/img/Design patterns/uml/1.gif" alt=" "><br><img src="/img/Design patterns/uml/2.gif" alt=" "><br>依赖关系的定义为：对于两个相对独立的对象，当一个对象负责构造另一个对象的实例，或者依赖另一个对象的服务时，这两个对象之间主要体现为依赖关系。例如类A当中使用了类B，其中类B是作为类A的方法参数、方法中的局部变量、或者静态方法调用。类上面的图例中：People类依赖于Book类和Food类，Book类和Food类是作为类中方法的参数形式出现在People类中的。</p>
-<h5 id="关联（Association）">关联（Association）</h5>
-<p><img src="/img/Design patterns/uml/3.gif" alt=" "><img src="/img/Design patterns/uml/4.gif" alt=" "><img src="/img/Design patterns/uml/5.gif" alt=" "><br>单向关联<br><img src="/img/Design patterns/uml/6.gif" alt=" "><br>双向关联<br><img src="/img/Design patterns/uml/7.gif" alt=" "><br>对于两个相对独立的对象，当一个对象的实例与另一个对象的一些特定实例存在固定的对应关系时，这两个对象之间为关联关系。关联关系分为单向关联和双向关联。单向关联表现为：类A当中使用了类B，其中类B是作为类A的成员变量。双向关联表现为：类A当中使用了类B作为成员变量；同时类B中也使用了类A作为成员变量。</p>
-<h5 id="聚合（Aggregation）">聚合（Aggregation）</h5>
-<p><img src="/img/Design patterns/uml/8.gif" alt=" "><br><img src="/img/Design patterns/uml/9.gif" alt=" "><br> 聚合关系是关联关系的一种，耦合度强于关联，他们的代码表现是相同的，仅仅是在语义上有所区别：关联关系的对象间是相互独立的，而聚合关系的对象之间存在着包容关系，他们之间是“整体-个体”的相互关系。</p>
-<h5 id="组合（Composition）">组合（Composition）</h5>
-<p><img src="/img/Design patterns/uml/10.gif" alt=" "><br><img src="/img/Design patterns/uml/11.gif" alt=" "><br>相比于聚合，组合是一种耦合度更强的关联关系。存在组合关系的类表示“整体-部分”的关联关系，“整体”负责“部分”的生命周期，他们之间是共生共死的；并且“部分”单独存在时没有任何意义。在上图的例子中，People与Soul、Body之间是组合关系，当人的生命周期开始时，必须同时有灵魂和肉体；当人的生命周期结束时，灵魂肉体随之消亡；无论是灵魂还是肉体，都不能单独存在，他们必须作为人的组成部分存在。</p>
-<h5 id="继承（Generalization）">继承（Generalization）</h5>
-<p><img src="/img/Design patterns/uml/12.gif" alt=" "><br><img src="/img/Design patterns/uml/13.gif" alt=" "><br>继承表示类与类（或者接口与接口）之间的父子关系。在java中，用关键字extends表示继承关系。UML图例中，继承关系用实线+空心箭头表示，箭头指向父类。</p>
-<h5 id="实现（Implementation）">实现（Implementation）</h5>
-<p><img src="/img/Design patterns/uml/14.gif" alt=" "><br><img src="/img/Design patterns/uml/15.gif" alt=" "><br>表示一个类实现一个或多个接口的方法。接口定义好操作的集合，由实现类去完成接口的具体操作。在java中使用implements表示。UML图例中，实现关系用虚线+空心箭头表示，箭头指向接口。</p>
-]]></content>
-    
-    
-      <category term="设计模式" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/"/>
-    
-      <category term="设计模式" scheme="https://github.com/DaMinger/DaMinger.github.io.git/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/"/>
-    
-  </entry>
-  
-  <entry>
-    <title><![CDATA[awk_exercise]]></title>
-    <link href="https://github.com/DaMinger/DaMinger.github.io.git/2014/05/19/Shell/awk_exercise/"/>
-    <id>https://github.com/DaMinger/DaMinger.github.io.git/2014/05/19/Shell/awk_exercise/</id>
-    <published>2014-05-19T12:56:28.000Z</published>
-    <updated>2014-05-19T13:22:28.000Z</updated>
-    <content type="html"><![CDATA[<p>实验脚本来自《鸟哥的私房菜》</p>
-<h4 id="假设我们有这样一个待处理的文件”grade-txt”">假设我们有这样一个待处理的文件”grade.txt”</h4>
-<pre><code>M<span class="preprocessor">.Tansley</span>     <span class="number">05</span>/<span class="number">99</span>     <span class="number">48311</span>     Green     <span class="number">8</span>     <span class="number">40</span>     <span class="number">44</span>
-J<span class="preprocessor">.Lulu</span>        <span class="number">06</span>/<span class="number">99</span>     <span class="number">48317</span>     green     <span class="number">9</span>     <span class="number">24</span>     <span class="number">26</span>
-P<span class="preprocessor">.Bunny</span>       <span class="number">02</span>/<span class="number">99</span>     <span class="number">48</span>        Yellow     <span class="number">12</span>     <span class="number">35</span>     <span class="number">28</span>
-J<span class="preprocessor">.Troll</span>       <span class="number">07</span>/<span class="number">99</span>     <span class="number">4842</span>     Brown-<span class="number">3</span>     <span class="number">12</span>     <span class="number">26</span>     <span class="number">26</span>
-L<span class="preprocessor">.Tansley</span>     <span class="number">05</span>/<span class="number">99</span>     <span class="number">4712</span>     Brown-<span class="number">2</span>     <span class="number">12</span>     <span class="number">30</span>     <span class="number">28</span>
-</code></pre><h5 id="打印整个文件">打印整个文件</h5>
-<pre><code>$ awk <span class="string">'{print $0}'</span> grade.txt
-M.Tansley       <span class="number">05</span>/<span class="number">99</span>   <span class="number">48311</span>   <span class="keyword">Green</span>   <span class="number">8</span>       <span class="number">40</span>      <span class="number">44</span>
-J.Lulu          <span class="number">06</span>/<span class="number">99</span>   <span class="number">48317</span>   green   <span class="number">9</span>       <span class="number">24</span>      <span class="number">26</span>
-P.Bunny         <span class="number">02</span>/<span class="number">99</span>   <span class="number">48</span>      <span class="keyword">Yellow</span>  <span class="number">12</span>      <span class="number">35</span>      <span class="number">28</span>
-J.Troll         <span class="number">07</span>/<span class="number">99</span>   <span class="number">4842</span>    <span class="keyword">Brown</span>-<span class="number">3</span> <span class="number">12</span>      <span class="number">26</span>      <span class="number">26</span>
-L.Tansley       <span class="number">05</span>/<span class="number">99</span>   <span class="number">4712</span>    <span class="keyword">Brown</span>-<span class="number">2</span> <span class="number">12</span>      <span class="number">30</span>      <span class="number">28</span>
-</code></pre><h5 id="打印第一和第四个域">打印第一和第四个域</h5>
-<pre><code>$ awk <span class="string">'{print $1,$4}'</span> grade.txt
-M.Tansley <span class="keyword">Green</span>
-J.Lulu green
-P.Bunny <span class="keyword">Yellow</span>
-J.Troll <span class="keyword">Brown</span>-<span class="number">3</span>
-L.Tansley <span class="keyword">Brown</span>-<span class="number">2</span>
-</code></pre><h5 id="打印表头">打印表头</h5>
-<pre><code>$ awk <span class="emphasis">'BEGIN {print "Name            Belt\n---------------------------"}
-&gt; {print $1"\t"$4}'</span> grade.txt
-<span class="header">Name            Belt
----------------------------</span>
-M.Tansley       Green
-J.Lulu          green
-P.Bunny         Yellow
-J.Troll         Brown-3
-L.Tansley       Brown-2
-</code></pre><p>正则表达式相关：为使一域号匹配正则表达式，使用符号‘～’后紧跟正则表达式，也可以用 i f语句。awk中if后面的条件用（）括起来。</p>
-<h5 id="下面代码打印$4_包含_Brown_的行">下面代码打印$4 包含 Brown 的行</h5>
-<pre><code>$ awk <span class="string">'$4~/Brown/ {print $0}'</span> grade.txt
-J.Troll         <span class="number">07</span>/<span class="number">99</span>   <span class="number">4842</span>    <span class="keyword">Brown</span>-<span class="number">3</span> <span class="number">12</span>      <span class="number">26</span>      <span class="number">26</span>
-L.Tansley       <span class="number">05</span>/<span class="number">99</span>   <span class="number">4712</span>    <span class="keyword">Brown</span>-<span class="number">2</span> <span class="number">12</span>      <span class="number">30</span>      <span class="number">28</span>
-</code></pre><h5 id="非精确匹配">非精确匹配</h5>
-<pre><code>$ awk <span class="string">'$3 ~/48/ {print $0}'</span> grade.txt
-M.Tansley       <span class="number">05</span>/<span class="number">99</span>   <span class="number">48311</span>   <span class="keyword">Green</span>   <span class="number">8</span>       <span class="number">40</span>      <span class="number">44</span>
-J.Lulu          <span class="number">06</span>/<span class="number">99</span>   <span class="number">48317</span>   green   <span class="number">9</span>       <span class="number">24</span>      <span class="number">26</span>
-P.Bunny         <span class="number">02</span>/<span class="number">99</span>   <span class="number">48</span>      <span class="keyword">Yellow</span>  <span class="number">12</span>      <span class="number">35</span>      <span class="number">28</span>
-J.Troll         <span class="number">07</span>/<span class="number">99</span>   <span class="number">4842</span>    <span class="keyword">Brown</span>-<span class="number">3</span> <span class="number">12</span>      <span class="number">26</span>      <span class="number">26</span>
-</code></pre><h5 id="精确匹配">精确匹配</h5>
-<pre><code><span class="variable">$ </span>awk <span class="string">'$3=="48" {print $0}'</span> grade.txt
-<span class="constant">P</span>.<span class="constant">Bunny</span>         <span class="number">02</span>/<span class="number">99</span>   <span class="number">48</span>      <span class="constant">Yellow</span>  <span class="number">12</span>      <span class="number">35</span>      <span class="number">28</span>
-</code></pre><h5 id="不匹配_使用_‘!~’">不匹配 使用 ‘!~’</h5>
-<pre><code>$ awk <span class="string">'$0 !~ /Brown/'</span> grade.txt
-M.Tansley       <span class="number">05</span>/<span class="number">99</span>   <span class="number">48311</span>   <span class="keyword">Green</span>   <span class="number">8</span>       <span class="number">40</span>      <span class="number">44</span>
-J.Lulu          <span class="number">06</span>/<span class="number">99</span>   <span class="number">48317</span>   green   <span class="number">9</span>       <span class="number">24</span>      <span class="number">26</span>
-P.Bunny         <span class="number">02</span>/<span class="number">99</span>   <span class="number">48</span>      <span class="keyword">Yellow</span>  <span class="number">12</span>      <span class="number">35</span>      <span class="number">28</span>
-
-$ awk <span class="string">'$4 != "Brown-2" {print $0}'</span> grade.txt
-M.Tansley       <span class="number">05</span>/<span class="number">99</span>   <span class="number">48311</span>   <span class="keyword">Green</span>   <span class="number">8</span>       <span class="number">40</span>      <span class="number">44</span>
-J.Lulu          <span class="number">06</span>/<span class="number">99</span>   <span class="number">48317</span>   green   <span class="number">9</span>       <span class="number">24</span>      <span class="number">26</span>
-P.Bunny         <span class="number">02</span>/<span class="number">99</span>   <span class="number">48</span>      <span class="keyword">Yellow</span>  <span class="number">12</span>      <span class="number">35</span>      <span class="number">28</span>
-J.Troll         <span class="number">07</span>/<span class="number">99</span>   <span class="number">4842</span>    <span class="keyword">Brown</span>-<span class="number">3</span> <span class="number">12</span>      <span class="number">26</span>      <span class="number">26</span>
-</code></pre><h5 id="小于">小于</h5>
-<pre><code><span class="variable">$ </span>awk <span class="string">'$6 &lt; $7 {print $0 "$1 Try better at the next comp"}'</span> grade.txt
-<span class="constant">M</span>.<span class="constant">Tansley</span>       <span class="number">05</span>/<span class="number">99</span>   <span class="number">48311</span>   <span class="constant">Green</span>   <span class="number">8</span>       <span class="number">40</span>      <span class="number">44</span><span class="variable">$1</span> <span class="constant">Try</span> better at the <span class="keyword">next</span> comp
-<span class="constant">J</span>.<span class="constant">Lulu</span>          <span class="number">06</span>/<span class="number">99</span>   <span class="number">48317</span>   green   <span class="number">9</span>       <span class="number">24</span>      <span class="number">26</span><span class="variable">$1</span> <span class="constant">Try</span> better at the <span class="keyword">next</span> comp
-</code></pre><h5 id="设置大小写">设置大小写</h5>
-<pre><code><span class="variable">$ </span>awk <span class="string">'/[Gg]reen/'</span> grade.txt
-<span class="constant">M</span>.<span class="constant">Tansley</span>       <span class="number">05</span>/<span class="number">99</span>   <span class="number">48311</span>   <span class="constant">Green</span>   <span class="number">8</span>       <span class="number">40</span>      <span class="number">44</span>
-<span class="constant">J</span>.<span class="constant">Lulu</span>          <span class="number">06</span>/<span class="number">99</span>   <span class="number">48317</span>   green   <span class="number">9</span>       <span class="number">24</span>      <span class="number">26</span>
-</code></pre><h5 id="匹配第一个域的第三个字符是‘a’">匹配第一个域的第三个字符是‘a’</h5>
-<pre><code>$ awk <span class="string">'$1 ~/^...a/'</span> grade.txt
-M.Tansley       <span class="number">05</span>/<span class="number">99</span>   <span class="number">48311</span>   <span class="keyword">Green</span>   <span class="number">8</span>       <span class="number">40</span>      <span class="number">44</span>
-L.Tansley       <span class="number">05</span>/<span class="number">99</span>   <span class="number">4712</span>    <span class="keyword">Brown</span>-<span class="number">2</span> <span class="number">12</span>      <span class="number">30</span>      <span class="number">28</span>
-</code></pre><h5 id="‘或’匹配，使用_‘|’_，需使用括号括起来">‘或’匹配，使用 ‘|’ ，需使用括号括起来</h5>
-<pre><code>$ awk <span class="string">'$0 ~/(Yellow|Brown)/'</span> grade.txt
-P.Bunny         <span class="number">02</span>/<span class="number">99</span>   <span class="number">48</span>      <span class="keyword">Yellow</span>  <span class="number">12</span>      <span class="number">35</span>      <span class="number">28</span>
-J.Troll         <span class="number">07</span>/<span class="number">99</span>   <span class="number">4842</span>    <span class="keyword">Brown</span>-<span class="number">3</span> <span class="number">12</span>      <span class="number">26</span>      <span class="number">26</span>
-L.Tansley       <span class="number">05</span>/<span class="number">99</span>   <span class="number">4712</span>    <span class="keyword">Brown</span>-<span class="number">2</span> <span class="number">12</span>      <span class="number">30</span>      <span class="number">28</span>
-</code></pre><h4 id="先来总结一下awk内置变量：">先来总结一下awk内置变量：</h4>
-<pre><code>ARGC          命令行参数个数
-ARGV          命令行参数排列
-ENVIRON       支持队列中系统环境变量的使用
-FILENAME      awk浏览文件名
-FNR           浏览文件的记录数
-FS            设置输入域分隔符，等价于命令行-F选项
-NF            浏览记录的域个数
-NR            已读的记录数
-OFS           输出域分隔符
-ORS           输出例句分隔符
-RS            控制记录分隔符
-
-$ awk <span class="string">'{print NF,NR,$0} END {print FILENAME}'</span> grade.txt
-<span class="number">7</span> <span class="number">1</span> M.Tansley   <span class="number">05</span>/<span class="number">99</span>   <span class="number">48311</span>   <span class="keyword">Green</span>   <span class="number">8</span>       <span class="number">40</span>      <span class="number">44</span>
-<span class="number">7</span> <span class="number">2</span> J.Lulu      <span class="number">06</span>/<span class="number">99</span>   <span class="number">48317</span>   green   <span class="number">9</span>       <span class="number">24</span>      <span class="number">26</span>
-<span class="number">7</span> <span class="number">3</span> P.Bunny     <span class="number">02</span>/<span class="number">99</span>   <span class="number">48</span>      <span class="keyword">Yellow</span>  <span class="number">12</span>      <span class="number">35</span>      <span class="number">28</span>
-<span class="number">7</span> <span class="number">4</span> J.Troll     <span class="number">07</span>/<span class="number">99</span>   <span class="number">4842</span>    <span class="keyword">Brown</span>-<span class="number">3</span> <span class="number">12</span>      <span class="number">26</span>      <span class="number">26</span>
-<span class="number">7</span> <span class="number">5</span> L.Tansley   <span class="number">05</span>/<span class="number">99</span>   <span class="number">4712</span>    <span class="keyword">Brown</span>-<span class="number">2</span> <span class="number">12</span>      <span class="number">30</span>      <span class="number">28</span>
-grade.txt
-</code></pre><h5 id="使用_-F_参数指定分隔符">使用 -F 参数指定分隔符</h5>
-<pre><code>$ <span class="built_in">echo</span> <span class="variable">$PWD</span>
-/home/root
-$ <span class="built_in">echo</span> <span class="variable">$PWD</span> | awk -F/ <span class="string">'{print $NF"\t"NF}'</span>
-root       <span class="number">3</span>
-</code></pre><h5 id="设置变量名，将27_赋值给变量BASELINE">设置变量名，将27 赋值给变量BASELINE</h5>
-<pre><code><span class="variable">$ </span>awk <span class="string">'BEGIN {BASELINE="27"} $6&lt;BASELINE {print $0}'</span> grade.txt
-<span class="constant">J</span>.<span class="constant">Lulu</span>  <span class="number">06</span>/<span class="number">99</span>   <span class="number">48317</span>   green   <span class="number">9</span>       <span class="number">24</span>      <span class="number">26</span>
-<span class="constant">J</span>.<span class="constant">Troll</span> <span class="number">07</span>/<span class="number">99</span>   <span class="number">4842</span>    <span class="constant">Brown</span>-<span class="number">3</span> <span class="number">12</span>      <span class="number">26</span>      <span class="number">26</span>
-</code></pre><h5 id="修改数值域取值，注意‘{}’">修改数值域取值，注意‘{}’</h5>
-<pre><code><span class="xml">$ awk '{if(</span><span class="variable">$1</span><span class="xml">=="M.Tansley") </span><span class="variable">$6</span><span class="xml">=</span><span class="variable">$6-1</span><span class="xml">; print </span><span class="variable">$1</span><span class="xml">,</span><span class="variable">$6</span><span class="xml">,</span><span class="variable">$7}</span><span class="xml">' grade.txt
-M.Tansley </span><span class="number">39</span><span class="xml"> </span><span class="number">44</span><span class="xml">
-J.Lulu </span><span class="number">24</span><span class="xml"> </span><span class="number">26</span><span class="xml">
-P.Bunny </span><span class="number">35</span><span class="xml"> </span><span class="number">28</span><span class="xml">
-J.Troll </span><span class="number">26</span><span class="xml"> </span><span class="number">26</span><span class="xml">
-L.Tansley </span><span class="number">30</span><span class="xml"> </span><span class="number">28</span><span class="xml"></span>
-</code></pre><h5 id="修改文本域取值">修改文本域取值</h5>
-<pre><code>$ awk '{<span class="keyword">if</span>($<span class="number">1</span>==<span class="string">"J.Troll"</span>) $<span class="number">1</span>=<span class="string">"J.L.Troll"</span>; print $<span class="number">1</span>}' grade.txt
-M.Tansley
-J.Lulu
-P.Bunny
-J.L.Troll
-L.Tansley
-</code></pre><h5 id="创建新的输出域，这里新的输出域为_diff">创建新的输出域，这里新的输出域为 diff</h5>
-<pre><code><span class="xml">$ awk 'BEGIN {print "Name \t Difference"} {if(</span><span class="variable">$6</span><span class="xml"><span class="tag">&lt;</span></span><span class="variable">$7</span><span class="xml">) {diff=</span><span class="variable">$7-</span><span class="xml"></span><span class="variable">$6</span><span class="xml">; print </span><span class="variable">$1</span><span class="xml">,diff}}' grade.txt
-Name     Difference
-M.Tansley </span><span class="number">4</span><span class="xml">
-J.Lulu </span><span class="number">2</span><span class="xml"></span>
-</code></pre><h5 id="统计某一个域的和，使用‘+=’_下面的例子统计第六个域的和">统计某一个域的和，使用‘+=’ 下面的例子统计第六个域的和</h5>
-<pre><code>$ awk <span class="string">'(tot+=$6); END{print "Club student total points: " tot}'</span> grade.txt
-M.Tansley       <span class="number">05</span>/<span class="number">99</span>   <span class="number">48311</span>   <span class="keyword">Green</span>   <span class="number">8</span>       <span class="number">40</span>      <span class="number">44</span>
-J.Lulu  <span class="number">06</span>/<span class="number">99</span>   <span class="number">48317</span>   green   <span class="number">9</span>       <span class="number">24</span>      <span class="number">26</span>
-P.Bunny <span class="number">02</span>/<span class="number">99</span>   <span class="number">48</span>      <span class="keyword">Yellow</span>  <span class="number">12</span>      <span class="number">35</span>      <span class="number">28</span>
-J.Troll <span class="number">07</span>/<span class="number">99</span>   <span class="number">4842</span>    <span class="keyword">Brown</span>-<span class="number">3</span> <span class="number">12</span>      <span class="number">26</span>      <span class="number">26</span>
-L.Tansley       <span class="number">05</span>/<span class="number">99</span>   <span class="number">4712</span>    <span class="keyword">Brown</span>-<span class="number">2</span> <span class="number">12</span>      <span class="number">30</span>      <span class="number">28</span>
-Club student total points: <span class="number">155</span>
-</code></pre><h5 id="注意区别，加‘{}’则不打印文件">注意区别，加‘{}’则不打印文件</h5>
-<pre><code>$ awk '<span class="tuple">{(tot+=$<span class="number">6</span>)}</span>; <span class="variable">END</span><span class="tuple">{print <span class="string">"Club student total points: "</span> tot}</span>' grade.txt
-<span class="variable">Club</span> student total points: <span class="number">155</span>
-
-awk 内置字符串函数
-
-<span class="function"><span class="title">gsub</span><span class="params">(r,s)</span>          在整个$0中用<span class="title">s</span>替代<span class="title">r</span>
-<span class="title">gsub</span><span class="params">(r,s,t)</span>        在整个<span class="title">t</span>中使用<span class="title">s</span>替代<span class="title">r</span>
-<span class="title">index</span><span class="params">(s,t)</span>         在返回<span class="title">s</span>中字符串<span class="title">t</span>的第一个位置
-<span class="title">length</span><span class="params">(s)</span>          放回<span class="title">s</span>长度
-<span class="title">match</span><span class="params">(s,r)</span>         测试<span class="title">s</span>是否包含匹配<span class="title">r</span>的字符串
-<span class="title">split</span><span class="params">(s,a,fs)</span>      在<span class="title">fs</span>上将<span class="title">s</span>分成序列<span class="title">a</span>
-<span class="title">sprint</span><span class="params">(fmt,exp)</span>    返回经<span class="title">fmt</span>格式化后的<span class="title">exp</span>
-<span class="title">sub</span><span class="params">(r,s)</span>           用$0中最左边最长的子串代替<span class="title">s</span>
-<span class="title">substr</span><span class="params">(s,p)</span>        返回字符串<span class="title">s</span>中从<span class="title">p</span>开始的后缀部分
-<span class="title">substr</span><span class="params">(s,p,n)</span>      返回字符串<span class="title">s</span>中从<span class="title">p</span>开始长度为<span class="title">n</span>的后缀部分</span>
-</code></pre><h5 id="替换，目标串使用正则表达式格式‘//’">替换，目标串使用正则表达式格式‘//’</h5>
-<pre><code><span class="variable">$ </span>awk <span class="string">'gsub(/4842/,4899) {print $0}'</span> grade.txt
-<span class="constant">J</span>.<span class="constant">Troll</span> <span class="number">07</span>/<span class="number">99</span>   <span class="number">4899</span>    <span class="constant">Brown</span>-<span class="number">3</span> <span class="number">12</span>      <span class="number">26</span>      <span class="number">26</span>
-</code></pre><h5 id="查询字符串第一次出现的位置，注意使用BEGIN，否则每一行都会打印，字符串使用引号括起来">查询字符串第一次出现的位置，注意使用BEGIN，否则每一行都会打印，字符串使用引号括起来</h5>
-<pre><code>$ awk '<span class="operator"><span class="keyword">BEGIN</span>{print index(<span class="string">"Bunny"</span>,<span class="string">"ny"</span>)}<span class="string">' grade.txt
-4</span></span>
-</code></pre><h5 id="长度">长度</h5>
-<pre><code>$ awk '$<span class="number">1</span>==<span class="string">"J.Troll"</span> {print <span class="property">length</span>($<span class="number">1</span>)<span class="string">" "</span>$<span class="number">1</span>}' grade.txt
-<span class="number">7</span> J.Troll
-</code></pre><h5 id="match_使用：_找不到返回0，找到返模式串在匹配串中的位置，">match 使用： 找不到返回0，找到返模式串在匹配串中的位置，</h5>
-<pre><code>注：单独使用 加<span class="constant">BEGIN</span>
-<span class="variable">$ </span>awk <span class="string">'BEGIN {print match("ANCD",/d/)}'</span>
-<span class="number">0</span>
-</code></pre><h5 id="以下两种模式都正确">以下两种模式都正确</h5>
-<pre><code>$ awk '$<span class="number">1</span>==<span class="string">"J.Lulu"</span> {print <span class="keyword">match</span>($<span class="number">1</span>,<span class="string">"u"</span>)}' grade.txt
-<span class="number">4</span>
-$ awk '$<span class="number">1</span>==<span class="string">"J.Lulu"</span> {print <span class="keyword">match</span>($<span class="number">1</span>,/u/)}' grade.txt
-<span class="number">4</span>
-</code></pre><h5 id="split_返回字符串数组元素个数">split 返回字符串数组元素个数</h5>
-<pre><code>$ awk '<span class="operator"><span class="keyword">BEGIN</span> {print split(<span class="string">"123#456#789"</span>,myarray,<span class="string">"#"</span>);</span>print myarray[1],myarray[2],myarray[3]}'
-3
-123 456 789
-</code></pre><h5 id="sub，发现并替换模式的第一个位置">sub，发现并替换模式的第一个位置</h5>
-<pre><code>$ awk <span class="string">'$1=="J.Troll" {sub(26,29,$0)} {print $0}'</span> grade.txt
-M.Tansley       <span class="number">05</span>/<span class="number">99</span>   <span class="number">48311</span>   <span class="keyword">Green</span>   <span class="number">8</span>       <span class="number">40</span>      <span class="number">44</span>
-J.Lulu  <span class="number">06</span>/<span class="number">99</span>   <span class="number">48317</span>   green   <span class="number">9</span>       <span class="number">24</span>      <span class="number">26</span>
-P.Bunny <span class="number">02</span>/<span class="number">99</span>   <span class="number">48</span>      <span class="keyword">Yellow</span>  <span class="number">12</span>      <span class="number">35</span>      <span class="number">28</span>
-J.Troll <span class="number">07</span>/<span class="number">99</span>   <span class="number">4842</span>    <span class="keyword">Brown</span>-<span class="number">3</span> <span class="number">12</span>      <span class="number">29</span>      <span class="number">26</span>
-L.Tansley       <span class="number">05</span>/<span class="number">99</span>   <span class="number">4712</span>    <span class="keyword">Brown</span>-<span class="number">2</span> <span class="number">12</span>      <span class="number">30</span>      <span class="number">28</span>
-</code></pre><h5 id="substr，返回字符串指定范围内的子串">substr，返回字符串指定范围内的子串</h5>
-<pre><code><span class="variable">$ </span>awk <span class="string">'$1=="L.Tansley" {print substr($1,1,5)}'</span> grade.txt
-<span class="constant">L</span>.<span class="constant">Tan</span>
-</code></pre><h5 id="使用substr返回指定位置开始的后缀部分，范围只给了一个参数，注意和上一个例子相对比">使用substr返回指定位置开始的后缀部分，范围只给了一个参数，注意和上一个例子相对比</h5>
-<pre><code><span class="variable">$ </span>awk <span class="string">'{print substr($1,3)}'</span> grade.txt
-<span class="constant">Tansley</span>
-<span class="constant">Lulu</span>
-<span class="constant">Bunny</span>
-<span class="constant">Troll</span>
-<span class="constant">Tansley</span>
-</code></pre><h5 id="从shell中向awk传递字符串，通过_echo_加管道的方式">从shell中向awk传递字符串，通过 echo 加管道的方式</h5>
-<pre><code><span class="variable">$ </span>echo <span class="string">"Test"</span> | awk <span class="string">'{print length($0)}'</span>
-<span class="number">4</span>
-<span class="variable">$ </span><span class="constant">STR</span>=<span class="string">"mydoc.txt"</span>
-<span class="variable">$ </span>echo <span class="variable">$STR</span> | awk <span class="string">'{print substr($STR,7)}'</span>
-txt
-</code></pre>]]></content>
-    
-    
-      <category term="Shell" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/Shell/"/>
-    
-      <category term="awk" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/awk/"/>
-    
-      <category term="Shell" scheme="https://github.com/DaMinger/DaMinger.github.io.git/categories/Shell/"/>
-    
-  </entry>
-  
-  <entry>
-    <title><![CDATA[awk的入门]]></title>
-    <link href="https://github.com/DaMinger/DaMinger.github.io.git/2014/05/19/Shell/awk/"/>
-    <id>https://github.com/DaMinger/DaMinger.github.io.git/2014/05/19/Shell/awk/</id>
-    <published>2014-05-19T12:08:42.000Z</published>
-    <updated>2014-05-19T12:53:49.000Z</updated>
-    <content type="html"><![CDATA[<p>实验全部来自《鸟哥的私房菜》</p>
-<p>sed 常常用于一整个行的处理， awk 则比较倾向于一行当中分成数个『栏位』（或者称为一个域，也就是一列）来处理。</p>
-<p>awk 通常运行的模式是这样的：</p>
-<pre><code>[root<span class="variable">@localhost</span> ~]<span class="comment"># awk '条件类型1{动作1} 条件类型2{动作2} ...' filename</span>
-</code></pre><p>awk 后面接两个单引号并加上大括号 {} 来配置想要对数据进行的处理动作。 awk 可以处理后续接的文件，也可以读取来自前个命令的 standard output 。 但如前面说的， awk 主要是处理『每一行的栏位内的数据』，而默认的『栏位的分隔符号为 “空白键” 或 “[tab]键” 』！举例来说，我们用 last 可以将登陆者的数据取出来，结果如下所示：</p>
-<pre><code>[root<span class="variable">@localhost</span> ~]<span class="comment"># last -n 5 &lt;==仅取出前五行</span>
-root     pts/<span class="number">1</span>   <span class="number">192.168</span>.<span class="number">1.100</span>  <span class="constant">Tue</span> <span class="constant">Feb</span> <span class="number">10</span> <span class="number">11</span><span class="symbol">:</span><span class="number">21</span>   still logged <span class="keyword">in</span>
-root     pts/<span class="number">1</span>   <span class="number">192.168</span>.<span class="number">1.100</span>  <span class="constant">Tue</span> <span class="constant">Feb</span> <span class="number">10</span> <span class="number">00</span><span class="symbol">:</span><span class="number">46</span> - <span class="number">02</span><span class="symbol">:</span><span class="number">28</span>  (<span class="number">01</span><span class="symbol">:</span><span class="number">41</span>)
-root     pts/<span class="number">1</span>   <span class="number">192.168</span>.<span class="number">1.100</span>  <span class="constant">Mon</span> <span class="constant">Feb</span>  <span class="number">9</span> <span class="number">11</span><span class="symbol">:</span><span class="number">41</span> - <span class="number">18</span><span class="symbol">:</span><span class="number">30</span>  (<span class="number">06</span><span class="symbol">:</span><span class="number">48</span>)
-dmtsai   pts/<span class="number">1</span>   <span class="number">192.168</span>.<span class="number">1.100</span>  <span class="constant">Mon</span> <span class="constant">Feb</span>  <span class="number">9</span> <span class="number">11</span><span class="symbol">:</span><span class="number">41</span> - <span class="number">11</span><span class="symbol">:</span><span class="number">41</span>  (<span class="number">00</span><span class="symbol">:</span><span class="number">00</span>)
-root     tty1                   <span class="constant">Fri</span> <span class="constant">Sep</span>  <span class="number">5</span> <span class="number">14</span><span class="symbol">:</span>09 - <span class="number">14</span><span class="symbol">:</span><span class="number">10</span>  (<span class="number">00</span><span class="symbol">:</span><span class="number">01</span>)
-</code></pre><p>若我想要取出帐号与登陆者的 IP ，且帐号与 IP 之间以 [tab] 隔开，则会变成这样：</p>
-<pre><code>[root<span class="variable">@localhost</span> ~]<span class="comment"># last -n 5 | awk '{print $1 "\t" $3}'</span>
-root    <span class="number">192.168</span>.<span class="number">1.100</span>
-root    <span class="number">192.168</span>.<span class="number">1.100</span>
-root    <span class="number">192.168</span>.<span class="number">1.100</span>
-dmtsai  <span class="number">192.168</span>.<span class="number">1.100</span>
-root    <span class="constant">Fri</span>
-</code></pre><p>上表是 awk 最常使用的动作！透过 print 的功能将栏位数据列出来！栏位的分隔则以空白键或 [tab] 按键来隔开。 因为不论哪一行我都要处理，因此，就不需要有 “条件类型” 的限制！我所想要的是第一栏以及第三栏， 但是，第五行的内容怪怪的～这是因为数据格式的问题啊！所以使用 awk 的时候，请先确认一下你的数据当中，如果是连续性的数据，请不要有空格或 [tab] 在内，否则，就会像这个例子这样，会发生误判喔！</p>
-<p>另外，由上面这个例子你也会知道，在每一行的每个栏位都是有变量名称的，那就是 $1, $2… 等变量名称。以上面的例子来说， root 是 $1 ，因为他是第一栏嘛！至於 192.168.1.100 是第三栏， 所以他就是 $3 啦！后面以此类推～呵呵！还有个变量喔！那就是 $0 ，$0 代表『一整列数据』的意思～以上面的例子来说，第一行的 $0 代表的就是『root …. 』那一行啊！ 由此可知，刚刚上面五行当中，整个 awk 的处理流程是：</p>
-<ul>
-<li>读入第一行，并将第一行的数据填入 $0, $1, $2…. 等变量当中；</li>
-<li>依据 “条件类型” 的限制，判断是否需要进行后面的 “动作”；</li>
-<li>做完所有的动作与条件类型；</li>
-<li>若还有后续的『行』的数据，则重复上面 1~3 的步骤，直到所有的数据都读完为止。</li>
-<li>经过这样的步骤，你会晓得， awk 是『以行为一次处理的单位』， 而『以栏位为最小的处理单位』。好了，那么 awk 怎么知道我到底这个数据有几行？有几栏呢？这就需要 awk 的内建变量的帮忙啦～</li>
-</ul>
-<p><img src="/img/Shell/awk/awk_1.jpg" alt="awk 的内建变量"></p>
-<p>我们继续以上面 last -n 5 的例子来做说明，如果我想要：列出每一行的帐号(就是 $1)；列出目前处理的行数(就是 awk 内的 NR 变量);并且说明，该行有多少栏位(就是 awk 内的 NF 变量)</p>
-<pre><code>[root@localhost ~]# last -n <span class="number">5</span>| awk '<span class="tuple">{print $<span class="number">1</span> <span class="string">"\t lines: "</span> <span class="variable">NR</span> <span class="string">"\t columns: "</span> <span class="variable">NF</span>}</span>'
-root     lines: <span class="number">1</span>        columns: <span class="number">10</span>
-root     lines: <span class="number">2</span>        columns: <span class="number">10</span>
-root     lines: <span class="number">3</span>        columns: <span class="number">10</span>
-dmtsai   lines: <span class="number">4</span>        columns: <span class="number">10</span>
-root     lines: <span class="number">5</span>        columns: <span class="number">9</span>
-</code></pre><p>注意，awk 后续的所有动作是以单引号『 ‘ 』括住的，由於单引号与双引号都必须是成对的， 所以， awk 的格式内容如果想要以 print 列印时，记得非变量的文字部分，都需要使用双引号来定义出来喔！因为单引号已经是 awk 的命令固定用法了！</p>
-<p>注意，在 awk 内的 NR, NF 等变量要用大写，且不需要有钱字号 $ 啦！这样可以了解 NR 与 NF 的差别了吧？注：$0 表示整行，$1 代表第一项</p>
-<p>好了，我们实际来运用一下逻辑判断吧！举例来说，在 /etc/passwd 当中是以冒号 “:” 来作为栏位的分隔， 该文件中第一栏位为帐号，第三栏位则是 UID。那假设我要查阅，第三栏小於 10 以下的数据，并且仅列出帐号与第三栏， 那么可以这样做：</p>
-<pre><code>[root<span class="variable">@localhost</span> ~]<span class="comment"># cat /etc/passwd | \</span>
-&gt; awk <span class="string">'{FS=":"} $3 &lt; 10 {print $1 "\t " $3}'</span>
-<span class="symbol">root:</span><span class="symbol">x:</span><span class="number">0</span><span class="symbol">:</span><span class="number">0</span><span class="symbol">:root</span><span class="symbol">:/root</span><span class="symbol">:/bin/bash</span>
-bin      <span class="number">1</span>
-daemon   <span class="number">2</span>
-....(以下省略)....
-</code></pre><p>有趣吧！不过，怎么第一行没有正确的显示出来呢？这是因为我们读入第一行的时候，那些变量 $1, $2… 默认还是以空白键为分隔的，所以虽然我们定义了 FS=”:” 了， 但是却仅能在第二行后才开始生效。那么怎么办呢？我们可以预先配置 awk 的变量啊！ 利用 BEGIN 这个关键字喔！这样做：</p>
-<pre><code>[root<span class="variable">@localhost</span> ~]<span class="comment"># cat /etc/passwd | \</span>
-&gt; awk <span class="string">'BEGIN {FS=":"} $3 &lt; 10 {print $1 "\t " $3}'</span>
-root     <span class="number">0</span>
-bin      <span class="number">1</span>
-daemon   <span class="number">2</span>
-......(以下省略)......
-</code></pre><p>很有趣吧！而除了 BEGIN 之外，我们还有 END 呢！另外，如果要用 awk 来进行『计算功能』呢？以底下的例子来看， 假设我有一个薪资数据表档名为 pay.txt ，内容是这样的：</p>
-<pre><code>Name    <span class="number">1</span><span class="keyword">st</span>     <span class="number">2</span>nd     <span class="number">3</span>th
-VBird   <span class="number">23000</span>   <span class="number">24000</span>   <span class="number">25000</span>
-DMTsai  <span class="number">21000</span>   <span class="number">20000</span>   <span class="number">23000</span>
-Bird2   <span class="number">43000</span>   <span class="number">42000</span>   <span class="number">41000</span>
-</code></pre><p>如何帮我计算每个人的总额呢？而且我还想要格式化输出喔！我们可以这样考虑：</p>
-<p>第一行只是说明，所以第一行不要进行加总 (NR==1 时处理)；第二行以后就会有加总的情况出现 (NR&gt;=2 以后处理)</p>
-<pre><code><span class="xml">[root@localhost ~]# cat pay.txt | \
-&gt; awk 'NR==</span><span class="number">1</span><span class="xml">{printf "%</span><span class="number">10</span><span class="xml">s %</span><span class="number">10</span><span class="xml">s %</span><span class="number">10</span><span class="xml">s %</span><span class="number">10</span><span class="xml">s %</span><span class="number">10</span><span class="xml">s\n",</span><span class="variable">$1</span><span class="xml">,</span><span class="variable">$2</span><span class="xml">,</span><span class="variable">$3</span><span class="xml">,</span><span class="variable">$4</span><span class="xml">,"Total" }
-NR&gt;=</span><span class="number">2</span><span class="xml">{total = </span><span class="variable">$2</span><span class="xml"> + </span><span class="variable">$3</span><span class="xml"> + </span><span class="variable">$4</span><span class="xml">
-printf "%</span><span class="number">10</span><span class="xml">s %</span><span class="number">10</span><span class="xml">d %</span><span class="number">10</span><span class="xml">d %</span><span class="number">10</span><span class="xml">d %</span><span class="number">10.2</span><span class="xml">f\n", </span><span class="variable">$1</span><span class="xml">, </span><span class="variable">$2</span><span class="xml">, </span><span class="variable">$3</span><span class="xml">, </span><span class="variable">$4</span><span class="xml">, total}'
-      Name        </span><span class="number">1</span><span class="xml">st        </span><span class="number">2</span><span class="xml">nd        </span><span class="number">3</span><span class="xml">th      Total
-     VBird      </span><span class="number">23000</span><span class="xml">      </span><span class="number">24000</span><span class="xml">      </span><span class="number">25000</span><span class="xml">   </span><span class="number">72000.00</span><span class="xml">
-    DMTsai      </span><span class="number">21000</span><span class="xml">      </span><span class="number">20000</span><span class="xml">      </span><span class="number">23000</span><span class="xml">   </span><span class="number">64000.00</span><span class="xml">
-     Bird2      </span><span class="number">43000</span><span class="xml">      </span><span class="number">42000</span><span class="xml">      </span><span class="number">41000</span><span class="xml">  </span><span class="number">126000.00</span><span class="xml"></span>
-</code></pre><p>上面的例子有几个重要事项应该要先说明的：</p>
-<p>awk 的命令间隔：所有 awk 的动作，亦即在 {} 内的动作，如果有需要多个命令辅助时，可利用分号『;』间隔， 或者直接以 [Enter] 按键来隔开每个命令，例如上面的范例中，鸟哥共按了三次 [enter] 喔！</p>
-<pre><code>逻辑运算当中，如果是『等於』的情况，则务必使用两个等号『==』！
-格式化输出时，在 <span class="built_in">printf</span> 的格式配置当中，务必加上 \n ，才能进行分行！
-与 bash shell 的变量不同，在 awk 当中，变量可以直接使用，不需加上 $ 符号。
-</code></pre><p>利用 awk 这个玩意儿，就可以帮我们处理很多日常工作了呢！真是好用的很～ 此外， awk 的输出格式当中，常常会以 printf 来辅助，所以， 最好你对 printf 也稍微熟悉一下比较好啦！另外， awk 的动作内 {} 也是支持 if (条件) 的喔！ 举例来说，上面的命令可以修订成为这样：</p>
-<pre><code><span class="xml">[root@localhost ~]# cat pay.txt | \
-&gt; awk '{if(NR==</span><span class="number">1</span><span class="xml">) printf "%</span><span class="number">10</span><span class="xml">s %</span><span class="number">10</span><span class="xml">s %</span><span class="number">10</span><span class="xml">s %</span><span class="number">10</span><span class="xml">s %</span><span class="number">10</span><span class="xml">s\n",</span><span class="variable">$1</span><span class="xml">,</span><span class="variable">$2</span><span class="xml">,</span><span class="variable">$3</span><span class="xml">,</span><span class="variable">$4</span><span class="xml">,"Total"}
-NR&gt;=</span><span class="number">2</span><span class="xml">{total = </span><span class="variable">$2</span><span class="xml"> + </span><span class="variable">$3</span><span class="xml"> + </span><span class="variable">$4</span><span class="xml">
-printf "%</span><span class="number">10</span><span class="xml">s %</span><span class="number">10</span><span class="xml">d %</span><span class="number">10</span><span class="xml">d %</span><span class="number">10</span><span class="xml">d %</span><span class="number">10.2</span><span class="xml">f\n", </span><span class="variable">$1</span><span class="xml">, </span><span class="variable">$2</span><span class="xml">, </span><span class="variable">$3</span><span class="xml">, </span><span class="variable">$4</span><span class="xml">, total}'</span>
-</code></pre><p>你可以仔细的比对一下上面两个输入有啥不同～从中去了解两种语法吧！我个人是比较倾向於使用第一种语法， 因为会比较有统一性啊</p>
-]]></content>
-    
-    
-      <category term="Shell" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/Shell/"/>
-    
-      <category term="awk" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/awk/"/>
-    
-      <category term="Shell" scheme="https://github.com/DaMinger/DaMinger.github.io.git/categories/Shell/"/>
-    
-  </entry>
-  
-  <entry>
-    <title><![CDATA[grep与sed的使用]]></title>
-    <link href="https://github.com/DaMinger/DaMinger.github.io.git/2014/05/19/Shell/sed/"/>
-    <id>https://github.com/DaMinger/DaMinger.github.io.git/2014/05/19/Shell/sed/</id>
-    <published>2014-05-19T11:12:57.000Z</published>
-    <updated>2014-05-19T12:07:48.000Z</updated>
-    <content type="html"><![CDATA[<p>实验脚本来自《鸟哥的私房菜》</p>
-<p>贴一张正则表达式特殊符号的图<br><img src="/img/Shell/sed/sed_1.jpg" alt="正则表达式特殊符号 "></p>
-<p>实验脚本regular_express.txt：</p>
-<pre><code><span class="string">"Open Source"</span> <span class="keyword">is</span> a good mechanism <span class="keyword">to</span> develop programs.
-apple <span class="keyword">is</span> <span class="keyword">my</span> favorite food.
-Football game <span class="keyword">is</span> <span class="keyword">not</span> use feet only.
-this dress doesn't fit <span class="keyword">me</span>.
-However, this dress <span class="keyword">is</span> <span class="keyword">about</span> $ <span class="number">3183</span> dollars.^M
-GNU <span class="keyword">is</span> free air <span class="keyword">not</span> free beer.^M
-Her hair <span class="keyword">is</span> very beauty.^M
-I can't finish <span class="keyword">the</span> test.^M
-Oh! The soup taste good.^M
-motorcycle <span class="keyword">is</span> cheap than car.
-This window <span class="keyword">is</span> clear.
-<span class="keyword">the</span> symbol '*' <span class="keyword">is</span> represented <span class="keyword">as</span> start.
-Oh!     My god!
-The gd software <span class="keyword">is</span> a library <span class="keyword">for</span> drafting programs.^M
-You are <span class="keyword">the</span> best <span class="keyword">is</span> mean you are <span class="keyword">the</span> no. <span class="number">1.</span>
-The world &lt;Happy&gt; <span class="keyword">is</span> <span class="keyword">the</span> same <span class="keyword">with</span> <span class="string">"glad"</span>.
-I like dog.
-google <span class="keyword">is</span> <span class="keyword">the</span> best tools <span class="keyword">for</span> search keyword.
-goooooogle yes!
-go! go! Let's go.
-<span class="comment"># I am VBird</span>
-</code></pre><h4 id="grep的使用">grep的使用</h4>
-<h6 id="搜寻特定字符串：">搜寻特定字符串：</h6>
-<pre><code>[root@localhost ~]<span class="comment"># grep -n 'the' regular_express.txt</span>
-<span class="number">8</span>:I can't finish <span class="keyword">the</span> test.
-<span class="number">12</span>:<span class="keyword">the</span> symbol '*' <span class="keyword">is</span> represented <span class="keyword">as</span> start.
-<span class="number">15</span>:You are <span class="keyword">the</span> best <span class="keyword">is</span> mean you are <span class="keyword">the</span> no. <span class="number">1.</span>
-<span class="number">16</span>:The world &lt;Happy&gt; <span class="keyword">is</span> <span class="keyword">the</span> same <span class="keyword">with</span> <span class="string">"glad"</span>.
-<span class="number">18</span>:google <span class="keyword">is</span> <span class="keyword">the</span> best tools <span class="keyword">for</span> search keyword.
-</code></pre><h6 id="反向选择，可以使用_‘v’_选项：">反向选择，可以使用 ‘v’ 选项：</h6>
-<pre><code>[root<span class="variable">@localhost</span> ~]<span class="comment"># grep -vn 'the' regular_express.txt</span>
-则所有包含 ‘the’ 的行都不会显示
-</code></pre><h6 id="如果不需要区分大小写，可以使用_‘i’_选项：">如果不需要区分大小写，可以使用 ‘i’ 选项：</h6>
-<pre><code>[root@localhost ~]<span class="comment"># grep -in 'the' regular_express.txt</span>
-<span class="number">8</span>:I can't finish <span class="keyword">the</span> test.
-<span class="number">9</span>:Oh! The soup taste good.
-<span class="number">12</span>:<span class="keyword">the</span> symbol '*' <span class="keyword">is</span> represented <span class="keyword">as</span> start.
-<span class="number">14</span>:The gd software <span class="keyword">is</span> a library <span class="keyword">for</span> drafting programs.
-<span class="number">15</span>:You are <span class="keyword">the</span> best <span class="keyword">is</span> mean you are <span class="keyword">the</span> no. <span class="number">1.</span>
-<span class="number">16</span>:The world &lt;Happy&gt; <span class="keyword">is</span> <span class="keyword">the</span> same <span class="keyword">with</span> <span class="string">"glad"</span>.
-<span class="number">18</span>:google <span class="keyword">is</span> <span class="keyword">the</span> best tools <span class="keyword">for</span> search keyword.
-</code></pre><h6 id="利用中括号_[_]_来搜寻集合字节">利用中括号 [ ] 来搜寻集合字节</h6>
-<pre><code>[root<span class="variable">@localhost</span> ~]<span class="comment"># grep -n 't[ae]st' regular_express.txt</span>
-<span class="number">8</span><span class="symbol">:I</span> can<span class="string">'t finish the test.
-9:Oh! The soup taste good.</span>
-</code></pre><h6 id="如果需要匹配某一部分，但是不想匹配以某些开头的情况：（匹配oo，但不匹配以g开头的情况）">如果需要匹配某一部分，但是不想匹配以某些开头的情况：（匹配oo，但不匹配以g开头的情况）</h6>
-<pre><code>[root<span class="variable">@localhost</span> ~]<span class="comment"># grep -n '[^g]oo' regular_express.txt</span>
-<span class="number">2</span><span class="symbol">:apple</span> is my favorite food.
-<span class="number">3</span><span class="symbol">:Football</span> game is <span class="keyword">not</span> use feet only.
-<span class="number">18</span><span class="symbol">:google</span> is the best tools <span class="keyword">for</span> search keyword.
-<span class="number">19</span><span class="symbol">:goooooogle</span> yes!
-[root<span class="variable">@localhost</span> ~]<span class="comment"># grep -n '[^a-z]oo' regular_express.txt</span>
-<span class="number">3</span><span class="symbol">:Football</span> game is <span class="keyword">not</span> use feet only.
-</code></pre><h6 id="行首与行尾字节_^_$">行首与行尾字节 ^ $</h6>
-<pre><code>[root@localhost ~]<span class="preprocessor"># grep -n '^the' regular_express.txt</span>
-<span class="number">12</span>:the symbol <span class="string">'*'</span> <span class="keyword">is</span> represented <span class="keyword">as</span> start.
-</code></pre><h6 id="匹配以小写字母开头的行：">匹配以小写字母开头的行：</h6>
-<pre><code>[root@localhost ~]<span class="comment"># grep -n '^[a-z]' regular_express.txt</span>
-<span class="number">2</span>:apple <span class="keyword">is</span> <span class="keyword">my</span> favorite food.
-<span class="number">4</span>:this dress doesn't fit <span class="keyword">me</span>.
-<span class="number">10</span>:motorcycle <span class="keyword">is</span> cheap than car.
-<span class="number">12</span>:<span class="keyword">the</span> symbol '*' <span class="keyword">is</span> represented <span class="keyword">as</span> start.
-<span class="number">18</span>:google <span class="keyword">is</span> <span class="keyword">the</span> best tools <span class="keyword">for</span> search keyword.
-<span class="number">19</span>:goooooogle yes!
-<span class="number">20</span>:go! go! Let's go.
-</code></pre><h6 id="匹配非大小写字母开头的行：">匹配非大小写字母开头的行：</h6>
-<pre><code>[root@localhost ~]<span class="preprocessor"># grep -n '^[^a-zA-Z]' regular_express.txt</span>
-<span class="number">1</span>:<span class="string">"Open Source"</span> <span class="keyword">is</span> a good mechanism <span class="keyword">to</span> develop programs.
-<span class="number">21</span>:<span class="preprocessor"># I am VBird</span>
-</code></pre><p>注意：那个 ^ 符号，在字节集合符号(括号[ ])之内与之外是不同的！ 在 [ ] 内代表“反向选择”，在 [ ] 之外则代表定位在行首的意义！</p>
-<h6 id="匹配空行：">匹配空行：</h6>
-<pre><code>[root<span class="variable">@localhost</span> ~]<span class="comment"># grep -n '^$' regular_express.txt</span>
-<span class="number">22</span><span class="symbol">:</span>
-</code></pre><h6 id="任意一个字节_-_与重复字节_*">任意一个字节 . 与重复字节 *</h6>
-<pre><code>[root<span class="variable">@localhost</span> ~]<span class="comment"># grep -n 'goo*g' regular_express.txt</span>
-<span class="number">18</span><span class="symbol">:google</span> is the best tools <span class="keyword">for</span> search keyword.
-<span class="number">19</span><span class="symbol">:goooooogle</span> yes!
-</code></pre><p>在正则表达式中‘.’ 0个或1个任意字符，‘*’代表任意多个任意字符</p>
-<h6 id="限定连续_RE_字符范围_{}">限定连续 RE 字符范围 {}</h6>
-<pre><code>[root<span class="variable">@localhost</span> ~]<span class="comment"># grep -n 'go\{2,5\}g' regular_express.txt</span>
-<span class="number">18</span><span class="symbol">:google</span> is the best tools <span class="keyword">for</span> search keyword.
-</code></pre><p>上面的式子匹配了2个‘o’，表达式的意思是匹配2-5个‘o’<br>若第二个参数为空，则匹配 第一个参数到无穷多个的情况：</p>
-<pre><code>[root<span class="variable">@localhost</span> ~]<span class="comment"># grep -n 'go\{2,\}g' regular_express.txt</span>
-<span class="number">18</span><span class="symbol">:google</span> is the best tools <span class="keyword">for</span> search keyword.
-<span class="number">19</span><span class="symbol">:goooooogle</span> yes!
-</code></pre><h4 id="基础的正规表示法特殊字符">基础的正规表示法特殊字符</h4>
-<p><img src="/img/Shell/sed/sed_2.jpg" alt="正则表达式特殊字符 "><br><img src="/img/Shell/sed/sed_3.jpg" alt="正则表达式特殊字符 "></p>
-<h4 id="sed的使用">sed的使用</h4>
-<p>[root@localhost ~]# sed [-nefr] [动作]选项与参数：</p>
-<pre><code>-<span class="ruby">n ：使用安静(silent)模式。在一般 sed 的用法中，所有来自 <span class="constant">STDIN</span> 
-</span>     的数据一般都会被列出到萤幕上。但如果加上 -n 参数后，则只有经过
-     sed 特殊处理的那一行(或者动作)才会被列出来。
--<span class="ruby">e ：直接在命令列模式上进行 sed 的动作编辑；
-</span>-<span class="ruby">f ：直接将 sed 的动作写在一个文件内， -f filename 则可以运行 filename 内的 
-</span>     sed 动作；
--<span class="ruby">r ：sed 的动作支持的是延伸型正规表示法的语法。(默认是基础正规表示法语法)
-</span>-<span class="ruby">i ：直接修改读取的文件内容，而不是由萤幕输出。</span>
-</code></pre><p>动作说明： [n1[,n2]]function</p>
-<pre><code>n1, n2 ：不见得会存在，一般代表『选择进行动作的行数』，举例来说，如果我的动作
-         是需要在 <span class="number">10</span> 到 <span class="number">20</span> 行之间进行的，则『 <span class="number">10</span>,<span class="number">20</span>[动作行为] 』
-<span class="function"><span class="keyword">function</span> ：</span>
-<span class="operator">a</span> ：新增， <span class="operator">a</span> 的后面可以接字串，而这些字串会在新的一行出现(目前的下一行)～
-c ：取代， c 的后面可以接字串，这些字串可以取代 n1,n2 之间的行！
-d ：删除，因为是删除啊，所以 d 后面通常不接任何东西；
-i ：插入， i 的后面可以接字串，而这些字串会在新的一行出现(目前的上一行)；
-p ：列印，亦即将某个选择的数据印出。通常 p 会与参数 sed -n 一起运行～
-s ：取代，可以直接进行取代的工作哩！通常这个 s 的动作可以搭配
-</code></pre><h6 id="例一：将_/etc/passwd_的内容列出并且列印行号，同时，请将第_2~5_行删除！">例一：将 /etc/passwd 的内容列出并且列印行号，同时，请将第 2~5 行删除！</h6>
-<pre><code>[root<span class="variable">@localhost</span> ~]<span class="comment"># nl /etc/passwd | sed '2,5d'</span>
-<span class="number">1</span> <span class="symbol">root:</span><span class="symbol">x:</span><span class="number">0</span><span class="symbol">:</span><span class="number">0</span><span class="symbol">:root</span><span class="symbol">:/root</span><span class="symbol">:/bin/bash</span>
-<span class="number">6</span> <span class="symbol">sync:</span><span class="symbol">x:</span><span class="number">5</span><span class="symbol">:</span><span class="number">0</span><span class="symbol">:sync</span><span class="symbol">:/sbin</span><span class="symbol">:/bin/sync</span>
-<span class="number">7</span> <span class="symbol">shutdown:</span><span class="symbol">x:</span><span class="number">6</span><span class="symbol">:</span><span class="number">0</span><span class="symbol">:shutdown</span><span class="symbol">:/sbin</span><span class="symbol">:/sbin/shutdown</span>
-.....(后面省略).....
-</code></pre><h6 id="例二：承上题，在第二行后(亦即是加在第三行)加上『drink_tea?』字样！">例二：承上题，在第二行后(亦即是加在第三行)加上『drink tea?』字样！</h6>
-<pre><code>[root<span class="variable">@localhost</span> ~]<span class="comment"># nl /etc/passwd | sed '2a drink tea'</span>
-<span class="number">1</span> <span class="symbol">root:</span><span class="symbol">x:</span><span class="number">0</span><span class="symbol">:</span><span class="number">0</span><span class="symbol">:root</span><span class="symbol">:/root</span><span class="symbol">:/bin/bash</span>
-<span class="number">2</span> <span class="symbol">bin:</span><span class="symbol">x:</span><span class="number">1</span><span class="symbol">:</span><span class="number">1</span><span class="symbol">:bin</span><span class="symbol">:/bin</span><span class="symbol">:/sbin/nologin</span>
-drink tea
-<span class="number">3</span> <span class="symbol">daemon:</span><span class="symbol">x:</span><span class="number">2</span><span class="symbol">:</span><span class="number">2</span><span class="symbol">:daemon</span><span class="symbol">:/sbin</span><span class="symbol">:/sbin/nologin</span>
-.....(后面省略).....
-</code></pre><h6 id="例三：我想将第2-5行的内容取代成为“No_2-5_number”呢？">例三：我想将第2-5行的内容取代成为“No 2-5 number”呢？</h6>
-<pre><code>[root<span class="variable">@localhost</span> ~]<span class="comment"># nl /etc/passwd | sed '2,5c No 2-5 number'</span>
-<span class="number">1</span> <span class="symbol">root:</span><span class="symbol">x:</span><span class="number">0</span><span class="symbol">:</span><span class="number">0</span><span class="symbol">:root</span><span class="symbol">:/root</span><span class="symbol">:/bin/bash</span>
-<span class="constant">No</span> <span class="number">2</span>-<span class="number">5</span> number
-<span class="number">6</span> <span class="symbol">sync:</span><span class="symbol">x:</span><span class="number">5</span><span class="symbol">:</span><span class="number">0</span><span class="symbol">:sync</span><span class="symbol">:/sbin</span><span class="symbol">:/bin/sync</span>
-.....(后面省略).....
-</code></pre><h6 id="例四：仅列出_/etc/passwd_文件内的第_5-7_行">例四：仅列出 /etc/passwd 文件内的第 5-7 行</h6>
-<pre><code>[root<span class="variable">@localhost</span> ~]<span class="comment"># nl /etc/passwd | sed -n '5,7p'</span>
-<span class="number">5</span> <span class="symbol">lp:</span><span class="symbol">x:</span><span class="number">4</span><span class="symbol">:</span><span class="number">7</span><span class="symbol">:lp</span><span class="symbol">:/var/spool/lpd</span><span class="symbol">:/sbin/nologin</span>
-<span class="number">6</span> <span class="symbol">sync:</span><span class="symbol">x:</span><span class="number">5</span><span class="symbol">:</span><span class="number">0</span><span class="symbol">:sync</span><span class="symbol">:/sbin</span><span class="symbol">:/bin/sync</span>
-<span class="number">7</span> <span class="symbol">shutdown:</span><span class="symbol">x:</span><span class="number">6</span><span class="symbol">:</span><span class="number">0</span><span class="symbol">:shutdown</span><span class="symbol">:/sbin</span><span class="symbol">:/sbin/shutdown</span>
-</code></pre><h5 id="部分数据的搜寻并取代的功能">部分数据的搜寻并取代的功能</h5>
-<p>基本使用方式：sed ‘s/要被取代的字串/新的字串/g’</p>
-<h6 id="步骤一：先观察原始信息，利用_/sbin/ifconfig_查询_IP_为何？">步骤一：先观察原始信息，利用 /sbin/ifconfig 查询 IP 为何？</h6>
-<pre><code>[root<span class="variable">@localhost</span> ~]<span class="comment"># /sbin/ifconfig eth0</span>
-eth<span class="number">0</span> <span class="constant">Link</span> <span class="symbol">encap:</span><span class="constant">Ethernet</span> <span class="constant">HWaddr</span> <span class="number">00</span><span class="symbol">:</span><span class="number">90</span><span class="symbol">:CC</span><span class="symbol">:A6</span><span class="symbol">:</span><span class="number">34</span><span class="symbol">:</span><span class="number">84</span>
-inet <span class="symbol">addr:</span><span class="number">192.168</span>.<span class="number">1.100</span> <span class="constant">Bcast</span><span class="symbol">:</span><span class="number">192.168</span>.<span class="number">1.255</span> <span class="constant">Mask</span><span class="symbol">:</span><span class="number">255.255</span>.<span class="number">255.0</span>
-inet6 <span class="symbol">addr:</span> <span class="symbol">fe80:</span><span class="symbol">:</span><span class="number">290</span><span class="symbol">:ccff</span><span class="symbol">:fea6</span><span class="symbol">:</span><span class="number">3484</span>/<span class="number">64</span> <span class="constant">Scope</span><span class="symbol">:Link</span>
-<span class="constant">UP</span> <span class="constant">BROADCAST</span> <span class="constant">RUNNING</span> <span class="constant">MULTICAST</span> <span class="constant">MTU</span><span class="symbol">:</span><span class="number">1500</span> <span class="constant">Metric</span><span class="symbol">:</span><span class="number">1</span>
-.....(以下省略).....
-</code></pre><p>我们的重点在第二行，也就是 192.168.1.100 那一行而已！先利用关键字捉出那一行！</p>
-<h6 id="步骤二：利用关键字配合_grep_撷取出关键的一行数据">步骤二：利用关键字配合 grep 撷取出关键的一行数据</h6>
-<pre><code>[root<span class="variable">@localhost</span> ~]<span class="comment"># /sbin/ifconfig eth0 | grep 'inet addr'</span>
-inet <span class="symbol">addr:</span><span class="number">192.168</span>.<span class="number">1.100</span> <span class="constant">Bcast</span><span class="symbol">:</span><span class="number">192.168</span>.<span class="number">1.255</span> <span class="constant">Mask</span><span class="symbol">:</span><span class="number">255.255</span>.<span class="number">255.0</span>
-</code></pre><p>当场仅剩下一行！接下来，我们要将开始到 addr: 通通删除，删除关键在於『 ^.*inet addr: 』啦！正规表示法出现！<br>，</p>
-<h6 id="步骤三：将_IP_前面的部分予以删除">步骤三：将 IP 前面的部分予以删除</h6>
-<pre><code>[root<span class="variable">@localhost</span> ~]<span class="comment"># /sbin/ifconfig eth0 | grep 'inet addr' | \</span>
-&gt; sed <span class="string">'s/^.*addr://g'</span>
-<span class="number">192.168</span>.<span class="number">1.100</span> <span class="constant">Bcast</span><span class="symbol">:</span><span class="number">192.168</span>.<span class="number">1.255</span> <span class="constant">Mask</span><span class="symbol">:</span><span class="number">255.255</span>.<span class="number">255.0</span>
-</code></pre><p> 仔细与上个步骤比较一下，前面的部分不见了！接下来则是删除后续的部分，此时所需的正规表示法为：『 Bcast.*$ 』就是啦！</p>
-<h6 id="步骤四：将_IP_后面的部分予以删除">步骤四：将 IP 后面的部分予以删除</h6>
-<pre><code>[root<span class="variable">@localhost</span> ~]<span class="comment"># /sbin/ifconfig eth0 | grep 'inet addr' | \</span>
-&gt; sed <span class="string">'s/^.*addr://g'</span> | sed <span class="string">'s/Bcast.*$//g'</span>
-<span class="number">192.168</span>.<span class="number">1.100</span>
-</code></pre><h6 id="例六：利用_sed_将_regular_express-txt_内每一行结尾若为_-_则换成_!">例六：利用 sed 将 regular_express.txt 内每一行结尾若为 . 则换成 !</h6>
-<pre><code>[root<span class="variable">@localhost</span> ~]<span class="comment"># sed -i 's/\.$/\!/g' regular_express.txt  </span>
-</code></pre><p>上头的 -i 选项可以让你的 sed 直接去修改后面接的文件内容而不是由屏幕输出！注意使用的时候需要对 ‘.’ 进行转义，而且需要指明是对结尾为‘.’ 的进行替换，使用 $ 符号<br>这里就顺便来实践一下，我有一个dos环境下创建的文件，当复制到 unix 环境下之后，结尾就会出现难看的“^M” 符号，如果要把这个符号去掉使用sed工具可以轻松搞定：</p>
-<pre><code>[root<span class="variable">@localhost</span> ~]<span class="comment"># sed -i 's/\^M$//g' regular_express.txt</span>
-</code></pre>]]></content>
-    
-    
-      <category term="Shell" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/Shell/"/>
-    
-      <category term="sed" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/sed/"/>
-    
-      <category term="Shell" scheme="https://github.com/DaMinger/DaMinger.github.io.git/categories/Shell/"/>
     
   </entry>
   
