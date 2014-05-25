@@ -4,21 +4,15 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>LeetCode:Reverse Integer | DaMinger&#39;s blog</title>
+    <title>LeetCode:Copy List with Random Pointer | DaMinger&#39;s blog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="DaMinger">
     
     <meta name="description" content="题目
-Reverse Integer 
-Reverse digits of an integer.
+A linked list is given such that each node contains an additional random pointer which could point to any node in the list or null.
 
-Example1: x = 123, return 321
-Example2: x = -123, return -321
-思路：整数各位取余
-解法
-public class Solution {
-">
+Return a deep ">
     
     
     
@@ -80,15 +74,15 @@ public class Solution {
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2014/05/23/数据结构与算法/LeetCode/reverinteger/" title="LeetCode:Reverse Integer" itemprop="url">LeetCode:Reverse Integer</a>
+      <a href="/2014/05/25/数据结构与算法/LeetCode/copylistwithrandompointer/" title="LeetCode:Copy List with Random Pointer" itemprop="url">LeetCode:Copy List with Random Pointer</a>
   </h1>
   <p class="article-author">By
     
       <a href="https://github.com/DaMinger/DaMinger.github.io.git" title="DaMinger">DaMinger</a>
     </p>
   <p class="article-time">
-    <time datetime="2014-05-23T12:27:35.000Z" itemprop="datePublished">5月 23 2014</time>
-    更新日期:<time datetime="2014-05-23T13:05:17.000Z" itemprop="dateModified">5月 23 2014</time>
+    <time datetime="2014-05-25T11:10:30.000Z" itemprop="datePublished">5月 25 2014</time>
+    更新日期:<time datetime="2014-05-25T11:47:03.000Z" itemprop="dateModified">5月 25 2014</time>
     
   </p>
 </header>
@@ -101,21 +95,49 @@ public class Solution {
 		</div>
 		
 		<h4 id="题目">题目</h4>
-<pre><code>Reverse Integer 
-Reverse digits <span class="operator">of</span> <span class="operator">an</span> <span class="keyword">integer</span>.
+<pre><code>A linked <span class="type">list</span> <span class="keyword">is</span> <span class="keyword">given</span> such <span class="keyword">that</span> each node <span class="keyword">contains</span> an additional random pointer which could point <span class="keyword">to</span> any node <span class="keyword">in</span> <span class="keyword">the</span> <span class="type">list</span> <span class="keyword">or</span> null.
 
-Example1: x = <span class="number">123</span>, <span class="constant">return</span> <span class="number">321</span>
-Example2: x = -<span class="number">123</span>, <span class="constant">return</span> -<span class="number">321</span>
-</code></pre><p>思路：整数各位取余</p>
+Return a deep <span class="keyword">copy</span> <span class="keyword">of</span> <span class="keyword">the</span> <span class="type">list</span>.
+</code></pre><p>思路：因为每个链表都有随机指针，遍历一遍肯定是不行的，遍历2遍，第一遍去记下next，第二遍去记下random，但是时间复杂度o(n^2),参考下面帖子想法不错，<br><a href="http://blog.csdn.net/zhaojinjia/article/details/9313275" target="_blank">http://blog.csdn.net/zhaojinjia/article/details/9313275</a>  <a href="http://blog.csdn.net/ljphhj/article/details/21832129" target="_blank">http://blog.csdn.net/ljphhj/article/details/21832129</a> <a href="http://blog.csdn.net/linhuanmars/article/details/22463599" target="_blank">http://blog.csdn.net/linhuanmars/article/details/22463599</a></p>
+<p>第一步对每个节点进行扫描，复制每个节点，将新节点接在旧节点后面；第二步扫描每个旧节点，把旧结点的随机指针赋给新节点的随机指针；第三步扫描所有节点，把链表拆成两个，第一个还原原链表，而第二个就是我们要求的复制链表。因为现在链表是旧新更替，只要把每隔两个结点分别相连，对链表进行分割即可。这个方法总共进行三次线性扫描，所以时间复杂度是O(n)。而这里并不需要额外空间，所以空间复杂度是O(1)。</p>
 <h4 id="解法">解法</h4>
-<pre><code><span class="keyword">public</span> <span class="keyword">class</span> Solution {
-    <span class="keyword">public</span> <span class="keyword">int</span> <span class="title">reverse</span>(<span class="keyword">int</span> x) {
-    <span class="keyword">int</span> nReverse = <span class="number">0</span>;
-            <span class="keyword">while</span> (x != <span class="number">0</span>) {
-                nReverse = nReverse * <span class="number">10</span> + x % <span class="number">10</span>;
-                x = x / <span class="number">10</span>;
+<pre><code>class RandomListNode {
+        <span class="keyword">int</span> label;
+        RandomListNode next, random;
+        RandomListNode(<span class="keyword">int</span> x) { <span class="keyword">this</span>.label = x; }
+     };
+<span class="keyword">public</span> <span class="keyword">class</span> copyListWithRandom {
+    <span class="keyword">public</span> RandomListNode <span class="title">copyRandomList</span>(RandomListNode head) {
+        <span class="keyword">if</span>(head ==<span class="keyword">null</span>){
+            <span class="keyword">return</span> head;
+        }
+        RandomListNode nowNode=head;
+        <span class="keyword">while</span>(nowNode !=<span class="keyword">null</span>){
+            RandomListNode copyNode=<span class="keyword">new</span> RandomListNode(nowNode.label);
+            copyNode.next=nowNode.next;
+            nowNode.next=copyNode;
+            nowNode =nowNode.next.next;
+        }
+        <span class="comment">//把随机节点接好</span>
+        nowNode=head;
+        <span class="keyword">while</span>(nowNode !=<span class="keyword">null</span>){
+            <span class="keyword">if</span>(nowNode.random!=<span class="keyword">null</span>){
+                nowNode.next.random=nowNode.random.next;
             }
-            <span class="keyword">return</span> nReverse;
+            nowNode=nowNode.next.next;
+        }
+        <span class="comment">//分成两个链表，第一个链表还原，第二链表就是我们想要的</span>
+        RandomListNode newHead =head.next;
+        nowNode=head;
+        <span class="keyword">while</span>(nowNode!=<span class="keyword">null</span>){
+            <span class="comment">//还原第一个链表</span>
+            RandomListNode newNode =nowNode.next;
+            nowNode.next=newNode.next;
+            <span class="keyword">if</span>(newNode.next!=<span class="keyword">null</span>)
+                newNode.next=newNode.next.next;
+            nowNode=nowNode.next;
+        }
+        <span class="keyword">return</span> newHead;
     }
 }
 </code></pre>  
@@ -137,7 +159,7 @@ Example2: x = -<span class="number">123</span>, <span class="constant">return</s
 
 <div class="article-share" id="share">
 
-  <div data-url="https://github.com/DaMinger/DaMinger.github.io.git/2014/05/23/数据结构与算法/LeetCode/reverinteger/" data-title="LeetCode:Reverse Integer | DaMinger&#39;s blog" data-tsina="null" class="share clearfix">
+  <div data-url="https://github.com/DaMinger/DaMinger.github.io.git/2014/05/25/数据结构与算法/LeetCode/copylistwithrandompointer/" data-title="LeetCode:Copy List with Random Pointer | DaMinger&#39;s blog" data-tsina="null" class="share clearfix">
   </div>
 
 </div>
@@ -147,18 +169,18 @@ Example2: x = -<span class="number">123</span>, <span class="constant">return</s
 <nav class="article-nav clearfix">
  
  <div class="prev" >
- <a href="/2014/05/23/数据结构与算法/LeetCode/stringtointeger/" title="LeetCode:String to Integer(atoi)">
+ <a href="/2014/05/25/数据结构与算法/LeetCode/singlenumber/" title="LeetCode:Single Number I and  II">
   <strong>PREVIOUS:</strong><br/>
   <span>
-  LeetCode:String to Integer(atoi)</span>
+  LeetCode:Single Number I and  II</span>
 </a>
 </div>
 
 
 <div class="next">
-<a href="/2014/05/23/数据结构与算法/LeetCode/linkedlistcycle2/"  title="LeetCode:Linked List Cycle II">
+<a href="/2014/05/23/数据结构与算法/LeetCode/stringtointeger/"  title="LeetCode:String to Integer(atoi)">
  <strong>NEXT:</strong><br/> 
- <span>LeetCode:Linked List Cycle II
+ <span>LeetCode:String to Integer(atoi)
 </span>
 </a>
 </div>

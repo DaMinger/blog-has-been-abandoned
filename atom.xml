@@ -4,7 +4,7 @@
   <subtitle><![CDATA[信春哥，系统稳，闭眼上线不回滚]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="https://github.com/DaMinger/DaMinger.github.io.git/"/>
-  <updated>2014-05-23T13:12:20.579Z</updated>
+  <updated>2014-05-25T11:49:42.389Z</updated>
   <id>https://github.com/DaMinger/DaMinger.github.io.git/</id>
   
   <author>
@@ -13,6 +13,145 @@
   </author>
   
   <generator uri="http://zespia.tw/hexo/">Hexo</generator>
+  
+  <entry>
+    <title><![CDATA[LeetCode:Pow(x, n)]]></title>
+    <link href="https://github.com/DaMinger/DaMinger.github.io.git/2014/05/25/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/LeetCode/power_x_n/"/>
+    <id>https://github.com/DaMinger/DaMinger.github.io.git/2014/05/25/数据结构与算法/LeetCode/power_x_n/</id>
+    <published>2014-05-25T11:13:08.000Z</published>
+    <updated>2014-05-25T11:46:44.000Z</updated>
+    <content type="html"><![CDATA[<h4 id="题目">题目</h4>
+<pre><code>Implement <span class="built_in">pow</span>(x, n).
+</code></pre><p>思路：最简单的方法是循环，循环n-1遍，每次乘以x。时间复杂度：O(N)。很显然，最后超时了。并且如果用递归的话，函数好写简洁，但是碰见大数，栈空间不够用会导致运行时错误（stack overflow）。<br>二分法解决问题：x^n = x^n/2 <em> x^n/2 </em> x^n%2  n考虑奇数偶数 时间复杂度：O(logN)<br><img src="/img/数据结构与算法/2.png" alt=" "></p>
+<h4 id="解法">解法</h4>
+<pre><code><span class="keyword">public</span> <span class="keyword">class</span> Solution {
+    <span class="keyword">public</span> <span class="keyword">double</span> <span class="title">pow</span>(<span class="keyword">double</span> x, <span class="keyword">int</span> n) {
+        <span class="keyword">if</span> (n == <span class="number">0</span>)
+            <span class="keyword">return</span> <span class="number">1.0</span>;
+        <span class="keyword">double</span> half = pow(x, n/<span class="number">2</span>);
+        <span class="keyword">if</span> (n % <span class="number">2</span> == <span class="number">0</span>)
+            <span class="keyword">return</span> half * half;
+        <span class="keyword">else</span> <span class="keyword">if</span>(n &gt; <span class="number">0</span>)
+            <span class="keyword">return</span> half * half * x;
+        <span class="keyword">else</span> 
+            <span class="keyword">return</span> half * half / x;
+    }
+}
+</code></pre>]]></content>
+    
+    
+      <category term="数据结构与算法" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/"/>
+    
+      <category term="数据结构与算法" scheme="https://github.com/DaMinger/DaMinger.github.io.git/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[LeetCode:Single Number I and  II]]></title>
+    <link href="https://github.com/DaMinger/DaMinger.github.io.git/2014/05/25/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/LeetCode/singlenumber/"/>
+    <id>https://github.com/DaMinger/DaMinger.github.io.git/2014/05/25/数据结构与算法/LeetCode/singlenumber/</id>
+    <published>2014-05-25T11:12:39.000Z</published>
+    <updated>2014-05-25T11:31:08.000Z</updated>
+    <content type="html"><![CDATA[<h4 id="题目">题目</h4>
+<pre><code>I:
+Given <span class="operator">an</span> array <span class="operator">of</span> integers, every <span class="keyword">element</span> appears twice except <span class="keyword">for</span> <span class="constant">one</span>. Find that single <span class="constant">one</span>.
+II:
+Given <span class="operator">an</span> array <span class="operator">of</span> integers, every <span class="keyword">element</span> appears <span class="constant">three</span> times except <span class="keyword">for</span> <span class="constant">one</span>. Find that single <span class="constant">one</span>.
+
+Note:
+Your algorithm should have <span class="operator">a</span> linear runtime complexity. Could you implement <span class="keyword">it</span> <span class="keyword">without</span> <span class="keyword">using</span> extra memory?
+</code></pre><p>思路：hashmap去存数组及对应的次数即可。</p>
+<h4 id="解法">解法</h4>
+<pre><code><span class="keyword">public</span> <span class="keyword">class</span> Solution {
+    <span class="keyword">public</span> <span class="keyword">int</span> <span class="title">singleNumber</span>(<span class="keyword">int</span>[] A) {
+        <span class="keyword">if</span>(A.length==<span class="number">0</span>){
+            <span class="keyword">return</span> <span class="number">0</span>;
+        }
+        HashMap&lt;Integer,Integer&gt; hash= <span class="keyword">new</span> HashMap&lt;Integer,Integer&gt;();
+        <span class="keyword">for</span>(<span class="keyword">int</span> a:A){
+            <span class="keyword">if</span>(hash.containsKey(a)){
+                hash.put(a,hash.<span class="keyword">get</span>(a)+<span class="number">1</span>);
+            }
+            <span class="keyword">else</span>{
+                hash.put(a,<span class="number">1</span>);
+            }
+        }
+        <span class="keyword">for</span>(<span class="keyword">int</span> key:hash.keySet()){
+            <span class="keyword">if</span>(hash.<span class="keyword">get</span>(key)==<span class="number">1</span>)
+                <span class="keyword">return</span> key;
+        }
+        <span class="keyword">return</span> <span class="number">0</span>;
+    }
+}
+</code></pre>]]></content>
+    
+    
+      <category term="数据结构与算法" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/"/>
+    
+      <category term="数据结构与算法" scheme="https://github.com/DaMinger/DaMinger.github.io.git/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[LeetCode:Copy List with Random Pointer]]></title>
+    <link href="https://github.com/DaMinger/DaMinger.github.io.git/2014/05/25/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/LeetCode/copylistwithrandompointer/"/>
+    <id>https://github.com/DaMinger/DaMinger.github.io.git/2014/05/25/数据结构与算法/LeetCode/copylistwithrandompointer/</id>
+    <published>2014-05-25T11:10:30.000Z</published>
+    <updated>2014-05-25T11:47:03.000Z</updated>
+    <content type="html"><![CDATA[<h4 id="题目">题目</h4>
+<pre><code>A linked <span class="type">list</span> <span class="keyword">is</span> <span class="keyword">given</span> such <span class="keyword">that</span> each node <span class="keyword">contains</span> an additional random pointer which could point <span class="keyword">to</span> any node <span class="keyword">in</span> <span class="keyword">the</span> <span class="type">list</span> <span class="keyword">or</span> null.
+
+Return a deep <span class="keyword">copy</span> <span class="keyword">of</span> <span class="keyword">the</span> <span class="type">list</span>.
+</code></pre><p>思路：因为每个链表都有随机指针，遍历一遍肯定是不行的，遍历2遍，第一遍去记下next，第二遍去记下random，但是时间复杂度o(n^2),参考下面帖子想法不错，<br><a href="http://blog.csdn.net/zhaojinjia/article/details/9313275" target="_blank">http://blog.csdn.net/zhaojinjia/article/details/9313275</a>  <a href="http://blog.csdn.net/ljphhj/article/details/21832129" target="_blank">http://blog.csdn.net/ljphhj/article/details/21832129</a> <a href="http://blog.csdn.net/linhuanmars/article/details/22463599" target="_blank">http://blog.csdn.net/linhuanmars/article/details/22463599</a></p>
+<p>第一步对每个节点进行扫描，复制每个节点，将新节点接在旧节点后面；第二步扫描每个旧节点，把旧结点的随机指针赋给新节点的随机指针；第三步扫描所有节点，把链表拆成两个，第一个还原原链表，而第二个就是我们要求的复制链表。因为现在链表是旧新更替，只要把每隔两个结点分别相连，对链表进行分割即可。这个方法总共进行三次线性扫描，所以时间复杂度是O(n)。而这里并不需要额外空间，所以空间复杂度是O(1)。</p>
+<h4 id="解法">解法</h4>
+<pre><code>class RandomListNode {
+        <span class="keyword">int</span> label;
+        RandomListNode next, random;
+        RandomListNode(<span class="keyword">int</span> x) { <span class="keyword">this</span>.label = x; }
+     };
+<span class="keyword">public</span> <span class="keyword">class</span> copyListWithRandom {
+    <span class="keyword">public</span> RandomListNode <span class="title">copyRandomList</span>(RandomListNode head) {
+        <span class="keyword">if</span>(head ==<span class="keyword">null</span>){
+            <span class="keyword">return</span> head;
+        }
+        RandomListNode nowNode=head;
+        <span class="keyword">while</span>(nowNode !=<span class="keyword">null</span>){
+            RandomListNode copyNode=<span class="keyword">new</span> RandomListNode(nowNode.label);
+            copyNode.next=nowNode.next;
+            nowNode.next=copyNode;
+            nowNode =nowNode.next.next;
+        }
+        <span class="comment">//把随机节点接好</span>
+        nowNode=head;
+        <span class="keyword">while</span>(nowNode !=<span class="keyword">null</span>){
+            <span class="keyword">if</span>(nowNode.random!=<span class="keyword">null</span>){
+                nowNode.next.random=nowNode.random.next;
+            }
+            nowNode=nowNode.next.next;
+        }
+        <span class="comment">//分成两个链表，第一个链表还原，第二链表就是我们想要的</span>
+        RandomListNode newHead =head.next;
+        nowNode=head;
+        <span class="keyword">while</span>(nowNode!=<span class="keyword">null</span>){
+            <span class="comment">//还原第一个链表</span>
+            RandomListNode newNode =nowNode.next;
+            nowNode.next=newNode.next;
+            <span class="keyword">if</span>(newNode.next!=<span class="keyword">null</span>)
+                newNode.next=newNode.next.next;
+            nowNode=nowNode.next;
+        }
+        <span class="keyword">return</span> newHead;
+    }
+}
+</code></pre>]]></content>
+    
+    
+      <category term="数据结构与算法" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/"/>
+    
+      <category term="数据结构与算法" scheme="https://github.com/DaMinger/DaMinger.github.io.git/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/"/>
+    
+  </entry>
   
   <entry>
     <title><![CDATA[LeetCode:String to Integer(atoi)]]></title>
@@ -2356,402 +2495,6 @@ rxmcst/s ：每秒钟接收的多播数据包。
         c2.print();
     }
 }
-</code></pre>]]></content>
-    
-    
-      <category term="设计模式" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/"/>
-    
-      <category term="设计模式" scheme="https://github.com/DaMinger/DaMinger.github.io.git/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/"/>
-    
-  </entry>
-  
-  <entry>
-    <title><![CDATA[设计模式之工厂模式]]></title>
-    <link href="https://github.com/DaMinger/DaMinger.github.io.git/2014/05/20/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/factory/"/>
-    <id>https://github.com/DaMinger/DaMinger.github.io.git/2014/05/20/设计模式/factory/</id>
-    <published>2014-05-20T11:34:39.000Z</published>
-    <updated>2014-05-20T12:06:36.000Z</updated>
-    <content type="html"><![CDATA[<h4 id="工厂模式定义">工厂模式定义</h4>
-<p>定义一个用于创建对象的接口，让子类决定实例化哪一个类，工厂方法使一个类的实例化延迟到其子类。</p>
-<h4 id="优点">优点</h4>
-<ul>
-<li>可以使代码结构清晰，有效地封装变化。在编程中，产品类的实例化有时候是比较复杂和多变的，通过工厂模式，将产品的实例化封装起来，使得调用者根本无需关心产品的实例化过程，只需依赖工厂即可得到自己想要的产品。</li>
-<li>对调用者屏蔽具体的产品类。如果使用工厂模式，调用者只关心产品的接口就可以了，至于具体的实现，调用者根本无需关心。即使变更了具体的实现，对调用者来说没有任何影响。</li>
-<li>降低耦合度。产品类的实例化通常来说是很复杂的，它需要依赖很多的类，而这些类对于调用者来说根本无需知道，如果使用了工厂方法，我们需要做的仅仅是实例化好产品类，然后交给调用者使用。对调用者来说，产品所依赖的类都是透明的。</li>
-</ul>
-<p><img src="/img/Design patterns/factory.png" alt="类图"></p>
-<p>实验来自《大话设计模式》   程序实例：基类雷锋类，派生出学生类和志愿者类，由这两种子类完成“学雷锋”工作。子类的创建由雷锋工厂的对应的子类完成。</p>
-<h4 id="Java版">Java版</h4>
-<p>基类：雷锋类</p>
-<pre><code><span class="keyword">public</span> <span class="keyword">class</span> LeiFeng {
-
-    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Sweep</span>() {
-        System.<span class="keyword">out</span>.println(<span class="string">"Sweep"</span>);
-    }
-    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Wash</span>() {
-        System.<span class="keyword">out</span>.println(<span class="string">"wash"</span>);
-    }
-    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title">BuyRice</span>() {
-        System.<span class="keyword">out</span>.println(<span class="string">"buy"</span>);
-    }
-}
-</code></pre><p>学生类和志愿者类</p>
-<pre><code><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Volunteer</span> <span class="keyword">extends</span> <span class="title">LeiFeng</span>{</span>
-
-}
-<span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Undergraduate</span> <span class="keyword">extends</span> <span class="title">LeiFeng</span>{</span>
-
-}
-</code></pre><p>定义雷锋工厂</p>
-<pre><code><span class="keyword">public</span> <span class="keyword">interface</span> IFactory {
-
-    LeiFeng CreateLeiFeng();
-}
-</code></pre><p>毕业生工厂、志愿者工厂，返回毕业生、志愿者实例</p>
-<pre><code><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UndergraduateFactory</span> <span class="keyword">implements</span> <span class="title">IFactory</span> {</span>
-
-    <span class="annotation">@Override</span>
-    <span class="keyword">public</span> LeiFeng <span class="title">CreateLeiFeng</span>() {
-        <span class="comment">// TODO Auto-generated method stub</span>
-        <span class="keyword">return</span> <span class="keyword">new</span> Undergraduate();
-    }
-}
-
-<span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">VolunteerFactory</span> <span class="keyword">implements</span> <span class="title">IFactory</span> {</span>
-
-    <span class="annotation">@Override</span>
-    <span class="keyword">public</span> LeiFeng <span class="title">CreateLeiFeng</span>() {
-        <span class="comment">// TODO Auto-generated method stub</span>
-        <span class="keyword">return</span> <span class="keyword">new</span> Volunteer();
-    }
-
-}
-</code></pre><p>客户端</p>
-<pre><code><span class="keyword">public</span> <span class="keyword">class</span> test {
-    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span>(String args[]){
-        <span class="comment">//毕业生去当雷锋，只需要得到一个实例就OK了</span>
-        IFactory factory = <span class="keyword">new</span> UndergraduateFactory();
-        LeiFeng stduent = factory.CreateLeiFeng();
-        stduent.BuyRice();
-        stduent.Wash();
-        stduent.Sweep();
-    }
-
-}
-</code></pre><h4 id="Python版">Python版</h4>
-<pre><code><span class="class"><span class="keyword">class</span> <span class="title">LeiFeng</span>:</span>
-    <span class="function"><span class="keyword">def</span> <span class="title">Sweep</span><span class="params">(self)</span>:</span>
-        <span class="keyword">print</span> <span class="string">"LeiFeng sweep"</span>
-
-<span class="class"><span class="keyword">class</span> <span class="title">Student</span><span class="params">(LeiFeng)</span>:</span>
-    <span class="function"><span class="keyword">def</span> <span class="title">Sweep</span><span class="params">(self)</span>:</span>
-        <span class="keyword">print</span> <span class="string">"Student sweep"</span>
-
-<span class="class"><span class="keyword">class</span> <span class="title">Volenter</span><span class="params">(LeiFeng)</span>:</span>
-    <span class="function"><span class="keyword">def</span> <span class="title">Sweep</span><span class="params">(self)</span>:</span>
-        <span class="keyword">print</span> <span class="string">"Volenter sweep"</span>
-
-<span class="class"><span class="keyword">class</span> <span class="title">LeiFengFactory</span>:</span>
-    <span class="function"><span class="keyword">def</span> <span class="title">CreateLeiFeng</span><span class="params">(self)</span>:</span>
-        temp = LeiFeng()
-        <span class="keyword">return</span> temp
-
-<span class="class"><span class="keyword">class</span> <span class="title">StudentFactory</span><span class="params">(LeiFengFactory)</span>:</span>
-    <span class="function"><span class="keyword">def</span> <span class="title">CreateLeiFeng</span><span class="params">(self)</span>:</span>
-        temp = Student()
-        <span class="keyword">return</span> temp
-
-<span class="class"><span class="keyword">class</span> <span class="title">VolenterFactory</span><span class="params">(LeiFengFactory)</span>:</span>
-    <span class="function"><span class="keyword">def</span> <span class="title">CreateLeiFeng</span><span class="params">(self)</span>:</span>
-        temp = Volenter()
-        <span class="keyword">return</span> temp
-
-<span class="keyword">if</span> __name__ == <span class="string">"__main__"</span>:
-    sf = StudentFactory()
-    s=sf.CreateLeiFeng()
-    s.Sweep()
-    sdf = VolenterFactory()
-    sd=sdf.CreateLeiFeng()
-    sd.Sweep()
-</code></pre>]]></content>
-    
-    
-      <category term="设计模式" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/"/>
-    
-      <category term="设计模式" scheme="https://github.com/DaMinger/DaMinger.github.io.git/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/"/>
-    
-  </entry>
-  
-  <entry>
-    <title><![CDATA[设计模式之单例模式]]></title>
-    <link href="https://github.com/DaMinger/DaMinger.github.io.git/2014/05/20/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/singleton/"/>
-    <id>https://github.com/DaMinger/DaMinger.github.io.git/2014/05/20/设计模式/singleton/</id>
-    <published>2014-05-20T10:15:49.000Z</published>
-    <updated>2014-05-20T11:16:00.000Z</updated>
-    <content type="html"><![CDATA[<h4 id="单例模式有以下特点：">单例模式有以下特点：</h4>
-<ul>
-<li>单例类只能有一个实例。</li>
-<li>单例类必须自己自己创建自己的唯一实例。</li>
-<li>单例类必须给所有其他对象提供这一实例。</li>
-</ul>
-<p>应用场景  例如：数据库连接池的设计一般是采用单例模式，因为数据库连接是一种数据库资源。数据库软件系统中使用数据库连接池，主要是节省打开或者关闭数据库连接所引起的效率损耗，这种效率上的损耗还是非常昂贵的，因为何用单例模式来维护，就可以大大降低这种损耗。</p>
-<p><img src="/img/Design patterns/Singleton.png" alt="类图"></p>
-<h4 id="经典懒汉模式">经典懒汉模式</h4>
-<pre><code>class LazySingleton{
-
-    <span class="keyword">private</span> <span class="keyword">static</span> LazySingleton singleton;
-
-    <span class="keyword">private</span> <span class="title">LazySingleton</span>(){
-
-    }
-
-    <span class="keyword">public</span> <span class="keyword">static</span> LazySingleton <span class="title">getInstance</span>(){
-
-        <span class="keyword">if</span>(singleton==<span class="keyword">null</span>){
-
-            singleton=<span class="keyword">new</span> LazySingleton();
-
-        }
-
-        <span class="keyword">return</span> singleton;
-
-    }  
-
-}
-</code></pre><p>但是这种设计不满足线程安全的要求，在并发环境下很可能出现多个Singleton实例。</p>
-<p>注：线程安全：如果你的代码所在的进程中有多个线程在同时运行，而这些线程可能会同时运行这段代码。如果每次运行结果和单线程运行的结果是一样的，而且其他的变量的值也和预期的是一样的，就是线程安全的。或者说：一个类或者程序所提供的接口对于线程来说是原子操作或者多个线程之间的切换不会导致该接口的执行结果存在二义性,也就是说我们不用考虑同步的问题。</p>
-<h4 id="饿汉模式">饿汉模式</h4>
-<pre><code>class HungrySingleton{
-
-    <span class="keyword">private</span> <span class="keyword">static</span> HungrySingleton singleton=<span class="keyword">new</span> HungrySingleton();
-
-    <span class="keyword">private</span> <span class="title">HungrySingleton</span>(){}
-
-    <span class="keyword">public</span> <span class="keyword">static</span> HungrySingleton <span class="title">getInstance</span>(){
-
-        <span class="keyword">return</span> singleton;
-
-    }
-
-}
-</code></pre><p>饿汉模式就是在jvm进程启动并在我们主动使用该类的时候就会在内存中初始化一个单例对象，当我们调用getInstance()的时候直接获取该对象，它的创建是在我们调用getInstance()静态方法之前！但是这种写法没实现Lazy loading。</p>
-<h4 id="改造的懒汉模式">改造的懒汉模式</h4>
-<pre><code>class LazySingleton{
-
-        <span class="keyword">private</span> <span class="keyword">static</span> LazySingleton singleton;
-
-        <span class="keyword">private</span> <span class="title">LazySingleton</span>(){
-
-        }
-
-        <span class="keyword">public</span> <span class="keyword">synchronized</span>  <span class="keyword">static</span> LazySingleton <span class="title">getInstance</span>(){
-
-            <span class="keyword">if</span>(singleton==<span class="keyword">null</span>){
-
-                singleton=<span class="keyword">new</span> LazySingleton();
-
-            }
-
-            <span class="keyword">return</span> singleton;
-
-        }  
-
-    }
-</code></pre><p>懒汉模式是相对于饿汉模式而言的，在jvm进程启动并在我们主动使用该类的时候不会在内存中初始化一个单例对象，只有当我们调用getInstance()的时候才去创建该对象，它的创建是在我们调用getInstance()静态方法之后，为了并没现象同步问题，我们在getInstance()方法上加了一个锁，这个方法每次只允许一个线程进来，虽然同步问题是解决了，但是相应的性能问题就出现了。</p>
-<h4 id="静态内部类">静态内部类</h4>
-<pre><code>class InternalSingleton{
-
-    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">class</span> SingletonHolder{
-
-        <span class="keyword">private</span> final <span class="keyword">static</span>  InternalSingleton INSTANCE=<span class="keyword">new</span> InternalSingleton();
-
-    }  
-
-    <span class="keyword">private</span> <span class="title">InternalSingleton</span>(){}
-
-    <span class="keyword">public</span> <span class="keyword">static</span> InternalSingleton <span class="title">getInstance</span>(){
-
-        <span class="keyword">return</span> SingletonHolder.INSTANCE;
-
-    }
-
-}
-</code></pre><p>加载时不会初始化静态变量INSTANCE，因为没有主动使用，达到Lazy loading</p>
-<h4 id="枚举">枚举</h4>
-<pre><code><span class="keyword">enum</span> EnumSingleton{
-    INSTANCE;
-    <span class="comment">//自定义方法</span>
-    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title">doSomeThing</span>(){
-    }
-}
-</code></pre><p>EnumSingleton.INSTANCE直接调用，《Effective Java》作者推荐使用的方法，优点：不仅能避免多线程同步问题，而且还能防止反序列化重新创建新的对象</p>
-<h4 id="双重校验锁">双重校验锁</h4>
-<p>这个我没怎么看懂，就不贴代码了，如有兴趣，自行搜索。</p>
-]]></content>
-    
-    
-      <category term="设计模式" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/"/>
-    
-      <category term="设计模式" scheme="https://github.com/DaMinger/DaMinger.github.io.git/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/"/>
-    
-  </entry>
-  
-  <entry>
-    <title><![CDATA[设计模式之策略模式]]></title>
-    <link href="https://github.com/DaMinger/DaMinger.github.io.git/2014/05/20/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/strategy/"/>
-    <id>https://github.com/DaMinger/DaMinger.github.io.git/2014/05/20/设计模式/strategy/</id>
-    <published>2014-05-20T08:29:14.000Z</published>
-    <updated>2014-05-20T10:07:00.000Z</updated>
-    <content type="html"><![CDATA[<h4 id="策略模式（Strategy）">策略模式（Strategy）</h4>
-<p>定义了算法家族，分别封装起来，让它们之间可以相互替换，此模式让算法的变化不会影响到使用算法的用户。</p>
-<p>策略模式是一种定义一系列算法的方法，从概念上看，所有这些算法完成的都是相同的工作，只是实现上不同，它可以以相同的方式调用所有的算法，减少各种算法类与算法使用类之间的耦合。</p>
-<p>策略模式是用来封装算法的，但在实践中发现，可以用它来封装几乎任何类型的规则，只要在分析过程中需要在不同时间应用不同的业务规则，就可以考虑使用策略模式来处理这种变化的可能性。</p>
-<h4 id="策略模式的好处">策略模式的好处</h4>
-<ul>
-<li>利用继承能有助于析取出不同算法中的公共功能</li>
-<li>简化了单元测试，因为每个算法都有自己的实现类，可以通过自己的接口单独进行测试</li>
-<li>将不同的行为封装到一个个独立的Strategy类中，可以在使用这些行为的类中消除条件语句，因为当不同的行为堆叠在一个类中时，就难以避免用条件语句来选择合适的行为。</li>
-</ul>
-<p>实验来自&lt;&lt;大话设计模式&gt;&gt;<br><img src="/img/Design patterns/Strategy.jpg" alt="类图"></p>
-<h4 id="Java版">Java版</h4>
-<p>抽象策略类</p>
-<pre><code><span class="keyword">abstract</span> class CashSuper {
-    <span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">double</span> <span class="title">acceptCash</span>(<span class="keyword">double</span> money);
-}
-</code></pre><p>具体策略类</p>
-<pre><code>CashNormal.java
-<span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CashNormal</span> <span class="keyword">extends</span> <span class="title">CashSuper</span>{</span>
-    <span class="keyword">public</span> <span class="keyword">double</span> <span class="title">acceptCash</span>(<span class="keyword">double</span> money) {
-        <span class="keyword">return</span> money;
-    }
-
-}
-CashRebate.java
-<span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CashRebate</span> <span class="keyword">extends</span> <span class="title">CashSuper</span>{</span>
-
-    <span class="keyword">private</span> <span class="keyword">double</span> moneyRebate =<span class="number">1</span>d;
-    <span class="keyword">public</span> <span class="title">CashRebate</span>(String moneyRebate){
-        <span class="keyword">this</span>.moneyRebate = Double.parseDouble(moneyRebate);
-    }
-    <span class="keyword">public</span> <span class="keyword">double</span> <span class="title">acceptCash</span>(<span class="keyword">double</span> money) {
-
-        <span class="keyword">return</span> money * moneyRebate;
-    }
-
-}
-CashReturn.java
-<span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CashReturn</span> <span class="keyword">extends</span> <span class="title">CashSuper</span> {</span>
-
-    <span class="keyword">private</span> <span class="keyword">double</span> moneyCondition = <span class="number">0.0</span>d;
-    <span class="keyword">private</span> <span class="keyword">double</span> moneyReturn = <span class="number">0.0</span>d;
-    <span class="keyword">public</span> <span class="title">CashReturn</span>(String moneyCondition,String moneyReturn){
-        <span class="keyword">this</span>.moneyCondition = Double.parseDouble(moneyCondition);
-        <span class="keyword">this</span>.moneyReturn = Double.parseDouble(moneyReturn);
-    }
-
-    <span class="keyword">public</span> <span class="keyword">double</span> <span class="title">acceptCash</span>(<span class="keyword">double</span> money) {
-        <span class="keyword">double</span> result = money;
-        <span class="keyword">if</span> (money &gt;= moneyCondition) {
-            result = money - Math.floor(money / moneyCondition) * moneyReturn;
-        }
-        <span class="keyword">return</span> result;
-    }
-
-}
-</code></pre><p>定义一个Context上下文，用一个ConcreteStrategy来配置，维护Strategy对象</p>
-<pre><code><span class="keyword">public</span> <span class="keyword">class</span> CashContext {
-
-    CashSuper cs ;
-
-    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setCs</span>(CashSuper cs) {
-        <span class="keyword">this</span>.cs = cs;
-    }
-    <span class="keyword">public</span> <span class="title">CashContext</span>(String type){
-        <span class="keyword">switch</span> (type){
-        <span class="keyword">case</span> <span class="string">"1"</span>:   <span class="comment">//normal</span>
-            cs = <span class="keyword">new</span> CashNormal();
-            <span class="keyword">break</span>;
-        <span class="keyword">case</span> <span class="string">"2"</span>:   <span class="comment">//return</span>
-            CashReturn cr1 = <span class="keyword">new</span> CashReturn(<span class="string">"300"</span>,<span class="string">"100"</span>);
-            cs = cr1;
-            <span class="keyword">break</span>;
-        <span class="keyword">case</span> <span class="string">"3"</span>:     <span class="comment">//0.8</span>
-            CashRebate cr2 = <span class="keyword">new</span> CashRebate(<span class="string">"0.8"</span>);
-            cs = cr2;
-            <span class="keyword">break</span>;
-        }
-    }
-    <span class="keyword">public</span> <span class="keyword">double</span> <span class="title">getResult</span>(<span class="keyword">double</span> money){
-        <span class="keyword">return</span> cs.acceptCash(money);
-    }
-}
-</code></pre><p>客户端</p>
-<pre><code>import java.util.Scanner;
-<span class="keyword">public</span> <span class="keyword">class</span> test {
-
-    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span>(String[] args) {
-
-        <span class="keyword">double</span> money =<span class="number">0.0</span>d;
-        String strategy =<span class="keyword">null</span>;
-        Scanner read =<span class="keyword">new</span> Scanner (System.<span class="keyword">in</span>);
-        System.<span class="keyword">out</span>.println(<span class="string">"Please choose strategy: 1:normal 2:满300返100 3:打0.8折"</span>);
-        strategy = read.next();
-        System.<span class="keyword">out</span>.println(<span class="string">"Please input  money"</span>);
-        money=Double.valueOf(read.next());<span class="comment">//Double.parseDouble(read.next())</span>
-        <span class="keyword">double</span> totalPrices = <span class="number">0</span>d;
-        CashContext csuper =<span class="keyword">new</span> CashContext(strategy);
-        totalPrices=csuper.getResult(money);
-        System.<span class="keyword">out</span>.println(<span class="string">" "</span>+totalPrices);
-    }
-
-}
-</code></pre><h4 id="Python版">Python版</h4>
-<pre><code><span class="class"><span class="keyword">class</span> <span class="title">CashSuper</span>:</span>
-    <span class="function"><span class="keyword">def</span> <span class="title">AcceptCash</span><span class="params">(self,money)</span>:</span>
-        <span class="keyword">return</span> <span class="number">0</span>
-
-<span class="class"><span class="keyword">class</span> <span class="title">CashNormal</span><span class="params">(CashSuper)</span>:</span>
-    <span class="function"><span class="keyword">def</span> <span class="title">AcceptCash</span><span class="params">(self,money)</span>:</span>
-        <span class="keyword">return</span> money
-
-<span class="class"><span class="keyword">class</span> <span class="title">CashRebate</span><span class="params">(CashSuper)</span>:</span>
-    discount = <span class="number">0</span>
-    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self,ds)</span>:</span>
-        self.discount = ds
-    <span class="function"><span class="keyword">def</span> <span class="title">AcceptCash</span><span class="params">(self,money)</span>:</span>
-        <span class="keyword">return</span> money * self.discount
-
-<span class="class"><span class="keyword">class</span> <span class="title">CashReturn</span><span class="params">(CashSuper)</span>:</span>
-    total = <span class="number">0</span>;
-    ret = <span class="number">0</span>;
-    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self,t,r)</span>:</span>
-        self.total = t
-        self.ret = r
-    <span class="function"><span class="keyword">def</span> <span class="title">AcceptCash</span><span class="params">(self,money)</span>:</span>
-        <span class="keyword">if</span> (money&gt;=self.total):
-            <span class="keyword">return</span> money - self.ret
-        <span class="keyword">else</span>:
-            <span class="keyword">return</span> money
-
-<span class="class"><span class="keyword">class</span> <span class="title">CashContext</span>:</span>
-    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self,csuper)</span>:</span>
-        self.cs = csuper
-    <span class="function"><span class="keyword">def</span> <span class="title">GetResult</span><span class="params">(self,money)</span>:</span>
-        <span class="keyword">return</span> self.cs.AcceptCash(money)
-
-<span class="keyword">if</span> __name__ == <span class="string">"__main__"</span>:
-    money = input(<span class="string">"money:"</span>)
-    strategy = {}
-    strategy[<span class="number">1</span>] = CashContext(CashNormal())
-    strategy[<span class="number">2</span>] = CashContext(CashRebate(<span class="number">0.8</span>))
-    strategy[<span class="number">3</span>] = CashContext(CashReturn(<span class="number">300</span>,<span class="number">100</span>))
-    ctype = input(<span class="string">"type:[1]for normal,[2]for 80% discount [3]for 300 -100."</span>)
-    <span class="keyword">if</span> ctype <span class="keyword">in</span> strategy:
-        cc = strategy[ctype]
-    <span class="keyword">else</span>:
-        <span class="keyword">print</span> <span class="string">"Undefine type.Use normal mode."</span>
-        cc = strategy[<span class="number">1</span>]
-    <span class="keyword">print</span> <span class="string">"you will pay:%d"</span> %(cc.GetResult(money))
 </code></pre>]]></content>
     
     
