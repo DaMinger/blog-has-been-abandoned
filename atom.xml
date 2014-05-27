@@ -4,7 +4,7 @@
   <subtitle><![CDATA[信春哥，系统稳，闭眼上线不回滚]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="https://github.com/DaMinger/DaMinger.github.io.git/"/>
-  <updated>2014-05-25T11:49:42.389Z</updated>
+  <updated>2014-05-27T09:22:57.148Z</updated>
   <id>https://github.com/DaMinger/DaMinger.github.io.git/</id>
   
   <author>
@@ -13,6 +13,135 @@
   </author>
   
   <generator uri="http://zespia.tw/hexo/">Hexo</generator>
+  
+  <entry>
+    <title><![CDATA[LeetCode:Two Sum]]></title>
+    <link href="https://github.com/DaMinger/DaMinger.github.io.git/2014/05/27/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/LeetCode/twosum/"/>
+    <id>https://github.com/DaMinger/DaMinger.github.io.git/2014/05/27/数据结构与算法/LeetCode/twosum/</id>
+    <published>2014-05-27T09:15:45.000Z</published>
+    <updated>2014-05-27T09:20:22.000Z</updated>
+    <content type="html"><![CDATA[<h4 id="题目">题目</h4>
+<pre><code>Given an array <span class="keyword">of</span> integers, find two numbers such <span class="keyword">that</span> they add up <span class="keyword">to</span> a specific target <span class="type">number</span>.
+
+The function twoSum should <span class="constant">return</span> indices <span class="keyword">of</span> <span class="keyword">the</span> two numbers such <span class="keyword">that</span> they add up <span class="keyword">to</span> <span class="keyword">the</span> target, <span class="keyword">where</span> index1 must be <span class="keyword">less than</span> index2. Please note <span class="keyword">that</span> your returned answers (both index1 <span class="keyword">and</span> index2) are <span class="keyword">not</span> zero-based.
+
+You may assume <span class="keyword">that</span> each input would have exactly one solution.
+
+Input: numbers={<span class="number">2</span>, <span class="number">7</span>, <span class="number">11</span>, <span class="number">15</span>}, target=<span class="number">9</span>
+Output: index1=<span class="number">1</span>, index2=<span class="number">2</span>
+</code></pre><p>思路：hashmap 存另外一个数及其index</p>
+<h4 id="解法">解法</h4>
+<pre><code><span class="keyword">public</span> <span class="keyword">class</span> Solution {
+    <span class="keyword">public</span> <span class="keyword">int</span>[] <span class="title">twoSum</span>(<span class="keyword">int</span>[] numbers, <span class="keyword">int</span> target) {
+        HashMap&lt;Integer,Integer&gt; map=<span class="keyword">new</span> HashMap&lt;Integer, Integer&gt;();
+        <span class="keyword">int</span> [] result=<span class="keyword">new</span> <span class="keyword">int</span>[<span class="number">2</span>];
+        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;numbers.length;i++){
+            <span class="keyword">if</span>(map.containsKey(numbers[i])){
+                <span class="keyword">int</span> index=map.<span class="keyword">get</span>(numbers[i]);
+                result[<span class="number">0</span>]=index+<span class="number">1</span>;
+                result[<span class="number">1</span>]=i+<span class="number">1</span>;
+                <span class="keyword">break</span>;
+            }<span class="keyword">else</span>{
+                map.put(target-numbers[i],i);
+            }
+        }
+        <span class="keyword">return</span> result;
+    }
+    <span class="comment">//超时写法</span>
+    <span class="comment">//    public int[]twoSum(int[]numbers,int target){</span>
+    <span class="comment">//        int[]ret=new int[2];</span>
+    <span class="comment">//        for(int i=0;i&lt;numbers.length;i++){</span>
+    <span class="comment">//            for(int j=i+1;j&lt;numbers.length;j++){</span>
+    <span class="comment">//                if(numbers[i]+numbers[j]==target){</span>
+    <span class="comment">//                    ret[0]=i+1;</span>
+    <span class="comment">//                    ret[1]=j+1;</span>
+    <span class="comment">//                }        </span>
+    <span class="comment">//            }</span>
+    <span class="comment">//        }</span>
+    <span class="comment">//        return ret;</span>
+    <span class="comment">//    }</span>
+}
+</code></pre>]]></content>
+    
+    
+      <category term="数据结构与算法" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/"/>
+    
+      <category term="数据结构与算法" scheme="https://github.com/DaMinger/DaMinger.github.io.git/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[LeetCode:Reorder List]]></title>
+    <link href="https://github.com/DaMinger/DaMinger.github.io.git/2014/05/27/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/LeetCode/reorderlist/"/>
+    <id>https://github.com/DaMinger/DaMinger.github.io.git/2014/05/27/数据结构与算法/LeetCode/reorderlist/</id>
+    <published>2014-05-27T06:18:26.000Z</published>
+    <updated>2014-05-27T06:23:39.000Z</updated>
+    <content type="html"><![CDATA[<h4 id="题目">题目</h4>
+<pre><code>Given a singly linked <span class="type">list</span> L: L0→L1→…→Ln-<span class="number">1</span>→Ln,
+reorder <span class="keyword">it</span> <span class="keyword">to</span>: L0→Ln→L1→Ln-<span class="number">1</span>→L2→Ln-<span class="number">2</span>→…
+
+You must do this <span class="keyword">in</span>-place <span class="keyword">without</span> altering <span class="keyword">the</span> nodes' values.
+
+For example,
+Given {<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>}, reorder <span class="keyword">it</span> <span class="keyword">to</span> {<span class="number">1</span>,<span class="number">4</span>,<span class="number">2</span>,<span class="number">3</span>}.
+</code></pre><p>思路：第一把整个链表划分成2个等长的子链表，如果原链表长度为奇数，那么第一个子链表的长度多1；第二翻转第二个子链表；第三将两个子链表合并。</p>
+<h4 id="解法">解法</h4>
+<pre><code>class ListNode {
+      <span class="keyword">int</span> val;
+      ListNode next;
+      ListNode(<span class="keyword">int</span> x) {
+         val = x;
+          next = <span class="keyword">null</span>;
+      }
+}
+
+<span class="keyword">public</span> <span class="keyword">class</span> Reorderlist {
+    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title">reorderList</span>(ListNode head) {
+        <span class="keyword">if</span>(head==<span class="keyword">null</span>||head.next==<span class="keyword">null</span>)
+            <span class="keyword">return</span>;
+        ListNode slowNode=head,fastNode=head;
+        <span class="keyword">while</span>(fastNode.next!=<span class="keyword">null</span>){
+            fastNode=fastNode.next;
+            <span class="keyword">if</span>(fastNode.next!=<span class="keyword">null</span>)
+                fastNode=fastNode.next;
+            <span class="keyword">else</span>
+                <span class="keyword">break</span>;
+            slowNode=slowNode.next;
+        }
+        <span class="comment">//快慢指针确定链表中点</span>
+        ListNode head1=head,head2=slowNode.next;
+        slowNode.next=<span class="keyword">null</span>;
+        <span class="comment">//对后半部分就行进行逆序</span>
+        ListNode cur=head2,post=cur.next;
+        cur.next=<span class="keyword">null</span>;
+        <span class="keyword">while</span>(post!=<span class="keyword">null</span>){
+            ListNode temp=post.next;
+            post.next=cur;
+            cur=post;
+            post=temp;
+        }
+        head2 =cur;
+        <span class="comment">//合并链表</span>
+        ListNode p=head1,q=head2;
+        <span class="keyword">while</span>(q!=<span class="keyword">null</span>){
+            ListNode temp1=p.next;
+            ListNode temp2=q.next;
+            p.next=q;
+            q.next=temp1;
+            p=temp1;
+            q=temp2;
+        }
+    }
+
+}
+</code></pre>]]></content>
+    
+    
+      <category term="数据结构与算法" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/"/>
+    
+      <category term="数据结构与算法" scheme="https://github.com/DaMinger/DaMinger.github.io.git/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/"/>
+    
+  </entry>
   
   <entry>
     <title><![CDATA[LeetCode:Pow(x, n)]]></title>
@@ -1849,18 +1978,18 @@ up <span class="number">70</span> days, <span class="number">16</span>:<span cla
 <p>对于内存监控，在top里我们要时刻监控第五行swap交换分区的used，如果这个数值在不断的变化，说明内核在不断进行内存和swap的数据交换，这是真正的内存不够用了。</p>
 <p>第六行，空行。</p>
 <p>第七行以下：各进程（任务）的状态监控，项目列信息说明如下：</p>
-<pre><code>PID — 进程id
-USER — 进程所有者
-PR — 进程优先级
-NI — nice值。负值表示高优先级，正值表示低优先级
-VIRT — 进程使用的虚拟内存总量，单位kb。VIRT=SWAP+RES
-RES — 进程使用的、未被换出的物理内存大小，单位kb。RES=CODE+DATA
-SHR — 共享内存大小，单位kb
-S — 进程状态。D=不可中断的睡眠状态 R=运行 S=睡眠 T=跟踪/停止 Z=僵尸进程
-<span class="tag">%<span class="title">CPU</span></span> — 上次更新到现在的CPU时间占用百分比
-<span class="tag">%<span class="title">MEM</span></span> — 进程使用的物理内存百分比
-TIME+ — 进程使用的CPU时间总计，单位1/100秒
-COMMAND — 进程名称（命令名/命令行）
+<pre><code><span class="xml"><span class="tag"><span class="attribute">PID</span> — 进程<span class="attribute">id</span>
+<span class="attribute">USER</span> — 进程所有者
+<span class="attribute">PR</span> — 进程优先级
+<span class="attribute">NI</span> — <span class="attribute">nice</span>值。负值表示高优先级，正值表示低优先级
+<span class="attribute">VIRT</span> — 进程使用的虚拟内存总量，单位<span class="attribute">kb</span>。<span class="attribute">VIRT</span>=<span class="value">SWAP+RES</span>
+<span class="attribute">RES</span> — 进程使用的、未被换出的物理内存大小，单位<span class="attribute">kb</span>。<span class="attribute">RES</span>=<span class="value">CODE+DATA</span>
+<span class="attribute">SHR</span> — 共享内存大小，单位<span class="attribute">kb</span>
+<span class="attribute">S</span> — 进程状态。<span class="attribute">D</span>=<span class="value">不可中断的睡眠状态</span> <span class="attribute">R</span>=<span class="value">运行</span> <span class="attribute">S</span>=<span class="value">睡眠</span> <span class="attribute">T</span>=<span class="value">跟踪</span>/停止 <span class="attribute">Z</span>=<span class="value">僵尸进程</span>
+%<span class="attribute">CPU</span> — 上次更新到现在的<span class="attribute">CPU</span>时间占用百分比
+%<span class="attribute">MEM</span> — 进程使用的物理内存百分比
+<span class="attribute">TIME</span>+ — 进程使用的<span class="attribute">CPU</span>时间总计，单位<span class="attribute">1</span>/<span class="attribute">100</span>秒
+<span class="attribute">COMMAND</span> — 进程名称（命令名/命令行）</span></span>
 </code></pre><h3 id="sar">sar</h3>
 <p>sar（System Activity Reporter）是系统活动情况报告的缩写。sar 工具将对系统当前的状态进行取样，然后通过计算数据和比例来表达系统的当前运行状态。它的特点是可以连续对系统取样，获得大量的取样数据；取样数据和分析的结果都可以存入文件，所需的负载很小。 sar 是目前 Linux 上最为全面的系统性能分析工具之一，可以从多方面对系统的活动进行报告，包括：文件的读写情况、系统调用的使用情况、磁盘I/O、CPU效率、内存使用状况、进程活动及IPC有关的活动等。为了提供不同的信息，sar 提供了丰富的选项、因此使用较为复杂。</p>
 <p>安装：</p>
@@ -2118,383 +2247,6 @@ rxmcst/s ：每秒钟接收的多播数据包。
     p.Attach(s2);
     p.action = <span class="string">"WARNING:BOSS "</span>;
     p.Notify()
-</code></pre>]]></content>
-    
-    
-      <category term="设计模式" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/"/>
-    
-      <category term="设计模式" scheme="https://github.com/DaMinger/DaMinger.github.io.git/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/"/>
-    
-  </entry>
-  
-  <entry>
-    <title><![CDATA[简单工厂、工厂方法、抽象工厂的区别]]></title>
-    <link href="https://github.com/DaMinger/DaMinger.github.io.git/2014/05/21/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/factorydiff/"/>
-    <id>https://github.com/DaMinger/DaMinger.github.io.git/2014/05/21/设计模式/factorydiff/</id>
-    <published>2014-05-21T01:06:07.000Z</published>
-    <updated>2014-05-21T01:45:40.000Z</updated>
-    <content type="html"><![CDATA[<p>本文参考<a href="http://blog.csdn.net/superbeck/article/details/4446177" target="_blank">http://blog.csdn.net/superbeck/article/details/4446177</a> 和 <a href="http://lavasoft.blog.51cto.com/62575/11674" target="_blank">http://lavasoft.blog.51cto.com/62575/11674</a></p>
-<h4 id="简单工厂">简单工厂</h4>
-<p>简单工厂模式的工厂类一般是使用静态方法，通过接收的参数的不同来返回不同的对象实例。不修改代码的话，是无法扩展的。<br><img src="/img/Design patterns/factory_diff/1.jpg" alt="类图"></p>
-<h4 id="工厂方法">工厂方法</h4>
-<p>工厂方法是针对每一种产品提供一个工厂类。通过不同的工厂实例来创建不同的产品实例。在同一等级结构中，支持增加任意产品。<br><img src="/img/Design patterns/factory_diff/2.jpg" alt="类图"></p>
-<h4 id="抽象工厂">抽象工厂</h4>
-<p>抽象工厂是应对产品族概念的。比如说，每个汽车公司可能要同时生产轿车，货车，客车，那么每一个工厂都要有创建轿车，货车和客车的方法。应对产品族概念而生，增加新的产品线很容易，但是无法增加新的产品。<br><img src="/img/Design patterns/factory_diff/3.jpg" alt="类图"></p>
-<h4 id="产品族和产品等级">产品族和产品等级</h4>
-<p>产品族：是指位于不同产品等级结构中，功能相关联的产品组成的家族。比如AMD的CPU和ADM芯片的主板，组成一个家族。Intel的CPU和Intel芯片的主板，又组成一个家族。而这两个家族都来自于两个产品等级：CPU，主板。一个等级结构是由相同的结构的产品组成，示意图如下：<br><img src="/img/Design patterns/factory_diff/4.png" alt=" "></p>
-<h4 id="区别">区别</h4>
-<p>简单工厂 ： 用来生产同一等级结构中的任意产品。（对于增加新的产品，无能为力）</p>
-<p>工厂方法 ：用来生产同一等级结构中的固定产品。（支持增加任意产品）   </p>
-<p>抽象工厂 ：用来生产不同产品族的全部产品。（对于增加新的产品，无能为力；支持增加产品族）</p>
-<h4 id="案例">案例</h4>
-<p>有一个农场，生产各种水果，有苹果（Apple）、草莓（Strawberry）、葡萄（Grape）；农场的园丁（FruitGardener）要根据客户的需求，提供相应的水果。</p>
-<h6 id="简单工厂模式">简单工厂模式</h6>
-<p><img src="/img/Design patterns/factory_diff/5.png" alt="类图"></p>
-<p>在简单工厂模式中，有个全能的园丁，控制所有作物的种植、生长和收获。现在农场规模变大了，管理更加专业化了。过去全能的园丁没有了，每一种作物都有专门的园丁管理，形成了规模化和专业化生产。</p>
-<h6 id="工厂模式">工厂模式</h6>
-<p><img src="/img/Design patterns/factory_diff/6.png" alt="类图"></p>
-<p>聪明的农场主总是让自己的庄园越来越有价值，“农场”在经历了简单工厂模式和工厂模式后，不断的扩大生产。如今，再次面临新的大发展，一项重要的工作就是引进塑料大棚技术，在大棚里种植热带（Tropical）和亚热带（Northern）的水果和蔬菜，用以满足市场需求，获取更大的利益。</p>
-<h6 id="抽象工厂模式">抽象工厂模式</h6>
-<p><img src="/img/Design patterns/factory_diff/8.png" alt="产品图"><br><img src="/img/Design patterns/factory_diff/7.png" alt="类图"></p>
-]]></content>
-    
-    
-      <category term="设计模式" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/"/>
-    
-      <category term="设计模式" scheme="https://github.com/DaMinger/DaMinger.github.io.git/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/"/>
-    
-  </entry>
-  
-  <entry>
-    <title><![CDATA[设计模式之抽象工厂模式]]></title>
-    <link href="https://github.com/DaMinger/DaMinger.github.io.git/2014/05/20/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/abstractfactory/"/>
-    <id>https://github.com/DaMinger/DaMinger.github.io.git/2014/05/20/设计模式/abstractfactory/</id>
-    <published>2014-05-20T12:08:21.000Z</published>
-    <updated>2014-05-20T13:06:21.000Z</updated>
-    <content type="html"><![CDATA[<h4 id="定义">定义</h4>
-<p>提供一个创建一系列相关或相互依赖对象的接口，而无需指定它们的具体类<br>分析：</p>
-<ul>
-<li>易于交换产品系列，具体工厂类在一个应用中只需要初始化的时候出现一次，这就使改变一个应用的具体工厂变得容易，它只需要改变具体工厂即可使用不同产品配置。</li>
-<li>让具体的创建实例过程与客户端分离，客户端是通过它们的抽象接口操纵实例，产品具体类名也被具体工厂实现分离，不会出现在客户代码中。</li>
-<li>对产品的扩展比较麻烦，费力，如果需要增加一个新产品，则要改动几乎所有的工厂类。</li>
-</ul>
-<p><img src="/img/Design patterns/abstractfactory.png" alt="类图"></p>
-<p>这个实验案例来自于网上</p>
-<h4 id="Java版">Java版</h4>
-<p>抽象产品角色（我们定义了一个打印机）</p>
-<pre><code><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">class</span> Printer
-{
-    <span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title">out</span>();
-
-    <span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title">getData</span>(String msg);
-}
-</code></pre><p>抽象工厂角色</p>
-<pre><code><span class="keyword">public</span> <span class="keyword">interface</span> PrinterFactory
-{
-    <span class="keyword">public</span> Printer <span class="title">getPrinter</span>(String type);
-}
-</code></pre><p>具体工厂角色（我们定义4个具体工厂，一个是高速打印机工厂，一个是普通打印机工厂，一个是戴尔打印机工厂，一个是惠普打印机工厂）</p>
-<pre><code>    <span class="comment">/*
-     * a、生产高速打印机的工厂
-     * b、可以是戴尔，也可以是惠普
-     */</span>
-    <span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">BetterPrinterFactory</span> <span class="keyword">implements</span> <span class="title">PrinterFactory</span>
-    {</span>
-        <span class="keyword">public</span> Printer <span class="title">getPrinter</span>(String type)
-        {
-            <span class="keyword">if</span>(type.equals(<span class="string">"dell"</span>))
-            {
-                <span class="keyword">return</span> <span class="keyword">new</span> DellBetterPrinter();
-            }
-            <span class="keyword">else</span> <span class="keyword">if</span>(type.equals(<span class="string">"hp"</span>))
-            {
-            <span class="keyword">return</span> <span class="keyword">new</span> HpBetterPrinter();
-            }
-            <span class="keyword">else</span>
-            {
-            <span class="keyword">return</span> <span class="keyword">null</span>;
-            }
-        }
-    }
-
-    <span class="comment">/*
-     * a、生产普通打印机的工厂
-     * b、可以是戴尔，也可以是惠普
-     */</span>
-    <span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CommonPrinterFactory</span> <span class="keyword">implements</span> <span class="title">PrinterFactory</span>
-    {</span>
-        <span class="keyword">public</span> Printer <span class="title">getPrinter</span>(String type)
-        {
-            <span class="keyword">if</span>(type.equals(<span class="string">"dell"</span>))
-            {
-                <span class="keyword">return</span> <span class="keyword">new</span> DellCommonPrinter();
-            }
-            <span class="keyword">else</span> <span class="keyword">if</span>(type.equals(<span class="string">"hp"</span>))
-            {
-                <span class="keyword">return</span> <span class="keyword">new</span> HpCommonPrinter();
-            }
-            <span class="keyword">else</span>
-            {
-                <span class="keyword">return</span> <span class="keyword">null</span>;
-            }
-        }
-    }
-
-
-    <span class="comment">/*
-     * a、生产戴尔打印机的工厂
-     * b、可以是高速打印机，也可以是普通打印机
-     */</span>
-    <span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DellPrinterFactory</span> <span class="keyword">implements</span> <span class="title">PrinterFactory</span>
-    {</span>
-        <span class="keyword">public</span> Printer <span class="title">getPrinter</span>(String vendor)
-        {
-            <span class="keyword">if</span>(vendor.equals(<span class="string">"better"</span>))
-            {
-                <span class="keyword">return</span> <span class="keyword">new</span> DellBetterPrinter();
-            }
-            <span class="keyword">else</span> <span class="keyword">if</span>(vendor.equals(<span class="string">"common"</span>))
-            {
-                <span class="keyword">return</span> <span class="keyword">new</span> DellCommonPrinter();
-            }
-            <span class="keyword">else</span>
-            {
-                <span class="keyword">return</span> <span class="keyword">null</span>;
-            }
-        }
-    }
-
-
-    <span class="comment">/*
-     * a、生产惠普打印机的工厂
-     * b、可以是高速打印机，也可以是普通打印机
-     */</span>
-    <span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HpPrinterFactory</span> <span class="keyword">implements</span> <span class="title">PrinterFactory</span>
-    {</span>
-        <span class="keyword">public</span> Printer <span class="title">getPrinter</span>(String vendor)
-        {
-            <span class="keyword">if</span>(vendor.equals(<span class="string">"better"</span>))
-            {
-                <span class="keyword">return</span> <span class="keyword">new</span> HpBetterPrinter();
-            }
-            <span class="keyword">else</span> <span class="keyword">if</span>(vendor.equals(<span class="string">"common"</span>))
-            {
-                <span class="keyword">return</span> <span class="keyword">new</span> HpCommonPrinter();
-            }
-            <span class="keyword">else</span>
-            {
-                <span class="keyword">return</span> <span class="keyword">null</span>;
-            }
-        }
-    }    
-</code></pre><p>具体产品角色（我们定义四个产品。戴尔高速打印机，戴尔普通打印机，惠普高速打印机，惠普普通打印机）</p>
-<pre><code><span class="javadoc">/**
- * 戴尔高速打印机
- */</span>
-<span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DellBetterPrinter</span> <span class="keyword">extends</span> <span class="title">Printer</span>
-{</span>
-    <span class="keyword">private</span>  <span class="keyword">final</span> <span class="keyword">int</span> MAX_CACHE_LINE = <span class="number">10</span>;
-    <span class="keyword">private</span> String[] printData = <span class="keyword">new</span> String[MAX_CACHE_LINE * <span class="number">2</span>];
-
-    <span class="keyword">private</span> <span class="keyword">int</span> dataNum = <span class="number">0</span>;
-
-    <span class="annotation">@Override</span>
-    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title">getData</span>(String msg)
-    {
-        <span class="keyword">if</span>(dataNum &gt;= MAX_CACHE_LINE * <span class="number">2</span>)
-        {
-            System.out.println(<span class="string">"输出队列已满,添加失败"</span>);
-        }
-        <span class="keyword">else</span>
-        {
-            printData[dataNum++] = msg;
-        }
-    }
-
-    <span class="annotation">@Override</span>
-    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title">out</span>()
-    {
-        <span class="keyword">while</span>(dataNum&gt;<span class="number">0</span>)
-        {
-            System.out.println(<span class="string">"戴尔高速打印机打印: "</span>+printData[<span class="number">0</span>]);
-
-            System.arraycopy(printData,<span class="number">1</span>,printData,<span class="number">0</span>,--dataNum);
-        }
-    }
-}
-
-
-<span class="javadoc">/**
- * 戴尔普通打印机
- */</span>
-<span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DellCommonPrinter</span> <span class="keyword">extends</span> <span class="title">Printer</span>
-{</span>
-    <span class="keyword">private</span>  <span class="keyword">final</span> <span class="keyword">int</span> MAX_CACHE_LINE = <span class="number">10</span>;
-    <span class="keyword">private</span> String[] printData = <span class="keyword">new</span> String[MAX_CACHE_LINE];
-
-    <span class="keyword">private</span> <span class="keyword">int</span> dataNum = <span class="number">0</span>;
-
-    <span class="annotation">@Override</span>
-    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title">getData</span>(String msg)
-    {
-        <span class="keyword">if</span>(dataNum &gt;= MAX_CACHE_LINE)
-        {
-            System.out.println(<span class="string">"输出队列已满,添加失败"</span>);
-        }
-        <span class="keyword">else</span>
-        {
-            printData[dataNum++] = msg;
-        }
-    }
-
-    <span class="annotation">@Override</span>
-    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title">out</span>()
-    {
-        <span class="keyword">while</span>(dataNum&gt;<span class="number">0</span>)
-        {
-            System.out.println(<span class="string">"戴尔普通打印机打印: "</span>+printData[<span class="number">0</span>]);
-
-            System.arraycopy(printData,<span class="number">1</span>,printData,<span class="number">0</span>,--dataNum);
-        }
-
-    }
-}
-
-
-<span class="javadoc">/**
- * 惠普高速打印机
- */</span>
-<span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HpBetterPrinter</span> <span class="keyword">extends</span> <span class="title">Printer</span>
-{</span>
-    <span class="keyword">private</span>  <span class="keyword">final</span> <span class="keyword">int</span> MAX_CACHE_LINE = <span class="number">10</span>;
-    <span class="keyword">private</span> String[] printData = <span class="keyword">new</span> String[MAX_CACHE_LINE * <span class="number">2</span>];
-
-    <span class="keyword">private</span> <span class="keyword">int</span> dataNum = <span class="number">0</span>;
-
-    <span class="annotation">@Override</span>
-    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title">getData</span>(String msg)
-    {
-        <span class="keyword">if</span>(dataNum &gt;= MAX_CACHE_LINE * <span class="number">2</span>)
-        {
-            System.out.println(<span class="string">"输出队列已满,添加失败"</span>);
-        }
-        <span class="keyword">else</span>
-        {
-            printData[dataNum++] = msg;
-        }
-    }
-
-    <span class="annotation">@Override</span>
-    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title">out</span>()
-    {
-        <span class="keyword">while</span>(dataNum&gt;<span class="number">0</span>)
-        {
-            System.out.println(<span class="string">"惠普高速打印机打印: "</span>+printData[<span class="number">0</span>]);
-
-            System.arraycopy(printData,<span class="number">1</span>,printData,<span class="number">0</span>,--dataNum);
-        }
-    }
-}
-
-
-<span class="javadoc">/**
- * 惠普普通打印机
- */</span>
-<span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HpCommonPrinter</span> <span class="keyword">extends</span> <span class="title">Printer</span>
-{</span>
-    <span class="keyword">private</span>  <span class="keyword">final</span> <span class="keyword">int</span> MAX_CACHE_LINE = <span class="number">10</span>;
-    <span class="keyword">private</span> String[] printData = <span class="keyword">new</span> String[MAX_CACHE_LINE];
-
-    <span class="keyword">private</span> <span class="keyword">int</span> dataNum = <span class="number">0</span>;
-
-    <span class="annotation">@Override</span>
-    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title">getData</span>(String msg)
-    {
-        <span class="keyword">if</span>(dataNum &gt;= MAX_CACHE_LINE)
-        {
-            System.out.println(<span class="string">"输出队列已满,添加失败"</span>);
-        }
-        <span class="keyword">else</span>
-        {
-            printData[dataNum++] = msg;
-        }
-    }
-
-    <span class="annotation">@Override</span>
-    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title">out</span>()
-    {
-        <span class="keyword">while</span>(dataNum&gt;<span class="number">0</span>)
-        {
-            System.out.println(<span class="string">"惠普普通打印机打印: "</span>+printData[<span class="number">0</span>]);
-
-            System.arraycopy(printData,<span class="number">1</span>,printData,<span class="number">0</span>,--dataNum);
-        }
-    }
-}
-</code></pre><p>制造出一个想要的工厂，去生产相对应的打印机</p>
-<pre><code>/*
- * 制造出一个想要的工厂，去生产相对应的打印机
- */
-<span class="keyword">public</span> <span class="keyword">class</span> PrinterFactoryFactory
-{
-    <span class="keyword">public</span>  PrinterFactory getPrintFactory(String <span class="class"><span class="keyword">type</span>)</span>
-    {
-        <span class="keyword">if</span>(<span class="class"><span class="keyword">type</span>.<span class="title">equals</span>(</span><span class="string">"common"</span>))<span class="comment">//造出一个生产普通打印机的工厂</span>
-        {
-            <span class="keyword">return</span> <span class="keyword">new</span> CommonPrinterFactory();
-        }
-        <span class="keyword">else</span> <span class="keyword">if</span>(<span class="class"><span class="keyword">type</span>.<span class="title">equals</span>(</span><span class="string">"better"</span>))<span class="comment">//造出一个生产高速打印机的工厂</span>
-        {
-            <span class="keyword">return</span> <span class="keyword">new</span> BetterPrinterFactory();
-        }
-        <span class="keyword">else</span> <span class="keyword">if</span>(<span class="class"><span class="keyword">type</span>.<span class="title">equals</span>(</span><span class="string">"dell"</span>))<span class="comment">//造出一个生产戴尔打印机的工厂</span>
-        {
-            <span class="keyword">return</span> <span class="keyword">new</span> DellPrinterFactory();<span class="comment">//造出一个生产惠普打印机的工厂</span>
-        }
-        <span class="keyword">else</span> <span class="keyword">if</span>(<span class="class"><span class="keyword">type</span>.<span class="title">equals</span>(</span><span class="string">"hp"</span>))
-        {
-            <span class="keyword">return</span> <span class="keyword">new</span> HpPrinterFactory();
-        }
-        <span class="keyword">else</span>
-        {
-            <span class="keyword">return</span> <span class="keyword">null</span>;
-        }
-    }
-}
-</code></pre><p>客户端</p>
-<pre><code><span class="keyword">public</span> <span class="keyword">class</span> Computer
-{
-    <span class="keyword">private</span> Printer <span class="keyword">out</span>;
-
-    <span class="keyword">public</span> <span class="title">Computer</span>(Printer <span class="keyword">out</span>)
-    {
-        <span class="keyword">this</span>.<span class="keyword">out</span> = <span class="keyword">out</span>;
-    }
-    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title">keyIn</span>(String msg)
-    {
-        <span class="keyword">out</span>.getData(msg);
-    }
-    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title">print</span>()
-    {
-        <span class="keyword">out</span>.<span class="keyword">out</span>();
-    }
-    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span>(String[] args)
-    {
-        PrinterFactoryFactory pff = <span class="keyword">new</span> PrinterFactoryFactory();
-        PrinterFactory of = pff.getPrintFactory(<span class="string">"common"</span>);
-        Computer c = <span class="keyword">new</span> Computer(of.getPrinter(<span class="string">"hp"</span>));
-        c.keyIn(<span class="string">"hello"</span>);
-        c.keyIn(<span class="string">"world"</span>);
-        c.print();
-
-        PrinterFactoryFactory pff2 = <span class="keyword">new</span> PrinterFactoryFactory();
-        PrinterFactory of2 = pff2.getPrintFactory(<span class="string">"hp"</span>);
-        Computer c2 = <span class="keyword">new</span> Computer(of2.getPrinter(<span class="string">"common"</span>));
-        c2.keyIn(<span class="string">"hello"</span>);
-        c2.keyIn(<span class="string">"world"</span>);
-        c2.print();
-    }
-}
 </code></pre>]]></content>
     
     
