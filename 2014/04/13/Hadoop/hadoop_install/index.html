@@ -109,12 +109,12 @@ hadoop <span class="number">1.2</span>.<span class="number">1</span>
 <span class="built_in">bind</span> <span class="number">9.8</span>.<span class="number">2</span>
 </code></pre><h1 id="安装系统">安装系统</h1>
 <h2 id="安装CentOS_6-3">安装CentOS 6.3</h2>
-<pre><code><span class="xml"><span class="tag">安装后注意关闭防火墙：
-<span class="attribute">service</span> <span class="attribute">iptables</span> <span class="attribute">stop</span>
-<span class="attribute">chkconfig</span> <span class="attribute">iptables</span> <span class="attribute">off</span>
-关闭<span class="attribute">selinux</span>
-<span class="attribute">vi</span> /<span class="attribute">etc</span>/<span class="attribute">selinux</span>/<span class="attribute">config</span>
-将<span class="attribute">SELINUX</span>=<span class="value">enforcing</span> 改成<span class="attribute">SELINUX</span>=<span class="value">disabled</span></span></span>
+<pre><code>安装后注意关闭防火墙：
+service iptables <span class="keyword">stop</span>
+chkconfig iptables <span class="keyword">off</span>
+关闭selinux
+vi /etc/selinux/config
+将SELINUX=enforcing 改成SELINUX=disabled
 </code></pre><h2 id="创建用户">创建用户</h2>
 <pre><code>建立hadoop运行账号
 在所有的节点创建hadoop运行账号
@@ -745,7 +745,7 @@ HOSTNAME=hadoop01.myhadoop.com
 		
 		
 		
-		<a rel="push" class="push" href="https://github.com/https://github.com/DaMinger" target="_blank" title="github"></a>
+		<a rel="push" class="push" href="https://github.com/DaMinger" target="_blank" title="github"></a>
 		
 		
 	</div>

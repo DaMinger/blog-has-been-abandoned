@@ -230,18 +230,18 @@ up <span class="number">70</span> days, <span class="number">16</span>:<span cla
 <p>对于内存监控，在top里我们要时刻监控第五行swap交换分区的used，如果这个数值在不断的变化，说明内核在不断进行内存和swap的数据交换，这是真正的内存不够用了。</p>
 <p>第六行，空行。</p>
 <p>第七行以下：各进程（任务）的状态监控，项目列信息说明如下：</p>
-<pre><code>PID — 进程id
-USER — 进程所有者
-PR — 进程优先级
-NI — nice值。负值表示高优先级，正值表示低优先级
-VIRT — 进程使用的虚拟内存总量，单位kb。VIRT=SWAP+RES
-RES — 进程使用的、未被换出的物理内存大小，单位kb。RES=CODE+DATA
-SHR — 共享内存大小，单位kb
-S — 进程状态。D=不可中断的睡眠状态 R=运行 S=睡眠 T=跟踪/停止 Z=僵尸进程
-<span class="tag">%<span class="title">CPU</span></span> — 上次更新到现在的CPU时间占用百分比
-<span class="tag">%<span class="title">MEM</span></span> — 进程使用的物理内存百分比
-TIME+ — 进程使用的CPU时间总计，单位1/100秒
-COMMAND — 进程名称（命令名/命令行）
+<pre><code><span class="xml"><span class="tag"><span class="attribute">PID</span> — 进程<span class="attribute">id</span>
+<span class="attribute">USER</span> — 进程所有者
+<span class="attribute">PR</span> — 进程优先级
+<span class="attribute">NI</span> — <span class="attribute">nice</span>值。负值表示高优先级，正值表示低优先级
+<span class="attribute">VIRT</span> — 进程使用的虚拟内存总量，单位<span class="attribute">kb</span>。<span class="attribute">VIRT</span>=<span class="value">SWAP+RES</span>
+<span class="attribute">RES</span> — 进程使用的、未被换出的物理内存大小，单位<span class="attribute">kb</span>。<span class="attribute">RES</span>=<span class="value">CODE+DATA</span>
+<span class="attribute">SHR</span> — 共享内存大小，单位<span class="attribute">kb</span>
+<span class="attribute">S</span> — 进程状态。<span class="attribute">D</span>=<span class="value">不可中断的睡眠状态</span> <span class="attribute">R</span>=<span class="value">运行</span> <span class="attribute">S</span>=<span class="value">睡眠</span> <span class="attribute">T</span>=<span class="value">跟踪</span>/停止 <span class="attribute">Z</span>=<span class="value">僵尸进程</span>
+%<span class="attribute">CPU</span> — 上次更新到现在的<span class="attribute">CPU</span>时间占用百分比
+%<span class="attribute">MEM</span> — 进程使用的物理内存百分比
+<span class="attribute">TIME</span>+ — 进程使用的<span class="attribute">CPU</span>时间总计，单位<span class="attribute">1</span>/<span class="attribute">100</span>秒
+<span class="attribute">COMMAND</span> — 进程名称（命令名/命令行）</span></span>
 </code></pre><h3 id="sar">sar</h3>
 <p>sar（System Activity Reporter）是系统活动情况报告的缩写。sar 工具将对系统当前的状态进行取样，然后通过计算数据和比例来表达系统的当前运行状态。它的特点是可以连续对系统取样，获得大量的取样数据；取样数据和分析的结果都可以存入文件，所需的负载很小。 sar 是目前 Linux 上最为全面的系统性能分析工具之一，可以从多方面对系统的活动进行报告，包括：文件的读写情况、系统调用的使用情况、磁盘I/O、CPU效率、内存使用状况、进程活动及IPC有关的活动等。为了提供不同的信息，sar 提供了丰富的选项、因此使用较为复杂。</p>
 <p>安装：</p>
@@ -505,7 +505,7 @@ rxmcst/s ：每秒钟接收的多播数据包。
 		
 		
 		
-		<a rel="push" class="push" href="https://github.com/https://github.com/DaMinger" target="_blank" title="github"></a>
+		<a rel="push" class="push" href="https://github.com/DaMinger" target="_blank" title="github"></a>
 		
 		
 	</div>
