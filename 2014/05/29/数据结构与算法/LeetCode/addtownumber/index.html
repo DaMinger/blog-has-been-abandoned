@@ -4,14 +4,14 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>设计模式之策略模式 | DaMinger&#39;s blog</title>
+    <title>LeetCode:Add Two Numbers | DaMinger&#39;s blog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="DaMinger">
     
-    <meta name="description" content="策略模式（Strategy）
-定义了算法家族，分别封装起来，让它们之间可以相互替换，此模式让算法的变化不会影响到使用算法的用户。
-策略模式是一种定义一系列算法的方法，从概念上看，所有这些算法完成的都是相同的工作，只是实现上不同，它可以以相同的方式调用所有的算法，减少各种算法类与算法使用类之间的耦合。">
+    <meta name="description" content="题目
+You are given two linked lists representing two non-negative numbers. 
+The digits are stored in reverse order and each of their nodes contain a sin">
     
     
     
@@ -73,15 +73,15 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2014/05/20/设计模式/strategy/" title="设计模式之策略模式" itemprop="url">设计模式之策略模式</a>
+      <a href="/2014/05/29/数据结构与算法/LeetCode/addtownumber/" title="LeetCode:Add Two Numbers" itemprop="url">LeetCode:Add Two Numbers</a>
   </h1>
   <p class="article-author">By
     
       <a href="https://github.com/DaMinger/DaMinger.github.io.git" title="DaMinger">DaMinger</a>
     </p>
   <p class="article-time">
-    <time datetime="2014-05-20T08:29:14.000Z" itemprop="datePublished">5月 20 2014</time>
-    更新日期:<time datetime="2014-05-20T10:07:00.000Z" itemprop="dateModified">5月 20 2014</time>
+    <time datetime="2014-05-29T03:03:02.000Z" itemprop="datePublished">5月 29 2014</time>
+    更新日期:<time datetime="2014-05-29T03:16:33.000Z" itemprop="dateModified">5月 29 2014</time>
     
   </p>
 </header>
@@ -90,179 +90,72 @@
 		
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
-		<ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#策略模式（Strategy）"><span class="toc-number">1.</span> <span class="toc-text">策略模式（Strategy）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#策略模式的好处"><span class="toc-number">2.</span> <span class="toc-text">策略模式的好处</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Java版"><span class="toc-number">3.</span> <span class="toc-text">Java版</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Python版"><span class="toc-number">4.</span> <span class="toc-text">Python版</span></a></li></ol>
+		<ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#题目"><span class="toc-number">1.</span> <span class="toc-text">题目</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#解法"><span class="toc-number">2.</span> <span class="toc-text">解法</span></a></li></ol>
 		</div>
 		
-		<h4 id="策略模式（Strategy）">策略模式（Strategy）</h4>
-<p>定义了算法家族，分别封装起来，让它们之间可以相互替换，此模式让算法的变化不会影响到使用算法的用户。</p>
-<p>策略模式是一种定义一系列算法的方法，从概念上看，所有这些算法完成的都是相同的工作，只是实现上不同，它可以以相同的方式调用所有的算法，减少各种算法类与算法使用类之间的耦合。</p>
-<p>策略模式是用来封装算法的，但在实践中发现，可以用它来封装几乎任何类型的规则，只要在分析过程中需要在不同时间应用不同的业务规则，就可以考虑使用策略模式来处理这种变化的可能性。</p>
-<h4 id="策略模式的好处">策略模式的好处</h4>
-<ul>
-<li>利用继承能有助于析取出不同算法中的公共功能</li>
-<li>简化了单元测试，因为每个算法都有自己的实现类，可以通过自己的接口单独进行测试</li>
-<li>将不同的行为封装到一个个独立的Strategy类中，可以在使用这些行为的类中消除条件语句，因为当不同的行为堆叠在一个类中时，就难以避免用条件语句来选择合适的行为。</li>
-</ul>
-<p>实验来自&lt;&lt;大话设计模式&gt;&gt;<br><img src="/img/Design patterns/Strategy.jpg" alt="类图"></p>
-<h4 id="Java版">Java版</h4>
-<p>抽象策略类</p>
-<pre><code><span class="keyword">abstract</span> class CashSuper {
-    <span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">double</span> <span class="title">acceptCash</span>(<span class="keyword">double</span> money);
+		<h4 id="题目">题目</h4>
+<pre><code>You are given <span class="constant">two</span> linked lists representing <span class="constant">two</span> non-negative numbers. 
+The digits are stored <span class="operator">in</span> reverse order <span class="operator">and</span> <span class="keyword">each</span> <span class="operator">of</span> their nodes contain <span class="operator">a</span> single digit. 
+Add <span class="operator">the</span> <span class="constant">two</span> numbers <span class="operator">and</span> <span class="constant">return</span> <span class="keyword">it</span> <span class="keyword">as</span> <span class="operator">a</span> linked list.
+
+Input: (<span class="number">2</span> -&gt; <span class="number">4</span> -&gt; <span class="number">3</span>) + (<span class="number">5</span> -&gt; <span class="number">6</span> -&gt; <span class="number">4</span>)
+Output: <span class="number">7</span> -&gt; <span class="number">0</span> -&gt; <span class="number">8</span>
+</code></pre><p>思路：处理好进位问题就行了，注意末尾进位。</p>
+<h4 id="解法">解法</h4>
+<pre><code><span class="keyword">public</span> <span class="keyword">class</span> ListNode {
+      <span class="keyword">int</span> val;
+      ListNode next;
+      ListNode(<span class="keyword">int</span> x) {
+          val = x;
+          next = <span class="keyword">null</span>;
+      }
 }
-</code></pre><p>具体策略类</p>
-<pre><code>CashNormal.java
-<span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CashNormal</span> <span class="keyword">extends</span> <span class="title">CashSuper</span>{</span>
-    <span class="keyword">public</span> <span class="keyword">double</span> <span class="title">acceptCash</span>(<span class="keyword">double</span> money) {
-        <span class="keyword">return</span> money;
-    }
+<span class="keyword">public</span> <span class="keyword">class</span> Solution {
+    <span class="keyword">public</span> ListNode <span class="title">addTwoNumbers</span>(ListNode l1, ListNode l2) {
+        <span class="keyword">int</span> carry=<span class="number">0</span>;
+        ListNode newHead=<span class="keyword">new</span> ListNode(<span class="number">0</span>);
+        ListNode p1=l1,p2=l2,p3=newHead;
+        <span class="keyword">while</span>(p1!=<span class="keyword">null</span> ||p2!=<span class="keyword">null</span>){
+            <span class="keyword">if</span>(p1!=<span class="keyword">null</span>){
+                carry +=p1.val;
+                p1=p1.next;
+            }
+            <span class="keyword">if</span>(p2!=<span class="keyword">null</span>){
+                carry +=p2.val;
+                p2=p2.next;
+            }
 
-}
-CashRebate.java
-<span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CashRebate</span> <span class="keyword">extends</span> <span class="title">CashSuper</span>{</span>
-
-    <span class="keyword">private</span> <span class="keyword">double</span> moneyRebate =<span class="number">1</span>d;
-    <span class="keyword">public</span> <span class="title">CashRebate</span>(String moneyRebate){
-        <span class="keyword">this</span>.moneyRebate = Double.parseDouble(moneyRebate);
-    }
-    <span class="keyword">public</span> <span class="keyword">double</span> <span class="title">acceptCash</span>(<span class="keyword">double</span> money) {
-
-        <span class="keyword">return</span> money * moneyRebate;
-    }
-
-}
-CashReturn.java
-<span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CashReturn</span> <span class="keyword">extends</span> <span class="title">CashSuper</span> {</span>
-
-    <span class="keyword">private</span> <span class="keyword">double</span> moneyCondition = <span class="number">0.0</span>d;
-    <span class="keyword">private</span> <span class="keyword">double</span> moneyReturn = <span class="number">0.0</span>d;
-    <span class="keyword">public</span> <span class="title">CashReturn</span>(String moneyCondition,String moneyReturn){
-        <span class="keyword">this</span>.moneyCondition = Double.parseDouble(moneyCondition);
-        <span class="keyword">this</span>.moneyReturn = Double.parseDouble(moneyReturn);
-    }
-
-    <span class="keyword">public</span> <span class="keyword">double</span> <span class="title">acceptCash</span>(<span class="keyword">double</span> money) {
-        <span class="keyword">double</span> result = money;
-        <span class="keyword">if</span> (money &gt;= moneyCondition) {
-            result = money - Math.floor(money / moneyCondition) * moneyReturn;
+            p3.next=<span class="keyword">new</span> ListNode(carry%<span class="number">10</span>);
+            p3=p3.next;
+            <span class="comment">//进位处理</span>
+            carry /=<span class="number">10</span>;
         }
-        <span class="keyword">return</span> result;
-    }
-
-}
-</code></pre><p>定义一个Context上下文，用一个ConcreteStrategy来配置，维护Strategy对象</p>
-<pre><code><span class="keyword">public</span> <span class="keyword">class</span> CashContext {
-
-    CashSuper cs ;
-
-    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setCs</span>(CashSuper cs) {
-        <span class="keyword">this</span>.cs = cs;
-    }
-    <span class="keyword">public</span> <span class="title">CashContext</span>(String type){
-        <span class="keyword">switch</span> (type){
-        <span class="keyword">case</span> <span class="string">"1"</span>:   <span class="comment">//normal</span>
-            cs = <span class="keyword">new</span> CashNormal();
-            <span class="keyword">break</span>;
-        <span class="keyword">case</span> <span class="string">"2"</span>:   <span class="comment">//return</span>
-            CashReturn cr1 = <span class="keyword">new</span> CashReturn(<span class="string">"300"</span>,<span class="string">"100"</span>);
-            cs = cr1;
-            <span class="keyword">break</span>;
-        <span class="keyword">case</span> <span class="string">"3"</span>:     <span class="comment">//0.8</span>
-            CashRebate cr2 = <span class="keyword">new</span> CashRebate(<span class="string">"0.8"</span>);
-            cs = cr2;
-            <span class="keyword">break</span>;
-        }
-    }
-    <span class="keyword">public</span> <span class="keyword">double</span> <span class="title">getResult</span>(<span class="keyword">double</span> money){
-        <span class="keyword">return</span> cs.acceptCash(money);
+        <span class="comment">//最后末尾产生进位</span>
+        <span class="keyword">if</span>(carry==<span class="number">1</span>)
+            p3.next=<span class="keyword">new</span> ListNode(<span class="number">1</span>);
+        <span class="keyword">return</span> newHead.next;
     }
 }
-</code></pre><p>客户端</p>
-<pre><code>import java.util.Scanner;
-<span class="keyword">public</span> <span class="keyword">class</span> test {
-
-    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span>(String[] args) {
-
-        <span class="keyword">double</span> money =<span class="number">0.0</span>d;
-        String strategy =<span class="keyword">null</span>;
-        Scanner read =<span class="keyword">new</span> Scanner (System.<span class="keyword">in</span>);
-        System.<span class="keyword">out</span>.println(<span class="string">"Please choose strategy: 1:normal 2:满300返100 3:打0.8折"</span>);
-        strategy = read.next();
-        System.<span class="keyword">out</span>.println(<span class="string">"Please input  money"</span>);
-        money=Double.valueOf(read.next());<span class="comment">//Double.parseDouble(read.next())</span>
-        <span class="keyword">double</span> totalPrices = <span class="number">0</span>d;
-        CashContext csuper =<span class="keyword">new</span> CashContext(strategy);
-        totalPrices=csuper.getResult(money);
-        System.<span class="keyword">out</span>.println(<span class="string">" "</span>+totalPrices);
-    }
-
-}
-</code></pre><h4 id="Python版">Python版</h4>
-<pre><code><span class="class"><span class="keyword">class</span> <span class="title">CashSuper</span>:</span>
-    <span class="function"><span class="keyword">def</span> <span class="title">AcceptCash</span><span class="params">(self,money)</span>:</span>
-        <span class="keyword">return</span> <span class="number">0</span>
-
-<span class="class"><span class="keyword">class</span> <span class="title">CashNormal</span><span class="params">(CashSuper)</span>:</span>
-    <span class="function"><span class="keyword">def</span> <span class="title">AcceptCash</span><span class="params">(self,money)</span>:</span>
-        <span class="keyword">return</span> money
-
-<span class="class"><span class="keyword">class</span> <span class="title">CashRebate</span><span class="params">(CashSuper)</span>:</span>
-    discount = <span class="number">0</span>
-    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self,ds)</span>:</span>
-        self.discount = ds
-    <span class="function"><span class="keyword">def</span> <span class="title">AcceptCash</span><span class="params">(self,money)</span>:</span>
-        <span class="keyword">return</span> money * self.discount
-
-<span class="class"><span class="keyword">class</span> <span class="title">CashReturn</span><span class="params">(CashSuper)</span>:</span>
-    total = <span class="number">0</span>;
-    ret = <span class="number">0</span>;
-    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self,t,r)</span>:</span>
-        self.total = t
-        self.ret = r
-    <span class="function"><span class="keyword">def</span> <span class="title">AcceptCash</span><span class="params">(self,money)</span>:</span>
-        <span class="keyword">if</span> (money&gt;=self.total):
-            <span class="keyword">return</span> money - self.ret
-        <span class="keyword">else</span>:
-            <span class="keyword">return</span> money
-
-<span class="class"><span class="keyword">class</span> <span class="title">CashContext</span>:</span>
-    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self,csuper)</span>:</span>
-        self.cs = csuper
-    <span class="function"><span class="keyword">def</span> <span class="title">GetResult</span><span class="params">(self,money)</span>:</span>
-        <span class="keyword">return</span> self.cs.AcceptCash(money)
-
-<span class="keyword">if</span> __name__ == <span class="string">"__main__"</span>:
-    money = input(<span class="string">"money:"</span>)
-    strategy = {}
-    strategy[<span class="number">1</span>] = CashContext(CashNormal())
-    strategy[<span class="number">2</span>] = CashContext(CashRebate(<span class="number">0.8</span>))
-    strategy[<span class="number">3</span>] = CashContext(CashReturn(<span class="number">300</span>,<span class="number">100</span>))
-    ctype = input(<span class="string">"type:[1]for normal,[2]for 80% discount [3]for 300 -100."</span>)
-    <span class="keyword">if</span> ctype <span class="keyword">in</span> strategy:
-        cc = strategy[ctype]
-    <span class="keyword">else</span>:
-        <span class="keyword">print</span> <span class="string">"Undefine type.Use normal mode."</span>
-        cc = strategy[<span class="number">1</span>]
-    <span class="keyword">print</span> <span class="string">"you will pay:%d"</span> %(cc.GetResult(money))
 </code></pre>  
 	</div>
 		<footer class="article-footer clearfix">
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/设计模式/">设计模式</a>
+  <span></span> <a href="/tags/数据结构与算法/">数据结构与算法</a>
   </div>
 
 
 <div class="article-categories">
   <span></span>
-  <a class="article-category-link" href="/categories/设计模式/">设计模式</a>
+  <a class="article-category-link" href="/categories/数据结构与算法/">数据结构与算法</a>
 </div>
 
 
 
 <div class="article-share" id="share">
 
-  <div data-url="https://github.com/DaMinger/DaMinger.github.io.git/2014/05/20/设计模式/strategy/" data-title="设计模式之策略模式 | DaMinger&#39;s blog" data-tsina="null" class="share clearfix">
+  <div data-url="https://github.com/DaMinger/DaMinger.github.io.git/2014/05/29/数据结构与算法/LeetCode/addtownumber/" data-title="LeetCode:Add Two Numbers | DaMinger&#39;s blog" data-tsina="null" class="share clearfix">
   </div>
 
 </div>
@@ -272,18 +165,18 @@ CashReturn.java
 <nav class="article-nav clearfix">
  
  <div class="prev" >
- <a href="/2014/05/20/设计模式/singleton/" title="设计模式之单例模式">
+ <a href="/2014/05/29/数据结构与算法/LeetCode/longestpalindromicstring/" title="LeetCode:Longest Palindromic Substring">
   <strong>PREVIOUS:</strong><br/>
   <span>
-  设计模式之单例模式</span>
+  LeetCode:Longest Palindromic Substring</span>
 </a>
 </div>
 
 
 <div class="next">
-<a href="/2014/05/20/设计模式/simplefactory/"  title="设计模式之简单工厂模式">
+<a href="/2014/05/27/数据结构与算法/LeetCode/twosum/"  title="LeetCode:Two Sum">
  <strong>NEXT:</strong><br/> 
- <span>设计模式之简单工厂模式
+ <span>LeetCode:Two Sum
 </span>
 </a>
 </div>
@@ -300,7 +193,7 @@ CashReturn.java
 
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
-  <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#策略模式（Strategy）"><span class="toc-number">1.</span> <span class="toc-text">策略模式（Strategy）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#策略模式的好处"><span class="toc-number">2.</span> <span class="toc-text">策略模式的好处</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Java版"><span class="toc-number">3.</span> <span class="toc-text">Java版</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Python版"><span class="toc-number">4.</span> <span class="toc-text">Python版</span></a></li></ol>
+  <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#题目"><span class="toc-number">1.</span> <span class="toc-text">题目</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#解法"><span class="toc-number">2.</span> <span class="toc-text">解法</span></a></li></ol>
   </div>
 
 <div id="asidepart">
