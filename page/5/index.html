@@ -70,6 +70,118 @@
 
   <section class="post" itemscope itemprop="blogPost">
   
+    <a rel="sink" class="sink" href="/2014/05/12/Hadoop/sqoop/" title="Sqoop的安装及数据在Mysql与HDFS之间的导入导出" itemprop="url">
+  
+    <h1 itemprop="name">Sqoop的安装及数据在Mysql与HDFS之间的导入导出</h1>
+    
+     
+           <p rel="wobble-bottom" class="wobble-bottom" itemprop="description" >解压Sqoop并cp相应的hadoop以及mysql的jar包
+[grid@hadoop01 ~]$ tar -xzvf sqoop-1.4.4.bin__hadoop-1.0.0.tar.gz 
+
+[grid@hadoop01 hadoop-1.2.1]$ cp hadoop-</p>
+        
+    
+    <time datetime="2014-05-12T07:16:57.000Z" itemprop="datePublished">5月 12 2014</time>
+  </a>
+</section>
+
+
+
+  <section class="post" itemscope itemprop="blogPost">
+  
+    <a rel="sink" class="sink" href="/2014/05/12/Hadoop/hbase_shell/" title="HBase shell的使用" itemprop="url">
+  
+    <h1 itemprop="name">HBase shell的使用</h1>
+    
+     
+           <p rel="wobble-bottom" class="wobble-bottom" itemprop="description" >HBase Shell的一些基本操作命令
+名称命令表达式创建表create ‘表名称’, ‘列名称1’,’列名称2’,’列名称N’添加记录put ‘表名称’, ‘行名称’, ‘列名称:’, ‘值查看记录get ‘表名称’, ‘行名称’查看表中的记录总数count  ‘表名称’
+删</p>
+        
+    
+    <time datetime="2014-05-12T07:16:49.000Z" itemprop="datePublished">5月 12 2014</time>
+  </a>
+</section>
+
+
+
+  <section class="post" itemscope itemprop="blogPost">
+  
+    <a rel="sink" class="sink" href="/2014/05/12/Hadoop/hbase_install/" title="HBse的安装" itemprop="url">
+  
+    <h1 itemprop="name">HBse的安装</h1>
+    
+     
+           <p rel="wobble-bottom" class="wobble-bottom" itemprop="description" >在安装hbase时要求与hadoop的版本相关联，那么如何找出合适的hbase版本呢，其实有一个简单但是有点费事的做法，就是可以下载hbase后解压查看lib目录中的hadoop-core-x.x.x.jar文件的版本号，就可以找到合适的hadoop版本号了。
+我下载了三个版本，</p>
+        
+    
+    <time datetime="2014-05-12T07:16:29.000Z" itemprop="datePublished">5月 12 2014</time>
+  </a>
+</section>
+
+
+
+  <section class="post" itemscope itemprop="blogPost">
+  
+    <a rel="sink" class="sink" href="/2014/05/11/Hadoop/hbase_problem/" title="炼数成金论坛上关于HBase三个小问题的讨论" itemprop="url">
+  
+    <h1 itemprop="name">炼数成金论坛上关于HBase三个小问题的讨论</h1>
+    
+     
+           <p rel="wobble-bottom" class="wobble-bottom" itemprop="description" >参考1和参考2
+我们常说HBase是“数据即日志”的数据库，它是怎样修改和删除数据的？和Oracle这类传统的RDBMS有什么区别？
+数据即日志，主要是指HBase中数据如日志般存储和更新，即几乎没有插入，修改，删除的操作，只是不停增加数据。这一特性主要是由于HBase数据文件存</p>
+        
+    
+    <time datetime="2014-05-11T02:23:49.000Z" itemprop="datePublished">5月 11 2014</time>
+  </a>
+</section>
+
+
+
+  <section class="post" itemscope itemprop="blogPost">
+  
+    <a rel="sink" class="sink" href="/2014/05/11/Hadoop/hbase/" title="HBase体系结构及原理" itemprop="url">
+  
+    <h1 itemprop="name">HBase体系结构及原理</h1>
+    
+     
+           <p rel="wobble-bottom" class="wobble-bottom" itemprop="description" >HBase简介
+HBase是Apache Hadoop的数据库，能够对大型数据提供随机、实时的读写访问。HBase的目标是存储并处理大型的数据。HBase是一个开源的，分布式的，多版本的，面向列的存储模型。它存储的是松散型数据。
+HBase特性：高可靠性、高效性、面向列、可伸缩、</p>
+        
+    
+    <time datetime="2014-05-11T02:20:31.000Z" itemprop="datePublished">5月 11 2014</time>
+  </a>
+</section>
+
+
+
+  <section class="post" itemscope itemprop="blogPost">
+  
+    <a rel="sink" class="sink" href="/2014/05/08/Hadoop/mahout_2/" title="Mahout利用朴素贝叶斯分类处理20个新闻组案例" itemprop="url">
+  
+    <h1 itemprop="name">Mahout利用朴素贝叶斯分类处理20个新闻组案例</h1>
+    
+     
+           <p rel="wobble-bottom" class="wobble-bottom" itemprop="description" >朴素贝叶斯分类算法
+朴素贝叶斯分类算法
+下载20个新闻组数据
+20个新闻组
+[grid@hadoop01 data]$ ls
+20news-bydate.tar.gz  20news-bydate-test  20news-bydate-train
+[grid@hadoop01 </p>
+        
+    
+    <time datetime="2014-05-08T00:40:51.000Z" itemprop="datePublished">5月 8 2014</time>
+  </a>
+</section>
+
+
+
+  <section class="post" itemscope itemprop="blogPost">
+  
     <a rel="sink" class="sink" href="/2014/05/08/Hadoop/mahout_1/" title="Mahout的初步体验" itemprop="url">
   
     <h1 itemprop="name">Mahout的初步体验</h1>
@@ -146,120 +258,6 @@ export J</p>
 
 
 
-  <section class="post" itemscope itemprop="blogPost">
-  
-    <a rel="sink" class="sink" href="/2014/04/23/Hadoop/hadoop_pig/" title="Pig的简单使用" itemprop="url">
-  
-    <h1 itemprop="name">Pig的简单使用</h1>
-    
-     
-           <p rel="wobble-bottom" class="wobble-bottom" itemprop="description" >安装配置pig
-下载你对应hadoop的pig版本,解压
-本地模式
-配置环境变量
-vi .bash_profile
-PATH=$PATH:/home/grid/pig-0.12.1/bin:$HOME/bin
-JAVA_HOME=/usr/jdk1.7.0_51
-
-export </p>
-        
-    
-    <time datetime="2014-04-23T10:53:16.000Z" itemprop="datePublished">4月 23 2014</time>
-  </a>
-</section>
-
-
-
-  <section class="post" itemscope itemprop="blogPost">
-  
-    <a rel="sink" class="sink" href="/2014/04/22/Hadoop/hadoop-eclispe/" title="eclipse连接hadoop1.2.1集群" itemprop="url">
-  
-    <h1 itemprop="name">eclipse连接hadoop1.2.1集群</h1>
-    
-     
-           <p rel="wobble-bottom" class="wobble-bottom" itemprop="description" >下载安装eclipse
-去官网下载eclipse，我下载的是eclipse-standard-kepler-SR2-linux-gtk-x86_64.tar.gz移到目录/opt下,解压tar -zxvf eclipse-standard-kepler-SR2-linux-gtk</p>
-        
-    
-    <time datetime="2014-04-22T12:43:01.000Z" itemprop="datePublished">4月 22 2014</time>
-  </a>
-</section>
-
-
-
-  <section class="post" itemscope itemprop="blogPost">
-  
-    <a rel="sink" class="sink" href="/2014/04/21/Hadoop/map_reduce/" title="Map-Reduce入门" itemprop="url">
-  
-    <h1 itemprop="name">Map-Reduce入门</h1>
-    
-     
-           <p rel="wobble-bottom" class="wobble-bottom" itemprop="description" >Map-Reduce的逻辑过程
-假设我们需要处理一批有关天气的数据，其格式如下：按照ASCII码存储，每行一条记录,每一行字符从0开始计数，第15个到第18个字符为年,第25个到第29个字符为温度，其中第25位是符号+/-    0067011990999991950051507</p>
-        
-    
-    <time datetime="2014-04-21T13:50:52.000Z" itemprop="datePublished">4月 21 2014</time>
-  </a>
-</section>
-
-
-
-  <section class="post" itemscope itemprop="blogPost">
-  
-    <a rel="sink" class="sink" href="/2014/04/21/Hadoop/hadoop_stream_python/" title="使用hadoop流的方法来实现对气象数据集求最高温度的分析任务（使用python）" itemprop="url">
-  
-    <h1 itemprop="name">使用hadoop流的方法来实现对气象数据集求最高温度的分析任务（使用python）</h1>
-    
-     
-           <p rel="wobble-bottom" class="wobble-bottom" itemprop="description" >使用hadoop流的方法来实现对气象数据集求最高温度的分析任务（使用python）
-创建python脚本
-[grid@hadoop01 python]$ ls
-max_temperature_map.py  max_temperature_reduce.py
-[grid@hado</p>
-        
-    
-    <time datetime="2014-04-21T13:50:46.000Z" itemprop="datePublished">4月 21 2014</time>
-  </a>
-</section>
-
-
-
-  <section class="post" itemscope itemprop="blogPost">
-  
-    <a rel="sink" class="sink" href="/2014/04/21/Hadoop/hadoop_mapreduce_1/" title="下载气象数据集部分数据，写一个Map-Reduce作业，求每年的最低温度，部署并运行之" itemprop="url">
-  
-    <h1 itemprop="name">下载气象数据集部分数据，写一个Map-Reduce作业，求每年的最低温度，部署并运行之</h1>
-    
-     
-           <p rel="wobble-bottom" class="wobble-bottom" itemprop="description" >下载气象数据集部分数据，写一个Map-Reduce作业，求每年的最低温度，部署并运行之，关于下载2013noaa上的天气数据，去http://f.dataguru.cn/ 的hadoop论坛上去搜就行
-是这种格式，2013的部分数据
-023170-99999-2013.gz  0</p>
-        
-    
-    <time datetime="2014-04-21T13:50:41.000Z" itemprop="datePublished">4月 21 2014</time>
-  </a>
-</section>
-
-
-
-  <section class="post" itemscope itemprop="blogPost">
-  
-    <a rel="sink" class="sink" href="/2014/04/18/Hadoop/hadoop_hdfs/" title="HDFS简单认识" itemprop="url">
-  
-    <h1 itemprop="name">HDFS简单认识</h1>
-    
-     
-           <p rel="wobble-bottom" class="wobble-bottom" itemprop="description" >一、HDFS的基本概念
-1.1、数据块(block)
-HDFS(Hadoop Distributed File System)默认的最基本的存储单位是64M的数据块。和普通文件系统相同的是，HDFS中的文件是被分成64M一块的数据块存储的。不同于普通文件系统的是，HDFS中，如果</p>
-        
-    
-    <time datetime="2014-04-18T11:58:57.000Z" itemprop="datePublished">4月 18 2014</time>
-  </a>
-</section>
-
-
-
 
   <nav id="page-nav" class="clearfix">
     <a class="extend prev" href="/page/4/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><a class="page-number" href="/page/7/">7</a><a class="extend next" href="/page/6/">Next &raquo;</a>
@@ -287,7 +285,7 @@ HDFS(Hadoop Distributed File System)默认的最基本的存储单位是64M的�
 		
 			<li><a rel="grow" class="grow" href="/categories/操作系统/" title="操作系统">操作系统<sup>1</sup></a></li>
 		
-			<li><a rel="grow" class="grow" href="/categories/数据结构与算法/" title="数据结构与算法">数据结构与算法<sup>18</sup></a></li>
+			<li><a rel="grow" class="grow" href="/categories/数据结构与算法/" title="数据结构与算法">数据结构与算法<sup>24</sup></a></li>
 		
 			<li><a rel="grow" class="grow" href="/categories/杂谈/" title="杂谈">杂谈<sup>2</sup></a></li>
 		
@@ -356,7 +354,7 @@ HDFS(Hadoop Distributed File System)默认的最基本的存储单位是64M的�
 		
 			<li><a href="/tags/学习计划/" title="学习计划">学习计划<sup>1</sup></a></li>
 		
-			<li><a href="/tags/数据结构与算法/" title="数据结构与算法">数据结构与算法<sup>18</sup></a></li>
+			<li><a href="/tags/数据结构与算法/" title="数据结构与算法">数据结构与算法<sup>24</sup></a></li>
 		
 			<li><a href="/tags/杂谈/" title="杂谈">杂谈<sup>1</sup></a></li>
 		
@@ -371,7 +369,7 @@ HDFS(Hadoop Distributed File System)默认的最基本的存储单位是64M的�
   
   <div class="archiveslist">
     <p class="asidetitle"><a href="/archives">归档</a></p>
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/05">五月 2014</a><span class="archive-list-count">42</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/04">四月 2014</a><span class="archive-list-count">19</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/06">六月 2014</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/05">五月 2014</a><span class="archive-list-count">42</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/04">四月 2014</a><span class="archive-list-count">19</span></li></ul>
   </div>
 
 
@@ -379,7 +377,7 @@ HDFS(Hadoop Distributed File System)默认的最基本的存储单位是64M的�
   <div class="tagcloudlist">
     <p class="asidetitle">标签云</p>
     <div class="tagcloudlist clearfix">
-       <a href="/tags/Eclipse/" style="font-size: 10.00px;">Eclipse</a><a href="/tags/HBase/" style="font-size: 13.33px;">HBase</a><a href="/tags/HDFS/" style="font-size: 11.67px;">HDFS</a><a href="/tags/Hadoop/" style="font-size: 20.00px;">Hadoop</a><a href="/tags/Hadoop_Stream/" style="font-size: 10.00px;">Hadoop_Stream</a><a href="/tags/Hive/" style="font-size: 11.67px;">Hive</a><a href="/tags/Java/" style="font-size: 11.67px;">Java</a><a href="/tags/Linux/" style="font-size: 15.00px;">Linux</a><a href="/tags/Mahout/" style="font-size: 11.67px;">Mahout</a><a href="/tags/Map-Reduce/" style="font-size: 11.67px;">Map-Reduce</a><a href="/tags/Mysql/" style="font-size: 10.00px;">Mysql</a><a href="/tags/Pig/" style="font-size: 10.00px;">Pig</a><a href="/tags/Shell/" style="font-size: 13.33px;">Shell</a><a href="/tags/Sqoop/" style="font-size: 10.00px;">Sqoop</a><a href="/tags/awk/" style="font-size: 11.67px;">awk</a><a href="/tags/sed/" style="font-size: 10.00px;">sed</a><a href="/tags/yum/" style="font-size: 10.00px;">yum</a><a href="/tags/学习计划/" style="font-size: 10.00px;">学习计划</a><a href="/tags/数据结构与算法/" style="font-size: 18.33px;">数据结构与算法</a><a href="/tags/杂谈/" style="font-size: 10.00px;">杂谈</a><a href="/tags/网卡错误/" style="font-size: 10.00px;">网卡错误</a><a href="/tags/网络/" style="font-size: 10.00px;">网络</a><a href="/tags/设计模式/" style="font-size: 16.67px;">设计模式</a><a href="/tags/进程与线程/" style="font-size: 10.00px;">进程与线程</a>
+       <a href="/tags/Eclipse/" style="font-size: 10.00px;">Eclipse</a><a href="/tags/HBase/" style="font-size: 13.33px;">HBase</a><a href="/tags/HDFS/" style="font-size: 11.67px;">HDFS</a><a href="/tags/Hadoop/" style="font-size: 18.33px;">Hadoop</a><a href="/tags/Hadoop_Stream/" style="font-size: 10.00px;">Hadoop_Stream</a><a href="/tags/Hive/" style="font-size: 11.67px;">Hive</a><a href="/tags/Java/" style="font-size: 11.67px;">Java</a><a href="/tags/Linux/" style="font-size: 15.00px;">Linux</a><a href="/tags/Mahout/" style="font-size: 11.67px;">Mahout</a><a href="/tags/Map-Reduce/" style="font-size: 11.67px;">Map-Reduce</a><a href="/tags/Mysql/" style="font-size: 10.00px;">Mysql</a><a href="/tags/Pig/" style="font-size: 10.00px;">Pig</a><a href="/tags/Shell/" style="font-size: 13.33px;">Shell</a><a href="/tags/Sqoop/" style="font-size: 10.00px;">Sqoop</a><a href="/tags/awk/" style="font-size: 11.67px;">awk</a><a href="/tags/sed/" style="font-size: 10.00px;">sed</a><a href="/tags/yum/" style="font-size: 10.00px;">yum</a><a href="/tags/学习计划/" style="font-size: 10.00px;">学习计划</a><a href="/tags/数据结构与算法/" style="font-size: 20.00px;">数据结构与算法</a><a href="/tags/杂谈/" style="font-size: 10.00px;">杂谈</a><a href="/tags/网卡错误/" style="font-size: 10.00px;">网卡错误</a><a href="/tags/网络/" style="font-size: 10.00px;">网络</a><a href="/tags/设计模式/" style="font-size: 16.67px;">设计模式</a><a href="/tags/进程与线程/" style="font-size: 10.00px;">进程与线程</a>
     </div>
   </div>
 
