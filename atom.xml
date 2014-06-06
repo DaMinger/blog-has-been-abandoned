@@ -4,7 +4,7 @@
   <subtitle><![CDATA[信春哥，系统稳，闭眼上线不回滚]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="https://github.com/DaMinger/DaMinger.github.io.git/"/>
-  <updated>2014-06-05T02:24:07.349Z</updated>
+  <updated>2014-06-06T05:34:33.467Z</updated>
   <id>https://github.com/DaMinger/DaMinger.github.io.git/</id>
   
   <author>
@@ -13,6 +13,380 @@
   </author>
   
   <generator uri="http://zespia.tw/hexo/">Hexo</generator>
+  
+  <entry>
+    <title><![CDATA[LeetCode:Word Ladder I]]></title>
+    <link href="https://github.com/DaMinger/DaMinger.github.io.git/2014/06/06/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/LeetCode/word_ladder_i/"/>
+    <id>https://github.com/DaMinger/DaMinger.github.io.git/2014/06/06/数据结构与算法/LeetCode/word_ladder_i/</id>
+    <published>2014-06-06T05:20:53.000Z</published>
+    <updated>2014-06-06T05:27:49.000Z</updated>
+    <content type="html"><![CDATA[<h4 id="题目">题目</h4>
+<pre><code>Given two <span class="property">words</span> (start <span class="keyword">and</span> <span class="keyword">end</span>), <span class="keyword">and</span> a dictionary, find <span class="keyword">the</span> <span class="property">length</span> <span class="keyword">of</span> shortest transformation sequence <span class="keyword">from</span> start <span class="keyword">to</span> <span class="keyword">end</span>, such <span class="keyword">that</span>:
+
+Only one letter can be changed <span class="keyword">at</span> a <span class="property">time</span>
+Each intermediate <span class="property">word</span> must exist <span class="keyword">in</span> <span class="keyword">the</span> dictionary
+For example,
+
+Given:
+start = <span class="string">"hit"</span>
+<span class="keyword">end</span> = <span class="string">"cog"</span>
+dict = [<span class="string">"hot"</span>,<span class="string">"dot"</span>,<span class="string">"dog"</span>,<span class="string">"lot"</span>,<span class="string">"log"</span>]
+As one shortest transformation <span class="keyword">is</span> <span class="string">"hit"</span> -&gt; <span class="string">"hot"</span> -&gt; <span class="string">"dot"</span> -&gt; <span class="string">"dog"</span> -&gt; <span class="string">"cog"</span>,
+<span class="command">return</span> <span class="keyword">its</span> <span class="property">length</span> <span class="number">5.</span>
+</code></pre><p>思路：把它看成一颗树，用两个队列，一个储存节点，一个储存距离，BFS即可</p>
+<h4 id="解法">解法</h4>
+<pre><code><span class="keyword">public</span> <span class="keyword">class</span> Solution {
+    <span class="keyword">public</span> <span class="keyword">int</span> <span class="title">ladderLength</span>(String start, String end, HashSet&lt;String&gt; dict) {
+
+        <span class="keyword">if</span> (dict.size() == <span class="number">0</span>)  
+            <span class="keyword">return</span> <span class="number">0</span>; 
+
+        LinkedList&lt;String&gt; wordQueue = <span class="keyword">new</span> LinkedList&lt;String&gt;();
+        LinkedList&lt;Integer&gt; distanceQueue = <span class="keyword">new</span> LinkedList&lt;Integer&gt;();
+
+        wordQueue.add(start);
+        distanceQueue.add(<span class="number">1</span>);
+
+
+        <span class="keyword">while</span>(!wordQueue.isEmpty()){
+            String currWord = wordQueue.pop();
+            Integer currDistance = distanceQueue.pop();
+
+            <span class="keyword">if</span>(currWord.equals(end)){
+                <span class="keyword">return</span> currDistance;
+            }
+
+            <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;currWord.length(); i++){
+                <span class="keyword">char</span>[] currCharArr = currWord.toCharArray();
+                <span class="keyword">for</span>(<span class="keyword">char</span> c=<span class="string">'a'</span>; c&lt;=<span class="string">'z'</span>; c++){
+                    currCharArr[i] = c;
+
+                    String newWord = <span class="keyword">new</span> String(currCharArr);
+                    <span class="keyword">if</span>(dict.contains(newWord)){
+                        wordQueue.add(newWord);
+                        distanceQueue.add(currDistance+<span class="number">1</span>);
+                        dict.remove(newWord);
+                    }
+                }
+            }
+        }
+
+        <span class="keyword">return</span> <span class="number">0</span>;
+    }
+}
+</code></pre>]]></content>
+    
+    
+      <category term="数据结构与算法" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/"/>
+    
+      <category term="数据结构与算法" scheme="https://github.com/DaMinger/DaMinger.github.io.git/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[LeetCode:Word Break I]]></title>
+    <link href="https://github.com/DaMinger/DaMinger.github.io.git/2014/06/06/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/LeetCode/word_break_i/"/>
+    <id>https://github.com/DaMinger/DaMinger.github.io.git/2014/06/06/数据结构与算法/LeetCode/word_break_i/</id>
+    <published>2014-06-06T05:15:12.000Z</published>
+    <updated>2014-06-06T05:25:51.000Z</updated>
+    <content type="html"><![CDATA[<h4 id="题目">题目</h4>
+<pre><code>Given <span class="operator">a</span> <span class="keyword">string</span> s <span class="operator">and</span> <span class="operator">a</span> dictionary <span class="operator">of</span> <span class="keyword">words</span> dict, determine <span class="keyword">if</span> s can be segmented <span class="keyword">into</span> <span class="operator">a</span> <span class="constant">space</span>-separated sequence <span class="operator">of</span> <span class="constant">one</span> <span class="operator">or</span> more dictionary <span class="keyword">words</span>.
+
+For example, given
+s = <span class="string">"leetcode"</span>,
+dict = [<span class="string">"leet"</span>, <span class="string">"code"</span>].
+
+Return <span class="constant">true</span> because <span class="string">"leetcode"</span> can be segmented <span class="keyword">as</span> <span class="string">"leet code"</span>.
+</code></pre><p>思路：动态规划，定义array t[]，当t[i]==true， 0-(i-1) 能被字典分段</p>
+<h4 id="解法">解法</h4>
+<pre><code><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Solution</span> {</span>
+    <span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">wordBreak</span>(String s, Set&lt;String&gt; dict) {
+        <span class="keyword">boolean</span>[] t = <span class="keyword">new</span> <span class="keyword">boolean</span>[s.length()+<span class="number">1</span>];
+        t[<span class="number">0</span>] = <span class="keyword">true</span>; <span class="comment">//set first to be true</span>
+
+        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;s.length(); i++){
+            <span class="comment">//should continue from match position</span>
+            <span class="keyword">if</span>(!t[i]) 
+                <span class="keyword">continue</span>;
+
+            <span class="keyword">for</span>(String a: dict){
+                <span class="keyword">int</span> len = a.length();
+                <span class="keyword">int</span> end = i + len;
+                <span class="keyword">if</span>(end &gt; s.length())
+                    <span class="keyword">continue</span>;
+
+                <span class="keyword">if</span>(t[end]) <span class="keyword">continue</span>;
+
+                <span class="keyword">if</span>(s.substring(i, end).equals(a)){
+                    t[end] = <span class="keyword">true</span>;
+                }
+            }
+        }
+
+        <span class="keyword">return</span> t[s.length()];
+    }
+}
+</code></pre>]]></content>
+    
+    
+      <category term="数据结构与算法" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/"/>
+    
+      <category term="数据结构与算法" scheme="https://github.com/DaMinger/DaMinger.github.io.git/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[LeetCode:Validate Binary Search Tree]]></title>
+    <link href="https://github.com/DaMinger/DaMinger.github.io.git/2014/06/06/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/LeetCode/validate_binary_search_tree/"/>
+    <id>https://github.com/DaMinger/DaMinger.github.io.git/2014/06/06/数据结构与算法/LeetCode/validate_binary_search_tree/</id>
+    <published>2014-06-06T05:11:05.000Z</published>
+    <updated>2014-06-06T05:13:41.000Z</updated>
+    <content type="html"><![CDATA[<h4 id="题目">题目</h4>
+<pre><code>Given a binary tree, determine <span class="keyword">if</span> <span class="keyword">it</span> <span class="keyword">is</span> a valid binary search tree (BST).
+
+Assume a BST <span class="keyword">is</span> defined <span class="keyword">as</span> follows:
+
+The left subtree <span class="keyword">of</span> a node <span class="keyword">contains</span> only nodes <span class="keyword">with</span> keys <span class="keyword">less than</span> <span class="keyword">the</span> node's key.
+The right subtree <span class="keyword">of</span> a node <span class="keyword">contains</span> only nodes <span class="keyword">with</span> keys <span class="keyword">greater than</span> <span class="keyword">the</span> node's key.
+Both <span class="keyword">the</span> left <span class="keyword">and</span> right subtrees must also be binary search trees.
+confused what <span class="string">"{1,#,2,3}"</span> means? &gt; <span class="command">read</span> more <span class="function_start"><span class="keyword">on</span></span> how binary tree <span class="keyword">is</span> serialized <span class="function_start"><span class="keyword">on</span></span> OJ.
+</code></pre><p>思路：递归</p>
+<h4 id="解法">解法</h4>
+<pre><code><span class="comment">//  Definition for binary tree</span>
+class TreeNode {
+    <span class="keyword">int</span> val;
+    TreeNode left;
+    TreeNode right;
+
+    TreeNode(<span class="keyword">int</span> x) {
+        val = x;
+    }
+}
+
+<span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Solution</span> {</span>
+
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">boolean</span> <span class="title">isValidBST</span>(TreeNode root) {
+        <span class="keyword">return</span> validate(root, Integer.MIN_VALUE, Integer.MAX_VALUE);
+    }
+
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">boolean</span> <span class="title">validate</span>(TreeNode root, <span class="keyword">int</span> min, <span class="keyword">int</span> max) {
+        <span class="keyword">if</span> (root == <span class="keyword">null</span>) {
+            <span class="keyword">return</span> <span class="keyword">true</span>;
+        }
+
+        <span class="comment">// not in range</span>
+        <span class="keyword">if</span> (root.val &lt;= min || root.val &gt;= max) {
+            <span class="keyword">return</span> <span class="keyword">false</span>;
+        }
+
+        <span class="comment">// left subtree must be &lt; root.val &amp;&amp; right subtree must be &gt; root.val</span>
+        <span class="keyword">return</span> validate(root.left, min, root.val) &amp;&amp; validate(root.right, root.val, max);
+    }
+}
+</code></pre>]]></content>
+    
+    
+      <category term="数据结构与算法" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/"/>
+    
+      <category term="数据结构与算法" scheme="https://github.com/DaMinger/DaMinger.github.io.git/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[LeetCode:Triangle]]></title>
+    <link href="https://github.com/DaMinger/DaMinger.github.io.git/2014/06/06/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/LeetCode/triangle/"/>
+    <id>https://github.com/DaMinger/DaMinger.github.io.git/2014/06/06/数据结构与算法/LeetCode/triangle/</id>
+    <published>2014-06-06T05:03:10.000Z</published>
+    <updated>2014-06-06T05:32:08.000Z</updated>
+    <content type="html"><![CDATA[<h4 id="题目">题目</h4>
+<pre><code>Given a triangle, find <span class="keyword">the</span> minimum path sum <span class="keyword">from</span> top <span class="keyword">to</span> bottom. Each step you may move <span class="keyword">to</span> adjacent numbers <span class="function_start"><span class="keyword">on</span></span> <span class="keyword">the</span> row <span class="keyword">below</span>.
+
+For example, <span class="keyword">given</span> <span class="keyword">the</span> following triangle
+[
+     [<span class="number">2</span>],
+    [<span class="number">3</span>,<span class="number">4</span>],
+   [<span class="number">6</span>,<span class="number">5</span>,<span class="number">7</span>],
+  [<span class="number">4</span>,<span class="number">1</span>,<span class="number">8</span>,<span class="number">3</span>]
+]
+The minimum path sum <span class="keyword">from</span> top <span class="keyword">to</span> bottom <span class="keyword">is</span> <span class="number">11</span> (i.e., <span class="number">2</span> + <span class="number">3</span> + <span class="number">5</span> + <span class="number">1</span> = <span class="number">11</span>).
+
+Note:
+Bonus point <span class="keyword">if</span> you are able <span class="keyword">to</span> do this using only O(n) extra <span class="constant">space</span>, <span class="keyword">where</span> n <span class="keyword">is</span> <span class="keyword">the</span> total <span class="type">number</span> <span class="keyword">of</span> rows <span class="keyword">in</span> <span class="keyword">the</span> triangle.
+</code></pre><p>思路：经典动态规划问题，可以定义成dp[node]表示从当前node到bottom的最小路径和，对于最下面一层，因为它们是最底层，故它们到bottom的最小路径和就是它们自身；再往上一层，最小路径就是该节点加上该节点肩上的两个点的最小值。</p>
+<h4 id="解法">解法</h4>
+<pre><code><span class="keyword">public</span> <span class="keyword">class</span> Solution {
+    <span class="keyword">public</span> <span class="keyword">int</span> <span class="title">minimumTotal</span>(List&lt;List&lt;Integer&gt;&gt; triangle) {
+        <span class="keyword">if</span>(triangle==<span class="keyword">null</span>||triangle.size()==<span class="number">0</span>){
+            <span class="keyword">return</span> <span class="number">0</span>;
+        }
+        <span class="keyword">int</span> row=triangle.size();
+        <span class="keyword">int</span> []num=<span class="keyword">new</span> <span class="keyword">int</span>[row];
+        <span class="keyword">for</span>(<span class="keyword">int</span> i=row-<span class="number">1</span>;i&gt;=<span class="number">0</span>;i--){
+            <span class="keyword">int</span> col=triangle.<span class="keyword">get</span>(i).size();
+            <span class="keyword">for</span>(<span class="keyword">int</span> j=<span class="number">0</span>;j&lt;col;j++){
+                <span class="comment">//最底层赋值</span>
+                <span class="keyword">if</span>(i==row-<span class="number">1</span>){
+                    num[j]=triangle.<span class="keyword">get</span>(i).<span class="keyword">get</span>(j);
+                    <span class="keyword">continue</span>;
+                }
+                num[j]=Math.min(num[j],num[j+<span class="number">1</span>])+ triangle.<span class="keyword">get</span>(i).<span class="keyword">get</span>(j);
+            }
+        }
+        <span class="keyword">return</span> num[<span class="number">0</span>];
+    }
+}
+</code></pre>]]></content>
+    
+    
+      <category term="数据结构与算法" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/"/>
+    
+      <category term="数据结构与算法" scheme="https://github.com/DaMinger/DaMinger.github.io.git/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[LeetCode:Same Tree]]></title>
+    <link href="https://github.com/DaMinger/DaMinger.github.io.git/2014/06/06/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/LeetCode/same_tree/"/>
+    <id>https://github.com/DaMinger/DaMinger.github.io.git/2014/06/06/数据结构与算法/LeetCode/same_tree/</id>
+    <published>2014-06-06T05:00:13.000Z</published>
+    <updated>2014-06-06T05:02:17.000Z</updated>
+    <content type="html"><![CDATA[<h4 id="题目">题目</h4>
+<pre><code>Given two binary trees, <span class="command">write</span> a function <span class="keyword">to</span> check <span class="keyword">if</span> they are <span class="keyword">equal</span> <span class="keyword">or</span> <span class="keyword">not</span>.
+
+Two binary trees are considered <span class="keyword">equal</span> <span class="keyword">if</span> they are structurally identical <span class="keyword">and</span> <span class="keyword">the</span> nodes have <span class="keyword">the</span> same value.
+</code></pre><p>思路：递归比较</p>
+<h4 id="解法">解法</h4>
+<pre><code><span class="keyword">public</span> <span class="keyword">class</span> Solution {
+    <span class="keyword">public</span> boolean <span class="title">isSameTree</span>(TreeNode p, TreeNode q) {
+        <span class="keyword">if</span>(p==<span class="keyword">null</span>&amp;&amp;q==<span class="keyword">null</span>)
+            <span class="keyword">return</span> <span class="keyword">true</span>;
+        <span class="keyword">else</span> <span class="keyword">if</span>(p==<span class="keyword">null</span>||q==<span class="keyword">null</span>)
+            <span class="keyword">return</span> <span class="keyword">false</span>;
+        <span class="keyword">if</span>(p.val==q.val)
+            <span class="keyword">return</span> isSameTree(p.left,q.left)&amp;&amp;isSameTree(q.right, p.right);
+        <span class="keyword">else</span>
+            <span class="keyword">return</span> <span class="keyword">false</span>;
+    }
+}
+</code></pre>]]></content>
+    
+    
+      <category term="数据结构与算法" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/"/>
+    
+      <category term="数据结构与算法" scheme="https://github.com/DaMinger/DaMinger.github.io.git/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[LeetCode:Swap Nodes in Pairs]]></title>
+    <link href="https://github.com/DaMinger/DaMinger.github.io.git/2014/06/06/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/LeetCode/swap_nodes_in_pairs/"/>
+    <id>https://github.com/DaMinger/DaMinger.github.io.git/2014/06/06/数据结构与算法/LeetCode/swap_nodes_in_pairs/</id>
+    <published>2014-06-06T04:55:54.000Z</published>
+    <updated>2014-06-06T04:59:10.000Z</updated>
+    <content type="html"><![CDATA[<h4 id="题目">题目</h4>
+<pre><code>Given a linked <span class="type">list</span>, swap <span class="keyword">every</span> two adjacent nodes <span class="keyword">and</span> <span class="constant">return</span> <span class="keyword">its</span> head.
+
+For example,
+Given <span class="number">1</span>-&gt;<span class="number">2</span>-&gt;<span class="number">3</span>-&gt;<span class="number">4</span>, you should <span class="constant">return</span> <span class="keyword">the</span> <span class="type">list</span> <span class="keyword">as</span> <span class="number">2</span>-&gt;<span class="number">1</span>-&gt;<span class="number">4</span>-&gt;<span class="number">3.</span>
+
+Your algorithm should use only <span class="type">constant</span> <span class="constant">space</span>. You may <span class="keyword">not</span> modify <span class="keyword">the</span> values <span class="keyword">in</span> <span class="keyword">the</span> <span class="type">list</span>, only nodes itself can be changed.
+</code></pre><p>思路：递归遍历链表，每两个改变指针指向</p>
+<h4 id="解法">解法</h4>
+<pre><code><span class="javadoc">/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode(int x) {
+ *         val = x;
+ *         next = null;
+ *     }
+ * }
+ */</span>
+<span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Solution</span> {</span>
+    <span class="keyword">public</span> ListNode <span class="title">swapPairs</span>(ListNode head) {
+        <span class="keyword">if</span>(head == <span class="keyword">null</span>) <span class="keyword">return</span> <span class="keyword">null</span>;
+        <span class="keyword">if</span>(head.next == <span class="keyword">null</span>) <span class="keyword">return</span> head;
+        ListNode first = head;
+        ListNode second = head.next;
+        ListNode third = second.next;
+        second.next = first;
+        first.next = swapPairs(third);
+        <span class="keyword">return</span> second;
+    }
+}
+</code></pre>]]></content>
+    
+    
+      <category term="数据结构与算法" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/"/>
+    
+      <category term="数据结构与算法" scheme="https://github.com/DaMinger/DaMinger.github.io.git/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[LeetCode:Search Insert Position]]></title>
+    <link href="https://github.com/DaMinger/DaMinger.github.io.git/2014/06/06/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/LeetCode/search_insert_position/"/>
+    <id>https://github.com/DaMinger/DaMinger.github.io.git/2014/06/06/数据结构与算法/LeetCode/search_insert_position/</id>
+    <published>2014-06-06T04:49:56.000Z</published>
+    <updated>2014-06-06T04:54:17.000Z</updated>
+    <content type="html"><![CDATA[<h4 id="题目">题目</h4>
+<pre><code>Given a sorted array <span class="keyword">and</span> a target value, <span class="constant">return</span> <span class="keyword">the</span> index <span class="keyword">if</span> <span class="keyword">the</span> target <span class="keyword">is</span> found. If <span class="keyword">not</span>, <span class="constant">return</span> <span class="keyword">the</span> index <span class="keyword">where</span> <span class="keyword">it</span> would be <span class="keyword">if</span> <span class="keyword">it</span> were inserted <span class="keyword">in</span> order.
+
+You may assume no duplicates <span class="keyword">in</span> <span class="keyword">the</span> array.
+
+Here are few examples.
+[<span class="number">1</span>,<span class="number">3</span>,<span class="number">5</span>,<span class="number">6</span>], <span class="number">5</span> → <span class="number">2</span>
+[<span class="number">1</span>,<span class="number">3</span>,<span class="number">5</span>,<span class="number">6</span>], <span class="number">2</span> → <span class="number">1</span>
+[<span class="number">1</span>,<span class="number">3</span>,<span class="number">5</span>,<span class="number">6</span>], <span class="number">7</span> → <span class="number">4</span>
+[<span class="number">1</span>,<span class="number">3</span>,<span class="number">5</span>,<span class="number">6</span>], <span class="number">0</span> → <span class="number">0</span>
+</code></pre><p>思路：方法一是遍历去找，方法二是二分法</p>
+<h4 id="解法">解法</h4>
+<pre><code><span class="comment">//方法一</span>
+<span class="keyword">public</span> <span class="keyword">class</span> Solution {
+    <span class="keyword">public</span> <span class="keyword">int</span> <span class="title">searchInsert</span>(<span class="keyword">int</span>[] A, <span class="keyword">int</span> target) {
+
+        <span class="keyword">if</span>(A==<span class="keyword">null</span>) <span class="keyword">return</span> <span class="number">0</span>;
+
+        <span class="keyword">if</span>(target &lt;= A[<span class="number">0</span>]) <span class="keyword">return</span> <span class="number">0</span>;
+
+        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;A.length-<span class="number">1</span>; i++){
+            <span class="keyword">if</span>(target &gt; A[i] &amp;&amp; target &lt;= A[i+<span class="number">1</span>]){
+                <span class="keyword">return</span> i+<span class="number">1</span>;
+            }
+        }
+
+        <span class="keyword">return</span> A.length;
+    }
+}
+<span class="comment">//方法二</span>
+<span class="keyword">public</span> <span class="keyword">class</span> Solution {
+    <span class="keyword">public</span> <span class="keyword">int</span> <span class="title">searchInsert</span>(<span class="keyword">int</span>[] A, <span class="keyword">int</span> target) {
+        <span class="keyword">if</span>(A==<span class="keyword">null</span>||A.length==<span class="number">0</span>)
+            <span class="keyword">return</span> <span class="number">0</span>;
+
+        <span class="keyword">return</span> searchInsert(A,target,<span class="number">0</span>,A.length-<span class="number">1</span>);
+    }
+
+    <span class="keyword">public</span> <span class="keyword">int</span> <span class="title">searchInsert</span>(<span class="keyword">int</span>[] A, <span class="keyword">int</span> target, <span class="keyword">int</span> start, <span class="keyword">int</span> end){
+        <span class="keyword">int</span> mid=(start+end)/<span class="number">2</span>;
+
+        <span class="keyword">if</span>(target==A[mid]) 
+            <span class="keyword">return</span> mid;
+        <span class="keyword">else</span> <span class="keyword">if</span>(target&lt;A[mid]) 
+            <span class="keyword">return</span> start&lt;mid?searchInsert(A,target,start,mid-<span class="number">1</span>):start;
+        <span class="keyword">else</span> 
+            <span class="keyword">return</span> end&gt;mid?searchInsert(A,target,mid+<span class="number">1</span>,end):(end+<span class="number">1</span>);
+    }
+}
+</code></pre>]]></content>
+    
+    
+      <category term="数据结构与算法" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/"/>
+    
+      <category term="数据结构与算法" scheme="https://github.com/DaMinger/DaMinger.github.io.git/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/"/>
+    
+  </entry>
   
   <entry>
     <title><![CDATA[LeetCode:Search for a Range]]></title>
@@ -887,441 +1261,6 @@ The minimum depth <span class="keyword">is</span> <span class="keyword">the</spa
     <span class="keyword">if</span>(l2!=<span class="keyword">null</span>)
         cur.next = l2;
     <span class="keyword">return</span> dummy.next;
-}
-</code></pre>]]></content>
-    
-    
-      <category term="数据结构与算法" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/"/>
-    
-      <category term="数据结构与算法" scheme="https://github.com/DaMinger/DaMinger.github.io.git/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/"/>
-    
-  </entry>
-  
-  <entry>
-    <title><![CDATA[LeetCode：Merge Two Sorted Lists]]></title>
-    <link href="https://github.com/DaMinger/DaMinger.github.io.git/2014/06/04/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/LeetCode/merge_two_sorted_list/"/>
-    <id>https://github.com/DaMinger/DaMinger.github.io.git/2014/06/04/数据结构与算法/LeetCode/merge_two_sorted_list/</id>
-    <published>2014-06-04T05:16:11.000Z</published>
-    <updated>2014-06-04T05:22:06.000Z</updated>
-    <content type="html"><![CDATA[<h4 id="题目">题目</h4>
-<pre><code>Merge <span class="constant">two</span> sorted linked lists <span class="operator">and</span> <span class="constant">return</span> <span class="keyword">it</span> <span class="keyword">as</span> <span class="operator">a</span> <span class="built_in">new</span> list. The <span class="built_in">new</span> list should be made <span class="keyword">by</span> splicing together <span class="operator">the</span> nodes <span class="operator">of</span> <span class="operator">the</span> <span class="keyword">first</span> <span class="constant">two</span> lists.
-</code></pre><p>思路：分别比较两个链表的节点。</p>
-<h4 id="解法">解法</h4>
-<pre><code>/**
- * Definition <span class="keyword">for</span> singly-linked list.
- * <span class="keyword">public</span> <span class="keyword">class</span> ListNode {
- *     <span class="built_in">int</span> val;
- *     ListNode <span class="keyword">next</span>;
- *     ListNode(<span class="built_in">int</span> x) {
- *         val = x;
- *         <span class="keyword">next</span> = <span class="literal">null</span>;
- *     }
- * }
- */
-<span class="keyword">public</span> <span class="keyword">class</span> Solution {
-    <span class="keyword">public</span> ListNode mergeTwoLists(ListNode l1, ListNode l2) {
-
-        ListNode p1 = l1;
-        ListNode p2 = l2;
-
-        ListNode fakeHead = <span class="keyword">new</span> ListNode(<span class="number">0</span>);
-        ListNode p = fakeHead;
-
-        <span class="keyword">while</span>(p1 != <span class="literal">null</span> &amp;&amp; p2 != <span class="literal">null</span>){
-          <span class="keyword">if</span>(p1.val &lt;= p2.val){
-              p.<span class="keyword">next</span> = p1;
-              p1 = p1.<span class="keyword">next</span>;
-          }<span class="keyword">else</span>{
-              p.<span class="keyword">next</span> = p2;
-              p2 = p2.<span class="keyword">next</span>;
-          }
-
-          p = p.<span class="keyword">next</span>;
-        }
-
-        <span class="keyword">if</span>(p1 != <span class="literal">null</span>)
-            p.<span class="keyword">next</span> = p1;
-        <span class="keyword">if</span>(p2 != <span class="literal">null</span>)
-            p.<span class="keyword">next</span> = p2;
-
-        return fakeHead.<span class="keyword">next</span>;
-    }
-}
-</code></pre>]]></content>
-    
-    
-      <category term="数据结构与算法" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/"/>
-    
-      <category term="数据结构与算法" scheme="https://github.com/DaMinger/DaMinger.github.io.git/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/"/>
-    
-  </entry>
-  
-  <entry>
-    <title><![CDATA[LeetCode：Maximum Subarray]]></title>
-    <link href="https://github.com/DaMinger/DaMinger.github.io.git/2014/06/04/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/LeetCode/maximum_subarray/"/>
-    <id>https://github.com/DaMinger/DaMinger.github.io.git/2014/06/04/数据结构与算法/LeetCode/maximum_subarray/</id>
-    <published>2014-06-04T05:10:01.000Z</published>
-    <updated>2014-06-04T05:43:54.000Z</updated>
-    <content type="html"><![CDATA[<h4 id="题目">题目</h4>
-<pre><code>Find <span class="operator">the</span> contiguous subarray <span class="operator">within</span> <span class="operator">an</span> array (containing <span class="keyword">at</span> least <span class="constant">one</span> <span class="built_in">number</span>) which has <span class="operator">the</span> largest <span class="built_in">sum</span>.
-
-For example, given <span class="operator">the</span> array [−<span class="number">2</span>,<span class="number">1</span>,−<span class="number">3</span>,<span class="number">4</span>,−<span class="number">1</span>,<span class="number">2</span>,<span class="number">1</span>,−<span class="number">5</span>,<span class="number">4</span>],
-<span class="operator">the</span> contiguous subarray [<span class="number">4</span>,−<span class="number">1</span>,<span class="number">2</span>,<span class="number">1</span>] has <span class="operator">the</span> largest <span class="built_in">sum</span> = <span class="number">6.</span>
-</code></pre><p>思路：从头到尾遍历这个数组的时候，对于一个数组里的数字，它有几种选择呢？它只有两种选择： 1. 加入之前的SubArray， 2. 自己另起一个SubArray.如果之前SubArray的总体和大于0的话，我们可以认为其对后续数字是有贡献的。这种情况下我们选择加入之前的SubArray；如果之前SubArray的总体和为0或者小于0的话，我们可以认为其对后续数字是没有贡献，甚至是有害的（小于0时）。这种情况下我们只能选择以这个数字开始，另起一个SubArray.sum记录之前SubArray的和，max用来返回最大值，当sum的值大于max时，说明发现和更大的SubArray序列，此时更新max的值。</p>
-<h4 id="解法">解法</h4>
-<pre><code><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Solution</span> {</span>
-    <span class="keyword">public</span> <span class="keyword">int</span> maxSubArray(<span class="keyword">int</span>[] A) {
-        <span class="keyword">int</span> max = Integer.MIN_VALUE;
-        <span class="keyword">int</span> <span class="keyword">sum</span> = <span class="number">0</span>;
-        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;A.length; i++){
-            <span class="keyword">sum</span> = <span class="keyword">sum</span>&gt;<span class="number">0</span>? <span class="keyword">sum</span> + A[i]: A[i];
-            max = Math.max(<span class="keyword">sum</span>,max);
-        }
-        <span class="keyword">return</span> max;
-    }
-}
-</code></pre>]]></content>
-    
-    
-      <category term="数据结构与算法" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/"/>
-    
-      <category term="数据结构与算法" scheme="https://github.com/DaMinger/DaMinger.github.io.git/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/"/>
-    
-  </entry>
-  
-  <entry>
-    <title><![CDATA[LeetCode：Longest Substring Without Repeating Characters]]></title>
-    <link href="https://github.com/DaMinger/DaMinger.github.io.git/2014/06/04/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/LeetCode/longest_substring_without_repeating_characters/"/>
-    <id>https://github.com/DaMinger/DaMinger.github.io.git/2014/06/04/数据结构与算法/LeetCode/longest_substring_without_repeating_characters/</id>
-    <published>2014-06-04T05:01:10.000Z</published>
-    <updated>2014-06-04T05:46:03.000Z</updated>
-    <content type="html"><![CDATA[<h4 id="题目">题目</h4>
-<pre><code>Given a <span class="type">string</span>, find <span class="keyword">the</span> <span class="property">length</span> <span class="keyword">of</span> <span class="keyword">the</span> longest substring <span class="keyword">without</span> repeating <span class="property">characters</span>. 
-For example, <span class="keyword">the</span> longest substring <span class="keyword">without</span> repeating letters <span class="keyword">for</span> <span class="string">"abcabcbb"</span> <span class="keyword">is</span> <span class="string">"abc"</span>, which <span class="keyword">the</span> <span class="property">length</span> <span class="keyword">is</span> <span class="number">3.</span> 
-For <span class="string">"bbbbb"</span> <span class="keyword">the</span> longest substring <span class="keyword">is</span> <span class="string">"b"</span>, <span class="keyword">with</span> <span class="keyword">the</span> <span class="property">length</span> <span class="keyword">of</span> <span class="number">1.</span>
-</code></pre><p>思路：本想用hashmap,但是超时了，参考 <a href="http://blog.csdn.net/linhuanmars/article/details/19949159" target="_blank">http://blog.csdn.net/linhuanmars/article/details/19949159</a>     左右窗口滑动的想法，很不错。</p>
-<p>基本思路是维护一个窗口，每次关注窗口中的字符串，在每次判断中，左窗口和右窗口选择其一向前移动。同样是维护一个HashSet, 正常情况下移动右窗口，如果没有出现重复则继续移动右窗口，如果发现重复字符，则说明当前窗口中的串已经不满足要求，继续移动有窗口不可能得到更好的结果，此时移动左窗口，直到不再有重复字符为止，中间跳过的这些串中不会有更好的结果，因为他们不是重复就是更短。因为左窗口和右窗口都只向前，所以两个窗口都对每个元素访问不超过一遍，因此时间复杂度为O(2*n)=O(n),是线性算法。空间复杂度为HashSet的size,也是O(n).</p>
-<h4 id="解法">解法</h4>
-<pre><code><span class="comment">//超时</span>
-<span class="keyword">public</span> <span class="keyword">class</span> Solution {
-  <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">lengthOfLongestSubstring</span>(String s) {
-
-    <span class="keyword">char</span>[] arr = s.toCharArray();
-    <span class="keyword">int</span> pre = <span class="number">0</span>;
-
-    HashMap&lt;Character, Integer&gt; map = <span class="keyword">new</span> HashMap&lt;Character, Integer&gt;();
-
-    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; arr.length; i++) {
-        <span class="keyword">if</span> (!map.containsKey(arr[i])) {
-            map.put(arr[i], i);
-        } <span class="keyword">else</span> {
-            pre = pre &gt; map.size() ? pre : map.size();
-            i = map.<span class="keyword">get</span>(arr[i]);
-            map.clear();
-        }
-    }
-
-    <span class="keyword">return</span> Math.max(pre, map.size());
-}
-}
-<span class="comment"><span class="xmlDocTag">///</span>左右窗口滑动 </span>
-<span class="keyword">public</span> <span class="keyword">int</span> <span class="title">lengthOfLongestSubstring</span>(String s) {
-    <span class="keyword">if</span>(s==<span class="keyword">null</span> &amp;&amp; s.length()==<span class="number">0</span>)
-        <span class="keyword">return</span> <span class="number">0</span>;
-    HashSet&lt;Character&gt; <span class="keyword">set</span> = <span class="keyword">new</span> HashSet&lt;Character&gt;();
-    <span class="keyword">int</span> max = <span class="number">0</span>;
-    <span class="keyword">int</span> walker = <span class="number">0</span>;
-    <span class="keyword">int</span> runner = <span class="number">0</span>;
-    <span class="keyword">while</span>(runner&lt;s.length())
-    {
-        <span class="keyword">if</span>(<span class="keyword">set</span>.contains(s.charAt(runner)))
-        {
-            <span class="keyword">if</span>(max&lt;runner-walker)
-            {
-                max = runner-walker;
-            }
-            <span class="keyword">while</span>(s.charAt(walker)!=s.charAt(runner))
-            {
-                <span class="keyword">set</span>.remove(s.charAt(walker));
-                walker++;
-            }
-            walker++;
-        }
-        <span class="keyword">else</span>
-        {
-            <span class="keyword">set</span>.add(s.charAt(runner));
-        }
-        runner++;
-    }
-    max = Math.max(max,runner-walker);
-    <span class="keyword">return</span> max;
-}
-</code></pre>]]></content>
-    
-    
-      <category term="数据结构与算法" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/"/>
-    
-      <category term="数据结构与算法" scheme="https://github.com/DaMinger/DaMinger.github.io.git/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/"/>
-    
-  </entry>
-  
-  <entry>
-    <title><![CDATA[LeetCode：Restore IP Addresses]]></title>
-    <link href="https://github.com/DaMinger/DaMinger.github.io.git/2014/06/04/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/LeetCode/restore_ip_addresses/"/>
-    <id>https://github.com/DaMinger/DaMinger.github.io.git/2014/06/04/数据结构与算法/LeetCode/restore_ip_addresses/</id>
-    <published>2014-06-04T04:50:56.000Z</published>
-    <updated>2014-06-04T04:57:11.000Z</updated>
-    <content type="html"><![CDATA[<h4 id="题目">题目</h4>
-<pre><code>Given a <span class="type">string</span> containing only digits, restore <span class="keyword">it</span> <span class="keyword">by</span> <span class="keyword">returning</span> all possible valid IP address combinations.
-
-For example:
-Given <span class="string">"25525511135"</span>,
-<span class="command">
-return</span> [<span class="string">"255.255.11.135"</span>, <span class="string">"255.255.111.35"</span>]. (Order <span class="keyword">does</span> <span class="keyword">not</span> matter)
-</code></pre><p>思路：dfs思路解决  每一段判断时考虑0作为首位的情况</p>
-<h4 id="解法">解法</h4>
-<pre><code><span class="keyword">public</span> <span class="keyword">class</span> Solution {
-    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span>(String[] args) {
-        String s = <span class="string">"12213452"</span>;
-        ArrayList&lt;String&gt; list = (<span class="keyword">new</span> Solution()).restoreIpAddresses(s);
-        System.<span class="keyword">out</span>.println(list);
-    }
-    <span class="keyword">public</span> ArrayList&lt;String&gt; <span class="title">restoreIpAddresses</span>(String s) {
-        ArrayList&lt;String&gt; list = <span class="keyword">new</span> ArrayList&lt;String&gt;();
-        <span class="keyword">if</span> (s == <span class="keyword">null</span> || s.length() &gt; <span class="number">12</span> || s.length() &lt; <span class="number">4</span>) <span class="keyword">return</span> list;
-        restore(s, <span class="number">1</span>, <span class="string">""</span>, list);
-        <span class="keyword">return</span> list;
-    }
-    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title">restore</span>(String s, <span class="keyword">int</span> num, String ip, ArrayList&lt;String&gt; list) {
-        <span class="keyword">if</span> (s == <span class="keyword">null</span> || s.length() == <span class="number">0</span>) <span class="keyword">return</span>;
-        <span class="keyword">if</span> (num == <span class="number">4</span> &amp;&amp; valid(s)) {
-            ip += s;
-            list.add(ip);
-            <span class="keyword">return</span>;
-        }
-        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= <span class="number">3</span>; i++) {
-            <span class="keyword">if</span> (i &gt; s.length()) <span class="keyword">break</span>;
-            String pre = s.substring(<span class="number">0</span>, i);
-            <span class="keyword">if</span> (valid(pre)) {
-                String post = s.substring(i);
-                restore(post, num + <span class="number">1</span>, ip + pre + <span class="string">"."</span>, list);
-            }
-        }
-    }
-
-    <span class="keyword">public</span> boolean <span class="title">valid</span>(String s) {
-        <span class="keyword">if</span> (s == <span class="keyword">null</span> || s.length() == <span class="number">0</span>) <span class="keyword">return</span> <span class="keyword">false</span>;
-        <span class="keyword">if</span> (s.length() &gt; <span class="number">1</span> &amp;&amp; s.charAt(<span class="number">0</span>) == <span class="string">'0'</span>) <span class="keyword">return</span> <span class="keyword">false</span>;
-        <span class="keyword">int</span> v = Integer.parseInt(s);
-        <span class="keyword">if</span> (v &gt;= <span class="number">0</span> &amp;&amp; v &lt;= <span class="number">255</span>) <span class="keyword">return</span> <span class="keyword">true</span>;
-        <span class="keyword">return</span> <span class="keyword">false</span>;
-    }
-}
-</code></pre>]]></content>
-    
-    
-      <category term="数据结构与算法" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/"/>
-    
-      <category term="数据结构与算法" scheme="https://github.com/DaMinger/DaMinger.github.io.git/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/"/>
-    
-  </entry>
-  
-  <entry>
-    <title><![CDATA[LeetCode:Flatten Binary Tree to Linked List]]></title>
-    <link href="https://github.com/DaMinger/DaMinger.github.io.git/2014/06/04/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/LeetCode/flatten_binary_tree_to_linked_list/"/>
-    <id>https://github.com/DaMinger/DaMinger.github.io.git/2014/06/04/数据结构与算法/LeetCode/flatten_binary_tree_to_linked_list/</id>
-    <published>2014-06-04T04:43:28.000Z</published>
-    <updated>2014-06-04T04:48:09.000Z</updated>
-    <content type="html"><![CDATA[<h4 id="题目">题目</h4>
-<pre><code>Given a binary tree, flatten it to a linked list in-place.
-
-For example,
-Given
-
-         1
-        / <span class="command">\
-</span>       2   5
-      / <span class="command">\ </span>  <span class="command">\
-</span>     3   4   6
-The flattened tree should look like:
-   1
-    <span class="command">\
-</span>     2
-      <span class="command">\
-</span>       3
-        <span class="command">\
-</span>         4
-          <span class="command">\
-</span>           5
-            <span class="command">\
-</span>             6
-</code></pre><p>思路：遍历左结点，当它的右节点不为空，将右节点压入栈</p>
-<h4 id="解法">解法</h4>
-<pre><code>/**
- * Definition <span class="keyword">for</span> binary tree
- * <span class="keyword">public</span> <span class="keyword">class</span> TreeNode {
- *     <span class="built_in">int</span> val;
- *     TreeNode <span class="built_in">left</span>;
- *     TreeNode <span class="built_in">right</span>;
- *     TreeNode(<span class="built_in">int</span> x) { val = x; }
- * }
- */
-<span class="keyword">public</span> <span class="keyword">class</span> Solution {
-    <span class="keyword">public</span> void flatten(TreeNode root) {
-        Stack&lt;TreeNode&gt; stack = <span class="keyword">new</span> Stack&lt;TreeNode&gt;();
-        TreeNode p = root;
-
-        <span class="keyword">while</span>(p != <span class="literal">null</span> || !stack.<span class="literal">empty</span>()){
-
-            <span class="keyword">if</span>(p.<span class="built_in">right</span> != <span class="literal">null</span>){
-                stack.push(p.<span class="built_in">right</span>);
-            }
-
-            <span class="keyword">if</span>(p.<span class="built_in">left</span> != <span class="literal">null</span>){
-                p.<span class="built_in">right</span> = p.<span class="built_in">left</span>;
-                p.<span class="built_in">left</span> = <span class="literal">null</span>;
-            }<span class="keyword">else</span> <span class="keyword">if</span>(!stack.<span class="literal">empty</span>()){
-                TreeNode temp = stack.pop();
-                p.<span class="built_in">right</span>=temp;
-            }
-
-            p = p.<span class="built_in">right</span>;
-        }
-    }
-}
-</code></pre>]]></content>
-    
-    
-      <category term="数据结构与算法" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/"/>
-    
-      <category term="数据结构与算法" scheme="https://github.com/DaMinger/DaMinger.github.io.git/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/"/>
-    
-  </entry>
-  
-  <entry>
-    <title><![CDATA[LeetCode:Convert Sorted List to Binary Search Tree]]></title>
-    <link href="https://github.com/DaMinger/DaMinger.github.io.git/2014/06/03/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/LeetCode/convert_sorted_list_to_binary_search_tree/"/>
-    <id>https://github.com/DaMinger/DaMinger.github.io.git/2014/06/03/数据结构与算法/LeetCode/convert_sorted_list_to_binary_search_tree/</id>
-    <published>2014-06-03T05:43:43.000Z</published>
-    <updated>2014-06-03T05:56:09.000Z</updated>
-    <content type="html"><![CDATA[<h4 id="题目">题目</h4>
-<pre><code>Given <span class="operator">a</span> singly linked list where elements are sorted <span class="operator">in</span> <span class="keyword">ascending</span> order, <span class="built_in">convert</span> <span class="keyword">it</span> <span class="built_in">to</span> <span class="operator">a</span> height balanced BST
-</code></pre><p>思路：二分+递归  比有序数组转二叉树麻烦点，因为数组可以在O(1)时间内找到任意节点，链表做不到，创建个bottom-up节点，作为每次递归的父节点，这样可以在创建二叉树的节点同时找到对应的节点。</p>
-<h4 id="解法">解法</h4>
-<pre><code><span class="comment">//  Definition for singly-linked list.</span>
-class ListNode {
-    <span class="keyword">int</span> val;
-    ListNode next;
-
-    ListNode(<span class="keyword">int</span> x) {
-        val = x;
-        next = <span class="keyword">null</span>;
-    }
-}
-
-<span class="comment">// Definition for binary tree</span>
-class TreeNode {
-    <span class="keyword">int</span> val;
-    TreeNode left;
-    TreeNode right;
-
-    TreeNode(<span class="keyword">int</span> x) {
-        val = x;
-    }
-}
-
-<span class="keyword">public</span> <span class="keyword">class</span> Solution {
-    <span class="keyword">static</span> ListNode h;
-
-    <span class="keyword">public</span> TreeNode <span class="title">sortedListToBST</span>(ListNode head) {
-        <span class="keyword">if</span> (head == <span class="keyword">null</span>)
-            <span class="keyword">return</span> <span class="keyword">null</span>;
-
-        h = head;
-        <span class="keyword">int</span> len = getLength(head);
-        <span class="keyword">return</span> sortedListToBST(<span class="number">0</span>, len - <span class="number">1</span>);
-    }
-
-    <span class="comment">// get list length</span>
-    <span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getLength</span>(ListNode head) {
-        <span class="keyword">int</span> len = <span class="number">0</span>;
-        ListNode p = head;
-
-        <span class="keyword">while</span> (p != <span class="keyword">null</span>) {
-            len++;
-            p = p.next;
-        }
-        <span class="keyword">return</span> len;
-    }
-
-    <span class="comment">// build tree bottom-up</span>
-    <span class="keyword">public</span> TreeNode <span class="title">sortedListToBST</span>(<span class="keyword">int</span> start, <span class="keyword">int</span> end) {
-        <span class="keyword">if</span> (start &gt; end)
-            <span class="keyword">return</span> <span class="keyword">null</span>;
-
-        <span class="comment">// mid</span>
-        <span class="keyword">int</span> mid = (start + end) / <span class="number">2</span>;
-
-        TreeNode left = sortedListToBST(start, mid - <span class="number">1</span>);
-        TreeNode root = <span class="keyword">new</span> TreeNode(h.val);
-        h = h.next;
-        TreeNode right = sortedListToBST(mid + <span class="number">1</span>, end);
-
-        root.left = left;
-        root.right = right;
-
-        <span class="keyword">return</span> root;
-    }
-}
-</code></pre>]]></content>
-    
-    
-      <category term="数据结构与算法" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/"/>
-    
-      <category term="数据结构与算法" scheme="https://github.com/DaMinger/DaMinger.github.io.git/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/"/>
-    
-  </entry>
-  
-  <entry>
-    <title><![CDATA[LeetCode:Convert Sorted Array to Binary Search Tree]]></title>
-    <link href="https://github.com/DaMinger/DaMinger.github.io.git/2014/06/03/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/LeetCode/convert_sorted_array_to_binary_search_tree/"/>
-    <id>https://github.com/DaMinger/DaMinger.github.io.git/2014/06/03/数据结构与算法/LeetCode/convert_sorted_array_to_binary_search_tree/</id>
-    <published>2014-06-03T05:39:33.000Z</published>
-    <updated>2014-06-03T05:42:52.000Z</updated>
-    <content type="html"><![CDATA[<h4 id="题目">题目</h4>
-<pre><code>Given <span class="operator">an</span> array where elements are sorted <span class="operator">in</span> <span class="keyword">ascending</span> order, <span class="built_in">convert</span> <span class="keyword">it</span> <span class="built_in">to</span> <span class="operator">a</span> height balanced BST.
-</code></pre><p>思路：二分+递归解决</p>
-<h4 id="解法">解法</h4>
-<pre><code><span class="comment">// Definition for binary tree</span>
-class TreeNode {
-    <span class="keyword">int</span> val;
-    TreeNode left;
-    TreeNode right;
-
-    TreeNode(<span class="keyword">int</span> x) {
-        val = x;
-    }
-}
-
-<span class="keyword">public</span> <span class="keyword">class</span> Solution {
-    <span class="keyword">public</span> TreeNode <span class="title">sortedArrayToBST</span>(<span class="keyword">int</span>[] num) {
-        <span class="keyword">if</span> (num.length == <span class="number">0</span>)
-            <span class="keyword">return</span> <span class="keyword">null</span>;
-
-        <span class="keyword">return</span> sortedArrayToBST(num, <span class="number">0</span>, num.length - <span class="number">1</span>);
-    }
-
-    <span class="keyword">public</span> TreeNode <span class="title">sortedArrayToBST</span>(<span class="keyword">int</span>[] num, <span class="keyword">int</span> start, <span class="keyword">int</span> end) {
-        <span class="keyword">if</span> (start &gt; end)
-            <span class="keyword">return</span> <span class="keyword">null</span>;
-
-        <span class="keyword">int</span> mid = (start + end) / <span class="number">2</span>;
-        TreeNode root = <span class="keyword">new</span> TreeNode(num[mid]);
-        root.left = sortedArrayToBST(num, start, mid - <span class="number">1</span>);
-        root.right = sortedArrayToBST(num, mid + <span class="number">1</span>, end);
-
-        <span class="keyword">return</span> root;
-    }
 }
 </code></pre>]]></content>
     
