@@ -4,15 +4,20 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>LeetCode:Search for a Range | DaMinger&#39;s blog</title>
+    <title>剑指offer:在一个二维数组中判断给定整数是否存在，要求在O(n)内实现 | DaMinger&#39;s blog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="DaMinger">
     
     <meta name="description" content="题目
-Given a sorted array of integers, find the starting and ending position of a given target value.
+在一个二维数组中，每一行元素从左到右递增，从上到下递增，现输入一个整数，
+判断数组中是否存在该整数，要求时间复杂度为O(n)
+思路：可以数组分为三个部分，数组右上角，左边，下面，数组如下
 
-Your algorithm&#39;s runtime complexity must be in th">
+    1  2  8  9
+    2  4  9  12
+    4  7  10 13
+    6">
     
     
     
@@ -74,15 +79,15 @@ Your algorithm&#39;s runtime complexity must be in th">
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2014/06/05/数据结构与算法/LeetCode/search_for_a_range/" title="LeetCode:Search for a Range" itemprop="url">LeetCode:Search for a Range</a>
+      <a href="/2014/06/08/数据结构与算法/剑指offer/剑指offer_01/" title="剑指offer:在一个二维数组中判断给定整数是否存在，要求在O(n)内实现" itemprop="url">剑指offer:在一个二维数组中判断给定整数是否存在，要求在O(n)内实现</a>
   </h1>
   <p class="article-author">By
     
       <a href="https://github.com/DaMinger/DaMinger.github.io.git" title="DaMinger">DaMinger</a>
     </p>
   <p class="article-time">
-    <time datetime="2014-06-05T02:13:08.000Z" itemprop="datePublished">6月 5 2014</time>
-    更新日期:<time datetime="2014-06-05T02:21:34.000Z" itemprop="dateModified">6月 5 2014</time>
+    <time datetime="2014-06-08T02:12:52.000Z" itemprop="datePublished">6月 8 2014</time>
+    更新日期:<time datetime="2014-06-08T02:35:05.000Z" itemprop="dateModified">6月 8 2014</time>
     
   </p>
 </header>
@@ -95,80 +100,67 @@ Your algorithm&#39;s runtime complexity must be in th">
 		</div>
 		
 		<h4 id="题目">题目</h4>
-<pre><code>Given a sorted array <span class="keyword">of</span> integers, find <span class="keyword">the</span> starting <span class="keyword">and</span> ending position <span class="keyword">of</span> a <span class="keyword">given</span> target value.
+<pre><code>在一个二维数组中，每一行元素从左到右递增，从上到下递增，现输入一个整数，
+判断数组中是否存在该整数，要求时间复杂度为<span class="keyword">O</span>(n)
+</code></pre><p>思路：可以数组分为三个部分，数组右上角，左边，下面，数组如下</p>
+<pre><code>
+    1  2  8  9
+    2  4  9  12
+    4  7  10 13
+    6  8  11 15
+</code></pre>
 
-Your algorithm's runtime complexity must be <span class="keyword">in</span> <span class="keyword">the</span> order <span class="keyword">of</span> O(<span class="command">log</span> n).
+<p>查找元需为7，数组右上角元素为9，因为7&lt;9,则在9左边的三列中寻找7元素，将col减1</p>
+<pre><code>
+    1  2  8
+    2  4  9
+    4  7  10
+    6  8  11
+</code></pre>
 
-If <span class="keyword">the</span> target <span class="keyword">is</span> <span class="keyword">not</span> found <span class="keyword">in</span> <span class="keyword">the</span> array, <span class="constant">return</span> [-<span class="number">1</span>, -<span class="number">1</span>].
+<p>再取数组右上角元素8，7&lt;8,则在8左边的两列中寻找7元素，将col减1</p>
+<pre><code>    
+    1  2
+    2  4
+    4  7
+    6  8
+</code></pre>
 
-For example,
-Given [<span class="number">5</span>, <span class="number">7</span>, <span class="number">7</span>, <span class="number">8</span>, <span class="number">8</span>, <span class="number">10</span>] <span class="keyword">and</span> target value <span class="number">8</span>,
-<span class="command">return</span> [<span class="number">3</span>, <span class="number">4</span>].
-</code></pre><p>思路：就是先用二分查找找到其中一个target，然后再往左右找到target的边缘。找边缘的方法跟二分查找仍然是一样的，只是切半的条件变成相等，或者不等（往左边找则是小于，往右边找则是大于）。这样下来总共进行了三次二分查找，所以算法的时间复杂度仍是O(logn)，空间复杂度是O(1)。</p>
+<p>再取数组右上角元素2，7&gt;2,则在2下边三行中寻找元素7</p>
+<pre><code>    
+    2  4 
+    4  7
+    6  8
+</code></pre>
+
+<p>再取数组的右上角元素4，7&gt;4，则在4下边2行中寻找</p>
+<pre><code>        
+    4  7
+    6  8
+</code></pre>    
+
+<p>再取数组的右上角元素7，7==4,返回，查找成功</p>
 <h4 id="解法">解法</h4>
-<pre><code><span class="keyword">public</span> <span class="keyword">int</span>[] <span class="title">searchRange</span>(<span class="keyword">int</span>[] A, <span class="keyword">int</span> target) {
-    <span class="keyword">int</span>[] res = <span class="keyword">new</span> <span class="keyword">int</span>[<span class="number">2</span>];
-    res[<span class="number">0</span>] = -<span class="number">1</span>;
-    res[<span class="number">1</span>] = -<span class="number">1</span>;
-    <span class="keyword">if</span>(A==<span class="keyword">null</span> || A.length==<span class="number">0</span>)
+<pre><code><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">getPos</span>(<span class="keyword">int</span> [][]a, <span class="keyword">int</span> key)
     {
-        <span class="keyword">return</span> res;
+        <span class="keyword">int</span> col = a[<span class="number">0</span>].length - <span class="number">1</span>;
+        <span class="keyword">int</span> row = <span class="number">0</span>;
+        <span class="keyword">while</span>(a[row][col] != key)
+        {
+            <span class="keyword">if</span>(a[row][col] &gt; key)
+            {
+                --col;
+            }
+            <span class="keyword">else</span>
+            {
+                ++row;
+            }
+        }
+        <span class="keyword">if</span>(a[row][col] == key)
+            <span class="keyword">return</span> <span class="keyword">true</span>;
+        <span class="keyword">else</span> 
+            <span class="keyword">return</span> <span class="keyword">false</span>;
     }
-    <span class="keyword">int</span> l=<span class="number">0</span>;
-    <span class="keyword">int</span> r=A.length-<span class="number">1</span>;
-    <span class="keyword">int</span> m=(l+r)/<span class="number">2</span>;
-    <span class="keyword">while</span>(l&lt;=r)
-    {
-        m=(l+r)/<span class="number">2</span>;
-        <span class="keyword">if</span>(A[m]==target)
-        {
-            res[<span class="number">0</span>]=m;
-            res[<span class="number">1</span>]=m;
-            <span class="keyword">break</span>;
-        }
-        <span class="keyword">else</span> <span class="keyword">if</span>(A[m]&gt;target)
-        {
-            r = m-<span class="number">1</span>;
-        }
-        <span class="keyword">else</span>
-        {
-            l = m+<span class="number">1</span>;
-        }
-    }
-    <span class="keyword">if</span>(A[m]!=target)
-        <span class="keyword">return</span> res;
-    <span class="keyword">int</span> newL = m;
-    <span class="keyword">int</span> newR = A.length-<span class="number">1</span>;
-    <span class="keyword">while</span>(newL&lt;=newR)
-    {
-        <span class="keyword">int</span> newM=(newL+newR)/<span class="number">2</span>;
-        <span class="keyword">if</span>(A[newM]==target)
-        {
-            newL = newM+<span class="number">1</span>;
-        }
-        <span class="keyword">else</span>
-        {
-            newR = newM-<span class="number">1</span>;
-        }            
-    }
-    res[<span class="number">1</span>]=newR;
-    newL = <span class="number">0</span>;
-    newR = m;
-    <span class="keyword">while</span>(newL&lt;=newR)
-    {
-        <span class="keyword">int</span> newM=(newL+newR)/<span class="number">2</span>;
-        <span class="keyword">if</span>(A[newM]==target)
-        {
-            newR = newM-<span class="number">1</span>;
-        }
-        <span class="keyword">else</span>
-        {
-            newL = newM+<span class="number">1</span>;
-        }            
-    }
-    res[<span class="number">0</span>]=newL;        
-    <span class="keyword">return</span> res;
-}
 </code></pre>  
 	</div>
 		<footer class="article-footer clearfix">
@@ -188,7 +180,7 @@ Given [<span class="number">5</span>, <span class="number">7</span>, <span class
 
 <div class="article-share" id="share">
 
-  <div data-url="https://github.com/DaMinger/DaMinger.github.io.git/2014/06/05/数据结构与算法/LeetCode/search_for_a_range/" data-title="LeetCode:Search for a Range | DaMinger&#39;s blog" data-tsina="null" class="share clearfix">
+  <div data-url="https://github.com/DaMinger/DaMinger.github.io.git/2014/06/08/数据结构与算法/剑指offer/剑指offer_01/" data-title="剑指offer:在一个二维数组中判断给定整数是否存在，要求在O(n)内实现 | DaMinger&#39;s blog" data-tsina="null" class="share clearfix">
   </div>
 
 </div>
@@ -197,19 +189,11 @@ Given [<span class="number">5</span>, <span class="number">7</span>, <span class
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
- <a href="/2014/06/06/数据结构与算法/LeetCode/search_insert_position/" title="LeetCode:Search Insert Position">
-  <strong>PREVIOUS:</strong><br/>
-  <span>
-  LeetCode:Search Insert Position</span>
-</a>
-</div>
-
 
 <div class="next">
-<a href="/2014/06/05/数据结构与算法/LeetCode/search_a_2d_matrix/"  title="LeetCode:Search a 2D Matrix">
+<a href="/2014/06/06/数据结构与算法/LeetCode/word_ladder_i/"  title="LeetCode:Word Ladder I">
  <strong>NEXT:</strong><br/> 
- <span>LeetCode:Search a 2D Matrix
+ <span>LeetCode:Word Ladder I
 </span>
 </a>
 </div>
