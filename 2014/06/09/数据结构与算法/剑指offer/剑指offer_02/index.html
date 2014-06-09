@@ -4,16 +4,16 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>LeetCode:LRU Cache | DaMinger&#39;s blog</title>
+    <title>剑指offer:编写一个方法，将字符串的空格全部替换为“%20” | DaMinger&#39;s blog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="DaMinger">
     
     <meta name="description" content="题目
-LRU Cache
-Design and implement a data structure for Least Recently Used (LRU) cache. It should support the following operations: get and set.
-
-get(">
+编写一个方法，将字符串的空格全部替换为“%20”。
+假定该字符串尾部有足够的空间存放新增字符，并且知道字符串的“真实”长度。
+（注：用JAVA实现的话，请使用字符数组实现，以便直接在数组上操作）
+思路：从尾部扫描，第一次扫描先数出字符串中有多少空格，算出最终的字符串有多长，第二次扫描，遇到空格">
     
     
     
@@ -75,15 +75,15 @@ get(">
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2014/05/23/数据结构与算法/LeetCode/lrucache/" title="LeetCode:LRU Cache" itemprop="url">LeetCode:LRU Cache</a>
+      <a href="/2014/06/09/数据结构与算法/剑指offer/剑指offer_02/" title="剑指offer:编写一个方法，将字符串的空格全部替换为“%20”" itemprop="url">剑指offer:编写一个方法，将字符串的空格全部替换为“%20”</a>
   </h1>
   <p class="article-author">By
     
       <a href="https://github.com/DaMinger/DaMinger.github.io.git" title="DaMinger">DaMinger</a>
     </p>
   <p class="article-time">
-    <time datetime="2014-05-23T12:24:58.000Z" itemprop="datePublished">5月 23 2014</time>
-    更新日期:<time datetime="2014-05-23T13:03:41.000Z" itemprop="dateModified">5月 23 2014</time>
+    <time datetime="2014-06-09T12:36:07.000Z" itemprop="datePublished">6月 9 2014</time>
+    更新日期:<time datetime="2014-06-09T12:44:35.000Z" itemprop="dateModified">6月 9 2014</time>
     
   </p>
 </header>
@@ -96,103 +96,35 @@ get(">
 		</div>
 		
 		<h4 id="题目">题目</h4>
-<pre><code>LRU Cache
-Design <span class="operator">and</span> implement <span class="operator">a</span> data structure <span class="keyword">for</span> Least Recently Used (LRU) cache. It should support <span class="operator">the</span> following operations: <span class="built_in">get</span> <span class="operator">and</span> <span class="built_in">set</span>.
-
-<span class="built_in">get</span>(key) - Get <span class="operator">the</span> <span class="built_in">value</span> (will always be positive) <span class="operator">of</span> <span class="operator">the</span> key <span class="keyword">if</span> <span class="operator">the</span> key exists <span class="operator">in</span> <span class="operator">the</span> cache, otherwise <span class="constant">return</span> -<span class="number">1.</span>
-<span class="built_in">set</span>(key, <span class="built_in">value</span>) - Set <span class="operator">or</span> insert <span class="operator">the</span> <span class="built_in">value</span> <span class="keyword">if</span> <span class="operator">the</span> key is <span class="operator">not</span> already present. When <span class="operator">the</span> cache reached its capacity, 
-                  <span class="keyword">it</span> should invalidate <span class="operator">the</span> least recently used <span class="keyword">item</span> <span class="keyword">before</span> inserting <span class="operator">a</span> <span class="built_in">new</span> <span class="keyword">item</span>.
-</code></pre><p>思路：双向链表+hashmap 没有超出容量之前，新节点放在头部，有重复的话，把该节点移到头结点，超出容量的话，移除尾节点<br><img src="/img/数据结构与算法/1.png" alt="双向链表"></p>
+<pre><code>编写一个方法，将字符串的空格全部替换为“<span class="variable">%20</span>”。
+假定该字符串尾部有足够的空间存放新增字符，并且知道字符串的“真实”长度。
+（注：用JAVA实现的话，请使用字符数组实现，以便直接在数组上操作）
+</code></pre><p>思路：从尾部扫描，第一次扫描先数出字符串中有多少空格，算出最终的字符串有多长，第二次扫描，遇到空格则将%20复制到下一个位置，如不是空格，就复制原先的字符</p>
 <h4 id="解法">解法</h4>
-<pre><code>import java.util.HashMap;
-
-<span class="comment">//双链表＋HashMap</span>
-class Node{
-    Node prev;
-    Node next;
-    <span class="keyword">int</span> <span class="keyword">value</span>;
-    <span class="keyword">int</span> key;
-    Node(<span class="keyword">int</span> key,<span class="keyword">int</span> <span class="keyword">value</span>){
-        <span class="keyword">this</span>.<span class="keyword">value</span>=<span class="keyword">value</span>;
-        <span class="keyword">this</span>.key=key;
-    }
-}
-
-<span class="keyword">public</span> <span class="keyword">class</span> LRUCache {
-    <span class="keyword">private</span> <span class="keyword">int</span>  capacity;
-    <span class="keyword">private</span> <span class="keyword">int</span> len;
-    <span class="keyword">private</span> Node head;
-    <span class="keyword">private</span> Node end;
-    <span class="keyword">private</span> HashMap&lt;Integer, Node&gt; map =<span class="keyword">new</span> HashMap&lt;Integer, Node&gt;();
-    <span class="keyword">public</span> <span class="title">LRUCache</span>(<span class="keyword">int</span> capacity) {
-        <span class="keyword">this</span>.capacity=capacity;
-        len=<span class="number">0</span>;
-    }
-    <span class="keyword">public</span> <span class="keyword">int</span> <span class="title">get</span>(<span class="keyword">int</span> key) {
-        <span class="keyword">if</span>(map.containsKey(key)){
-            Node last=map.<span class="keyword">get</span>(key);
-            removeNode(last);
-            setHead(last);
-            <span class="keyword">return</span> last.<span class="keyword">value</span>;
-        }<span class="keyword">else</span>{
-            <span class="keyword">return</span> -<span class="number">1</span>;
+<pre><code><span class="keyword">public</span>  <span class="keyword">void</span> replaceSpace(<span class="keyword">char</span>[]<span class="keyword">str</span>，<span class="keyword">int</span> length){
+        <span class="keyword">if</span>(<span class="keyword">str</span>==<span class="keyword">null</span>||<span class="keyword">str</span>.length==<span class="number">0</span>)
+            <span class="keyword">return</span>;
+        <span class="keyword">int</span> spaceCount=<span class="number">0</span>,i,newlength;
+        <span class="keyword">for</span>(i=<span class="number">0</span>;i&lt;length;i++){
+            <span class="keyword">if</span>(<span class="keyword">str</span>[i]==<span class="string">' '</span>){
+                spaceCount++;
+            }
         }
-    }
-    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title">removeNode</span>(Node node){
-        Node cur=node;
-        Node pre=cur.prev;
-        Node post = cur.next;
-        <span class="keyword">if</span>(pre !=<span class="keyword">null</span>){
-            pre.next=post;
-        }<span class="keyword">else</span>{
-            <span class="comment">//前驱节点为空</span>
-            head =post;
-        }
-        <span class="keyword">if</span>(post !=<span class="keyword">null</span>){
-            post.prev=pre;
-        }<span class="keyword">else</span>{
-            <span class="comment">//后驱节点为空</span>
-            end =pre;
-        }
-    }
-    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setHead</span>(Node node){
-        node.next=head;
-        node.prev=<span class="keyword">null</span>;
-        <span class="keyword">if</span>(head!=<span class="keyword">null</span>){
-            head.prev=node;
-        }
-        head=node;
-        <span class="keyword">if</span>(end==<span class="keyword">null</span>){
-            end=node;
-        }
-    }
-    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title">set</span>(<span class="keyword">int</span> key, <span class="keyword">int</span> <span class="keyword">value</span>) {
-        <span class="keyword">if</span>(map.containsKey(key)){
-            Node oldNode=map.<span class="keyword">get</span>(key);
-            oldNode.<span class="keyword">value</span>=<span class="keyword">value</span>;
-            removeNode(oldNode);
-            setHead(oldNode);
-        }<span class="keyword">else</span>{
-            Node newNode =<span class="keyword">new</span> Node(key, <span class="keyword">value</span>);
-            <span class="keyword">if</span>(len&lt;capacity){
-                <span class="comment">//把LRU里面的新节点放在头部</span>
-                setHead(newNode);
-                map.put(key, newNode);
-                len++;
+        newlength=length+spaceCount*<span class="number">2</span>;
+        <span class="comment">//java不会再最后自动加\0，c语言，c++才会</span>
+        <span class="keyword">str</span>[newlength]=<span class="string">'\0'</span>;
+        <span class="keyword">for</span>(i=length-<span class="number">1</span>;i&gt;=<span class="number">0</span>;i--){
+            <span class="keyword">if</span>(<span class="keyword">str</span>[i]==<span class="string">' '</span>){
+                <span class="keyword">str</span>[newlength-<span class="number">1</span>]=<span class="string">'0'</span>;
+                <span class="keyword">str</span>[newlength-<span class="number">2</span>]=<span class="string">'2'</span>;
+                <span class="keyword">str</span>[newlength-<span class="number">3</span>]=<span class="string">'%'</span>;
+                newlength=newlength-<span class="number">3</span>;
             }<span class="keyword">else</span>{
-                <span class="comment">//超出容量，则移除尾节点</span>
-                map.remove(end.key);
-                end=end.prev;
-                <span class="keyword">if</span>(end!=<span class="keyword">null</span>){
-                    end.next=<span class="keyword">null</span>;
-                }
-                setHead(newNode);
-                map.put(key, newNode);
+                <span class="keyword">str</span>[newlength-<span class="number">1</span>]=<span class="keyword">str</span>[i];
+                newlength=newlength-<span class="number">1</span>;
             }
         }
     }
-
-}
 </code></pre>  
 	</div>
 		<footer class="article-footer clearfix">
@@ -212,7 +144,7 @@ class Node{
 
 <div class="article-share" id="share">
 
-  <div data-url="https://github.com/DaMinger/DaMinger.github.io.git/2014/05/23/数据结构与算法/LeetCode/lrucache/" data-title="LeetCode:LRU Cache | DaMinger&#39;s blog" data-tsina="null" class="share clearfix">
+  <div data-url="https://github.com/DaMinger/DaMinger.github.io.git/2014/06/09/数据结构与算法/剑指offer/剑指offer_02/" data-title="剑指offer:编写一个方法，将字符串的空格全部替换为“%20” | DaMinger&#39;s blog" data-tsina="null" class="share clearfix">
   </div>
 
 </div>
@@ -221,19 +153,11 @@ class Node{
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
- <a href="/2014/05/23/数据结构与算法/LeetCode/linkedlistcycle/" title="LeetCode:Linked List Cycle">
-  <strong>PREVIOUS:</strong><br/>
-  <span>
-  LeetCode:Linked List Cycle</span>
-</a>
-</div>
-
 
 <div class="next">
-<a href="/2014/05/22/数据结构与算法/basicadt/"  title="基础的数据结构总结">
+<a href="/2014/06/08/数据结构与算法/剑指offer/剑指offer_01/"  title="剑指offer:在一个二维数组中判断给定整数是否存在，要求在O(n)内实现">
  <strong>NEXT:</strong><br/> 
- <span>基础的数据结构总结
+ <span>剑指offer:在一个二维数组中判断给定整数是否存在，要求在O(n)内实现
 </span>
 </a>
 </div>
