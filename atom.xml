@@ -4,7 +4,7 @@
   <subtitle><![CDATA[信春哥，系统稳，闭眼上线不回滚]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="https://github.com/DaMinger/DaMinger.github.io.git/"/>
-  <updated>2014-06-09T12:46:50.277Z</updated>
+  <updated>2014-06-22T13:01:51.239Z</updated>
   <id>https://github.com/DaMinger/DaMinger.github.io.git/</id>
   
   <author>
@@ -13,6 +13,53 @@
   </author>
   
   <generator uri="http://zespia.tw/hexo/">Hexo</generator>
+  
+  <entry>
+    <title><![CDATA[OpenCv的安装]]></title>
+    <link href="https://github.com/DaMinger/DaMinger.github.io.git/2014/06/22/OpenCv/opencv_1/"/>
+    <id>https://github.com/DaMinger/DaMinger.github.io.git/2014/06/22/OpenCv/opencv_1/</id>
+    <published>2014-06-22T11:55:25.000Z</published>
+    <updated>2014-06-22T13:00:34.000Z</updated>
+    <content type="html"><![CDATA[<p>最近在做学年课程设计，老师给了几个题目，全是XX信息管理系统，打心底不想再做管理系统了，于是换题，考虑最后答辩的工程量，放弃一开始想做的基于python的FTP软件，整这个车牌识别的东西，这玩意没接触过，探索一段时间，发现可以用OpenCv来解决，特此记录其中的一些知识点和想法。</p>
+<h4 id="下载和安装OpenCv">下载和安装OpenCv</h4>
+<p><a href="http://opencv.org/" target="_blank">http://opencv.org/</a> 我下载的是版本是2.4.9，双击解压，我解压到 D:\dy 得到bulid和sources，开发IDE VS2010</p>
+<h4 id="配置环境变量">配置环境变量</h4>
+<p>【计算机】-&gt;【（右键）属性】-&gt;【高级系统设置】-&gt;【高级（标签）】-&gt;【环境变量】-&gt;“双击”系统变量中的PATH-&gt;在变量值里面添加相应的路径。<br>例如 D:\dy\opencv\build\x86\vc10\bin  x86—&gt;32位系统 vc10—&gt;vs2010</p>
+<h4 id="配置工程包含（include）目录">配置工程包含（include）目录</h4>
+<p>新建工程 看下面三幅图<br><img src="/img/OpenCv/install_1.jpg" alt="图1 "><br><img src="/img/OpenCv/install_2.jpg" alt="图2 "><br><img src="/img/OpenCv/install_3.jpg" alt="图3 "><br>在工程添加一个cpp文件 名称叫main<br>每次新建opencv工程都会重新配置一些东西，解决办法：&lt;视图&gt;—&lt;属性管理器&gt;<br><img src="/img/OpenCv/install_4.jpg" alt="图4 "><br><img src="/img/OpenCv/install_5.jpg" alt="图5 "><br>打开属性页面【通用属性】 -&gt;【VC++目录】 -&gt;【包含目录】<br><img src="/img/OpenCv/install_6.jpg" alt="图6 "></p>
+<h4 id="工程库（lib）目录的配置">工程库（lib）目录的配置</h4>
+<p>打开属性页面【通用属性】 -&gt;【VC++目录】 -&gt;【库目录】<br><img src="/img/OpenCv/install_7.jpg" alt="图7 "></p>
+<h4 id="链接库的配置">链接库的配置</h4>
+<p>打开属性页面【通用属性】 -&gt;【链接器】-&gt;【输入】-&gt;【附加的依赖项】<br><img src="/img/OpenCv/install_8.jpg" alt="图8 "><br>这里说明一下：所粘贴内容即为之前我们解压的OpencV目录D:dy\opencv\build\x86\vc10\lib下所有lib库文件的名字；其中的249代表我们的OpenCV版本为2.4.9，我粘的包全是后面带个d的包，因为我是在debug模式下调win32程序，若想在release下调试，需要把release版（即不带d）的相关lib添加进去，这里说明：带d的包和不带d的包不能同时引进，要不然报错。</p>
+<h4 id="验证配置是否完成">验证配置是否完成</h4>
+<pre><code><span class="preprocessor">#include&lt;iostream&gt;</span>
+<span class="preprocessor">#include &lt;opencv2/core/core.hpp&gt;</span>
+<span class="preprocessor">#include &lt;opencv2/highgui/highgui.hpp&gt;</span>
+
+
+<span class="keyword">using</span> <span class="keyword">namespace</span> cv;
+
+
+<span class="keyword">int</span> main()
+{
+    <span class="comment">// 读入一张图片</span>
+    Mat img=imread(<span class="string">"g:/opencv_pic/3.jpg"</span>);
+    <span class="comment">// 创建一个名为 "test"窗口</span>
+    cvNamedWindow(<span class="string">"test"</span>);
+    <span class="comment">// 在窗口中显示图片</span>
+    imshow(<span class="string">"test"</span>,img);
+    <span class="comment">// 等待事件关闭窗口</span>
+    waitKey(<span class="number">0</span>);
+}
+</code></pre><p><img src="/img/OpenCv/install_9.jpg" alt="图9 "></p>
+]]></content>
+    
+    
+      <category term="OpenCv" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/OpenCv/"/>
+    
+      <category term="OpenCv" scheme="https://github.com/DaMinger/DaMinger.github.io.git/categories/OpenCv/"/>
+    
+  </entry>
   
   <entry>
     <title><![CDATA[剑指offer:编写一个方法，将字符串的空格全部替换为“%20”]]></title>
@@ -1187,69 +1234,6 @@ NQueen II
         <span class="keyword">return</span> <span class="keyword">true</span>;
     }
 }
-</code></pre>]]></content>
-    
-    
-      <category term="数据结构与算法" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/"/>
-    
-      <category term="数据结构与算法" scheme="https://github.com/DaMinger/DaMinger.github.io.git/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/"/>
-    
-  </entry>
-  
-  <entry>
-    <title><![CDATA[LeetCode：Minimum Depth of Binary Tree]]></title>
-    <link href="https://github.com/DaMinger/DaMinger.github.io.git/2014/06/04/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/LeetCode/minimum_depth_of_binary_tree/"/>
-    <id>https://github.com/DaMinger/DaMinger.github.io.git/2014/06/04/数据结构与算法/LeetCode/minimum_depth_of_binary_tree/</id>
-    <published>2014-06-04T05:33:53.000Z</published>
-    <updated>2014-06-04T05:39:21.000Z</updated>
-    <content type="html"><![CDATA[<h4 id="题目">题目</h4>
-<pre><code>Given a binary tree, find <span class="keyword">its</span> minimum depth.
-
-The minimum depth <span class="keyword">is</span> <span class="keyword">the</span> <span class="type">number</span> <span class="keyword">of</span> nodes along <span class="keyword">the</span> shortest path <span class="keyword">from</span> <span class="keyword">the</span> root node down <span class="keyword">to</span> <span class="keyword">the</span> nearest leaf node.
-</code></pre><p>思路：需要辅助队列，遍历到左子树或者右子树为空的时候，返回count</p>
-<h4 id="解法">解法</h4>
-<pre><code><span class="javadoc">/**
- * Definition for binary tree
- * public class TreeNode {
- *     int val;
- *     TreeNode left;
- *     TreeNode right;
- *     TreeNode(int x) { val = x; }
- * }
- */</span>
-<span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Solution</span> {</span>
-    <span class="keyword">public</span> <span class="keyword">int</span> <span class="title">minDepth</span>(TreeNode root) {
-        <span class="keyword">if</span>(root == <span class="keyword">null</span>){
-            <span class="keyword">return</span> <span class="number">0</span>;
-        }
-
-        LinkedList&lt;TreeNode&gt; nodes = <span class="keyword">new</span> LinkedList&lt;TreeNode&gt;();
-        LinkedList&lt;Integer&gt; counts = <span class="keyword">new</span> LinkedList&lt;Integer&gt;();
-
-        nodes.add(root);
-        counts.add(<span class="number">1</span>);
-
-        <span class="keyword">while</span>(!nodes.isEmpty()){
-            TreeNode curr = nodes.remove();
-            <span class="keyword">int</span> count = counts.remove();
-
-            <span class="keyword">if</span>(curr.left != <span class="keyword">null</span>){
-                nodes.add(curr.left);
-                counts.add(count+<span class="number">1</span>);
-            }
-
-            <span class="keyword">if</span>(curr.right != <span class="keyword">null</span>){
-                nodes.add(curr.right);
-                counts.add(count+<span class="number">1</span>);
-            }
-
-            <span class="keyword">if</span>(curr.left == <span class="keyword">null</span> &amp;&amp; curr.right == <span class="keyword">null</span>){
-                <span class="keyword">return</span> count;
-            }
-        }
-
-        <span class="keyword">return</span> <span class="number">0</span>;
-    }
 </code></pre>]]></content>
     
     
