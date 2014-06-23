@@ -4,7 +4,7 @@
   <subtitle><![CDATA[信春哥，系统稳，闭眼上线不回滚]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="https://github.com/DaMinger/DaMinger.github.io.git/"/>
-  <updated>2014-06-22T13:01:51.239Z</updated>
+  <updated>2014-06-23T09:29:56.589Z</updated>
   <id>https://github.com/DaMinger/DaMinger.github.io.git/</id>
   
   <author>
@@ -13,6 +13,868 @@
   </author>
   
   <generator uri="http://zespia.tw/hexo/">Hexo</generator>
+  
+  <entry>
+    <title><![CDATA[Oracle12c Rman Recover Table(基于时间点)]]></title>
+    <link href="https://github.com/DaMinger/DaMinger.github.io.git/2014/06/23/Oracle/Oracle12c/oracle12c_recover_table/"/>
+    <id>https://github.com/DaMinger/DaMinger.github.io.git/2014/06/23/Oracle/Oracle12c/oracle12c_recover_table/</id>
+    <published>2014-06-23T07:41:41.000Z</published>
+    <updated>2014-06-23T09:26:11.000Z</updated>
+    <content type="html"><![CDATA[<p>实验贴，感谢飞总技术分享<a href="http://www.xifenfei.com/4229.html" target="_blank">http://www.xifenfei.com/4229.html</a></p>
+<h4 id="简介">简介</h4>
+<p>Oracle12c的rman中出现可以进行table级别的恢复，本试验测试了rman基于时间点恢复一个被删除表的操作过程</p>
+<h4 id="查看数据库版本">查看数据库版本</h4>
+<pre><code>SQL&gt; <span class="keyword">select</span> * from v$version;
+
+BANNER                                                                    CON_ID
+<span class="comment">--------------------------------------------------------------------- ----------</span>
+Oracle Database <span class="number">12</span>c Enterprise Edition <span class="keyword">Release</span> <span class="number">12.1</span><span class="number">.0</span><span class="number">.1</span><span class="number">.0</span> - <span class="number">64</span><span class="typename">bit</span> Pro          <span class="number">0</span>
+duction
+
+PL/SQL <span class="keyword">Release</span> <span class="number">12.1</span><span class="number">.0</span><span class="number">.1</span><span class="number">.0</span> - Production                                         <span class="number">0</span>
+CORE    <span class="number">12.1</span><span class="number">.0</span><span class="number">.1</span><span class="number">.0</span>      Production                                             <span class="number">0</span>
+TNS <span class="keyword">for</span> Linux: Version <span class="number">12.1</span><span class="number">.0</span><span class="number">.1</span><span class="number">.0</span> - Production                                 <span class="number">0</span>
+NLSRTL Version <span class="number">12.1</span><span class="number">.0</span><span class="number">.1</span><span class="number">.0</span> - Production                                         <span class="number">0</span>
+</code></pre><h4 id="创建表并插入数据（我是在自定义用户lqm下做操作的）">创建表并插入数据（我是在自定义用户lqm下做操作的）</h4>
+<pre><code>SQL&gt; select to<span class="emphasis">_char(sysdate,'yyyy-mm-dd hh24:mi:ss') from dual;
+
+</span><span class="header">TO_CHAR(SYSDATE,'YY
+-------------------</span>
+2014-06-23 11:08:55
+
+SQL&gt; create table t<span class="emphasis">_lqm(id number,insert_</span>time date);
+
+Table created.
+
+SQL&gt; insert into t<span class="emphasis">_lqm values(1,sysdate);
+
+</span>1 row created.
+
+SQL&gt; commit;
+
+Commit complete.
+SQL&gt; archive log list;
+Database log mode              Archive Mode
+Automatic archival             Enabled
+Archive destination            USE<span class="emphasis">_DB_</span>RECOVERY<span class="emphasis">_FILE_</span>DEST
+Oldest online log sequence     11
+Next log sequence to archive   13
+Current log sequence           13
+SQL&gt;  select to<span class="emphasis">_char(sysdate,'yyyy-mm-dd hh24:mi:ss') from dual;
+
+</span><span class="header">TO_CHAR(SYSDATE,'YY
+-------------------</span>
+2014-06-23 11:10:34
+</code></pre><h4 id="备份数据库">备份数据库</h4>
+<pre><code>RMAN&gt; backup  <span class="keyword">as</span> compressed backupset database  format '/tmp/lqm_db_%U';
+
+Starting backup <span class="keyword">at</span> <span class="number">23</span>-JUN-<span class="number">14</span>
+using target database control <span class="type">file</span> <span class="keyword">instead of</span> recovery catalog
+allocated channel: ORA_DISK_1
+channel ORA_DISK_1: SID=<span class="number">51</span> device type=DISK
+channel ORA_DISK_1: starting compressed full datafile backup <span class="keyword">set</span>
+channel ORA_DISK_1: specifying datafile(s) <span class="keyword">in</span> backup <span class="keyword">set</span>
+input datafile <span class="type">file</span> <span class="type">number</span>=<span class="number">00001</span> <span class="property">name</span>=/u01/app/oracle/oradata/lqm/system01.dbf
+input datafile <span class="type">file</span> <span class="type">number</span>=<span class="number">00003</span> <span class="property">name</span>=/u01/app/oracle/oradata/lqm/sysaux01.dbf
+input datafile <span class="type">file</span> <span class="type">number</span>=<span class="number">00002</span> <span class="property">name</span>=/u01/app/oracle/oradata/lqm/example01.dbf
+input datafile <span class="type">file</span> <span class="type">number</span>=<span class="number">00004</span> <span class="property">name</span>=/u01/app/oracle/oradata/lqm/undotbs01.dbf
+input datafile <span class="type">file</span> <span class="type">number</span>=<span class="number">00006</span> <span class="property">name</span>=/u01/app/oracle/oradata/lqm/users01.dbf
+channel ORA_DISK_1: starting piece <span class="number">1</span> <span class="keyword">at</span> <span class="number">23</span>-JUN-<span class="number">14</span>
+channel ORA_DISK_1: finished piece <span class="number">1</span> <span class="keyword">at</span> <span class="number">23</span>-JUN-<span class="number">14</span>
+piece handle=/tmp/lqm_db_03pbi8mq_1_1 tag=TAG20140623T111121 comment=NONE
+channel ORA_DISK_1: backup <span class="keyword">set</span> complete, elapsed <span class="property">time</span>: <span class="number">00</span>:<span class="number">02</span>:<span class="number">25</span>
+channel ORA_DISK_1: starting compressed full datafile backup <span class="keyword">set</span>
+channel ORA_DISK_1: specifying datafile(s) <span class="keyword">in</span> backup <span class="keyword">set</span>
+including current control <span class="type">file</span> <span class="keyword">in</span> backup <span class="keyword">set</span>
+including current SPFILE <span class="keyword">in</span> backup <span class="keyword">set</span>
+channel ORA_DISK_1: starting piece <span class="number">1</span> <span class="keyword">at</span> <span class="number">23</span>-JUN-<span class="number">14</span>
+channel ORA_DISK_1: finished piece <span class="number">1</span> <span class="keyword">at</span> <span class="number">23</span>-JUN-<span class="number">14</span>
+piece handle=/tmp/lqm_db_04pbi8rb_1_1 tag=TAG20140623T111121 comment=NONE
+channel ORA_DISK_1: backup <span class="keyword">set</span> complete, elapsed <span class="property">time</span>: <span class="number">00</span>:<span class="number">00</span>:<span class="number">01</span>
+Finished backup <span class="keyword">at</span> <span class="number">23</span>-JUN-<span class="number">14</span>
+</code></pre><h4 id="插入数据继续测试">插入数据继续测试</h4>
+<pre><code>SQL&gt; insert <span class="keyword">into</span> t_lqm values(<span class="number">2</span>,sysdate);
+
+<span class="number">1</span> row created.
+
+SQL&gt; commit;
+
+Commit complete.
+
+SQL&gt;  alter system switch logfile;
+
+System altered.
+
+SQL&gt;  alter system switch logfile;
+
+System altered.
+
+SQL&gt; insert <span class="keyword">into</span> t_lqm values(<span class="number">3</span>,sysdate);
+
+<span class="number">1</span> row created.
+
+SQL&gt; insert <span class="keyword">into</span> t_lqm values(<span class="number">4</span>,sysdate);
+
+<span class="number">1</span> row created.
+
+SQL&gt; commit;
+
+Commit complete.
+
+SQL&gt; archive <span class="command">log</span> <span class="type">list</span>;
+Database <span class="command">log</span> mode              Archive Mode
+Automatic archival             Enabled
+Archive destination            USE_DB_RECOVERY_FILE_DEST
+Oldest online <span class="command">log</span> sequence     <span class="number">13</span>
+Next <span class="command">log</span> sequence <span class="keyword">to</span> archive   <span class="number">15</span>
+Current <span class="command">log</span> sequence           <span class="number">15</span>
+SQL&gt; select to_char(sysdate,'yyyy-mm-dd hh24:mi:ss') <span class="keyword">from</span> dual;
+
+TO_CHAR(SYSDATE,'YY
+<span class="comment">-------------------</span>
+<span class="number">2014</span>-<span class="number">06</span>-<span class="number">23</span> <span class="number">11</span>:<span class="number">16</span>:<span class="number">06</span>
+SQL&gt; select <span class="property">id</span>,to_char(insert_time,'yyyy-mm-dd hh24:mi:ss') <span class="keyword">from</span> t_lqm;
+
+        ID TO_CHAR(INSERT_TIME
+<span class="comment">---------- -------------------</span>
+         <span class="number">1</span> <span class="number">2014</span>-<span class="number">06</span>-<span class="number">23</span> <span class="number">11</span>:<span class="number">09</span>:<span class="number">50</span>
+         <span class="number">2</span> <span class="number">2014</span>-<span class="number">06</span>-<span class="number">23</span> <span class="number">11</span>:<span class="number">14</span>:<span class="number">59</span>
+         <span class="number">3</span> <span class="number">2014</span>-<span class="number">06</span>-<span class="number">23</span> <span class="number">11</span>:<span class="number">15</span>:<span class="number">17</span>
+         <span class="number">4</span> <span class="number">2014</span>-<span class="number">06</span>-<span class="number">23</span> <span class="number">11</span>:<span class="number">15</span>:<span class="number">21</span>
+</code></pre><h4 id="删除测试表">删除测试表</h4>
+<pre><code>SQL&gt; drop table t<span class="emphasis">_lqm purge;
+
+</span>Table dropped.
+
+SQL&gt;  select to<span class="emphasis">_char(sysdate,'yyyy-mm-dd hh24:mi:ss') from dual;
+
+</span><span class="header">TO_CHAR(SYSDATE,'YY
+-------------------</span>
+2014-06-23 11:17:09
+</code></pre><h4 id="rman_recover_table">rman recover table</h4>
+<pre><code>[<span class="function_or_atom">oracle</span>@<span class="function_or_atom">oracle12c</span> ~]$ <span class="function_or_atom">rman</span> <span class="function_or_atom">target</span> <span class="function_or_atom">sys</span>/<span class="function_or_atom">oracle</span> <span class="function_or_atom">log</span>=/<span class="function_or_atom">tmp</span>/<span class="function_or_atom">recover_table</span>.<span class="function_or_atom">log</span>
+<span class="variable">RMAN</span>&gt; <span class="variable">RECOVER</span> <span class="variable">TABLE</span> <span class="variable">LQM</span>.<span class="string">"T_LQM"</span>
+<span class="prompt">2&gt; </span><span class="function_or_atom">until</span> <span class="function_or_atom">time</span>  <span class="string">"to_date('2014-06-23 11:16:06','yyyy-mm-dd hh24:mi:ss')"</span>
+<span class="prompt">3&gt; </span><span class="variable">AUXILIARY</span> <span class="variable">DESTINATION</span> <span class="string">'/tmp/recovertable'</span>
+<span class="prompt">4&gt; </span><span class="variable">REMAP</span> <span class="variable">TABLE</span> <span class="string">'LQM'</span>.<span class="string">'T_LQM'</span>:<span class="string">'T_LQM_NEW'</span>;
+</code></pre><p>这里出了点错，’/tmp/recovertable’忘了赋权限了（oracle:oinstall），具体恢复过程请看文章最后附的log</p>
+<h4 id="验证数据库">验证数据库</h4>
+<pre><code>SQL&gt; <span class="keyword">select</span> id,to_char(insert_time,<span class="string">'yyyy-mm-dd hh24:mi:ss'</span>) <span class="keyword">from</span> t_lqm_new;
+
+        ID TO_CHAR(INSERT_TIME
+---------- -------------------
+         <span class="number">1</span> <span class="number">2014</span>-<span class="number">06</span>-<span class="number">23</span> <span class="number">11</span>:<span class="number">09</span>:<span class="number">50</span>
+         <span class="number">2</span> <span class="number">2014</span>-<span class="number">06</span>-<span class="number">23</span> <span class="number">11</span>:<span class="number">14</span>:<span class="number">59</span>
+         <span class="number">3</span> <span class="number">2014</span>-<span class="number">06</span>-<span class="number">23</span> <span class="number">11</span>:<span class="number">15</span>:<span class="number">17</span>
+         <span class="number">4</span> <span class="number">2014</span>-<span class="number">06</span>-<span class="number">23</span> <span class="number">11</span>:<span class="number">15</span>:<span class="number">21</span>
+</code></pre><h4 id="流程总结与重要提示">流程总结与重要提示</h4>
+<h5 id="流程总结">流程总结</h5>
+<p>案例脚本</p>
+<figure class="highlight 案例脚本"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+</pre></td><td class="code"><pre>RMAN&gt; connect target <span class="string">"username/password as SYSBACKUP"</span>; 
+RMAN&gt; RECOVER TABLE username.tablename UNTIL TIME <span class="string">'TIMESTAMP…'</span> 
+AUXILIARY DESTINATION <span class="string">'/u01/tablerecovery'</span> 
+DATAPUMP DESTINATION <span class="string">'/u01/dpump'</span> 
+DUMP FILE <span class="string">'tablename.dmp'</span> 
+NOTABLEIMPORT -- <span class="keyword">this</span> option avoids importing the table automatically.(此选项避免自动导入表) 
+REMAP TABLE <span class="string">'username.tablename'</span>: <span class="string">'username.new_table_name'</span>; -- can rename table <span class="keyword">with</span> <span class="keyword">this</span> option.(此选项可以对表重命名)
+</pre></td></tr></table></figure>
+
+<p>大致过程：还原system,undo,sysaux表空间,然后read only数据库,然后重启数据库还原表所在表空间,然后expdp导出表,根据需要决定是否导入表到数据库。</p>
+<h5 id="重要提示：">重要提示：</h5>
+<p>rman recover table 必须使用sys用户登录,而不能使用/,因为12c默认有backup用户。</p>
+<p>确保对于辅助数据库在/u01文件系统下（本例中是/tmp）有足够的可用空间，同时对数据泵文件也有同样保证(因为rman recover table 需要还原system,undo,sysaux表空间,需要还原表所在表空间,和expdp导出文件空间)。</p>
+<p>必须要存在一份完整的数据库备份，或者至少是要有SYSTEM相关的表空间备份。</p>
+<p>SYS用户表或分区无法恢复。</p>
+<p>存储于SYSAUX和SYSTEM表空间下的表和分区无法恢复。</p>
+<p>当REMAP选项用来恢复的表包含NOT NULL约束时，恢复此表是不可行的。</p>
+<h4 id="附：recover_table-log">附：recover_table.log</h4>
+<pre><code>[root@oracle12c tmp]<span class="comment"># cat recover_table.log </span>
+
+Recovery Manager: Release <span class="number">12.1</span><span class="number">.0</span><span class="number">.1</span><span class="number">.0</span> - Production <span class="function_start"><span class="keyword">on</span></span> Mon Jun <span class="number">23</span> <span class="number">11</span>:<span class="number">49</span>:<span class="number">13</span> <span class="number">2014</span>
+
+Copyright (c) <span class="number">1982</span>, <span class="number">2013</span>, Oracle <span class="keyword">and</span>/<span class="keyword">or</span> <span class="keyword">its</span> affiliates.  All rights reserved.
+
+connected <span class="keyword">to</span> target database: LQM (DBID=<span class="number">3049410225</span>)
+
+RMAN&gt; <span class="number">2</span>&gt; <span class="number">3</span>&gt; <span class="number">4</span>&gt; 
+Starting recover <span class="keyword">at</span> <span class="number">23</span>-JUN-<span class="number">14</span>
+using target database control <span class="type">file</span> <span class="keyword">instead of</span> recovery catalog
+allocated channel: ORA_DISK_1
+channel ORA_DISK_1: SID=<span class="number">52</span> device type=DISK
+RMAN-<span class="number">05026</span>: WARNING: presuming following <span class="keyword">set</span> <span class="keyword">of</span> tablespaces applies <span class="keyword">to</span> specified Point-<span class="keyword">in</span>-Time
+
+List <span class="keyword">of</span> tablespaces expected <span class="keyword">to</span> have UNDO segments
+Tablespace SYSTEM
+Tablespace UNDOTBS1
+
+Creating automatic instance, <span class="keyword">with</span> SID='eAAi'
+
+initialization parameters used <span class="keyword">for</span> automatic instance:
+db_name=LQM
+db_unique_name=eAAi_pitr_LQM
+compatible=<span class="number">12.1</span><span class="number">.0</span><span class="number">.0</span><span class="number">.0</span>
+db_block_size=<span class="number">8192</span>
+db_files=<span class="number">200</span>
+sga_target=<span class="number">1</span>G
+processes=<span class="number">80</span>
+diagnostic_dest=/u01/app/oracle
+db_create_file_dest=/tmp/recovertable
+log_archive_dest_1='location=/tmp/recovertable'
+<span class="comment">#No auxiliary parameter file used</span>
+
+
+starting up automatic instance LQM
+
+Oracle instance started
+
+Total System Global Area    <span class="number">1068937216</span> bytes
+
+Fixed Size                     <span class="number">2296576</span> bytes
+Variable Size                <span class="number">281019648</span> bytes
+Database Buffers             <span class="number">780140544</span> bytes
+Redo Buffers                   <span class="number">5480448</span> bytes
+Automatic instance created
+
+<span class="property">contents</span> <span class="keyword">of</span> Memory Script:
+{
+<span class="comment"># set requested point in time</span>
+<span class="keyword">set</span> <span class="keyword">until</span>  <span class="property">time</span> <span class="string">"to_date('2014-06-23 11:16:06','yyyy-mm-dd hh24:mi:ss')"</span>;
+<span class="comment"># restore the controlfile</span>
+restore clone controlfile;
+<span class="comment"># mount the controlfile</span>
+sql clone 'alter database mount clone database';
+<span class="comment"># archive current online log </span>
+sql 'alter system archive <span class="command">log</span> current';
+}
+executing Memory Script
+
+executing command: SET <span class="keyword">until</span> clause
+
+Starting restore <span class="keyword">at</span> <span class="number">23</span>-JUN-<span class="number">14</span>
+allocated channel: ORA_AUX_DISK_1
+channel ORA_AUX_DISK_1: SID=<span class="number">20</span> device type=DISK
+
+channel ORA_AUX_DISK_1: starting datafile backup <span class="keyword">set</span> restore
+channel ORA_AUX_DISK_1: restoring control <span class="type">file</span>
+channel ORA_AUX_DISK_1: reading <span class="keyword">from</span> backup piece /tmp/lqm_db_04pbi8rb_1_1
+channel ORA_AUX_DISK_1: piece handle=/tmp/lqm_db_04pbi8rb_1_1 tag=TAG20140623T111121
+channel ORA_AUX_DISK_1: restored backup piece <span class="number">1</span>
+channel ORA_AUX_DISK_1: restore complete, elapsed <span class="property">time</span>: <span class="number">00</span>:<span class="number">00</span>:<span class="number">55</span>
+output <span class="type">file</span> <span class="property">name</span>=/tmp/recovertable/LQM/controlfile/o1_mf_9th8z5hk_.ctl
+Finished restore <span class="keyword">at</span> <span class="number">23</span>-JUN-<span class="number">14</span>
+
+sql statement: alter database mount clone database
+
+sql statement: alter system archive <span class="command">log</span> current
+
+<span class="property">contents</span> <span class="keyword">of</span> Memory Script:
+{
+<span class="comment"># set requested point in time</span>
+<span class="keyword">set</span> <span class="keyword">until</span>  <span class="property">time</span> <span class="string">"to_date('2014-06-23 11:16:06','yyyy-mm-dd hh24:mi:ss')"</span>;
+<span class="comment"># set destinations for recovery set and auxiliary set datafiles</span>
+<span class="keyword">set</span> newname <span class="keyword">for</span> clone datafile  <span class="number">1</span> <span class="keyword">to</span> new;
+<span class="keyword">set</span> newname <span class="keyword">for</span> clone datafile  <span class="number">4</span> <span class="keyword">to</span> new;
+<span class="keyword">set</span> newname <span class="keyword">for</span> clone datafile  <span class="number">3</span> <span class="keyword">to</span> new;
+<span class="keyword">set</span> newname <span class="keyword">for</span> clone tempfile  <span class="number">1</span> <span class="keyword">to</span> new;
+<span class="comment"># switch all tempfiles</span>
+switch clone tempfile all;
+<span class="comment"># restore the tablespaces in the recovery set and the auxiliary set</span>
+restore clone datafile  <span class="number">1</span>, <span class="number">4</span>, <span class="number">3</span>;
+switch clone datafile all;
+}
+executing Memory Script
+
+executing command: SET <span class="keyword">until</span> clause
+
+executing command: SET NEWNAME
+
+executing command: SET NEWNAME
+
+executing command: SET NEWNAME
+
+executing command: SET NEWNAME
+
+renamed tempfile <span class="number">1</span> <span class="keyword">to</span> /tmp/recovertable/LQM/datafile/o1_mf_temp_%u_.tmp <span class="keyword">in</span> control <span class="type">file</span>
+
+Starting restore <span class="keyword">at</span> <span class="number">23</span>-JUN-<span class="number">14</span>
+using channel ORA_AUX_DISK_1
+
+channel ORA_AUX_DISK_1: starting datafile backup <span class="keyword">set</span> restore
+channel ORA_AUX_DISK_1: specifying datafile(s) <span class="keyword">to</span> restore <span class="keyword">from</span> backup <span class="keyword">set</span>
+channel ORA_AUX_DISK_1: restoring datafile <span class="number">00001</span> <span class="keyword">to</span> /tmp/recovertable/LQM/datafile/o1_mf_system_%u_.dbf
+channel ORA_AUX_DISK_1: restoring datafile <span class="number">00004</span> <span class="keyword">to</span> /tmp/recovertable/LQM/datafile/o1_mf_undotbs1_%u_.dbf
+channel ORA_AUX_DISK_1: restoring datafile <span class="number">00003</span> <span class="keyword">to</span> /tmp/recovertable/LQM/datafile/o1_mf_sysaux_%u_.dbf
+channel ORA_AUX_DISK_1: reading <span class="keyword">from</span> backup piece /tmp/lqm_db_03pbi8mq_1_1
+channel ORA_AUX_DISK_1: piece handle=/tmp/lqm_db_03pbi8mq_1_1 tag=TAG20140623T111121
+channel ORA_AUX_DISK_1: restored backup piece <span class="number">1</span>
+channel ORA_AUX_DISK_1: restore complete, elapsed <span class="property">time</span>: <span class="number">00</span>:<span class="number">01</span>:<span class="number">56</span>
+Finished restore <span class="keyword">at</span> <span class="number">23</span>-JUN-<span class="number">14</span>
+
+datafile <span class="number">1</span> switched <span class="keyword">to</span> datafile <span class="keyword">copy</span>
+input datafile <span class="keyword">copy</span> RECID=<span class="number">4</span> STAMP=<span class="number">850996384</span> <span class="type">file</span> <span class="property">name</span>=/tmp/recovertable/LQM/datafile/o1_mf_system_9th91fkw_.dbf
+datafile <span class="number">4</span> switched <span class="keyword">to</span> datafile <span class="keyword">copy</span>
+input datafile <span class="keyword">copy</span> RECID=<span class="number">5</span> STAMP=<span class="number">850996384</span> <span class="type">file</span> <span class="property">name</span>=/tmp/recovertable/LQM/datafile/o1_mf_undotbs1_9th91g7j_.dbf
+datafile <span class="number">3</span> switched <span class="keyword">to</span> datafile <span class="keyword">copy</span>
+input datafile <span class="keyword">copy</span> RECID=<span class="number">6</span> STAMP=<span class="number">850996384</span> <span class="type">file</span> <span class="property">name</span>=/tmp/recovertable/LQM/datafile/o1_mf_sysaux_9th91flw_.dbf
+
+<span class="property">contents</span> <span class="keyword">of</span> Memory Script:
+{
+<span class="comment"># set requested point in time</span>
+<span class="keyword">set</span> <span class="keyword">until</span>  <span class="property">time</span> <span class="string">"to_date('2014-06-23 11:16:06','yyyy-mm-dd hh24:mi:ss')"</span>;
+<span class="comment"># online the datafiles restored or switched</span>
+sql clone <span class="string">"alter database datafile  1 online"</span>;
+sql clone <span class="string">"alter database datafile  4 online"</span>;
+sql clone <span class="string">"alter database datafile  3 online"</span>;
+<span class="comment"># recover and open database read only</span>
+recover clone database tablespace  <span class="string">"SYSTEM"</span>, <span class="string">"UNDOTBS1"</span>, <span class="string">"SYSAUX"</span>;
+sql clone 'alter database open <span class="command">read</span> only';
+}
+executing Memory Script
+
+executing command: SET <span class="keyword">until</span> clause
+
+sql statement: alter database datafile  <span class="number">1</span> online
+
+sql statement: alter database datafile  <span class="number">4</span> online
+
+sql statement: alter database datafile  <span class="number">3</span> online
+
+Starting recover <span class="keyword">at</span> <span class="number">23</span>-JUN-<span class="number">14</span>
+using channel ORA_AUX_DISK_1
+
+starting media recovery
+
+archived <span class="command">log</span> <span class="keyword">for</span> thread <span class="number">1</span> <span class="keyword">with</span> sequence <span class="number">13</span> <span class="keyword">is</span> already <span class="function_start"><span class="keyword">on</span></span> disk <span class="keyword">as</span> <span class="type">file</span> /u01/app/oracle/fast_recovery_area/LQM/archivelog/<span class="number">2014</span>_06_23/o1_mf_1_13_9th6xygs_.arc
+archived <span class="command">log</span> <span class="keyword">for</span> thread <span class="number">1</span> <span class="keyword">with</span> sequence <span class="number">14</span> <span class="keyword">is</span> already <span class="function_start"><span class="keyword">on</span></span> disk <span class="keyword">as</span> <span class="type">file</span> /u01/app/oracle/fast_recovery_area/LQM/archivelog/<span class="number">2014</span>_06_23/o1_mf_1_14_9th6y06s_.arc
+archived <span class="command">log</span> <span class="keyword">for</span> thread <span class="number">1</span> <span class="keyword">with</span> sequence <span class="number">15</span> <span class="keyword">is</span> already <span class="function_start"><span class="keyword">on</span></span> disk <span class="keyword">as</span> <span class="type">file</span> /u01/app/oracle/fast_recovery_area/LQM/archivelog/<span class="number">2014</span>_06_23/o1_mf_1_15_9th78jx5_.arc
+archived <span class="command">log</span> <span class="type">file</span> <span class="property">name</span>=/u01/app/oracle/fast_recovery_area/LQM/archivelog/<span class="number">2014</span>_06_23/o1_mf_1_13_9th6xygs_.arc thread=<span class="number">1</span> sequence=<span class="number">13</span>
+archived <span class="command">log</span> <span class="type">file</span> <span class="property">name</span>=/u01/app/oracle/fast_recovery_area/LQM/archivelog/<span class="number">2014</span>_06_23/o1_mf_1_14_9th6y06s_.arc thread=<span class="number">1</span> sequence=<span class="number">14</span>
+archived <span class="command">log</span> <span class="type">file</span> <span class="property">name</span>=/u01/app/oracle/fast_recovery_area/LQM/archivelog/<span class="number">2014</span>_06_23/o1_mf_1_15_9th78jx5_.arc thread=<span class="number">1</span> sequence=<span class="number">15</span>
+media recovery complete, elapsed <span class="property">time</span>: <span class="number">00</span>:<span class="number">00</span>:<span class="number">02</span>
+Finished recover <span class="keyword">at</span> <span class="number">23</span>-JUN-<span class="number">14</span>
+
+sql statement: alter database open <span class="command">read</span> only
+
+<span class="property">contents</span> <span class="keyword">of</span> Memory Script:
+{
+   sql clone <span class="string">"create spfile from memory"</span>;
+   shutdown clone immediate;
+   startup clone nomount;
+   sql clone <span class="string">"alter system set  control_files = 
+  ''/tmp/recovertable/LQM/controlfile/o1_mf_9th8z5hk_.ctl'' comment=
+ ''RMAN set'' scope=spfile"</span>;
+   shutdown clone immediate;
+   startup clone nomount;
+<span class="comment"># mount database</span>
+sql clone 'alter database mount clone database';
+}
+executing Memory Script
+
+sql statement: create spfile <span class="keyword">from</span> memory
+
+database closed
+database dismounted
+Oracle instance shut down
+
+connected <span class="keyword">to</span> auxiliary database (<span class="keyword">not</span> started)
+Oracle instance started
+
+Total System Global Area    <span class="number">1068937216</span> bytes
+
+Fixed Size                     <span class="number">2296576</span> bytes
+Variable Size                <span class="number">285213952</span> bytes
+Database Buffers             <span class="number">775946240</span> bytes
+Redo Buffers                   <span class="number">5480448</span> bytes
+
+sql statement: alter system <span class="keyword">set</span>  control_files =   ''/tmp/recovertable/LQM/controlfile/o1_mf_9th8z5hk_.ctl'' comment= ''RMAN <span class="keyword">set</span>'' scope=spfile
+
+Oracle instance shut down
+
+connected <span class="keyword">to</span> auxiliary database (<span class="keyword">not</span> started)
+Oracle instance started
+
+Total System Global Area    <span class="number">1068937216</span> bytes
+
+Fixed Size                     <span class="number">2296576</span> bytes
+Variable Size                <span class="number">285213952</span> bytes
+Database Buffers             <span class="number">775946240</span> bytes
+Redo Buffers                   <span class="number">5480448</span> bytes
+
+sql statement: alter database mount clone database
+
+<span class="property">contents</span> <span class="keyword">of</span> Memory Script:
+{
+<span class="comment"># set requested point in time</span>
+<span class="keyword">set</span> <span class="keyword">until</span>  <span class="property">time</span> <span class="string">"to_date('2014-06-23 11:16:06','yyyy-mm-dd hh24:mi:ss')"</span>;
+<span class="comment"># set destinations for recovery set and auxiliary set datafiles</span>
+<span class="keyword">set</span> newname <span class="keyword">for</span> datafile  <span class="number">6</span> <span class="keyword">to</span> new;
+<span class="comment"># restore the tablespaces in the recovery set and the auxiliary set</span>
+restore clone datafile  <span class="number">6</span>;
+switch clone datafile all;
+}
+executing Memory Script
+
+executing command: SET <span class="keyword">until</span> clause
+
+executing command: SET NEWNAME
+
+Starting restore <span class="keyword">at</span> <span class="number">23</span>-JUN-<span class="number">14</span>
+allocated channel: ORA_AUX_DISK_1
+channel ORA_AUX_DISK_1: SID=<span class="number">7</span> device type=DISK
+
+channel ORA_AUX_DISK_1: starting datafile backup <span class="keyword">set</span> restore
+channel ORA_AUX_DISK_1: specifying datafile(s) <span class="keyword">to</span> restore <span class="keyword">from</span> backup <span class="keyword">set</span>
+channel ORA_AUX_DISK_1: restoring datafile <span class="number">00006</span> <span class="keyword">to</span> /tmp/recovertable/EAAI_PITR_LQM/datafile/o1_mf_users_%u_.dbf
+channel ORA_AUX_DISK_1: reading <span class="keyword">from</span> backup piece /tmp/lqm_db_03pbi8mq_1_1
+channel ORA_AUX_DISK_1: piece handle=/tmp/lqm_db_03pbi8mq_1_1 tag=TAG20140623T111121
+channel ORA_AUX_DISK_1: restored backup piece <span class="number">1</span>
+channel ORA_AUX_DISK_1: restore complete, elapsed <span class="property">time</span>: <span class="number">00</span>:<span class="number">00</span>:<span class="number">01</span>
+Finished restore <span class="keyword">at</span> <span class="number">23</span>-JUN-<span class="number">14</span>
+
+datafile <span class="number">6</span> switched <span class="keyword">to</span> datafile <span class="keyword">copy</span>
+input datafile <span class="keyword">copy</span> RECID=<span class="number">8</span> STAMP=<span class="number">850996449</span> <span class="type">file</span> <span class="property">name</span>=/tmp/recovertable/EAAI_PITR_LQM/datafile/o1_mf_users_9th9710c_.dbf
+
+<span class="property">contents</span> <span class="keyword">of</span> Memory Script:
+{
+<span class="comment"># set requested point in time</span>
+<span class="keyword">set</span> <span class="keyword">until</span>  <span class="property">time</span> <span class="string">"to_date('2014-06-23 11:16:06','yyyy-mm-dd hh24:mi:ss')"</span>;
+<span class="comment"># online the datafiles restored or switched</span>
+sql clone <span class="string">"alter database datafile  6 online"</span>;
+<span class="comment"># recover and open resetlogs</span>
+recover clone database tablespace  <span class="string">"USERS"</span>, <span class="string">"SYSTEM"</span>, <span class="string">"UNDOTBS1"</span>, <span class="string">"SYSAUX"</span> delete archivelog;
+alter clone database open resetlogs;
+}
+executing Memory Script
+
+executing command: SET <span class="keyword">until</span> clause
+
+sql statement: alter database datafile  <span class="number">6</span> online
+
+Starting recover <span class="keyword">at</span> <span class="number">23</span>-JUN-<span class="number">14</span>
+using channel ORA_AUX_DISK_1
+
+starting media recovery
+
+archived <span class="command">log</span> <span class="keyword">for</span> thread <span class="number">1</span> <span class="keyword">with</span> sequence <span class="number">13</span> <span class="keyword">is</span> already <span class="function_start"><span class="keyword">on</span></span> disk <span class="keyword">as</span> <span class="type">file</span> /u01/app/oracle/fast_recovery_area/LQM/archivelog/<span class="number">2014</span>_06_23/o1_mf_1_13_9th6xygs_.arc
+archived <span class="command">log</span> <span class="keyword">for</span> thread <span class="number">1</span> <span class="keyword">with</span> sequence <span class="number">14</span> <span class="keyword">is</span> already <span class="function_start"><span class="keyword">on</span></span> disk <span class="keyword">as</span> <span class="type">file</span> /u01/app/oracle/fast_recovery_area/LQM/archivelog/<span class="number">2014</span>_06_23/o1_mf_1_14_9th6y06s_.arc
+archived <span class="command">log</span> <span class="keyword">for</span> thread <span class="number">1</span> <span class="keyword">with</span> sequence <span class="number">15</span> <span class="keyword">is</span> already <span class="function_start"><span class="keyword">on</span></span> disk <span class="keyword">as</span> <span class="type">file</span> /u01/app/oracle/fast_recovery_area/LQM/archivelog/<span class="number">2014</span>_06_23/o1_mf_1_15_9th78jx5_.arc
+archived <span class="command">log</span> <span class="type">file</span> <span class="property">name</span>=/u01/app/oracle/fast_recovery_area/LQM/archivelog/<span class="number">2014</span>_06_23/o1_mf_1_13_9th6xygs_.arc thread=<span class="number">1</span> sequence=<span class="number">13</span>
+archived <span class="command">log</span> <span class="type">file</span> <span class="property">name</span>=/u01/app/oracle/fast_recovery_area/LQM/archivelog/<span class="number">2014</span>_06_23/o1_mf_1_14_9th6y06s_.arc thread=<span class="number">1</span> sequence=<span class="number">14</span>
+archived <span class="command">log</span> <span class="type">file</span> <span class="property">name</span>=/u01/app/oracle/fast_recovery_area/LQM/archivelog/<span class="number">2014</span>_06_23/o1_mf_1_15_9th78jx5_.arc thread=<span class="number">1</span> sequence=<span class="number">15</span>
+media recovery complete, elapsed <span class="property">time</span>: <span class="number">00</span>:<span class="number">00</span>:<span class="number">01</span>
+Finished recover <span class="keyword">at</span> <span class="number">23</span>-JUN-<span class="number">14</span>
+
+database opened
+
+<span class="property">contents</span> <span class="keyword">of</span> Memory Script:
+{
+<span class="comment"># create directory for datapump import</span>
+sql <span class="string">"create or replace directory TSPITR_DIROBJ_DPDIR as ''
+/tmp/recovertable''"</span>;
+<span class="comment"># create directory for datapump export</span>
+sql clone <span class="string">"create or replace directory TSPITR_DIROBJ_DPDIR as ''
+/tmp/recovertable''"</span>;
+}
+executing Memory Script
+
+sql statement: create <span class="keyword">or</span> replace directory TSPITR_DIROBJ_DPDIR <span class="keyword">as</span> ''/tmp/recovertable''
+
+sql statement: create <span class="keyword">or</span> replace directory TSPITR_DIROBJ_DPDIR <span class="keyword">as</span> ''/tmp/recovertable''
+
+Performing export <span class="keyword">of</span> tables...
+   EXPDP&gt; Starting <span class="string">"SYS"</span>.<span class="string">"TSPITR_EXP_eAAi_wFyn"</span>:  
+   EXPDP&gt; Estimate <span class="keyword">in</span> progress using BLOCKS method...
+   EXPDP&gt; Processing object type TABLE_EXPORT/TABLE/TABLE_DATA
+   EXPDP&gt; Total estimation using BLOCKS method: <span class="number">64</span> KB
+   EXPDP&gt; Processing object type TABLE_EXPORT/TABLE/TABLE
+   EXPDP&gt; Processing object type TABLE_EXPORT/TABLE/STATISTICS/TABLE_STATISTICS
+   EXPDP&gt; Processing object type TABLE_EXPORT/TABLE/STATISTICS/MARKER
+   EXPDP&gt; ORA-<span class="number">39127</span>: unexpected <span class="keyword">error</span> <span class="keyword">from</span> call <span class="keyword">to</span> export_string :=SYS.DBMS_TRANSFORM_EXIMP.INSTANCE_INFO_EXP('AQ$_ORDERS_QUEUETABLE_S','IX',<span class="number">1</span>,<span class="number">1</span>,'<span class="number">12.01</span><span class="number">.00</span><span class="number">.00</span><span class="number">.00</span>',newblock) 
+ORA-<span class="number">00376</span>: <span class="type">file</span> <span class="number">2</span> cannot be <span class="command">read</span> <span class="keyword">at</span> this <span class="property">time</span>
+ORA-<span class="number">01110</span>: data <span class="type">file</span> <span class="number">2</span>: '/u01/app/oracle/oradata/lqm/example01.dbf'
+ORA-<span class="number">06512</span>: <span class="keyword">at</span> <span class="string">"SYS.DBMS_TRANSFORM_EXIMP"</span>, line <span class="number">197</span>
+ORA-<span class="number">06512</span>: <span class="keyword">at</span> line <span class="number">1</span>
+ORA-<span class="number">06512</span>: <span class="keyword">at</span> <span class="string">"SYS.DBMS_METADATA"</span>, line <span class="number">9901</span>
+ORA-<span class="number">39127</span>: unexpected <span class="keyword">error</span> <span class="keyword">from</span> call <span class="keyword">to</span> export_string :=SYS.DBMS_TRANSFORM_EXIMP.INSTANCE_INFO_EXP('AQ$_STREAMS_QUEUE_TABLE_S','IX',<span class="number">1</span>,<span class="number">1</span>,'<span class="number">12.01</span><span class="number">.00</span><span class="number">.00</span><span class="number">.00</span>',newblock) 
+ORA-<span class="number">00376</span>: <span class="type">file</span> <span class="number">2</span> cannot be <span class="command">read</span> <span class="keyword">at</span> this <span class="property">time</span>
+ORA-<span class="number">01110</span>: data <span class="type">file</span> <span class="number">2</span>: '/u01/app/oracle/oradata/lqm/example01.dbf'
+ORA-<span class="number">06512</span>: <span class="keyword">at</span> <span class="string">"SYS.DBMS_TRANSFORM_EXIMP"</span>, line <span class="number">197</span>
+ORA-<span class="number">06512</span>: <span class="keyword">at</span> line <span class="number">1</span>
+ORA-<span class="number">06512</span>: <span class="keyword">at</span> <span class="string">"SYS.DBMS_METADATA"</span>, line <span class="number">9901</span>
+   EXPDP&gt; . . exported <span class="string">"LQM"</span>.<span class="string">"T_LQM"</span>                               <span class="number">5.507</span> KB       <span class="number">4</span> rows
+   EXPDP&gt; Master table <span class="string">"SYS"</span>.<span class="string">"TSPITR_EXP_eAAi_wFyn"</span> successfully loaded/unloaded
+   EXPDP&gt; ******************************************************************************
+   EXPDP&gt; Dump <span class="type">file</span> <span class="keyword">set</span> <span class="keyword">for</span> SYS.TSPITR_EXP_eAAi_wFyn <span class="keyword">is</span>:
+   EXPDP&gt;   /tmp/recovertable/tspitr_eAAi_29849.dmp
+   EXPDP&gt; Job <span class="string">"SYS"</span>.<span class="string">"TSPITR_EXP_eAAi_wFyn"</span> completed <span class="keyword">with</span> <span class="number">2</span> <span class="keyword">error</span>(s) <span class="keyword">at</span> Mon Jun <span class="number">23</span> <span class="number">11</span>:<span class="number">56</span>:<span class="number">28</span> <span class="number">2014</span> elapsed <span class="number">0</span> <span class="number">00</span>:<span class="number">01</span>:<span class="number">03</span>
+Export completed
+
+
+<span class="property">contents</span> <span class="keyword">of</span> Memory Script:
+{
+<span class="comment"># shutdown clone before import</span>
+shutdown clone abort
+}
+executing Memory Script
+
+Oracle instance shut down
+
+Performing import <span class="keyword">of</span> tables...
+   IMPDP&gt; Master table <span class="string">"SYS"</span>.<span class="string">"TSPITR_IMP_eAAi_hnrb"</span> successfully loaded/unloaded
+   IMPDP&gt; Starting <span class="string">"SYS"</span>.<span class="string">"TSPITR_IMP_eAAi_hnrb"</span>:  
+   IMPDP&gt; Processing object type TABLE_EXPORT/TABLE/TABLE
+   IMPDP&gt; Processing object type TABLE_EXPORT/TABLE/TABLE_DATA
+   IMPDP&gt; . . imported <span class="string">"LQM"</span>.<span class="string">"T_LQM_NEW"</span>                           <span class="number">5.507</span> KB       <span class="number">4</span> rows
+   IMPDP&gt; Processing object type TABLE_EXPORT/TABLE/STATISTICS/TABLE_STATISTICS
+   IMPDP&gt; Processing object type TABLE_EXPORT/TABLE/STATISTICS/MARKER
+   IMPDP&gt; Job <span class="string">"SYS"</span>.<span class="string">"TSPITR_IMP_eAAi_hnrb"</span> successfully completed <span class="keyword">at</span> Mon Jun <span class="number">23</span> <span class="number">11</span>:<span class="number">57</span>:<span class="number">27</span> <span class="number">2014</span> elapsed <span class="number">0</span> <span class="number">00</span>:<span class="number">00</span>:<span class="number">33</span>
+Import completed
+
+
+Removing automatic instance
+Automatic instance removed
+auxiliary instance <span class="type">file</span> /tmp/recovertable/LQM/datafile/o1_mf_temp_9th95brp_.tmp deleted
+auxiliary instance <span class="type">file</span> /tmp/recovertable/EAAI_PITR_LQM/onlinelog/o1_mf_3_9th9771q_.<span class="command">log</span> deleted
+auxiliary instance <span class="type">file</span> /tmp/recovertable/EAAI_PITR_LQM/onlinelog/o1_mf_2_9th975hp_.<span class="command">log</span> deleted
+auxiliary instance <span class="type">file</span> /tmp/recovertable/EAAI_PITR_LQM/onlinelog/o1_mf_1_9th9739h_.<span class="command">log</span> deleted
+auxiliary instance <span class="type">file</span> /tmp/recovertable/EAAI_PITR_LQM/datafile/o1_mf_users_9th9710c_.dbf deleted
+auxiliary instance <span class="type">file</span> /tmp/recovertable/LQM/datafile/o1_mf_sysaux_9th91flw_.dbf deleted
+auxiliary instance <span class="type">file</span> /tmp/recovertable/LQM/datafile/o1_mf_undotbs1_9th91g7j_.dbf deleted
+auxiliary instance <span class="type">file</span> /tmp/recovertable/LQM/datafile/o1_mf_system_9th91fkw_.dbf deleted
+auxiliary instance <span class="type">file</span> /tmp/recovertable/LQM/controlfile/o1_mf_9th8z5hk_.ctl deleted
+auxiliary instance <span class="type">file</span> tspitr_eAAi_29849.dmp deleted
+Finished recover <span class="keyword">at</span> <span class="number">23</span>-JUN-<span class="number">14</span>
+
+RMAN&gt; 
+RMAN&gt; 
+RMAN&gt; 
+RMAN&gt; 
+
+Recovery Manager complete.
+</code></pre>]]></content>
+    
+    
+      <category term="Oracle" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/Oracle/"/>
+    
+      <category term="Oracle" scheme="https://github.com/DaMinger/DaMinger.github.io.git/categories/Oracle/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[Oracle12c的Top-N Queries初步使用]]></title>
+    <link href="https://github.com/DaMinger/DaMinger.github.io.git/2014/06/23/Oracle/Oracle12c/oracle12c_top/"/>
+    <id>https://github.com/DaMinger/DaMinger.github.io.git/2014/06/23/Oracle/Oracle12c/oracle12c_top/</id>
+    <published>2014-06-23T07:40:29.000Z</published>
+    <updated>2014-06-23T08:27:24.000Z</updated>
+    <content type="html"><![CDATA[<h4 id="简介">简介</h4>
+<p>Oracle12C中终于推出了方便的Top-N Queries功能，弥补了与其他数据库的差距(SQL Server TOP用法，MYSQL Limit用法)</p>
+<h5 id="语法规则">语法规则</h5>
+<pre><code>[ OFFSET offset <span class="list">{ ROW | ROWS }</span> ]
+[ FETCH <span class="list">{ FIRST | NEXT }</span> [ <span class="list">{ rowcount | percent PERCENT }</span> ]
+<span class="list">{ ROW | ROWS }</span> <span class="list">{ ONLY | WITH TIES }</span> ]
+</code></pre><p><img src="/img/Oracle/Oracle12c/top.jpg" alt="TOP语法图解 "></p>
+<h4 id="准备测试表和数据">准备测试表和数据</h4>
+<h5 id="查看数据库版本">查看数据库版本</h5>
+<pre><code>SQL&gt;  <span class="keyword">select</span> * from v$version;
+
+BANNER                                                                    CON_ID
+<span class="comment">--------------------------------------------------------------------- ----------</span>
+Oracle Database <span class="number">12</span>c Enterprise Edition <span class="keyword">Release</span> <span class="number">12.1</span><span class="number">.0</span><span class="number">.1</span><span class="number">.0</span> - <span class="number">64</span><span class="typename">bit</span> Pro          <span class="number">0</span>
+duction
+
+PL/SQL <span class="keyword">Release</span> <span class="number">12.1</span><span class="number">.0</span><span class="number">.1</span><span class="number">.0</span> - Production                                         <span class="number">0</span>
+CORE    <span class="number">12.1</span><span class="number">.0</span><span class="number">.1</span><span class="number">.0</span>      Production                                             <span class="number">0</span>
+TNS <span class="keyword">for</span> Linux: Version <span class="number">12.1</span><span class="number">.0</span><span class="number">.1</span><span class="number">.0</span> - Production                                 <span class="number">0</span>
+NLSRTL Version <span class="number">12.1</span><span class="number">.0</span><span class="number">.1</span><span class="number">.0</span> - Production                                         <span class="number">0</span>
+</code></pre><h6 id="创建表并插入数据">创建表并插入数据</h6>
+<pre><code>SQL&gt; DROP TABLE rownum_order_test;
+
+Table dropped.
+
+SQL&gt; <span class="keyword">CREATE</span> TABLE rownum_order_test (
+  <span class="number">2</span>    val  NUMBER
+  <span class="number">3</span>  );
+
+Table created.
+
+SQL&gt; INSERT ALL
+  <span class="number">2</span>    <span class="keyword">INTO</span> rownum_order_test
+  <span class="number">3</span>    <span class="keyword">INTO</span> rownum_order_test
+  <span class="number">4</span>  <span class="keyword">SELECT</span> level
+  <span class="number">5</span>  <span class="keyword">FROM</span>   dual
+  <span class="number">6</span>  CONNECT <span class="keyword">BY</span> level &lt;= <span class="number">10</span>;
+
+<span class="number">20</span> rows created.
+
+SQL&gt; COMMIT;
+
+Commit complete.
+</code></pre><h6 id="现在我们有20个数据，10行数据不重复">现在我们有20个数据，10行数据不重复</h6>
+<pre><code>SQL&gt; SELECT val
+<span class="code">  2  FROM   rownum_order_test</span>
+<span class="code">  3  ORDER BY val;</span>
+
+<span class="header">       VAL
+----------</span>
+<span class="code">         1</span>
+<span class="code">         1</span>
+<span class="code">         2</span>
+<span class="code">         2</span>
+<span class="code">         3</span>
+<span class="code">         3</span>
+<span class="code">         4</span>
+<span class="code">         4</span>
+<span class="code">         5</span>
+<span class="code">         5</span>
+<span class="code">         6</span>
+
+<span class="header">       VAL
+----------</span>
+<span class="code">         6</span>
+<span class="code">         7</span>
+<span class="code">         7</span>
+<span class="code">         8</span>
+<span class="code">         8</span>
+<span class="code">         9</span>
+<span class="code">         9</span>
+<span class="code">        10</span>
+<span class="code">        10</span>
+
+20 rows selected.
+</code></pre><h4 id="查出最大的5个值(使用only关键字限定行数）">查出最大的5个值(使用only关键字限定行数）</h4>
+<pre><code>SQL&gt; SELECT val
+<span class="code">  2  FROM   rownum_order_test</span>
+<span class="code">  3  ORDER BY val DESC</span>
+<span class="code">  4  FETCH FIRST 5 ROWS ONLY;</span>
+
+<span class="header">       VAL
+----------</span>
+<span class="code">        10</span>
+<span class="code">        10</span>
+<span class="code">         9</span>
+<span class="code">         9</span>
+<span class="code">         8</span>
+</code></pre><h4 id="当在限定第N行有多个匹配值（使用with_ties_看例子_翻译的不好）">当在限定第N行有多个匹配值（使用with ties   看例子 翻译的不好）</h4>
+<pre><code>SQL&gt; SELECT val
+<span class="code">  2  FROM   rownum_order_test</span>
+<span class="code">  3  ORDER BY val DESC</span>
+<span class="code">  4  FETCH FIRST 5 ROWS WITH TIES;</span>
+
+<span class="header">       VAL
+----------</span>
+<span class="code">        10</span>
+<span class="code">        10</span>
+<span class="code">         9</span>
+<span class="code">         9</span>
+<span class="code">         8</span>
+<span class="code">         8</span>
+
+6 rows selected.
+</code></pre><h4 id="按百分比返回（使用percent）">按百分比返回（使用percent）</h4>
+<pre><code>SQL&gt; SELECT val
+<span class="code">  2  FROM   rownum_order_test</span>
+<span class="code">  3  ORDER BY val</span>
+<span class="code">  4  FETCH FIRST 20 PERCENT ROWS ONLY;</span>
+
+<span class="header">       VAL
+----------</span>
+<span class="code">         1</span>
+<span class="code">         1</span>
+<span class="code">         2</span>
+<span class="code">         2</span>
+</code></pre><h4 id="分页展示数据">分页展示数据</h4>
+<p>原先写法（采用子查询）：</p>
+<pre><code>SQL&gt; <span class="keyword">SELECT</span> val
+  <span class="number">2</span>  <span class="keyword">FROM</span>   (<span class="keyword">SELECT</span> val, rownum <span class="keyword">AS</span> rnum
+  <span class="number">3</span>          <span class="keyword">FROM</span>   (<span class="keyword">SELECT</span> val
+  <span class="number">4</span>                  <span class="keyword">FROM</span>   rownum_order_test
+  <span class="number">5</span>                  <span class="keyword">ORDER</span> <span class="keyword">BY</span> val)
+  <span class="number">6</span>          <span class="keyword">WHERE</span> rownum &lt;= <span class="number">8</span>)
+  <span class="number">7</span>  <span class="keyword">WHERE</span>  rnum &gt;= <span class="number">5</span>;
+
+       VAL
+----------
+         <span class="number">3</span>
+         <span class="number">3</span>
+         <span class="number">4</span>
+         <span class="number">4</span>
+</code></pre><p>看看新写法：</p>
+<pre><code>SQL&gt; SELECT val
+<span class="code">  2  FROM   rownum_order_test</span>
+<span class="code">  3  ORDER BY val</span>
+<span class="code">  4  OFFSET 4 ROWS FETCH NEXT 4 ROWS ONLY;</span>
+
+<span class="header">       VAL
+----------</span>
+<span class="code">         3</span>
+<span class="code">         3</span>
+<span class="code">         4</span>
+<span class="code">         4</span>
+</code></pre><p>开始点是OFFSET+1，比子查询简洁了不少</p>
+<p>百分比写法：</p>
+<pre><code>SQL&gt; SELECT val
+<span class="code">  2  FROM   rownum_order_test</span>
+<span class="code">  3  ORDER BY val</span>
+<span class="code">  4  OFFSET 4 ROWS FETCH NEXT 20 PERCENT ROWS ONLY;</span>
+
+<span class="header">       VAL
+----------</span>
+<span class="code">         3</span>
+<span class="code">         3</span>
+<span class="code">         4</span>
+<span class="code">         4</span>
+</code></pre><h4 id="支持绑定变量">支持绑定变量</h4>
+<pre><code>SQL&gt; VARIABLE v_offset NUMBER;
+SQL&gt; VARIABLE v_next NUMBER;
+SQL&gt; <span class="keyword">BEGIN</span>
+  <span class="number">2</span>  :v_offset := <span class="number">4</span>;
+  <span class="number">3</span>   :v_next   := <span class="number">4</span>;
+  <span class="number">4</span>  <span class="keyword">END</span>;
+  <span class="number">5</span>  /
+
+PL/SQL <span class="function"><span class="keyword">procedure</span> <span class="title">successfully</span> <span class="title">completed</span>.
+
+<span class="title">SQL</span>&gt; <span class="title">SELECT</span> <span class="title">val</span>
+  2  <span class="title">FROM</span>   <span class="title">rownum_order_test</span>
+  3  <span class="title">ORDER</span> <span class="title">BY</span> <span class="title">val</span>
+  4  <span class="title">OFFSET</span> :</span>v_offset ROWS FETCH NEXT :v_next ROWS ONLY;
+
+       VAL
+----------
+         <span class="number">3</span>
+         <span class="number">3</span>
+         <span class="number">4</span>
+         <span class="number">4</span>
+</code></pre><h4 id="执行计划">执行计划</h4>
+<p>子查询的执行计划：</p>
+<pre><code>SQL&gt; set autotrace on;
+SQL&gt; SELECT val
+<span class="code">  2  FROM   (SELECT val, rownum AS rnum</span>
+<span class="code">  3          FROM   (SELECT val</span>
+<span class="code">  4                  FROM   rownum_order_test</span>
+<span class="code">  5                  ORDER BY val)</span>
+<span class="code">  6          WHERE rownum &lt;= 8)</span>
+<span class="code">  7  WHERE  rnum &gt;= 5;</span>
+
+<span class="header">       VAL
+----------</span>
+<span class="code">         3</span>
+<span class="code">         3</span>
+<span class="code">         4</span>
+<span class="code">         4</span>
+
+
+<span class="header">Execution Plan
+----------------------------------------------------------</span>
+Plan hash value: 2927523340
+
+<span class="code">----------------------------------------------------------------------------------------------
+| Id  | Operation                | Name              | Rows  | Bytes | Cost (%CPU)| Time     |
+----------------------------------------------------------------------------------------------</span>
+|   0 | SELECT STATEMENT         |                   |     8 |   208 |     2   (0)| 00:00:01 |
+|*  1 |  VIEW                    |                   |     8 |   208 |     2   (0)| 00:00:01 |
+|*  2 |   COUNT STOPKEY          |                   |       |       |            |          |
+|   3 |    VIEW                  |                   |    20 |   260 |     2   (0)| 00:00:01 |
+|*  4 |     SORT ORDER BY STOPKEY|                   |    20 |   260 |     2   (0)| 00:00:01 |
+<span class="header">|   5 |      TABLE ACCESS FULL   | ROWNUM_ORDER_TEST |    20 |   260 |     2   (0)| 00:00:01 |
+----------------------------------------------------------------------------------------------</span>
+
+<span class="header">Predicate Information (identified by operation id):
+---------------------------------------------------</span>
+
+<span class="code">   1 - filter("RNUM"&gt;=5)</span>
+<span class="code">   2 - filter(ROWNUM&lt;=8)</span>
+<span class="code">   4 - filter(ROWNUM&lt;=8)</span>
+
+<span class="header">Note
+-----</span>
+<span class="code">   - dynamic statistics used: dynamic sampling (level=2)</span>
+
+
+<span class="header">Statistics
+----------------------------------------------------------</span>
+<span class="code">          0  recursive calls</span>
+<span class="code">          0  db block gets</span>
+<span class="code">          3  consistent gets</span>
+<span class="code">          0  physical reads</span>
+<span class="code">          0  redo size</span>
+<span class="code">        604  bytes sent via SQL*Net to client</span>
+<span class="code">        543  bytes received via SQL*Net from client</span>
+<span class="code">          2  SQL*Net roundtrips to/from client</span>
+<span class="code">          1  sorts (memory)</span>
+<span class="code">          0  sorts (disk)</span>
+<span class="code">          4  rows processed</span>
+</code></pre><p>新写法执行计划：</p>
+<pre><code>SQL&gt; SELECT val
+<span class="code">  2  FROM   rownum_order_test</span>
+<span class="code">  3  ORDER BY val</span>
+<span class="code">  4  OFFSET 4 ROWS FETCH NEXT 4 ROWS ONLY;</span>
+
+<span class="header">       VAL
+----------</span>
+<span class="code">         3</span>
+<span class="code">         3</span>
+<span class="code">         4</span>
+<span class="code">         4</span>
+
+
+<span class="header">Execution Plan
+----------------------------------------------------------</span>
+Plan hash value: 1664719511
+
+<span class="code">----------------------------------------------------------------------------------------------
+| Id  | Operation                | Name              | Rows  | Bytes | Cost (%CPU)| Time     |
+----------------------------------------------------------------------------------------------</span>
+|   0 | SELECT STATEMENT         |                   |    20 |   780 |     2   (0)| 00:00:01 |
+|*  1 |  VIEW                    |                   |    20 |   780 |     2   (0)| 00:00:01 |
+|*  2 |   WINDOW SORT PUSHED RANK|                   |    20 |   260 |     2   (0)| 00:00:01 |
+<span class="header">|   3 |    TABLE ACCESS FULL     | ROWNUM_ORDER_TEST |    20 |   260 |     2   (0)| 00:00:01 |
+----------------------------------------------------------------------------------------------</span>
+
+<span class="header">Predicate Information (identified by operation id):
+---------------------------------------------------</span>
+
+<span class="code">   1 - filter("from$_subquery$_002"."rowlimit_$$_rownumber"&lt;=CASE  WHEN (4&gt;=0) THEN 4</span>
+<span class="code">              ELSE 0 END +4 AND "from$_subquery$_002"."rowlimit_$$_rownumber"&gt;4)</span>
+<span class="code">   2 - filter(ROW_NUMBER() OVER ( ORDER BY "VAL")&lt;=CASE  WHEN (4&gt;=0) THEN 4 ELSE 0</span>
+<span class="code">              END +4)</span>
+
+<span class="header">Note
+-----</span>
+<span class="code">   - dynamic statistics used: dynamic sampling (level=2)</span>
+
+
+<span class="header">Statistics
+----------------------------------------------------------</span>
+<span class="code">          0  recursive calls</span>
+<span class="code">          0  db block gets</span>
+<span class="code">          3  consistent gets</span>
+<span class="code">          0  physical reads</span>
+<span class="code">          0  redo size</span>
+<span class="code">        604  bytes sent via SQL*Net to client</span>
+<span class="code">        543  bytes received via SQL*Net from client</span>
+<span class="code">          2  SQL*Net roundtrips to/from client</span>
+<span class="code">          1  sorts (memory)</span>
+<span class="code">          0  sorts (disk)</span>
+<span class="code">          4  rows processed</span>
+
+SQL&gt; set autotrace off
+</code></pre><p>执行计划比原先简洁不少，小数据两种消耗差不多，不知道大数据怎么样。</p>
+]]></content>
+    
+    
+      <category term="Oracle" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/Oracle/"/>
+    
+      <category term="Oracle" scheme="https://github.com/DaMinger/DaMinger.github.io.git/categories/Oracle/"/>
+    
+  </entry>
   
   <entry>
     <title><![CDATA[OpenCv的安装]]></title>
@@ -1064,174 +1926,6 @@ Given <span class="operator">the</span> below binary tree <span class="operator"
         }
 
         return <span class="literal">false</span>;
-    }
-}
-</code></pre>]]></content>
-    
-    
-      <category term="数据结构与算法" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/"/>
-    
-      <category term="数据结构与算法" scheme="https://github.com/DaMinger/DaMinger.github.io.git/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/"/>
-    
-  </entry>
-  
-  <entry>
-    <title><![CDATA[LeetCode:Partition List]]></title>
-    <link href="https://github.com/DaMinger/DaMinger.github.io.git/2014/06/05/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/LeetCode/partition_list/"/>
-    <id>https://github.com/DaMinger/DaMinger.github.io.git/2014/06/05/数据结构与算法/LeetCode/partition_list/</id>
-    <published>2014-06-05T01:28:44.000Z</published>
-    <updated>2014-06-05T01:41:14.000Z</updated>
-    <content type="html"><![CDATA[<h4 id="题目">题目</h4>
-<pre><code>Given <span class="operator">a</span> linked list <span class="operator">and</span> <span class="operator">a</span> <span class="built_in">value</span> x, partition <span class="keyword">it</span> such that all nodes less than x come <span class="keyword">before</span> nodes greater than <span class="operator">or</span> equal <span class="built_in">to</span> x.
-
-You should preserve <span class="operator">the</span> original <span class="built_in">relative</span> order <span class="operator">of</span> <span class="operator">the</span> nodes <span class="operator">in</span> <span class="keyword">each</span> <span class="operator">of</span> <span class="operator">the</span> <span class="constant">two</span> partitions.
-
-For example,
-Given <span class="number">1</span>-&gt;<span class="number">4</span>-&gt;<span class="number">3</span>-&gt;<span class="number">2</span>-&gt;<span class="number">5</span>-&gt;<span class="number">2</span> <span class="operator">and</span> x = <span class="number">3</span>,
-<span class="constant">return</span> <span class="number">1</span>-&gt;<span class="number">2</span>-&gt;<span class="number">2</span>-&gt;<span class="number">4</span>-&gt;<span class="number">3</span>-&gt;<span class="number">5.</span>
-</code></pre><p>思路：分两段拼接。</p>
-<h4 id="解法">解法</h4>
-<pre><code><span class="keyword">public</span> <span class="keyword">class</span> Solution {
-    <span class="keyword">public</span> ListNode <span class="title">partition</span>(ListNode head, <span class="keyword">int</span> x) {
-        <span class="keyword">if</span>(head == <span class="keyword">null</span>) <span class="keyword">return</span> <span class="keyword">null</span>;
-
-        ListNode fakeHead1 = <span class="keyword">new</span> ListNode(<span class="number">0</span>);
-        ListNode fakeHead2 = <span class="keyword">new</span> ListNode(<span class="number">0</span>);
-        fakeHead1.next = head;
-
-        ListNode p = head;
-        ListNode prev = fakeHead1;
-        ListNode p2 = fakeHead2;
-
-        <span class="keyword">while</span>(p != <span class="keyword">null</span>){
-            <span class="keyword">if</span>(p.val &lt; x){
-                p = p.next;
-                prev = prev.next;
-            }<span class="keyword">else</span>{
-
-                p2.next = p;
-                prev.next = p.next;
-
-                p = prev.next;
-                p2 = p2.next;
-            } 
-        }
-
-        <span class="comment">// close the list</span>
-        p2.next = <span class="keyword">null</span>;
-
-        prev.next = fakeHead2.next;
-
-        <span class="keyword">return</span> fakeHead1.next;
-    }
-}
-</code></pre>]]></content>
-    
-    
-      <category term="数据结构与算法" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/"/>
-    
-      <category term="数据结构与算法" scheme="https://github.com/DaMinger/DaMinger.github.io.git/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/"/>
-    
-  </entry>
-  
-  <entry>
-    <title><![CDATA[LeetCode:NQueen I II]]></title>
-    <link href="https://github.com/DaMinger/DaMinger.github.io.git/2014/06/05/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/LeetCode/nqueen_i_ii/"/>
-    <id>https://github.com/DaMinger/DaMinger.github.io.git/2014/06/05/数据结构与算法/LeetCode/nqueen_i_ii/</id>
-    <published>2014-06-05T01:18:13.000Z</published>
-    <updated>2014-06-05T01:27:25.000Z</updated>
-    <content type="html"><![CDATA[<h4 id="题目">题目</h4>
-<pre><code>N-Queens
-The n-queens puzzle <span class="keyword">is</span> the problem <span class="keyword">of</span> placing n queens <span class="keyword">on</span> an n×n chessboard such that no two queens attack each other.
-Given an <span class="typename">integer</span> n, <span class="keyword">return</span> <span class="keyword">all</span> distinct solutions <span class="keyword">to</span> the n-queens puzzle.
-Each solution contains a distinct board <span class="keyword">configuration</span> <span class="keyword">of</span> the n-queens' placement, where <span class="attribute">'Q</span>' <span class="keyword">and</span> '.' both indicate a queen 
-<span class="keyword">and</span> an empty space respectively.
-<span class="keyword">For</span> example,There exist two distinct solutions <span class="keyword">to</span> the <span class="number">4</span>-queens puzzle:
-[
- [<span class="string">".Q.."</span>,  // Solution <span class="number">1</span>
-  <span class="string">"...Q"</span>,
-  <span class="string">"Q..."</span>,
-  <span class="string">"..Q."</span>],
-
- [<span class="string">"..Q."</span>,  // Solution <span class="number">2</span>
-  <span class="string">"Q..."</span>,
-  <span class="string">"...Q"</span>,
-  <span class="string">".Q.."</span>]
-]
-N-Queens II 
-Follow up <span class="keyword">for</span> N-Queens problem.
-Now, instead outputting board configurations, <span class="keyword">return</span> the total number <span class="keyword">of</span> distinct solutions.
-</code></pre><p>思路: 传统的dfs递归,验证放置Queen的地方是否合法,输出Board结果</p>
-<h4 id="解法">解法</h4>
-<pre><code>NQueen I 
-<span class="keyword">public</span> <span class="keyword">class</span> Solution {
-    <span class="keyword">public</span> ArrayList&lt;String[]&gt; <span class="title">solveNQueens</span>(<span class="keyword">int</span> n) {
-        ArrayList&lt;String[]&gt; res = <span class="keyword">new</span> ArrayList&lt;String[]&gt;();
-        <span class="keyword">int</span>[] loc = <span class="keyword">new</span> <span class="keyword">int</span>[n];
-        dfs(res,loc,<span class="number">0</span>,n);
-        <span class="keyword">return</span> res;
-    }
-    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title">dfs</span>(ArrayList&lt;String[]&gt; res, <span class="keyword">int</span>[] loc, <span class="keyword">int</span> cur, <span class="keyword">int</span> n){
-        <span class="keyword">if</span>(cur==n) 
-            printboard(res,loc,n);
-        <span class="keyword">else</span>{
-            <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;n;i++){
-                loc[cur] = i;
-                <span class="keyword">if</span>(isValid(loc,cur))
-                    dfs(res,loc,cur+<span class="number">1</span>,n);
-            }
-        }
-    }
-    <span class="keyword">public</span> boolean <span class="title">isValid</span>(<span class="keyword">int</span>[] loc, <span class="keyword">int</span> cur){
-        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;cur;i++){
-            <span class="keyword">if</span>(loc[i]==loc[cur]||Math.abs(loc[i]-loc[cur])==(cur-i))
-                <span class="keyword">return</span> <span class="keyword">false</span>;
-        }
-        <span class="keyword">return</span> <span class="keyword">true</span>;
-    }
-    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title">printboard</span>(ArrayList&lt;String[]&gt; res, <span class="keyword">int</span>[] loc, <span class="keyword">int</span> n){
-        String[] ans = <span class="keyword">new</span> String[n];
-        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;n;i++){
-            String row = <span class="keyword">new</span> String();
-            <span class="keyword">for</span>(<span class="keyword">int</span> j=<span class="number">0</span>;j&lt;n;j++){
-                <span class="keyword">if</span>(j==loc[i]) row += <span class="string">"Q"</span>;
-                <span class="keyword">else</span> row += <span class="string">"."</span>;
-            }
-            ans[i] = row;
-        }
-        res.add(ans);
-    }
-}
-dfs的循环是指这一行里，从第一列到最后一列放置的所有可能，如果放置的地点通过isValid验证，
-通过cur+<span class="number">1</span>进入下一行进行递归， 如果没通过验证，试下一个位置，如果所有位置都不Valid，跳回上一层
-
-NQueen II
-<span class="keyword">public</span> <span class="keyword">class</span> Solution {
-    <span class="keyword">int</span> res; 
-    <span class="keyword">public</span> <span class="keyword">int</span> <span class="title">totalNQueens</span>(<span class="keyword">int</span> n) {
-        res = <span class="number">0</span>;
-        <span class="keyword">if</span>(n&lt;=<span class="number">0</span>) <span class="keyword">return</span> res;
-        <span class="keyword">int</span>[] loc = <span class="keyword">new</span> <span class="keyword">int</span>[n];
-        dfs(loc,<span class="number">0</span>,n);
-        <span class="keyword">return</span> res;
-    }
-    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title">dfs</span>(<span class="keyword">int</span>[] loc, <span class="keyword">int</span> cur, <span class="keyword">int</span> n){
-        <span class="keyword">if</span> (cur==n) {
-            res+=<span class="number">1</span>;
-            <span class="keyword">return</span>;
-        }
-        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;n;i++){
-            loc[cur] = i;
-            <span class="keyword">if</span>(isValid(loc,cur))
-                dfs(loc,cur+<span class="number">1</span>,n);
-        }
-    }
-    <span class="keyword">public</span> boolean <span class="title">isValid</span>(<span class="keyword">int</span>[] loc, <span class="keyword">int</span> cur){
-        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;cur;i++){
-            <span class="keyword">if</span>(loc[i]==loc[cur]||Math.abs(loc[i]-loc[cur])==(cur-i))
-                <span class="keyword">return</span> <span class="keyword">false</span>;
-        }
-        <span class="keyword">return</span> <span class="keyword">true</span>;
     }
 }
 </code></pre>]]></content>
