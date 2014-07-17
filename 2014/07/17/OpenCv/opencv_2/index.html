@@ -1,0 +1,489 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>基于OpenCV的车牌识别系统 | DaMinger&#39;s blog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="DaMinger">
+    
+    <meta name="description" content="前一段时间忙死了，各种考试，今天有点空，把我那个学年课程设计（车牌识别）处理流程写一下，做个记录
+车牌识别流程图
+
+图像预处理模块
+将彩色图像转化为灰度图像
+真彩图转换具有信息量大的优点，但同时其数据量也大，因此主要利用汽车牌照的灰度图像进行处理，灰度图像数据量小，能提高后面图像处理的运行速度
+去除">
+    
+    
+    
+    
+    <link rel="alternative" href="/atom.xml" title="DaMinger&#39;s blog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/pacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/pacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+    <link href="/css/hover.css" rel="stylesheet">
+    <link href="/css/bottom.css" rel="stylesheet">
+</head>
+
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a rel="pulse" class="pulse" href="/"><img src="/img/pacman.png" alt="DaMinger&#39;s blog" title="DaMinger&#39;s blog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a rel="hover" class="hover" href="/" title="DaMinger&#39;s blog">DaMinger&#39;s blog</a></h1>
+				<h2 class="blog-motto"><a rel="wobble-to-bottom-right" class="wobble-to-bottom-right" href="#" title="#">乐于鼓捣各种小实验</a></h2>
+			</div>
+			<div class="navbar"><a rel="buzz" class="buzz" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a rel="wobble-top" class="wobble-top" href="/">Home</a></li>
+					
+						<li><a rel="wobble-top" class="wobble-top" href="/archives">Menu</a></li>
+					
+						<li><a rel="wobble-top" class="wobble-top" href="/about">About</a></li>
+					
+				</ul>
+				
+			</nav>			
+</div>
+<div style="text-align:right;">
+<form  class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+ <input type="search" name="q" id="search" autocomplete="off" autocorrect="off" autocapitalize="off" maxlength="20" placeholder="Search" />
+ <input type="hidden" name="q" value="site:github.com/DaMinger/DaMinger.github.io.git">
+</form>
+</div>
+
+
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2014/07/17/OpenCv/opencv_2/" title="基于OpenCV的车牌识别系统" itemprop="url">基于OpenCV的车牌识别系统</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="https://github.com/DaMinger/DaMinger.github.io.git" title="DaMinger">DaMinger</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2014-07-17T01:24:18.000Z" itemprop="datePublished">7月 17 2014</time>
+    更新日期:<time datetime="2014-07-17T02:56:04.000Z" itemprop="dateModified">7月 17 2014</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		<ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#车牌识别流程图"><span class="toc-number">1.</span> <span class="toc-text">车牌识别流程图</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#图像预处理模块"><span class="toc-number">2.</span> <span class="toc-text">图像预处理模块</span></a></li><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#将彩色图像转化为灰度图像"><span class="toc-number">2.0.1.</span> <span class="toc-text">将彩色图像转化为灰度图像</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#去除图像的干扰噪声"><span class="toc-number">2.0.2.</span> <span class="toc-text">去除图像的干扰噪声</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#图像边缘检测"><span class="toc-number">2.0.3.</span> <span class="toc-text">图像边缘检测</span></a></li></ol></ol><li class="toc-item toc-level-4"><a class="toc-link" href="#车牌粗定位模块"><span class="toc-number">3.</span> <span class="toc-text">车牌粗定位模块</span></a></li><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#边缘密度法"><span class="toc-number">3.0.1.</span> <span class="toc-text">边缘密度法</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#种子法标定单连通区域"><span class="toc-number">3.0.2.</span> <span class="toc-text">种子法标定单连通区域</span></a></li></ol></ol><li class="toc-item toc-level-4"><a class="toc-link" href="#车牌字分割模块"><span class="toc-number">4.</span> <span class="toc-text">车牌字分割模块</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#车牌字符识别模块"><span class="toc-number">5.</span> <span class="toc-text">车牌字符识别模块</span></a></li></ol>
+		</div>
+		
+		<p>前一段时间忙死了，各种考试，今天有点空，把我那个学年课程设计（车牌识别）处理流程写一下，做个记录</p>
+<h4 id="车牌识别流程图">车牌识别流程图</h4>
+<p><img src="/img/OpenCv/car_card_1.jpg" alt="车牌识别流程图 "></p>
+<h4 id="图像预处理模块">图像预处理模块</h4>
+<h6 id="将彩色图像转化为灰度图像">将彩色图像转化为灰度图像</h6>
+<p>真彩图转换具有信息量大的优点，但同时其数据量也大，因此主要利用汽车牌照的灰度图像进行处理，灰度图像数据量小，能提高后面图像处理的运行速度<br><img src="/img/OpenCv/car_card_2.jpg" alt="灰度化 "></p>
+<h6 id="去除图像的干扰噪声">去除图像的干扰噪声</h6>
+<p>采用中值滤波，中值滤波就是利用一个有奇数点的滑动窗口，将窗口中心点的值用窗口内各点的中值代替，中值滤波对于消除孤立噪声点的干扰十分有用，更重要的是使用这种窗口进行滤波时，除有效地消除噪声外，还能很有效地保护边界的信息。<br><img src="/img/OpenCv/car_card_3.jpg" alt="去除噪音 "></p>
+<h6 id="图像边缘检测">图像边缘检测</h6>
+<p>物体的边缘是以图像局部特征的不连续性的形式出现的，例如，灰度值的突变，颜色的突变，纹理结构的突变等。边缘常常意味着一个区域的结束和另一个区域的开始。车牌与车牌周围一般具有明显的灰度变化，经边缘处理后可将车牌形成独立的区域，便于车牌定位时形成与周围不相连的单连通区域。</p>
+<p>我采用Canny 算子法能比较好地提取出连续的字符轮廓边缘,同时对于噪声有很好的抑制。<br><img src="/img/OpenCv/car_card_4.jpg" alt="边缘化处理 "></p>
+<h4 id="车牌粗定位模块">车牌粗定位模块</h4>
+<h6 id="边缘密度法">边缘密度法</h6>
+<p>给出“ 边缘密度法”的定义：在某一宽度范围的模板内, 灰度值大于某一阈值的边缘点的总和。设计如下扫描算法如下</p>
+<pre><code>(1)扫描整幅图像,二值化将灰度小于某阈值的点置0, 否则置255
+(2)记录每行的值255为点的个数，删除点数小于某数值的行
+(3)移动模板计算模板内点的密度，大于某阈值是将模板区图像全部置225，否则置0。
+(4)对图像进行一定的膨胀操作。
+</code></pre><p><img src="/img/OpenCv/car_card_5.jpg" alt="膨松二值性 "></p>
+<h6 id="种子法标定单连通区域">种子法标定单连通区域</h6>
+<p>在使用边缘密度法后可形成多个单连通区域，要通过利用种子方法实现单连通区域的搜索，找到各个单连通区域的边界。<br><img src="/img/OpenCv/car_card_6.jpg" alt="感兴趣的区域一 "><br><img src="/img/OpenCv/car_card_7.jpg" alt="感兴趣的区域二 "><br><img src="/img/OpenCv/car_card_8.jpg" alt="最终标记 "></p>
+<h4 id="车牌字分割模块">车牌字分割模块</h4>
+<p>首先二值化，然后根据下表进行字符分割<br><img src="/img/OpenCv/car_card_10.jpg" alt="分割系 "><br><img src="/img/OpenCv/car_card_9.jpg" alt="效果图 "></p>
+<h4 id="车牌字符识别模块">车牌字符识别模块</h4>
+<p>采用十三特征模版匹配</p>
+<pre><code>首先把字符平均分成8份，如图4-5所示(这里以字符“8”举例)。分别统计这8个区域中的白色点像素的数目，可以得到8个特征．
+然后统计水平方向中间两列和竖直方向中间两列的白色像素点的个数作为4个特征如图4-6和图4-7，最后统计所有白色像素点的个数作为第13个特征。
+将字符图像的全部白色像素的数目的总和作为一个特征，总共即得到13个特征。
+</code></pre><p><img src="/img/OpenCv/car_card_11.jpg" alt="效果图 "></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/OpenCv/">OpenCv</a>
+  </div>
+
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/OpenCv/">OpenCv</a>
+</div>
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="https://github.com/DaMinger/DaMinger.github.io.git/2014/07/17/OpenCv/opencv_2/" data-title="基于OpenCV的车牌识别系统 | DaMinger&#39;s blog" data-tsina="null" class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+
+<div class="next">
+<a href="/2014/06/23/Oracle/Oracle12c/oracle12c_recover_table/"  title="Oracle12c Rman Recover Table(基于时间点)">
+ <strong>NEXT:</strong><br/> 
+ <span>Oracle12c Rman Recover Table(基于时间点)
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section class="comment">
+	<div class="ds-thread"></div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+  <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#车牌识别流程图"><span class="toc-number">1.</span> <span class="toc-text">车牌识别流程图</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#图像预处理模块"><span class="toc-number">2.</span> <span class="toc-text">图像预处理模块</span></a></li><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#将彩色图像转化为灰度图像"><span class="toc-number">2.0.1.</span> <span class="toc-text">将彩色图像转化为灰度图像</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#去除图像的干扰噪声"><span class="toc-number">2.0.2.</span> <span class="toc-text">去除图像的干扰噪声</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#图像边缘检测"><span class="toc-number">2.0.3.</span> <span class="toc-text">图像边缘检测</span></a></li></ol></ol><li class="toc-item toc-level-4"><a class="toc-link" href="#车牌粗定位模块"><span class="toc-number">3.</span> <span class="toc-text">车牌粗定位模块</span></a></li><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#边缘密度法"><span class="toc-number">3.0.1.</span> <span class="toc-text">边缘密度法</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#种子法标定单连通区域"><span class="toc-number">3.0.2.</span> <span class="toc-text">种子法标定单连通区域</span></a></li></ol></ol><li class="toc-item toc-level-4"><a class="toc-link" href="#车牌字分割模块"><span class="toc-number">4.</span> <span class="toc-text">车牌字分割模块</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#车牌字符识别模块"><span class="toc-number">5.</span> <span class="toc-text">车牌字符识别模块</span></a></li></ol>
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p rel="asidetitle grow" class="asidetitle grow">分类</p>
+		<ul>
+		
+			<li><a rel="grow" class="grow" href="/categories/Hadoop/" title="Hadoop">Hadoop<sup>20</sup></a></li>
+		
+			<li><a rel="grow" class="grow" href="/categories/Java/" title="Java">Java<sup>2</sup></a></li>
+		
+			<li><a rel="grow" class="grow" href="/categories/Linux/" title="Linux">Linux<sup>5</sup></a></li>
+		
+			<li><a rel="grow" class="grow" href="/categories/OpenCv/" title="OpenCv">OpenCv<sup>2</sup></a></li>
+		
+			<li><a rel="grow" class="grow" href="/categories/Oracle/" title="Oracle">Oracle<sup>2</sup></a></li>
+		
+			<li><a rel="grow" class="grow" href="/categories/Shell/" title="Shell">Shell<sup>4</sup></a></li>
+		
+			<li><a rel="grow" class="grow" href="/categories/操作系统/" title="操作系统">操作系统<sup>1</sup></a></li>
+		
+			<li><a rel="grow" class="grow" href="/categories/数据结构与算法/" title="数据结构与算法">数据结构与算法<sup>51</sup></a></li>
+		
+			<li><a rel="grow" class="grow" href="/categories/杂谈/" title="杂谈">杂谈<sup>2</sup></a></li>
+		
+			<li><a rel="grow" class="grow" href="/categories/计算机网络/" title="计算机网络">计算机网络<sup>1</sup></a></li>
+		
+			<li><a rel="grow" class="grow" href="/categories/设计模式/" title="设计模式">设计模式<sup>8</sup></a></li>
+		
+		</ul>
+</div>
+
+
+
+  <div class="linkslist">
+<h3 rel="grow" class="grow asidetitle">友情链接</h3>
+<ul class="entry">
+<li><a rel="grow" class="grow" href="http://tahiti.oracle.com/" title="Oracle文档">Oracle文档</a></li>
+<li><a rel="grow" class="grow" href="http://dev.mysql.com/doc/" title="Mysql文档">Mysql文档</a></li>
+<li><a rel="grow" class="grow" href="http://pythontip.sinaapp.com/" title="Python在线挑战">Python在线挑战</a></li>
+<li><a rel="grow" class="grow" href="http://www.programcreek.com/" title="Java">Java</a></li>
+<li><a rel="grow" class="grow" href="http://asktom.oracle.com/" title="AskTom">AskTom</a></li>
+<li><a rel="grow" class="grow" href="http://blog.csdn.net/tianlesoftware/" title="Dave">Dave</a></li>
+<li><a rel="grow" class="grow" href="http://www.eygle.com/" title="eygle">eygle</a></li>
+<li><a rel="grow" class="grow" href="http://www.dbsnake.com/" title="dbsnake">dbsnake</a></li>
+</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/Eclipse/" title="Eclipse">Eclipse<sup>1</sup></a></li>
+		
+			<li><a href="/tags/HBase/" title="HBase">HBase<sup>4</sup></a></li>
+		
+			<li><a href="/tags/HDFS/" title="HDFS">HDFS<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Hadoop/" title="Hadoop">Hadoop<sup>20</sup></a></li>
+		
+			<li><a href="/tags/Hadoop_Stream/" title="Hadoop_Stream">Hadoop_Stream<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Hive/" title="Hive">Hive<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Java/" title="Java">Java<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Linux/" title="Linux">Linux<sup>5</sup></a></li>
+		
+			<li><a href="/tags/Mahout/" title="Mahout">Mahout<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Map-Reduce/" title="Map-Reduce">Map-Reduce<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Mysql/" title="Mysql">Mysql<sup>1</sup></a></li>
+		
+			<li><a href="/tags/OpenCv/" title="OpenCv">OpenCv<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Oracle/" title="Oracle">Oracle<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Pig/" title="Pig">Pig<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Shell/" title="Shell">Shell<sup>4</sup></a></li>
+		
+			<li><a href="/tags/Sqoop/" title="Sqoop">Sqoop<sup>1</sup></a></li>
+		
+			<li><a href="/tags/awk/" title="awk">awk<sup>2</sup></a></li>
+		
+			<li><a href="/tags/sed/" title="sed">sed<sup>1</sup></a></li>
+		
+			<li><a href="/tags/yum/" title="yum">yum<sup>1</sup></a></li>
+		
+			<li><a href="/tags/学习计划/" title="学习计划">学习计划<sup>1</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle"><a href="/archives">归档</a></p>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/07">七月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/06">六月 2014</a><span class="archive-list-count">36</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/05">五月 2014</a><span class="archive-list-count">42</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/04">四月 2014</a><span class="archive-list-count">19</span></li></ul>
+  </div>
+
+
+  
+  <div class="tagcloudlist">
+    <p class="asidetitle">标签云</p>
+    <div class="tagcloudlist clearfix">
+       <a href="/tags/Eclipse/" style="font-size: 10.00px;">Eclipse</a><a href="/tags/HBase/" style="font-size: 13.33px;">HBase</a><a href="/tags/HDFS/" style="font-size: 11.67px;">HDFS</a><a href="/tags/Hadoop/" style="font-size: 18.33px;">Hadoop</a><a href="/tags/Hadoop_Stream/" style="font-size: 10.00px;">Hadoop_Stream</a><a href="/tags/Hive/" style="font-size: 11.67px;">Hive</a><a href="/tags/Java/" style="font-size: 11.67px;">Java</a><a href="/tags/Linux/" style="font-size: 15.00px;">Linux</a><a href="/tags/Mahout/" style="font-size: 11.67px;">Mahout</a><a href="/tags/Map-Reduce/" style="font-size: 11.67px;">Map-Reduce</a><a href="/tags/Mysql/" style="font-size: 10.00px;">Mysql</a><a href="/tags/OpenCv/" style="font-size: 11.67px;">OpenCv</a><a href="/tags/Oracle/" style="font-size: 11.67px;">Oracle</a><a href="/tags/Pig/" style="font-size: 10.00px;">Pig</a><a href="/tags/Shell/" style="font-size: 13.33px;">Shell</a><a href="/tags/Sqoop/" style="font-size: 10.00px;">Sqoop</a><a href="/tags/awk/" style="font-size: 11.67px;">awk</a><a href="/tags/sed/" style="font-size: 10.00px;">sed</a><a href="/tags/yum/" style="font-size: 10.00px;">yum</a><a href="/tags/学习计划/" style="font-size: 10.00px;">学习计划</a><a href="/tags/数据结构与算法/" style="font-size: 20.00px;">数据结构与算法</a><a href="/tags/杂谈/" style="font-size: 10.00px;">杂谈</a><a href="/tags/网卡错误/" style="font-size: 10.00px;">网卡错误</a><a href="/tags/网络/" style="font-size: 10.00px;">网络</a><a href="/tags/设计模式/" style="font-size: 16.67px;">设计模式</a><a href="/tags/进程与线程/" style="font-size: 10.00px;">进程与线程</a>
+    </div>
+  </div>
+
+
+  <iframe width="100%" height="550" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=2&ptype=1&speed=0&skin=1&isTitle=1&noborder=1&isWeibo=1&isFans=1&uid=3819451430&verifier=f953543e&dpc=1"></iframe>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<span class="buzz" rel="buzz"> Hello,I&#39;m liuqinming.For now I&#39;m a student at collage. <br/>
+			I will share my learning experience with you at this blog.</span>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		<a rel="push" class="push" href="https://github.com/DaMinger" target="_blank" title="github"></a>
+		
+		
+	</div>
+		<p class="copyright">Powered by <a rel="float-shadow" class="float-shadow" href="http://zespia.tw/hexo/" target="_blank" title="hexo">Hexo</a> and Theme by <a class="box-shadow-inset"href="https://github.com/uruir/pacmanhover" target="_blank" title="Pacman">PacmanHover</a> © 2014 
+		
+		
+		<a class="wobble-horizontal" rel="wobble-horizontal" href="https://github.com/DaMinger/DaMinger.github.io.git" target="_blank" title="DaMinger">DaMinger</a>
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+    c.click(function(){
+      ta.css('display', 'block').addClass('fadeIn');
+    });
+    o.click(function(){
+      ta.css('display', 'none');
+    });
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,320-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"null"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+<div id="totop" style="position:fixed;bottom:150px;right:50px;cursor: pointer;">
+<a title="���ض���"><img src="/img/scrollup.png"/></a>
+</div>
+<script src="/js/totop.js"></script>
+
+
+
+  </body>
+</html>

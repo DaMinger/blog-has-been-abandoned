@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title><![CDATA[DaMinger's blog]]></title>
-  <subtitle><![CDATA[信春哥，系统稳，闭眼上线不回滚]]></subtitle>
+  <subtitle><![CDATA[乐于鼓捣各种小实验]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="https://github.com/DaMinger/DaMinger.github.io.git/"/>
-  <updated>2014-06-23T09:29:56.589Z</updated>
+  <updated>2014-07-17T02:56:45.935Z</updated>
   <id>https://github.com/DaMinger/DaMinger.github.io.git/</id>
   
   <author>
@@ -13,6 +13,50 @@
   </author>
   
   <generator uri="http://zespia.tw/hexo/">Hexo</generator>
+  
+  <entry>
+    <title><![CDATA[基于OpenCV的车牌识别系统]]></title>
+    <link href="https://github.com/DaMinger/DaMinger.github.io.git/2014/07/17/OpenCv/opencv_2/"/>
+    <id>https://github.com/DaMinger/DaMinger.github.io.git/2014/07/17/OpenCv/opencv_2/</id>
+    <published>2014-07-17T01:24:18.000Z</published>
+    <updated>2014-07-17T02:56:04.000Z</updated>
+    <content type="html"><![CDATA[<p>前一段时间忙死了，各种考试，今天有点空，把我那个学年课程设计（车牌识别）处理流程写一下，做个记录</p>
+<h4 id="车牌识别流程图">车牌识别流程图</h4>
+<p><img src="/img/OpenCv/car_card_1.jpg" alt="车牌识别流程图 "></p>
+<h4 id="图像预处理模块">图像预处理模块</h4>
+<h6 id="将彩色图像转化为灰度图像">将彩色图像转化为灰度图像</h6>
+<p>真彩图转换具有信息量大的优点，但同时其数据量也大，因此主要利用汽车牌照的灰度图像进行处理，灰度图像数据量小，能提高后面图像处理的运行速度<br><img src="/img/OpenCv/car_card_2.jpg" alt="灰度化 "></p>
+<h6 id="去除图像的干扰噪声">去除图像的干扰噪声</h6>
+<p>采用中值滤波，中值滤波就是利用一个有奇数点的滑动窗口，将窗口中心点的值用窗口内各点的中值代替，中值滤波对于消除孤立噪声点的干扰十分有用，更重要的是使用这种窗口进行滤波时，除有效地消除噪声外，还能很有效地保护边界的信息。<br><img src="/img/OpenCv/car_card_3.jpg" alt="去除噪音 "></p>
+<h6 id="图像边缘检测">图像边缘检测</h6>
+<p>物体的边缘是以图像局部特征的不连续性的形式出现的，例如，灰度值的突变，颜色的突变，纹理结构的突变等。边缘常常意味着一个区域的结束和另一个区域的开始。车牌与车牌周围一般具有明显的灰度变化，经边缘处理后可将车牌形成独立的区域，便于车牌定位时形成与周围不相连的单连通区域。</p>
+<p>我采用Canny 算子法能比较好地提取出连续的字符轮廓边缘,同时对于噪声有很好的抑制。<br><img src="/img/OpenCv/car_card_4.jpg" alt="边缘化处理 "></p>
+<h4 id="车牌粗定位模块">车牌粗定位模块</h4>
+<h6 id="边缘密度法">边缘密度法</h6>
+<p>给出“ 边缘密度法”的定义：在某一宽度范围的模板内, 灰度值大于某一阈值的边缘点的总和。设计如下扫描算法如下</p>
+<pre><code>(1)扫描整幅图像,二值化将灰度小于某阈值的点置0, 否则置255
+(2)记录每行的值255为点的个数，删除点数小于某数值的行
+(3)移动模板计算模板内点的密度，大于某阈值是将模板区图像全部置225，否则置0。
+(4)对图像进行一定的膨胀操作。
+</code></pre><p><img src="/img/OpenCv/car_card_5.jpg" alt="膨松二值性 "></p>
+<h6 id="种子法标定单连通区域">种子法标定单连通区域</h6>
+<p>在使用边缘密度法后可形成多个单连通区域，要通过利用种子方法实现单连通区域的搜索，找到各个单连通区域的边界。<br><img src="/img/OpenCv/car_card_6.jpg" alt="感兴趣的区域一 "><br><img src="/img/OpenCv/car_card_7.jpg" alt="感兴趣的区域二 "><br><img src="/img/OpenCv/car_card_8.jpg" alt="最终标记 "></p>
+<h4 id="车牌字分割模块">车牌字分割模块</h4>
+<p>首先二值化，然后根据下表进行字符分割<br><img src="/img/OpenCv/car_card_10.jpg" alt="分割系 "><br><img src="/img/OpenCv/car_card_9.jpg" alt="效果图 "></p>
+<h4 id="车牌字符识别模块">车牌字符识别模块</h4>
+<p>采用十三特征模版匹配</p>
+<pre><code>首先把字符平均分成8份，如图4-5所示(这里以字符“8”举例)。分别统计这8个区域中的白色点像素的数目，可以得到8个特征．
+然后统计水平方向中间两列和竖直方向中间两列的白色像素点的个数作为4个特征如图4-6和图4-7，最后统计所有白色像素点的个数作为第13个特征。
+将字符图像的全部白色像素的数目的总和作为一个特征，总共即得到13个特征。
+</code></pre><p><img src="/img/OpenCv/car_card_11.jpg" alt="效果图 "></p>
+]]></content>
+    
+    
+      <category term="OpenCv" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/OpenCv/"/>
+    
+      <category term="OpenCv" scheme="https://github.com/DaMinger/DaMinger.github.io.git/categories/OpenCv/"/>
+    
+  </entry>
   
   <entry>
     <title><![CDATA[Oracle12c Rman Recover Table(基于时间点)]]></title>
@@ -1864,68 +1908,6 @@ isMatch(<span class="string">"aab"</span>, <span class="string">"c*a*b"</span>) 
             }
             <span class="keyword">return</span> <span class="keyword">false</span>;
         } 
-    }
-}
-</code></pre>]]></content>
-    
-    
-      <category term="数据结构与算法" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/"/>
-    
-      <category term="数据结构与算法" scheme="https://github.com/DaMinger/DaMinger.github.io.git/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/"/>
-    
-  </entry>
-  
-  <entry>
-    <title><![CDATA[LeetCode:Path Sum]]></title>
-    <link href="https://github.com/DaMinger/DaMinger.github.io.git/2014/06/05/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/LeetCode/pathsum/"/>
-    <id>https://github.com/DaMinger/DaMinger.github.io.git/2014/06/05/数据结构与算法/LeetCode/pathsum/</id>
-    <published>2014-06-05T01:33:39.000Z</published>
-    <updated>2014-06-05T01:41:25.000Z</updated>
-    <content type="html"><![CDATA[<h4 id="题目">题目</h4>
-<pre><code>Given <span class="operator">a</span> binary tree <span class="operator">and</span> <span class="operator">a</span> <span class="built_in">sum</span>, determine <span class="keyword">if</span> <span class="operator">the</span> tree has <span class="operator">a</span> root-<span class="built_in">to</span>-leaf path such that adding up all <span class="operator">the</span> values along <span class="operator">the</span> path equals <span class="operator">the</span> given <span class="built_in">sum</span>.
-
-For example:
-Given <span class="operator">the</span> below binary tree <span class="operator">and</span> <span class="built_in">sum</span> = <span class="number">22</span>,
-              <span class="number">5</span>
-             / \
-            <span class="number">4</span>   <span class="number">8</span>
-           /   / \
-          <span class="number">11</span>  <span class="number">13</span>  <span class="number">4</span>
-         /  \      \
-        <span class="number">7</span>    <span class="number">2</span>      <span class="number">1</span>
-<span class="constant">return</span> <span class="constant">true</span>, <span class="keyword">as</span> there exist <span class="operator">a</span> root-<span class="built_in">to</span>-leaf path <span class="number">5</span>-&gt;<span class="number">4</span>-&gt;<span class="number">11</span>-&gt;<span class="number">2</span> which <span class="built_in">sum</span> is <span class="number">22.</span>
-</code></pre><p>思路：把所有节点放进队列里面，把节点的值放入另外一个队列里面，当它是叶子节点时，计算总和（BFS问题）</p>
-<h4 id="解法">解法</h4>
-<pre><code><span class="keyword">public</span> <span class="keyword">class</span> Solution {
-    <span class="keyword">public</span> boolean hasPathSum(TreeNode root, <span class="built_in">int</span> sum) {
-        <span class="keyword">if</span>(root == <span class="literal">null</span>) return <span class="literal">false</span>;
-
-        LinkedList&lt;TreeNode&gt; nodes = <span class="keyword">new</span> LinkedList&lt;TreeNode&gt;();
-        LinkedList&lt;Integer&gt; values = <span class="keyword">new</span> LinkedList&lt;Integer&gt;();
-
-        nodes.add(root);
-        values.add(root.val);
-
-        <span class="keyword">while</span>(!nodes.<span class="built_in">isEmpty</span>()){
-            TreeNode curr = nodes.poll();
-            <span class="built_in">int</span> sumValue = values.poll();
-
-            <span class="keyword">if</span>(curr.<span class="built_in">left</span> == <span class="literal">null</span> &amp;&amp; curr.<span class="built_in">right</span> == <span class="literal">null</span> &amp;&amp; sumValue==sum){
-                return <span class="literal">true</span>;
-            }
-
-            <span class="keyword">if</span>(curr.<span class="built_in">left</span> != <span class="literal">null</span>){
-                nodes.add(curr.<span class="built_in">left</span>);
-                values.add(sumValue+curr.<span class="built_in">left</span>.val);
-            }
-
-            <span class="keyword">if</span>(curr.<span class="built_in">right</span> != <span class="literal">null</span>){
-                nodes.add(curr.<span class="built_in">right</span>);
-                values.add(sumValue+curr.<span class="built_in">right</span>.val);
-            }
-        }
-
-        return <span class="literal">false</span>;
     }
 }
 </code></pre>]]></content>
