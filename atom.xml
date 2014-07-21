@@ -4,7 +4,7 @@
   <subtitle><![CDATA[乐于鼓捣各种小实验]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="https://github.com/DaMinger/DaMinger.github.io.git/"/>
-  <updated>2014-07-17T02:56:45.935Z</updated>
+  <updated>2014-07-21T12:03:36.992Z</updated>
   <id>https://github.com/DaMinger/DaMinger.github.io.git/</id>
   
   <author>
@@ -19,7 +19,7 @@
     <link href="https://github.com/DaMinger/DaMinger.github.io.git/2014/07/17/OpenCv/opencv_2/"/>
     <id>https://github.com/DaMinger/DaMinger.github.io.git/2014/07/17/OpenCv/opencv_2/</id>
     <published>2014-07-17T01:24:18.000Z</published>
-    <updated>2014-07-17T02:56:04.000Z</updated>
+    <updated>2014-07-21T12:02:43.000Z</updated>
     <content type="html"><![CDATA[<p>前一段时间忙死了，各种考试，今天有点空，把我那个学年课程设计（车牌识别）处理流程写一下，做个记录</p>
 <h4 id="车牌识别流程图">车牌识别流程图</h4>
 <p><img src="/img/OpenCv/car_card_1.jpg" alt="车牌识别流程图 "></p>
@@ -45,8 +45,8 @@
 <p>首先二值化，然后根据下表进行字符分割<br><img src="/img/OpenCv/car_card_10.jpg" alt="分割系 "><br><img src="/img/OpenCv/car_card_9.jpg" alt="效果图 "></p>
 <h4 id="车牌字符识别模块">车牌字符识别模块</h4>
 <p>采用十三特征模版匹配</p>
-<pre><code>首先把字符平均分成8份，如图4-5所示(这里以字符“8”举例)。分别统计这8个区域中的白色点像素的数目，可以得到8个特征．
-然后统计水平方向中间两列和竖直方向中间两列的白色像素点的个数作为4个特征如图4-6和图4-7，最后统计所有白色像素点的个数作为第13个特征。
+<pre><code>首先把字符平均分成8份。分别统计这8个区域中的白色点像素的数目，可以得到8个特征．
+然后统计水平方向中间两列和竖直方向中间两列的白色像素点的个数作为4个特征，最后统计所有白色像素点的个数作为第13个特征。
 将字符图像的全部白色像素的数目的总和作为一个特征，总共即得到13个特征。
 </code></pre><p><img src="/img/OpenCv/car_card_11.jpg" alt="效果图 "></p>
 ]]></content>
