@@ -1,0 +1,592 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>Centos6.5编译安装（percona5.5）简略步骤及问题 | DaMinger&#39;s blog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="DaMinger">
+    
+    <meta name="description" content="安装Centos6.5 采用最小化安装
+   注意点：因为是最小化安装，网卡不会自启动，设置自启动，关闭防火墙和selinux，配置yum,安装wget工具。
+安装依赖包
+yum install  gcc gcc-c++ ncurses ncurses-devel 
+下载相关源码包
+wget htt">
+    
+    
+    
+    
+    <link rel="alternative" href="/atom.xml" title="DaMinger&#39;s blog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/pacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/pacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+    <link href="/css/hover.css" rel="stylesheet">
+    <link href="/css/bottom.css" rel="stylesheet">
+</head>
+
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a rel="pulse" class="pulse" href="/"><img src="/img/pacman.png" alt="DaMinger&#39;s blog" title="DaMinger&#39;s blog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a rel="hover" class="hover" href="/" title="DaMinger&#39;s blog">DaMinger&#39;s blog</a></h1>
+				<h2 class="blog-motto"><a rel="wobble-to-bottom-right" class="wobble-to-bottom-right" href="#" title="#">乐于鼓捣各种小实验</a></h2>
+			</div>
+			<div class="navbar"><a rel="buzz" class="buzz" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a rel="wobble-top" class="wobble-top" href="/">Home</a></li>
+					
+						<li><a rel="wobble-top" class="wobble-top" href="/archives">Menu</a></li>
+					
+						<li><a rel="wobble-top" class="wobble-top" href="/about">About</a></li>
+					
+				</ul>
+				
+			</nav>			
+</div>
+<div style="text-align:right;">
+<form  class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+ <input type="search" name="q" id="search" autocomplete="off" autocorrect="off" autocapitalize="off" maxlength="20" placeholder="Search" />
+ <input type="hidden" name="q" value="site:github.com/DaMinger/DaMinger.github.io.git">
+</form>
+</div>
+
+
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2014/11/19/Mysql/percona_install/" title="Centos6.5编译安装（percona5.5）简略步骤及问题" itemprop="url">Centos6.5编译安装（percona5.5）简略步骤及问题</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="https://github.com/DaMinger/DaMinger.github.io.git" title="DaMinger">DaMinger</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2014-11-19T03:40:11.000Z" itemprop="datePublished">11月 19 2014</time>
+    更新日期:<time datetime="2014-11-19T03:47:12.000Z" itemprop="dateModified">11月 19 2014</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		<ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#安装Centos6-5_采用最小化安装"><span class="toc-number">1.</span> <span class="toc-text">安装Centos6.5 采用最小化安装</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#安装依赖包"><span class="toc-number">2.</span> <span class="toc-text">安装依赖包</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#下载相关源码包"><span class="toc-number">3.</span> <span class="toc-text">下载相关源码包</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#cmake安装"><span class="toc-number">4.</span> <span class="toc-text">cmake安装</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Percona_5-5预编译"><span class="toc-number">5.</span> <span class="toc-text">Percona 5.5预编译</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#编译安装"><span class="toc-number">6.</span> <span class="toc-text">编译安装</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#启动脚本，设置开机自启动"><span class="toc-number">7.</span> <span class="toc-text">启动脚本，设置开机自启动</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#/etc/my-cnf，（网上的一份，具体参数需调整，此次试验采用此脚本）"><span class="toc-number">8.</span> <span class="toc-text">/etc/my.cnf，（网上的一份，具体参数需调整，此次试验采用此脚本）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#初始化数据库，设置环境变量"><span class="toc-number">9.</span> <span class="toc-text">初始化数据库，设置环境变量</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#启动Percona数据库"><span class="toc-number">10.</span> <span class="toc-text">启动Percona数据库</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#设置数据库root密码，删除空密码、测试数据库"><span class="toc-number">11.</span> <span class="toc-text">设置数据库root密码，删除空密码、测试数据库</span></a></li></ol>
+		</div>
+		
+		<h4 id="安装Centos6-5_采用最小化安装">安装Centos6.5 采用最小化安装</h4>
+<p>   注意点：因为是最小化安装，网卡不会自启动，设置自启动，关闭防火墙和selinux，配置yum,安装wget工具。</p>
+<h4 id="安装依赖包">安装依赖包</h4>
+<pre><code>yum install  gcc gcc<span class="attribute">-c</span><span class="subst">++</span> ncurses ncurses<span class="attribute">-devel</span> 
+</code></pre><h4 id="下载相关源码包">下载相关源码包</h4>
+<pre><code>wget http://www<span class="preprocessor">.cmake</span><span class="preprocessor">.org</span>/files/v2<span class="number">.8</span>/cmake-<span class="number">2.8</span><span class="number">.11</span><span class="number">.2</span><span class="preprocessor">.tar</span><span class="preprocessor">.gz</span>
+wget http://www<span class="preprocessor">.percona</span><span class="preprocessor">.com</span>/redir/downloads/Percona-Server-<span class="number">5.5</span>/LATEST/source/tarball/percona-server-<span class="number">5.5</span><span class="number">.40</span>-<span class="number">36.1</span><span class="preprocessor">.tar</span><span class="preprocessor">.gz</span>
+</code></pre><h4 id="cmake安装">cmake安装</h4>
+<pre><code>tar xzf cmake-<span class="number">2.8</span><span class="number">.11</span><span class="number">.2</span><span class="preprocessor">.tar</span><span class="preprocessor">.gz</span>
+cd cmake-<span class="number">2.8</span><span class="number">.11</span><span class="number">.2</span>
+./configure
+make &amp;&amp;  make install
+</code></pre><h4 id="Percona_5-5预编译">Percona 5.5预编译</h4>
+<pre><code>tar zxf percona-server-5.5.40-36.1.tar.gz
+cd percona-server-5.5.40-36.1
+useradd -M -s /sbin/nologin mysql
+mkdir -p /data/percona
+chown mysql.mysql -R /data/percona
+cmake . -DCMAKE_INSTALL_PREFIX=/usr/local/percona \
+-<span class="ruby"><span class="constant">DMYSQL_UNIX_ADDR</span>=<span class="regexp">/tmp/mysql</span>.sock \
+</span>-<span class="ruby"><span class="constant">DMYSQL_DATADIR</span>=<span class="regexp">/data/percona</span> \
+</span>-<span class="ruby"><span class="constant">DSYSCONFDIR</span>=<span class="regexp">/etc \
+</span></span>-<span class="ruby"><span class="constant">DMYSQL_TCP_PORT</span>=<span class="number">3306</span> \
+</span>-<span class="ruby"><span class="constant">DWITH_INNOBASE_STORAGE_ENGINE</span>=<span class="number">1</span> \
+</span>-<span class="ruby"><span class="constant">DWITH_PARTITION_STORAGE_ENGINE</span>=<span class="number">1</span> \
+</span>-<span class="ruby"><span class="constant">DWITH_BLACKHOLE_STORAGE_ENGINE</span>=<span class="number">1</span> \
+</span>-<span class="ruby"><span class="constant">DWITH_MYISAM_STORAGE_ENGINE</span>=<span class="number">1</span> \
+</span>-<span class="ruby"><span class="constant">DWITH_READLINE</span>=<span class="number">1</span> \
+</span>-<span class="ruby"><span class="constant">DENABLED_LOCAL_INFILE</span>=<span class="number">1</span> \
+</span>-<span class="ruby"><span class="constant">DDEFAULT_CHARSET</span>=utf8 \
+</span>-<span class="ruby"><span class="constant">DDEFAULT_COLLATION</span>=utf8_general_ci \
+</span>-<span class="ruby"><span class="constant">DWITH_EXTRA_CHARSETS</span>=all
+</span>编译参数解释
+CMAKE_INSTALL_PREFIX #安装路径
+MYSQL_UNIX_ADDR #unix socket路径
+MYSQL_DATADIR #数据库存放路径
+SYSCONFDIR #配置文件路径
+MYSQL_TCP_PORT #数据库端口
+WITH_INNOBASE_STORAGE_ENGINE #安装innodb引擎
+WITH_PARTITION_STORAGE_ENGINE #安装分区引擎
+WITH_BLACKHOLE_STORAGE_ENGINE #安装blackhole引擎
+WITH_MYISAM_STORAGE_ENGINE #安装myisam引擎
+WITH_READLINE #快捷键功能
+ENABLED_LOCAL_INFILE #允许从本地导入数据
+DEFAULT_CHARSET #默认编码
+DEFAULT_COLLATION #默认字符集
+WITH_EXTRA_CHARSETS #是否使用其他编码，all表示所有
+</code></pre><h4 id="编译安装">编译安装</h4>
+<pre><code><span class="built_in">make</span> &amp;&amp; <span class="built_in">make</span> install
+</code></pre><h4 id="启动脚本，设置开机自启动">启动脚本，设置开机自启动</h4>
+<pre><code><span class="keyword">cp</span> support-files/mysql<span class="preprocessor">.server</span> /etc/init<span class="preprocessor">.d</span>/mysqld
+chmod +<span class="built_in">x</span> /etc/init<span class="preprocessor">.d</span>/mysqld
+chkconfig --<span class="keyword">add</span> mysqld
+chkconfig mysqld on
+</code></pre><h4 id="/etc/my-cnf，（网上的一份，具体参数需调整，此次试验采用此脚本）">/etc/my.cnf，（网上的一份，具体参数需调整，此次试验采用此脚本）</h4>
+<pre><code>[mysqld]
+<span class="constant">basedir</span> = /usr/local/percona
+<span class="constant">datadir</span> = /data/percona
+pid-file = /data/percona/mysql.pid
+character-set-server = utf8
+collation-server = utf8_general_ci
+<span class="constant">user</span> = mysql
+<span class="constant">port</span> = 3306
+<span class="constant">default_storage_engine</span> = InnoDB
+<span class="constant">innodb_file_per_table</span> = 1
+<span class="constant">server_id</span> = 1
+<span class="constant">log_bin</span> = mysql-bin
+<span class="constant">binlog_format</span> = mixed
+<span class="constant">expire_logs_days</span> = 7
+bind-address = 0.0.0.0
+
+<span class="comment"># name-resolve</span>
+skip-name-resolve
+skip-host-cache
+
+<span class="comment">#lower_case_table_names = 1</span>
+<span class="constant">ft_min_word_len</span> = 1
+<span class="constant">query_cache_size</span> = 64M
+<span class="constant">query_cache_type</span> = 1
+
+skip-external-locking
+<span class="constant">key_buffer_size</span> = 16M
+<span class="constant">max_allowed_packet</span> = 1M
+<span class="constant">table_open_cache</span> = 64
+<span class="constant">sort_buffer_size</span> = 512K
+<span class="constant">net_buffer_length</span> = 8K
+<span class="constant">read_buffer_size</span> = 256K
+<span class="constant">read_rnd_buffer_size</span> = 512K
+<span class="constant">myisam_sort_buffer_size</span> = 8M
+
+<span class="comment"># LOG</span>
+<span class="constant">log_error</span> = /data/percona/mysql-error.log
+<span class="constant">long_query_time</span> = 1
+slow_query_log
+<span class="constant">slow_query_log_file</span> = /data/percona/mysql-slow.log
+
+<span class="comment"># Oher</span>
+<span class="comment">#max_connections = 1000</span>
+<span class="constant">open_files_limit</span> = 65535
+
+[client]
+<span class="constant">port</span> = 3306
+</code></pre><h4 id="初始化数据库，设置环境变量">初始化数据库，设置环境变量</h4>
+<pre><code>/usr/<span class="built_in">local</span>/percona/scripts/mysql_install_db <span class="subst">--</span>user<span class="subst">=</span>mysql <span class="subst">--</span>basedir<span class="subst">=</span>/usr/<span class="built_in">local</span>/percona <span class="subst">--</span>datadir<span class="subst">=</span>/<span class="built_in">data</span>/percona
+chown mysql<span class="built_in">.</span>mysql <span class="attribute">-R</span> /<span class="built_in">data</span>/percona
+export PATH<span class="subst">=</span><span class="variable">$PATH</span>:/usr/<span class="built_in">local</span>/percona/bin
+echo <span class="string">"export PATH=\$PATH:/usr/local/percona/bin"</span> <span class="subst">&gt;&gt;</span> /etc/profile
+<span class="built_in">.</span> /etc/profile
+</code></pre><h4 id="启动Percona数据库">启动Percona数据库</h4>
+<pre><code>service mysqld <span class="operator"><span class="keyword">start</span></span>
+</code></pre><h4 id="设置数据库root密码，删除空密码、测试数据库">设置数据库root密码，删除空密码、测试数据库</h4>
+<pre><code>出现问题及解决方式
+/usr/local/percona/bin/mysqladmin -u root password “lqm”   将root默认口令更改后，mysql服务重启后登陆不进去
+出现错误如下
+<span class="symbol">mysqladmin:</span> connect to server at <span class="string">'localhost'</span> failed
+<span class="symbol">error:</span> <span class="string">'Access denied for user '</span>root<span class="string">'@'</span>localhost<span class="string">' (using password: YES)'</span>
+解决方式
+<span class="comment"># vi /etc/my.cnf</span>
+在[mysqld]的段中加上一句<span class="symbol">:skip-grant-tables</span>
+重启mysqld  
+<span class="comment">#service mysqld restart,</span>
+登陆并修改mysql的root密码
+<span class="comment"># mysql</span>
+mysql&gt; <span class="constant">USE</span> mysql ;
+mysql&gt; <span class="constant">UPDATE</span> user <span class="constant">SET</span> <span class="constant">Password</span> = password ( <span class="string">'new-password'</span> ) <span class="constant">WHERE</span> <span class="constant">User</span> = <span class="string">'root'</span> ;
+mysql&gt; flush privileges ;
+将<span class="constant">MySQL</span>的登录设置修改回来
+<span class="comment"># vi /etc/my.cnf</span>
+将刚才在[mysqld]的段中加上的skip-grant-tables删除
+保存并且退出vi。
+重新启动mysqld
+</code></pre>  
+	</div>
+		<footer class="article-footer clearfix">
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Mysql/">Mysql</a>
+  </div>
+
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Mysql/">Mysql</a>
+</div>
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="https://github.com/DaMinger/DaMinger.github.io.git/2014/11/19/Mysql/percona_install/" data-title="Centos6.5编译安装（percona5.5）简略步骤及问题 | DaMinger&#39;s blog" data-tsina="null" class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+
+<div class="next">
+<a href="/2014/07/17/OpenCv/opencv_2/"  title="基于OpenCV的车牌识别系统">
+ <strong>NEXT:</strong><br/> 
+ <span>基于OpenCV的车牌识别系统
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section class="comment">
+	<div class="ds-thread"></div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+  <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#安装Centos6-5_采用最小化安装"><span class="toc-number">1.</span> <span class="toc-text">安装Centos6.5 采用最小化安装</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#安装依赖包"><span class="toc-number">2.</span> <span class="toc-text">安装依赖包</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#下载相关源码包"><span class="toc-number">3.</span> <span class="toc-text">下载相关源码包</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#cmake安装"><span class="toc-number">4.</span> <span class="toc-text">cmake安装</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Percona_5-5预编译"><span class="toc-number">5.</span> <span class="toc-text">Percona 5.5预编译</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#编译安装"><span class="toc-number">6.</span> <span class="toc-text">编译安装</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#启动脚本，设置开机自启动"><span class="toc-number">7.</span> <span class="toc-text">启动脚本，设置开机自启动</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#/etc/my-cnf，（网上的一份，具体参数需调整，此次试验采用此脚本）"><span class="toc-number">8.</span> <span class="toc-text">/etc/my.cnf，（网上的一份，具体参数需调整，此次试验采用此脚本）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#初始化数据库，设置环境变量"><span class="toc-number">9.</span> <span class="toc-text">初始化数据库，设置环境变量</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#启动Percona数据库"><span class="toc-number">10.</span> <span class="toc-text">启动Percona数据库</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#设置数据库root密码，删除空密码、测试数据库"><span class="toc-number">11.</span> <span class="toc-text">设置数据库root密码，删除空密码、测试数据库</span></a></li></ol>
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p rel="asidetitle grow" class="asidetitle grow">分类</p>
+		<ul>
+		
+			<li><a rel="grow" class="grow" href="/categories/Hadoop/" title="Hadoop">Hadoop<sup>20</sup></a></li>
+		
+			<li><a rel="grow" class="grow" href="/categories/Java/" title="Java">Java<sup>2</sup></a></li>
+		
+			<li><a rel="grow" class="grow" href="/categories/Linux/" title="Linux">Linux<sup>5</sup></a></li>
+		
+			<li><a rel="grow" class="grow" href="/categories/Mysql/" title="Mysql">Mysql<sup>1</sup></a></li>
+		
+			<li><a rel="grow" class="grow" href="/categories/OpenCv/" title="OpenCv">OpenCv<sup>2</sup></a></li>
+		
+			<li><a rel="grow" class="grow" href="/categories/Oracle/" title="Oracle">Oracle<sup>2</sup></a></li>
+		
+			<li><a rel="grow" class="grow" href="/categories/Shell/" title="Shell">Shell<sup>4</sup></a></li>
+		
+			<li><a rel="grow" class="grow" href="/categories/操作系统/" title="操作系统">操作系统<sup>1</sup></a></li>
+		
+			<li><a rel="grow" class="grow" href="/categories/数据结构与算法/" title="数据结构与算法">数据结构与算法<sup>51</sup></a></li>
+		
+			<li><a rel="grow" class="grow" href="/categories/杂谈/" title="杂谈">杂谈<sup>2</sup></a></li>
+		
+			<li><a rel="grow" class="grow" href="/categories/计算机网络/" title="计算机网络">计算机网络<sup>1</sup></a></li>
+		
+			<li><a rel="grow" class="grow" href="/categories/设计模式/" title="设计模式">设计模式<sup>8</sup></a></li>
+		
+		</ul>
+</div>
+
+
+
+  <div class="linkslist">
+<h3 rel="grow" class="grow asidetitle">友情链接</h3>
+<ul class="entry">
+<li><a rel="grow" class="grow" href="http://tahiti.oracle.com/" title="Oracle文档">Oracle文档</a></li>
+<li><a rel="grow" class="grow" href="http://dev.mysql.com/doc/" title="Mysql文档">Mysql文档</a></li>
+<li><a rel="grow" class="grow" href="http://pythontip.sinaapp.com/" title="Python在线挑战">Python在线挑战</a></li>
+<li><a rel="grow" class="grow" href="http://www.programcreek.com/" title="Java">Java</a></li>
+<li><a rel="grow" class="grow" href="http://asktom.oracle.com/" title="AskTom">AskTom</a></li>
+<li><a rel="grow" class="grow" href="http://blog.csdn.net/tianlesoftware/" title="Dave">Dave</a></li>
+<li><a rel="grow" class="grow" href="http://www.eygle.com/" title="eygle">eygle</a></li>
+<li><a rel="grow" class="grow" href="http://www.dbsnake.com/" title="dbsnake">dbsnake</a></li>
+</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/Eclipse/" title="Eclipse">Eclipse<sup>1</sup></a></li>
+		
+			<li><a href="/tags/HBase/" title="HBase">HBase<sup>4</sup></a></li>
+		
+			<li><a href="/tags/HDFS/" title="HDFS">HDFS<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Hadoop/" title="Hadoop">Hadoop<sup>20</sup></a></li>
+		
+			<li><a href="/tags/Hadoop_Stream/" title="Hadoop_Stream">Hadoop_Stream<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Hive/" title="Hive">Hive<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Java/" title="Java">Java<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Linux/" title="Linux">Linux<sup>5</sup></a></li>
+		
+			<li><a href="/tags/Mahout/" title="Mahout">Mahout<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Map-Reduce/" title="Map-Reduce">Map-Reduce<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Mysql/" title="Mysql">Mysql<sup>2</sup></a></li>
+		
+			<li><a href="/tags/OpenCv/" title="OpenCv">OpenCv<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Oracle/" title="Oracle">Oracle<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Pig/" title="Pig">Pig<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Shell/" title="Shell">Shell<sup>4</sup></a></li>
+		
+			<li><a href="/tags/Sqoop/" title="Sqoop">Sqoop<sup>1</sup></a></li>
+		
+			<li><a href="/tags/awk/" title="awk">awk<sup>2</sup></a></li>
+		
+			<li><a href="/tags/sed/" title="sed">sed<sup>1</sup></a></li>
+		
+			<li><a href="/tags/yum/" title="yum">yum<sup>1</sup></a></li>
+		
+			<li><a href="/tags/学习计划/" title="学习计划">学习计划<sup>1</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle"><a href="/archives">归档</a></p>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/11">十一月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/07">七月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/06">六月 2014</a><span class="archive-list-count">36</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/05">五月 2014</a><span class="archive-list-count">42</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/04">四月 2014</a><span class="archive-list-count">19</span></li></ul>
+  </div>
+
+
+  
+  <div class="tagcloudlist">
+    <p class="asidetitle">标签云</p>
+    <div class="tagcloudlist clearfix">
+       <a href="/tags/Eclipse/" style="font-size: 10.00px;">Eclipse</a><a href="/tags/HBase/" style="font-size: 13.33px;">HBase</a><a href="/tags/HDFS/" style="font-size: 11.67px;">HDFS</a><a href="/tags/Hadoop/" style="font-size: 18.33px;">Hadoop</a><a href="/tags/Hadoop_Stream/" style="font-size: 10.00px;">Hadoop_Stream</a><a href="/tags/Hive/" style="font-size: 11.67px;">Hive</a><a href="/tags/Java/" style="font-size: 11.67px;">Java</a><a href="/tags/Linux/" style="font-size: 15.00px;">Linux</a><a href="/tags/Mahout/" style="font-size: 11.67px;">Mahout</a><a href="/tags/Map-Reduce/" style="font-size: 11.67px;">Map-Reduce</a><a href="/tags/Mysql/" style="font-size: 11.67px;">Mysql</a><a href="/tags/OpenCv/" style="font-size: 11.67px;">OpenCv</a><a href="/tags/Oracle/" style="font-size: 11.67px;">Oracle</a><a href="/tags/Pig/" style="font-size: 10.00px;">Pig</a><a href="/tags/Shell/" style="font-size: 13.33px;">Shell</a><a href="/tags/Sqoop/" style="font-size: 10.00px;">Sqoop</a><a href="/tags/awk/" style="font-size: 11.67px;">awk</a><a href="/tags/sed/" style="font-size: 10.00px;">sed</a><a href="/tags/yum/" style="font-size: 10.00px;">yum</a><a href="/tags/学习计划/" style="font-size: 10.00px;">学习计划</a><a href="/tags/数据结构与算法/" style="font-size: 20.00px;">数据结构与算法</a><a href="/tags/杂谈/" style="font-size: 10.00px;">杂谈</a><a href="/tags/网卡错误/" style="font-size: 10.00px;">网卡错误</a><a href="/tags/网络/" style="font-size: 10.00px;">网络</a><a href="/tags/设计模式/" style="font-size: 16.67px;">设计模式</a><a href="/tags/进程与线程/" style="font-size: 10.00px;">进程与线程</a>
+    </div>
+  </div>
+
+
+  <iframe width="100%" height="550" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=2&ptype=1&speed=0&skin=1&isTitle=1&noborder=1&isWeibo=1&isFans=1&uid=3819451430&verifier=f953543e&dpc=1"></iframe>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<span class="buzz" rel="buzz"> Hello,I&#39;m liuqinming.For now I&#39;m a student at collage. <br/>
+			I will share my learning experience with you at this blog.</span>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		<a rel="push" class="push" href="https://github.com/DaMinger" target="_blank" title="github"></a>
+		
+		
+	</div>
+		<p class="copyright">Powered by <a rel="float-shadow" class="float-shadow" href="http://zespia.tw/hexo/" target="_blank" title="hexo">Hexo</a> and Theme by <a class="box-shadow-inset"href="https://github.com/uruir/pacmanhover" target="_blank" title="Pacman">PacmanHover</a> © 2014 
+		
+		
+		<a class="wobble-horizontal" rel="wobble-horizontal" href="https://github.com/DaMinger/DaMinger.github.io.git" target="_blank" title="DaMinger">DaMinger</a>
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+    c.click(function(){
+      ta.css('display', 'block').addClass('fadeIn');
+    });
+    o.click(function(){
+      ta.css('display', 'none');
+    });
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,320-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"null"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+<div id="totop" style="position:fixed;bottom:150px;right:50px;cursor: pointer;">
+<a title="���ض���"><img src="/img/scrollup.png"/></a>
+</div>
+<script src="/js/totop.js"></script>
+
+
+
+  </body>
+</html>

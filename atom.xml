@@ -4,7 +4,7 @@
   <subtitle><![CDATA[乐于鼓捣各种小实验]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="https://github.com/DaMinger/DaMinger.github.io.git/"/>
-  <updated>2014-07-21T12:03:36.992Z</updated>
+  <updated>2014-11-19T03:47:47.758Z</updated>
   <id>https://github.com/DaMinger/DaMinger.github.io.git/</id>
   
   <author>
@@ -13,6 +13,152 @@
   </author>
   
   <generator uri="http://zespia.tw/hexo/">Hexo</generator>
+  
+  <entry>
+    <title><![CDATA[Centos6.5编译安装（percona5.5）简略步骤及问题]]></title>
+    <link href="https://github.com/DaMinger/DaMinger.github.io.git/2014/11/19/Mysql/percona_install/"/>
+    <id>https://github.com/DaMinger/DaMinger.github.io.git/2014/11/19/Mysql/percona_install/</id>
+    <published>2014-11-19T03:40:11.000Z</published>
+    <updated>2014-11-19T03:47:12.000Z</updated>
+    <content type="html"><![CDATA[<h4 id="安装Centos6-5_采用最小化安装">安装Centos6.5 采用最小化安装</h4>
+<p>   注意点：因为是最小化安装，网卡不会自启动，设置自启动，关闭防火墙和selinux，配置yum,安装wget工具。</p>
+<h4 id="安装依赖包">安装依赖包</h4>
+<pre><code>yum install  gcc gcc<span class="attribute">-c</span><span class="subst">++</span> ncurses ncurses<span class="attribute">-devel</span> 
+</code></pre><h4 id="下载相关源码包">下载相关源码包</h4>
+<pre><code>wget http://www<span class="preprocessor">.cmake</span><span class="preprocessor">.org</span>/files/v2<span class="number">.8</span>/cmake-<span class="number">2.8</span><span class="number">.11</span><span class="number">.2</span><span class="preprocessor">.tar</span><span class="preprocessor">.gz</span>
+wget http://www<span class="preprocessor">.percona</span><span class="preprocessor">.com</span>/redir/downloads/Percona-Server-<span class="number">5.5</span>/LATEST/source/tarball/percona-server-<span class="number">5.5</span><span class="number">.40</span>-<span class="number">36.1</span><span class="preprocessor">.tar</span><span class="preprocessor">.gz</span>
+</code></pre><h4 id="cmake安装">cmake安装</h4>
+<pre><code>tar xzf cmake-<span class="number">2.8</span><span class="number">.11</span><span class="number">.2</span><span class="preprocessor">.tar</span><span class="preprocessor">.gz</span>
+cd cmake-<span class="number">2.8</span><span class="number">.11</span><span class="number">.2</span>
+./configure
+make &amp;&amp;  make install
+</code></pre><h4 id="Percona_5-5预编译">Percona 5.5预编译</h4>
+<pre><code>tar zxf percona-server-5.5.40-36.1.tar.gz
+cd percona-server-5.5.40-36.1
+useradd -M -s /sbin/nologin mysql
+mkdir -p /data/percona
+chown mysql.mysql -R /data/percona
+cmake . -DCMAKE_INSTALL_PREFIX=/usr/local/percona \
+-<span class="ruby"><span class="constant">DMYSQL_UNIX_ADDR</span>=<span class="regexp">/tmp/mysql</span>.sock \
+</span>-<span class="ruby"><span class="constant">DMYSQL_DATADIR</span>=<span class="regexp">/data/percona</span> \
+</span>-<span class="ruby"><span class="constant">DSYSCONFDIR</span>=<span class="regexp">/etc \
+</span></span>-<span class="ruby"><span class="constant">DMYSQL_TCP_PORT</span>=<span class="number">3306</span> \
+</span>-<span class="ruby"><span class="constant">DWITH_INNOBASE_STORAGE_ENGINE</span>=<span class="number">1</span> \
+</span>-<span class="ruby"><span class="constant">DWITH_PARTITION_STORAGE_ENGINE</span>=<span class="number">1</span> \
+</span>-<span class="ruby"><span class="constant">DWITH_BLACKHOLE_STORAGE_ENGINE</span>=<span class="number">1</span> \
+</span>-<span class="ruby"><span class="constant">DWITH_MYISAM_STORAGE_ENGINE</span>=<span class="number">1</span> \
+</span>-<span class="ruby"><span class="constant">DWITH_READLINE</span>=<span class="number">1</span> \
+</span>-<span class="ruby"><span class="constant">DENABLED_LOCAL_INFILE</span>=<span class="number">1</span> \
+</span>-<span class="ruby"><span class="constant">DDEFAULT_CHARSET</span>=utf8 \
+</span>-<span class="ruby"><span class="constant">DDEFAULT_COLLATION</span>=utf8_general_ci \
+</span>-<span class="ruby"><span class="constant">DWITH_EXTRA_CHARSETS</span>=all
+</span>编译参数解释
+CMAKE_INSTALL_PREFIX #安装路径
+MYSQL_UNIX_ADDR #unix socket路径
+MYSQL_DATADIR #数据库存放路径
+SYSCONFDIR #配置文件路径
+MYSQL_TCP_PORT #数据库端口
+WITH_INNOBASE_STORAGE_ENGINE #安装innodb引擎
+WITH_PARTITION_STORAGE_ENGINE #安装分区引擎
+WITH_BLACKHOLE_STORAGE_ENGINE #安装blackhole引擎
+WITH_MYISAM_STORAGE_ENGINE #安装myisam引擎
+WITH_READLINE #快捷键功能
+ENABLED_LOCAL_INFILE #允许从本地导入数据
+DEFAULT_CHARSET #默认编码
+DEFAULT_COLLATION #默认字符集
+WITH_EXTRA_CHARSETS #是否使用其他编码，all表示所有
+</code></pre><h4 id="编译安装">编译安装</h4>
+<pre><code><span class="built_in">make</span> &amp;&amp; <span class="built_in">make</span> install
+</code></pre><h4 id="启动脚本，设置开机自启动">启动脚本，设置开机自启动</h4>
+<pre><code><span class="keyword">cp</span> support-files/mysql<span class="preprocessor">.server</span> /etc/init<span class="preprocessor">.d</span>/mysqld
+chmod +<span class="built_in">x</span> /etc/init<span class="preprocessor">.d</span>/mysqld
+chkconfig --<span class="keyword">add</span> mysqld
+chkconfig mysqld on
+</code></pre><h4 id="/etc/my-cnf，（网上的一份，具体参数需调整，此次试验采用此脚本）">/etc/my.cnf，（网上的一份，具体参数需调整，此次试验采用此脚本）</h4>
+<pre><code>[mysqld]
+<span class="constant">basedir</span> = /usr/local/percona
+<span class="constant">datadir</span> = /data/percona
+pid-file = /data/percona/mysql.pid
+character-set-server = utf8
+collation-server = utf8_general_ci
+<span class="constant">user</span> = mysql
+<span class="constant">port</span> = 3306
+<span class="constant">default_storage_engine</span> = InnoDB
+<span class="constant">innodb_file_per_table</span> = 1
+<span class="constant">server_id</span> = 1
+<span class="constant">log_bin</span> = mysql-bin
+<span class="constant">binlog_format</span> = mixed
+<span class="constant">expire_logs_days</span> = 7
+bind-address = 0.0.0.0
+
+<span class="comment"># name-resolve</span>
+skip-name-resolve
+skip-host-cache
+
+<span class="comment">#lower_case_table_names = 1</span>
+<span class="constant">ft_min_word_len</span> = 1
+<span class="constant">query_cache_size</span> = 64M
+<span class="constant">query_cache_type</span> = 1
+
+skip-external-locking
+<span class="constant">key_buffer_size</span> = 16M
+<span class="constant">max_allowed_packet</span> = 1M
+<span class="constant">table_open_cache</span> = 64
+<span class="constant">sort_buffer_size</span> = 512K
+<span class="constant">net_buffer_length</span> = 8K
+<span class="constant">read_buffer_size</span> = 256K
+<span class="constant">read_rnd_buffer_size</span> = 512K
+<span class="constant">myisam_sort_buffer_size</span> = 8M
+
+<span class="comment"># LOG</span>
+<span class="constant">log_error</span> = /data/percona/mysql-error.log
+<span class="constant">long_query_time</span> = 1
+slow_query_log
+<span class="constant">slow_query_log_file</span> = /data/percona/mysql-slow.log
+
+<span class="comment"># Oher</span>
+<span class="comment">#max_connections = 1000</span>
+<span class="constant">open_files_limit</span> = 65535
+
+[client]
+<span class="constant">port</span> = 3306
+</code></pre><h4 id="初始化数据库，设置环境变量">初始化数据库，设置环境变量</h4>
+<pre><code>/usr/<span class="built_in">local</span>/percona/scripts/mysql_install_db <span class="subst">--</span>user<span class="subst">=</span>mysql <span class="subst">--</span>basedir<span class="subst">=</span>/usr/<span class="built_in">local</span>/percona <span class="subst">--</span>datadir<span class="subst">=</span>/<span class="built_in">data</span>/percona
+chown mysql<span class="built_in">.</span>mysql <span class="attribute">-R</span> /<span class="built_in">data</span>/percona
+export PATH<span class="subst">=</span><span class="variable">$PATH</span>:/usr/<span class="built_in">local</span>/percona/bin
+echo <span class="string">"export PATH=\$PATH:/usr/local/percona/bin"</span> <span class="subst">&gt;&gt;</span> /etc/profile
+<span class="built_in">.</span> /etc/profile
+</code></pre><h4 id="启动Percona数据库">启动Percona数据库</h4>
+<pre><code>service mysqld <span class="operator"><span class="keyword">start</span></span>
+</code></pre><h4 id="设置数据库root密码，删除空密码、测试数据库">设置数据库root密码，删除空密码、测试数据库</h4>
+<pre><code>出现问题及解决方式
+/usr/local/percona/bin/mysqladmin -u root password “lqm”   将root默认口令更改后，mysql服务重启后登陆不进去
+出现错误如下
+<span class="symbol">mysqladmin:</span> connect to server at <span class="string">'localhost'</span> failed
+<span class="symbol">error:</span> <span class="string">'Access denied for user '</span>root<span class="string">'@'</span>localhost<span class="string">' (using password: YES)'</span>
+解决方式
+<span class="comment"># vi /etc/my.cnf</span>
+在[mysqld]的段中加上一句<span class="symbol">:skip-grant-tables</span>
+重启mysqld  
+<span class="comment">#service mysqld restart,</span>
+登陆并修改mysql的root密码
+<span class="comment"># mysql</span>
+mysql&gt; <span class="constant">USE</span> mysql ;
+mysql&gt; <span class="constant">UPDATE</span> user <span class="constant">SET</span> <span class="constant">Password</span> = password ( <span class="string">'new-password'</span> ) <span class="constant">WHERE</span> <span class="constant">User</span> = <span class="string">'root'</span> ;
+mysql&gt; flush privileges ;
+将<span class="constant">MySQL</span>的登录设置修改回来
+<span class="comment"># vi /etc/my.cnf</span>
+将刚才在[mysqld]的段中加上的skip-grant-tables删除
+保存并且退出vi。
+重新启动mysqld
+</code></pre>]]></content>
+    
+    
+      <category term="Mysql" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/Mysql/"/>
+    
+      <category term="Mysql" scheme="https://github.com/DaMinger/DaMinger.github.io.git/categories/Mysql/"/>
+    
+  </entry>
   
   <entry>
     <title><![CDATA[基于OpenCV的车牌识别系统]]></title>
@@ -1848,67 +1994,6 @@ For k = <span class="number">3</span>, you should <span class="constant">return<
     }
     head.<span class="keyword">next</span> = <span class="keyword">end</span>;
     return head;
-}
-</code></pre>]]></content>
-    
-    
-      <category term="数据结构与算法" scheme="https://github.com/DaMinger/DaMinger.github.io.git/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/"/>
-    
-      <category term="数据结构与算法" scheme="https://github.com/DaMinger/DaMinger.github.io.git/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/"/>
-    
-  </entry>
-  
-  <entry>
-    <title><![CDATA[LeetCode:Regular Expression Matching]]></title>
-    <link href="https://github.com/DaMinger/DaMinger.github.io.git/2014/06/05/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/LeetCode/regular_expression_matching/"/>
-    <id>https://github.com/DaMinger/DaMinger.github.io.git/2014/06/05/数据结构与算法/LeetCode/regular_expression_matching/</id>
-    <published>2014-06-05T01:39:54.000Z</published>
-    <updated>2014-06-05T01:45:10.000Z</updated>
-    <content type="html"><![CDATA[<h4 id="题目">题目</h4>
-<pre><code>Implement regular expression matching <span class="operator">with</span> support <span class="keyword">for</span> <span class="string">'.'</span> <span class="operator">and</span> <span class="string">'*'</span>.
-
-<span class="string">'.'</span> Matches <span class="keyword">any</span> single <span class="keyword">character</span>.
-<span class="string">'*'</span> Matches <span class="constant">zero</span> <span class="operator">or</span> more <span class="operator">of</span> <span class="operator">the</span> preceding <span class="keyword">element</span>.
-
-The matching should cover <span class="operator">the</span> entire input <span class="keyword">string</span> (<span class="operator">not</span> partial).
-
-The <span class="function"><span class="keyword">function</span> <span class="title">prototype</span> <span class="title">should</span> <span class="title">be</span>:</span>
-bool isMatch(const <span class="keyword">char</span> *s, const <span class="keyword">char</span> *p)
-
-Some examples:
-isMatch(<span class="string">"aa"</span>,<span class="string">"a"</span>) → <span class="constant">false</span>
-isMatch(<span class="string">"aa"</span>,<span class="string">"aa"</span>) → <span class="constant">true</span>
-isMatch(<span class="string">"aaa"</span>,<span class="string">"aa"</span>) → <span class="constant">false</span>
-isMatch(<span class="string">"aa"</span>, <span class="string">"a*"</span>) → <span class="constant">true</span>
-isMatch(<span class="string">"aa"</span>, <span class="string">".*"</span>) → <span class="constant">true</span>
-isMatch(<span class="string">"ab"</span>, <span class="string">".*"</span>) → <span class="constant">true</span>
-isMatch(<span class="string">"aab"</span>, <span class="string">"c*a*b"</span>) → <span class="constant">true</span>
-</code></pre><p>思路：注意s为1的情况，递归验证即可</p>
-<h4 id="解法">解法</h4>
-<pre><code><span class="keyword">public</span> <span class="keyword">class</span> Solution {
-    <span class="keyword">public</span> boolean <span class="title">isMatch</span>(String s, String p) {
-
-        <span class="keyword">if</span>(p.length() == <span class="number">0</span>)
-            <span class="keyword">return</span> s.length() == <span class="number">0</span>;
-
-        <span class="comment">//p's length 1 is special case    </span>
-        <span class="keyword">if</span>(p.length() == <span class="number">1</span> || p.charAt(<span class="number">1</span>) != <span class="string">'*'</span>){
-            <span class="keyword">if</span>(s.length() &lt; <span class="number">1</span> || (p.charAt(<span class="number">0</span>) != <span class="string">'.'</span> &amp;&amp; s.charAt(<span class="number">0</span>) != p.charAt(<span class="number">0</span>)))
-                <span class="keyword">return</span> <span class="keyword">false</span>;
-            <span class="keyword">return</span> isMatch(s.substring(<span class="number">1</span>), p.substring(<span class="number">1</span>));    
-
-        }<span class="keyword">else</span>{
-            <span class="keyword">int</span> len = s.length();
-
-            <span class="keyword">int</span> i = -<span class="number">1</span>; 
-            <span class="keyword">while</span>(i&lt;len &amp;&amp; (i &lt; <span class="number">0</span> || p.charAt(<span class="number">0</span>) == <span class="string">'.'</span> || p.charAt(<span class="number">0</span>) == s.charAt(i))){
-                <span class="keyword">if</span>(isMatch(s.substring(i+<span class="number">1</span>), p.substring(<span class="number">2</span>)))
-                    <span class="keyword">return</span> <span class="keyword">true</span>;
-                i++;
-            }
-            <span class="keyword">return</span> <span class="keyword">false</span>;
-        } 
-    }
 }
 </code></pre>]]></content>
     
