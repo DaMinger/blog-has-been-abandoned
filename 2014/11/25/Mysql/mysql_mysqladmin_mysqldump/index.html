@@ -4,10 +4,22 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>mysql、mysqladmin、mysqldump总结 | DaMinger&#39;s blog</title>
+    <title>mysql、mysqladmin、mysqldump常用命令总结 | DaMinger&#39;s blog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="DaMinger">
+    
+    <meta name="description" content="除了mysql -u root -p 等这些常用的参数外，总结一下基础指令
+mysqldump --help
+mysql --help 
+mysqladmin --help    你懂得
+mysql常用命令
+自动补全
+方法一
+[mysql]
+#no-auto-rehash
+auto-rehash
+方">
     
     
     
@@ -69,7 +81,7 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2014/11/25/Mysql/mysql_mysqladmin_mysqldump/" title="mysql、mysqladmin、mysqldump总结" itemprop="url">mysql、mysqladmin、mysqldump总结</a>
+      <a href="/2014/11/25/Mysql/mysql_mysqladmin_mysqldump/" title="mysql、mysqladmin、mysqldump常用命令总结" itemprop="url">mysql、mysqladmin、mysqldump常用命令总结</a>
   </h1>
   <p class="article-author">By
     
@@ -77,7 +89,7 @@
     </p>
   <p class="article-time">
     <time datetime="2014-11-25T07:00:19.000Z" itemprop="datePublished">11月 25 2014</time>
-    更新日期:<time datetime="2014-11-25T07:02:39.000Z" itemprop="dateModified">11月 25 2014</time>
+    更新日期:<time datetime="2014-11-25T08:26:24.000Z" itemprop="dateModified">11月 25 2014</time>
     
   </p>
 </header>
@@ -86,10 +98,108 @@
 		
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
-		
+		<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#mysql常用命令"><span class="toc-number">1.</span> <span class="toc-text">mysql常用命令</span></a></li><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#自动补全"><span class="toc-number">1.0.0.1.</span> <span class="toc-text">自动补全</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#-D_使用哪个数据库"><span class="toc-number">1.0.0.2.</span> <span class="toc-text">-D  使用哪个数据库</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#-default-character-set设置默认字符集"><span class="toc-number">1.0.0.3.</span> <span class="toc-text">--default-character-set设置默认字符集</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#-e_执行mysql的sql语句"><span class="toc-number">1.0.0.4.</span> <span class="toc-text">-e 执行mysql的sql语句</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#-h_指定连接端口号"><span class="toc-number">1.0.0.5.</span> <span class="toc-text">-h 指定连接端口号</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#-E_垂直打印查询输出"><span class="toc-number">1.0.0.6.</span> <span class="toc-text">-E 垂直打印查询输出</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#-f_如果有错误跳过去，继续执行下面的"><span class="toc-number">1.0.0.7.</span> <span class="toc-text">-f 如果有错误跳过去，继续执行下面的</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#-N_不显示列信息"><span class="toc-number">1.0.0.8.</span> <span class="toc-text">-N 不显示列信息</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#-H_-X以HTML、XML报表呈现"><span class="toc-number">1.0.0.9.</span> <span class="toc-text">-H -X以HTML、XML报表呈现</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#-S_连接服务器的sockey文件"><span class="toc-number">1.0.0.10.</span> <span class="toc-text">-S 连接服务器的sockey文件</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#-P_设置端口号"><span class="toc-number">1.0.0.11.</span> <span class="toc-text">-P 设置端口号</span></a></li></ol></ol></ol><li class="toc-item toc-level-3"><a class="toc-link" href="#mysqladmin常用命令"><span class="toc-number">2.</span> <span class="toc-text">mysqladmin常用命令</span></a></li><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#status查看服务器的状况"><span class="toc-number">2.0.0.1.</span> <span class="toc-text">status查看服务器的状况</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#修改root密码"><span class="toc-number">2.0.0.2.</span> <span class="toc-text">修改root密码</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#ping检查mysqlserver是否可用"><span class="toc-number">2.0.0.3.</span> <span class="toc-text">ping检查mysqlserver是否可用</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#version查询服务器的版本"><span class="toc-number">2.0.0.4.</span> <span class="toc-text">version查询服务器的版本</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#extended-status查看服务器状态的当前值："><span class="toc-number">2.0.0.5.</span> <span class="toc-text">extended-status查看服务器状态的当前值：</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#variables查询服务器系统变量值："><span class="toc-number">2.0.0.6.</span> <span class="toc-text">variables查询服务器系统变量值：</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#processlist显示服务器所有运行的进程："><span class="toc-number">2.0.0.7.</span> <span class="toc-text">processlist显示服务器所有运行的进程：</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#创建数据库"><span class="toc-number">2.0.0.8.</span> <span class="toc-text">创建数据库</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#删除数据库"><span class="toc-number">2.0.0.9.</span> <span class="toc-text">删除数据库</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#重载权限信息"><span class="toc-number">2.0.0.10.</span> <span class="toc-text">重载权限信息</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#执行kill_进程"><span class="toc-number">2.0.0.11.</span> <span class="toc-text">执行kill 进程</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#停止和启动MySQL_replication_on_a_slave_server"><span class="toc-number">2.0.0.12.</span> <span class="toc-text">停止和启动MySQL replication on a slave server</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#flush选项"><span class="toc-number">2.0.0.13.</span> <span class="toc-text">flush选项</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#mysqlshow指令"><span class="toc-number">2.0.0.14.</span> <span class="toc-text">mysqlshow指令</span></a></li></ol></ol></ol><li class="toc-item toc-level-3"><a class="toc-link" href="#mysqldump常用指令"><span class="toc-number">3.</span> <span class="toc-text">mysqldump常用指令</span></a></li><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#导出整个数据库"><span class="toc-number">3.0.0.1.</span> <span class="toc-text">导出整个数据库</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#导出一个表"><span class="toc-number">3.0.0.2.</span> <span class="toc-text">导出一个表</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#导出一个数据库结构_-d"><span class="toc-number">3.0.0.3.</span> <span class="toc-text">导出一个数据库结构 -d</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#导入数据库，常用source_命令"><span class="toc-number">3.0.0.4.</span> <span class="toc-text">导入数据库，常用source 命令</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#默认参数参考"><span class="toc-number">3.0.0.5.</span> <span class="toc-text">默认参数参考</span></a></li></ol>
 		</div>
 		
-		  
+		<p>除了mysql -u root -p 等这些常用的参数外，总结一下基础指令</p>
+<pre><code><span class="comment">mysqldump</span> <span class="literal">-</span><span class="literal">-</span><span class="comment">help</span>
+<span class="comment">mysql</span> <span class="literal">-</span><span class="literal">-</span><span class="comment">help</span> 
+<span class="comment">mysqladmin</span> <span class="literal">-</span><span class="literal">-</span><span class="comment">help</span>    <span class="comment">你懂得</span>
+</code></pre><h3 id="mysql常用命令">mysql常用命令</h3>
+<h6 id="自动补全">自动补全</h6>
+<pre><code>方法一
+[mysql]
+#no-<span class="keyword">auto</span>-rehash
+<span class="keyword">auto</span>-rehash
+方法二
+mysql -u root --<span class="keyword">auto</span>-rehash
+</code></pre><h6 id="-D_使用哪个数据库">-D  使用哪个数据库</h6>
+<pre><code>mysql <span class="attribute">-u</span> root <span class="attribute">-D</span> test  
+</code></pre><h6 id="-default-character-set设置默认字符集">--default-character-set设置默认字符集</h6>
+<pre><code>mysql <span class="attribute">-u</span> root <span class="attribute">-D</span> test  <span class="subst">--</span>default<span class="attribute">-character</span><span class="attribute">-set</span><span class="subst">=</span>utf8
+</code></pre><h6 id="-e_执行mysql的sql语句">-e 执行mysql的sql语句</h6>
+<pre><code>mysql <span class="attribute">-uroot</span> <span class="attribute">-D</span> bak_test <span class="attribute">-e</span> <span class="string">"show tables;"</span> 
+这个很有用的，因为我不用进入mysql客户里面去，就能把我要的数据取出来，这个可以配合shell脚本的话，能发挥很大的功能
+</code></pre><h6 id="-h_指定连接端口号">-h 指定连接端口号</h6>
+<pre><code>mysql <span class="attribute">-u</span> root <span class="attribute">-h</span> <span class="number">192.168</span><span class="number">.1</span><span class="number">.102</span>  指定端口号很重要
+</code></pre><h6 id="-E_垂直打印查询输出">-E 垂直打印查询输出</h6>
+<pre><code>mysql <span class="attribute">-uroot</span> bak_test <span class="attribute">-e</span> <span class="string">"show tables;"</span> <span class="attribute">-E</span>  
+</code></pre><h6 id="-f_如果有错误跳过去，继续执行下面的">-f 如果有错误跳过去，继续执行下面的</h6>
+<pre><code>mysql -uroot bak_test -e "<span class="operator"><span class="keyword">show</span> databaseds;</span><span class="operator"><span class="keyword">show</span> tables;</span>" -f  
+上面的databaseds拼错了，依旧能输出
+</code></pre><h6 id="-N_不显示列信息">-N 不显示列信息</h6>
+<pre><code>mysql <span class="attribute">-uroot</span> bak_test <span class="attribute">-e</span> <span class="string">"select * from user"</span> <span class="attribute">-N</span> 
+</code></pre><h6 id="-H_-X以HTML、XML报表呈现">-H -X以HTML、XML报表呈现</h6>
+<pre><code>mysql <span class="attribute">-uroot</span> bak_test <span class="attribute">-e</span> <span class="string">"show tables  "</span> <span class="attribute">-X</span> 
+mysql <span class="attribute">-uroot</span> bak_test <span class="attribute">-e</span> <span class="string">"show tables  "</span> <span class="attribute">-H</span> 
+做报表的时候可以考虑
+</code></pre><h6 id="-S_连接服务器的sockey文件">-S 连接服务器的sockey文件</h6>
+<pre><code>mysql <span class="attribute">-u</span> root <span class="attribute">-D</span> test   <span class="attribute">-S</span> /tmp/mysql<span class="built_in">.</span>sock  
+当我们一台服务器启动了二个不同mysql版本的时候，存放socket的文件是不能一样的，－S用来指定连接到那个
+</code></pre><h6 id="-P_设置端口号">-P 设置端口号</h6>
+<pre><code>mysql <span class="attribute">-u</span> root <span class="attribute">-o</span> test  <span class="attribute">-P</span> <span class="number">13306</span>  <span class="attribute">-S</span> /tmp/mysql<span class="built_in">.</span>sock
+</code></pre><p>以上我认为这些用的还多，注意组合使用。</p>
+<h3 id="mysqladmin常用命令">mysqladmin常用命令</h3>
+<p>mysqladmin和mysql有些参数功能上是一样的</p>
+<h6 id="status查看服务器的状况">status查看服务器的状况</h6>
+<pre><code>mysqladmin <span class="attribute">-uroot</span> <span class="attribute">-p</span> status
+mysqladmin <span class="attribute">-uroot</span> <span class="attribute">-p</span> <span class="attribute">-i</span> <span class="number">2</span> <span class="attribute">-c</span> <span class="number">5</span> status每个两秒查看一次服务器的状态，总共重复<span class="number">5</span>次
+</code></pre><h6 id="修改root密码">修改root密码</h6>
+<pre><code>mysqladmin <span class="attribute">-u</span> root <span class="attribute">-poldpassword</span> password newpassword    
+</code></pre><h6 id="ping检查mysqlserver是否可用">ping检查mysqlserver是否可用</h6>
+<pre><code>mysqladmin <span class="attribute">-uroot</span> <span class="attribute">-p</span> ping
+</code></pre><h6 id="version查询服务器的版本">version查询服务器的版本</h6>
+<pre><code>mysqladmin <span class="attribute">-uroot</span> <span class="attribute">-p</span> version
+</code></pre><h6 id="extended-status查看服务器状态的当前值：">extended-status查看服务器状态的当前值：</h6>
+<pre><code>mysqladmin <span class="attribute">-uroot</span> <span class="attribute">-p</span> extended<span class="attribute">-status</span>
+</code></pre><h6 id="variables查询服务器系统变量值：">variables查询服务器系统变量值：</h6>
+<pre><code>mysqladmin <span class="attribute">-uroot</span> <span class="attribute">-p</span> variables
+</code></pre><h6 id="processlist显示服务器所有运行的进程：">processlist显示服务器所有运行的进程：</h6>
+<pre><code>mysqladmin <span class="attribute">-uroot</span> <span class="attribute">-p</span> processlist
+mysqladmin <span class="attribute">-uroot</span> <span class="attribute">-p</span><span class="attribute">-i</span> <span class="number">1</span> processlist 每秒刷新一次
+</code></pre><h6 id="创建数据库">创建数据库</h6>
+<pre><code>mysqladmin <span class="attribute">-uroot</span> <span class="attribute">-p</span> create daba<span class="attribute">-test</span>
+</code></pre><h6 id="删除数据库">删除数据库</h6>
+<pre><code>mysqladmin <span class="attribute">-uroot</span> <span class="attribute">-p</span> drop daba<span class="attribute">-test</span>
+</code></pre><h6 id="重载权限信息">重载权限信息</h6>
+<pre><code>mysqladmin <span class="attribute">-uroot</span> <span class="attribute">-p</span> reload
+</code></pre><h6 id="执行kill_进程">执行kill 进程</h6>
+<pre><code>mysqladmin <span class="attribute">-uroot</span> <span class="attribute">-p</span> processlist
+mysqladmin <span class="attribute">-uroot</span> <span class="attribute">-p</span> kill idnum
+</code></pre><h6 id="停止和启动MySQL_replication_on_a_slave_server">停止和启动MySQL replication on a slave server</h6>
+<pre><code>mysqladmin <span class="attribute">-u</span> root <span class="attribute">-p</span> stop<span class="attribute">-slave</span>
+mysqladmin <span class="attribute">-u</span> root <span class="attribute">-p</span> start<span class="attribute">-slave</span>
+</code></pre><h6 id="flush选项">flush选项</h6>
+<pre><code>mysqladmin <span class="attribute">-u</span> root <span class="attribute">-p</span> flush<span class="attribute">-hosts</span><span class="subst">|</span>flush<span class="attribute">-logs</span><span class="subst">|</span>flush<span class="attribute">-privileges</span><span class="subst">|</span>flush<span class="attribute">-status</span><span class="subst">|</span>flush<span class="attribute">-tables</span><span class="subst">|</span>flush<span class="attribute">-threads</span>
+</code></pre><h6 id="mysqlshow指令">mysqlshow指令</h6>
+<pre><code>mysqlshow <span class="attribute">-uroot</span> <span class="attribute">-p</span> 显示服务器上的所有数据库
+mysqlshow <span class="attribute">-uroot</span> <span class="attribute">-p</span> daba<span class="attribute">-test</span> 显示数据库daba<span class="attribute">-test</span>下有些什么表
+mysqlshow <span class="attribute">-uroot</span> <span class="attribute">-p</span> daba<span class="attribute">-test</span> <span class="attribute">-v</span> 统计daba<span class="attribute">-test</span> 下数据库表列的汇总
+mysqlshow <span class="attribute">-uroot</span> <span class="attribute">-p</span> daba<span class="attribute">-test</span> <span class="attribute">-v</span> <span class="attribute">-v</span> 统计daba<span class="attribute">-test</span> 下数据库表的列数和行数
+</code></pre><h3 id="mysqldump常用指令">mysqldump常用指令</h3>
+<p>先看几个常用用例</p>
+<h6 id="导出整个数据库">导出整个数据库</h6>
+<pre><code>mysqldump <span class="attribute">-u</span> 用户名 <span class="attribute">-p</span> 数据库名 <span class="subst">&gt;</span> 导出的文件名 
+mysqldump <span class="attribute">-u</span> wcnc <span class="attribute">-p</span> smgp_apps_wcnc <span class="subst">&gt;</span> wcnc<span class="built_in">.</span>sql
+</code></pre><h6 id="导出一个表">导出一个表</h6>
+<pre><code>mysqldump <span class="attribute">-u</span> 用户名 <span class="attribute">-p</span> 数据库名 表名<span class="subst">&gt;</span> 导出的文件名
+</code></pre><h6 id="导出一个数据库结构_-d">导出一个数据库结构 -d</h6>
+<pre><code>mysqldump -u wcnc -p -d --add-<span class="keyword">drop</span>-table smgp_apps_wcnc &gt;d:\wcnc_db.sql
+#-d 不导出数据只导出结构 --add-<span class="keyword">drop</span>-table 在每个create语句之前增加一个<span class="keyword">drop</span> table 
+</code></pre><h6 id="导入数据库，常用source_命令">导入数据库，常用source 命令</h6>
+<pre><code>先确认好客户端字符集和导入字符集
+mysql&gt;<span class="built_in">source</span> d:\wcnc_db.sql
+</code></pre><h6 id="默认参数参考">默认参数参考</h6>
+<pre><code><span class="subst">--</span>add<span class="attribute">-drop</span><span class="attribute">-table</span>
+每个数据表创建之前添加drop数据表语句。(默认为打开状态，使用<span class="subst">--</span><span class="keyword">skip</span><span class="attribute">-add</span><span class="attribute">-drop</span><span class="attribute">-table</span>取消选项)
+mysqldump  <span class="attribute">-uroot</span> <span class="attribute">-p</span> <span class="subst">--</span><span class="literal">all</span><span class="attribute">-databases</span>  (默认添加drop语句)
+mysqldump  <span class="attribute">-uroot</span> <span class="attribute">-p</span> <span class="subst">--</span><span class="literal">all</span><span class="attribute">-databases</span> –<span class="attribute">-skip</span><span class="attribute">-add</span><span class="attribute">-drop</span><span class="attribute">-table</span>  (取消drop语句)
+<span class="subst">--</span>add<span class="attribute">-locks</span>
+在每个表导出之前增加LOCK TABLES并且之后UNLOCK  TABLE。(默认为打开状态，使用<span class="subst">--</span><span class="keyword">skip</span><span class="attribute">-add</span><span class="attribute">-locks</span>取消选项)
+mysqldump  <span class="attribute">-uroot</span> <span class="attribute">-p</span> <span class="subst">--</span><span class="literal">all</span><span class="attribute">-databases</span>  (默认添加LOCK语句)
+mysqldump  <span class="attribute">-uroot</span> <span class="attribute">-p</span> <span class="subst">--</span><span class="literal">all</span><span class="attribute">-databases</span> <span class="subst">-</span>–<span class="keyword">skip</span><span class="attribute">-add</span><span class="attribute">-locks</span>   (取消LOCK语句)
+</code></pre><p>mysqldump其余参数参考网址<br><a href="http://www.cnblogs.com/xuejie/archive/2013/01/11/2856911.html" target="_blank">http://www.cnblogs.com/xuejie/archive/2013/01/11/2856911.html</a></p>
+  
 	</div>
 		<footer class="article-footer clearfix">
 
@@ -108,7 +218,7 @@
 
 <div class="article-share" id="share">
 
-  <div data-url="https://github.com/DaMinger/DaMinger.github.io.git/2014/11/25/Mysql/mysql_mysqladmin_mysqldump/" data-title="mysql、mysqladmin、mysqldump总结 | DaMinger&#39;s blog" data-tsina="null" class="share clearfix">
+  <div data-url="https://github.com/DaMinger/DaMinger.github.io.git/2014/11/25/Mysql/mysql_mysqladmin_mysqldump/" data-title="mysql、mysqladmin、mysqldump常用命令总结 | DaMinger&#39;s blog" data-tsina="null" class="share clearfix">
   </div>
 
 </div>
@@ -138,7 +248,7 @@
 
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
-  
+  <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#mysql常用命令"><span class="toc-number">1.</span> <span class="toc-text">mysql常用命令</span></a></li><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#自动补全"><span class="toc-number">1.0.0.1.</span> <span class="toc-text">自动补全</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#-D_使用哪个数据库"><span class="toc-number">1.0.0.2.</span> <span class="toc-text">-D  使用哪个数据库</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#-default-character-set设置默认字符集"><span class="toc-number">1.0.0.3.</span> <span class="toc-text">--default-character-set设置默认字符集</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#-e_执行mysql的sql语句"><span class="toc-number">1.0.0.4.</span> <span class="toc-text">-e 执行mysql的sql语句</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#-h_指定连接端口号"><span class="toc-number">1.0.0.5.</span> <span class="toc-text">-h 指定连接端口号</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#-E_垂直打印查询输出"><span class="toc-number">1.0.0.6.</span> <span class="toc-text">-E 垂直打印查询输出</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#-f_如果有错误跳过去，继续执行下面的"><span class="toc-number">1.0.0.7.</span> <span class="toc-text">-f 如果有错误跳过去，继续执行下面的</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#-N_不显示列信息"><span class="toc-number">1.0.0.8.</span> <span class="toc-text">-N 不显示列信息</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#-H_-X以HTML、XML报表呈现"><span class="toc-number">1.0.0.9.</span> <span class="toc-text">-H -X以HTML、XML报表呈现</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#-S_连接服务器的sockey文件"><span class="toc-number">1.0.0.10.</span> <span class="toc-text">-S 连接服务器的sockey文件</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#-P_设置端口号"><span class="toc-number">1.0.0.11.</span> <span class="toc-text">-P 设置端口号</span></a></li></ol></ol></ol><li class="toc-item toc-level-3"><a class="toc-link" href="#mysqladmin常用命令"><span class="toc-number">2.</span> <span class="toc-text">mysqladmin常用命令</span></a></li><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#status查看服务器的状况"><span class="toc-number">2.0.0.1.</span> <span class="toc-text">status查看服务器的状况</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#修改root密码"><span class="toc-number">2.0.0.2.</span> <span class="toc-text">修改root密码</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#ping检查mysqlserver是否可用"><span class="toc-number">2.0.0.3.</span> <span class="toc-text">ping检查mysqlserver是否可用</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#version查询服务器的版本"><span class="toc-number">2.0.0.4.</span> <span class="toc-text">version查询服务器的版本</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#extended-status查看服务器状态的当前值："><span class="toc-number">2.0.0.5.</span> <span class="toc-text">extended-status查看服务器状态的当前值：</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#variables查询服务器系统变量值："><span class="toc-number">2.0.0.6.</span> <span class="toc-text">variables查询服务器系统变量值：</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#processlist显示服务器所有运行的进程："><span class="toc-number">2.0.0.7.</span> <span class="toc-text">processlist显示服务器所有运行的进程：</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#创建数据库"><span class="toc-number">2.0.0.8.</span> <span class="toc-text">创建数据库</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#删除数据库"><span class="toc-number">2.0.0.9.</span> <span class="toc-text">删除数据库</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#重载权限信息"><span class="toc-number">2.0.0.10.</span> <span class="toc-text">重载权限信息</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#执行kill_进程"><span class="toc-number">2.0.0.11.</span> <span class="toc-text">执行kill 进程</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#停止和启动MySQL_replication_on_a_slave_server"><span class="toc-number">2.0.0.12.</span> <span class="toc-text">停止和启动MySQL replication on a slave server</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#flush选项"><span class="toc-number">2.0.0.13.</span> <span class="toc-text">flush选项</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#mysqlshow指令"><span class="toc-number">2.0.0.14.</span> <span class="toc-text">mysqlshow指令</span></a></li></ol></ol></ol><li class="toc-item toc-level-3"><a class="toc-link" href="#mysqldump常用指令"><span class="toc-number">3.</span> <span class="toc-text">mysqldump常用指令</span></a></li><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#导出整个数据库"><span class="toc-number">3.0.0.1.</span> <span class="toc-text">导出整个数据库</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#导出一个表"><span class="toc-number">3.0.0.2.</span> <span class="toc-text">导出一个表</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#导出一个数据库结构_-d"><span class="toc-number">3.0.0.3.</span> <span class="toc-text">导出一个数据库结构 -d</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#导入数据库，常用source_命令"><span class="toc-number">3.0.0.4.</span> <span class="toc-text">导入数据库，常用source 命令</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#默认参数参考"><span class="toc-number">3.0.0.5.</span> <span class="toc-text">默认参数参考</span></a></li></ol>
   </div>
 
 <div id="asidepart">
