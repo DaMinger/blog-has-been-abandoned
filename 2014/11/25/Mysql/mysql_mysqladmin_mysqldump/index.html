@@ -4,17 +4,10 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>LeetCode:Linked List Cycle II | DaMinger&#39;s blog</title>
+    <title>mysql、mysqladmin、mysqldump总结 | DaMinger&#39;s blog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="DaMinger">
-    
-    <meta name="description" content="题目
-Linked List Cycle II 
-Given a linked list, return the node where the cycle begins. If there is no cycle, return null.
-
-Follow up:
-Can you solve it ">
     
     
     
@@ -76,15 +69,15 @@ Can you solve it ">
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2014/05/23/数据结构与算法/LeetCode/linkedlistcycle2/" title="LeetCode:Linked List Cycle II" itemprop="url">LeetCode:Linked List Cycle II</a>
+      <a href="/2014/11/25/Mysql/mysql_mysqladmin_mysqldump/" title="mysql、mysqladmin、mysqldump总结" itemprop="url">mysql、mysqladmin、mysqldump总结</a>
   </h1>
   <p class="article-author">By
     
       <a href="https://github.com/DaMinger/DaMinger.github.io.git" title="DaMinger">DaMinger</a>
     </p>
   <p class="article-time">
-    <time datetime="2014-05-23T12:26:02.000Z" itemprop="datePublished">5月 23 2014</time>
-    更新日期:<time datetime="2014-05-23T13:09:17.000Z" itemprop="dateModified">5月 23 2014</time>
+    <time datetime="2014-11-25T07:00:19.000Z" itemprop="datePublished">11月 25 2014</time>
+    更新日期:<time datetime="2014-11-25T07:02:39.000Z" itemprop="dateModified">11月 25 2014</time>
     
   </p>
 </header>
@@ -93,67 +86,29 @@ Can you solve it ">
 		
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
-		<ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#题目"><span class="toc-number">1.</span> <span class="toc-text">题目</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#解法"><span class="toc-number">2.</span> <span class="toc-text">解法</span></a></li></ol>
+		
 		</div>
 		
-		<h4 id="题目">题目</h4>
-<pre><code>Linked List Cycle II 
-Given <span class="operator">a</span> linked list, <span class="constant">return</span> <span class="operator">the</span> node where <span class="operator">the</span> cycle <span class="operator">begins</span>. If there is no cycle, <span class="constant">return</span> <span class="constant">null</span>.
-
-Follow up:
-Can you solve <span class="keyword">it</span> <span class="keyword">without</span> <span class="keyword">using</span> extra <span class="constant">space</span>?
-</code></pre><p>思路：此题除判断回路外还需要判断闭环的位置。依旧设置快慢指针p1,p2.假设链表长度为n，环开始的节点Y为到头节点X有a步，p1和p2在距离环开始的节点b步的Z地方相遇（按顺时针），假设相遇节点Z到环开始的节点c步（按顺时针），那么p1走的路程为a+b，p2走的路程为a+b+c+b，显然p2走的路程为p1的2倍，于是2(a+b)=a+2b+c，于是我们推出a=c。</p>
-<p>知道这个结论后面的解答就很简单了，p1和p2相遇后，把p1指向头节点，然后p1,p2都一次走一步，走了c步后p1 p2相遇，该节点Y就是环开始的节点。<br><img src="/img/数据结构与算法/2.jpg" alt=""></p>
-<h4 id="解法">解法</h4>
-<pre><code><span class="keyword">class</span> ListNode {
-      <span class="built_in">int</span> val;
-      ListNode <span class="keyword">next</span>;
-      ListNode(<span class="built_in">int</span> x) {
-         val = x;
-          <span class="keyword">next</span> = <span class="literal">null</span>;
-      }
-}
-<span class="keyword">public</span> <span class="keyword">class</span> detectCycle222 {
-    <span class="keyword">public</span> ListNode detectCycle(ListNode head) {
-        ListNode slow=head,fast=head;
-        <span class="keyword">while</span>(<span class="literal">true</span>){
-            <span class="keyword">if</span>(fast ==<span class="literal">null</span>||fast.<span class="keyword">next</span>==<span class="literal">null</span>){
-                return <span class="literal">null</span>;
-            }
-            slow =slow.<span class="keyword">next</span>;
-            fast =fast.<span class="keyword">next</span>.<span class="keyword">next</span>;
-            <span class="keyword">if</span>(slow ==fast){
-                break;
-            }
-        }
-        slow=head;
-        <span class="keyword">while</span>(slow!=fast){
-            slow=slow.<span class="keyword">next</span>;
-            fast=fast.<span class="keyword">next</span>;
-        }
-        return slow;
-    }
-}
-</code></pre>  
+		  
 	</div>
 		<footer class="article-footer clearfix">
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/数据结构与算法/">数据结构与算法</a>
+  <span></span> <a href="/tags/Mysql/">Mysql</a>
   </div>
 
 
 <div class="article-categories">
   <span></span>
-  <a class="article-category-link" href="/categories/数据结构与算法/">数据结构与算法</a>
+  <a class="article-category-link" href="/categories/Mysql/">Mysql</a>
 </div>
 
 
 
 <div class="article-share" id="share">
 
-  <div data-url="https://github.com/DaMinger/DaMinger.github.io.git/2014/05/23/数据结构与算法/LeetCode/linkedlistcycle2/" data-title="LeetCode:Linked List Cycle II | DaMinger&#39;s blog" data-tsina="null" class="share clearfix">
+  <div data-url="https://github.com/DaMinger/DaMinger.github.io.git/2014/11/25/Mysql/mysql_mysqladmin_mysqldump/" data-title="mysql、mysqladmin、mysqldump总结 | DaMinger&#39;s blog" data-tsina="null" class="share clearfix">
   </div>
 
 </div>
@@ -162,19 +117,11 @@ Can you solve <span class="keyword">it</span> <span class="keyword">without</spa
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
- <a href="/2014/05/23/数据结构与算法/LeetCode/reverinteger/" title="LeetCode:Reverse Integer">
-  <strong>PREVIOUS:</strong><br/>
-  <span>
-  LeetCode:Reverse Integer</span>
-</a>
-</div>
-
 
 <div class="next">
-<a href="/2014/05/23/数据结构与算法/LeetCode/linkedlistcycle/"  title="LeetCode:Linked List Cycle">
+<a href="/2014/11/19/Mysql/percona_install/"  title="Centos6.5编译安装（percona5.5）简略步骤及问题">
  <strong>NEXT:</strong><br/> 
- <span>LeetCode:Linked List Cycle
+ <span>Centos6.5编译安装（percona5.5）简略步骤及问题
 </span>
 </a>
 </div>
@@ -191,7 +138,7 @@ Can you solve <span class="keyword">it</span> <span class="keyword">without</spa
 
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
-  <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#题目"><span class="toc-number">1.</span> <span class="toc-text">题目</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#解法"><span class="toc-number">2.</span> <span class="toc-text">解法</span></a></li></ol>
+  
   </div>
 
 <div id="asidepart">
