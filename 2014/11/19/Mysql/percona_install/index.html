@@ -12,9 +12,9 @@
     <meta name="description" content="安装Centos6.5 采用最小化安装
    注意点：因为是最小化安装，网卡不会自启动，设置自启动，关闭防火墙和selinux，配置yum,安装wget工具。
 安装依赖包
-yum install  gcc gcc-c++ ncurses ncurses-devel 
+yum install  gcc gcc-c++ ncurses ncurses-devel bison
 下载相关源码包
-wget htt">
+wge">
     
     
     
@@ -84,7 +84,7 @@ wget htt">
     </p>
   <p class="article-time">
     <time datetime="2014-11-19T03:40:11.000Z" itemprop="datePublished">11月 19 2014</time>
-    更新日期:<time datetime="2014-11-19T03:47:12.000Z" itemprop="dateModified">11月 19 2014</time>
+    更新日期:<time datetime="2014-12-08T06:08:51.000Z" itemprop="dateModified">12月 8 2014</time>
     
   </p>
 </header>
@@ -99,7 +99,7 @@ wget htt">
 		<h4 id="安装Centos6-5_采用最小化安装">安装Centos6.5 采用最小化安装</h4>
 <p>   注意点：因为是最小化安装，网卡不会自启动，设置自启动，关闭防火墙和selinux，配置yum,安装wget工具。</p>
 <h4 id="安装依赖包">安装依赖包</h4>
-<pre><code>yum install  gcc gcc<span class="attribute">-c</span><span class="subst">++</span> ncurses ncurses<span class="attribute">-devel</span> 
+<pre><code>yum install  gcc gcc<span class="attribute">-c</span><span class="subst">++</span> ncurses ncurses<span class="attribute">-devel</span> bison
 </code></pre><h4 id="下载相关源码包">下载相关源码包</h4>
 <pre><code>wget http://www<span class="preprocessor">.cmake</span><span class="preprocessor">.org</span>/files/v2<span class="number">.8</span>/cmake-<span class="number">2.8</span><span class="number">.11</span><span class="number">.2</span><span class="preprocessor">.tar</span><span class="preprocessor">.gz</span>
 wget http://www<span class="preprocessor">.percona</span><span class="preprocessor">.com</span>/redir/downloads/Percona-Server-<span class="number">5.5</span>/LATEST/source/tarball/percona-server-<span class="number">5.5</span><span class="number">.40</span>-<span class="number">36.1</span><span class="preprocessor">.tar</span><span class="preprocessor">.gz</span>
@@ -115,7 +115,8 @@ useradd -M -s /sbin/nologin mysql
 mkdir -p /data/percona
 chown mysql.mysql -R /data/percona
 cmake . -DCMAKE_INSTALL_PREFIX=/usr/local/percona \
--<span class="ruby"><span class="constant">DMYSQL_UNIX_ADDR</span>=<span class="regexp">/tmp/mysql</span>.sock \
+-<span class="ruby"><span class="constant">DENABLE_DTRACE</span>=<span class="number">0</span>
+</span>-<span class="ruby"><span class="constant">DMYSQL_UNIX_ADDR</span>=<span class="regexp">/tmp/mysql</span>.sock \
 </span>-<span class="ruby"><span class="constant">DMYSQL_DATADIR</span>=<span class="regexp">/data/percona</span> \
 </span>-<span class="ruby"><span class="constant">DSYSCONFDIR</span>=<span class="regexp">/etc \
 </span></span>-<span class="ruby"><span class="constant">DMYSQL_TCP_PORT</span>=<span class="number">3306</span> \
